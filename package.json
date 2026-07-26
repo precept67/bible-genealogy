@@ -1,0 +1,13 @@
+{
+  "name": "bible-genealogy",
+  "version": "1.0.0",
+  "description": "Bible Genealogy App",
+  "main": "index.html",
+  "scripts": {
+    "tauri": "tauri",
+    "build": "mkdir -p dist && cp index.html style_v16_v2.css app_v16_v2.js data_v16_v2.js database.json dist/ && npx tauri build"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^1.5.0"
+  }
+}

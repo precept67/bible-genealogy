@@ -1,0 +1,38 @@
+{
+  "package": {
+    "productName": "BibleGenealogy",
+    "version": "1.0.0"
+  },
+  "build": {
+    "distDir": "../dist",
+    "devPath": "../dist",
+    "beforeDevCommand": "",
+    "beforeBuildCommand": ""
+  },
+  "tauri": {
+    "bundle": {
+      "active": true,
+      "targets": "all",
+      "identifier": "com.biblegenealogy.app",
+      "icon": [
+        "icons/32x32.png",
+        "icons/128x128.png",
+        "icons/128x128@2x.png",
+        "icons/icon.icns",
+        "icons/icon.ico"
+      ]
+    },
+    "security": {
+      "csp": null
+    },
+    "windows": [
+      {
+        "title": "성경 족보 묵상",
+        "width": 1280,
+        "height": 720,
+        "resizable": true,
+        "fullscreen": false
+      }
+    ]
+  }
+}

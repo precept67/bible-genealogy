@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>성경 인물 족보 시각화 연구 도구</title>
+  <script>
+    window.onerror = function(message, source, lineno, colno, error) {
+      setTimeout(function() {
+        const stats = document.getElementById('stats');
+        if (stats) {
+          stats.innerHTML = `<span style="color: #ff3333; font-weight: bold;">오류: ${message} (라인 ${lineno})</span>`;
+        }
+        const div = document.createElement('div');
+        div.style.position = 'fixed';
+        div.style.top = '10px';
+        div.style.left = '10px';
+        div.style.right = '10px';
+        div.style.background = '#ffdddd';
+        div.style.border = '2px solid #ff3333';
+        div.style.color = '#aa0000';
+        div.style.padding = '15px';
+        div.style.zIndex = '99999';
+        div.style.fontFamily = 'monospace';
+        div.style.fontSize = '12px';
+        div.style.whiteSpace = 'pre-wrap';
+        div.style.boxShadow = '0 4px 10px rgba(0,0,0,0.3)';
+        div.innerHTML = `<h3>⚠️ 스크립트 실행 오류 발생</h3>
+<b>메시지:</b> ${message}<br>
+<b>소스:</b> ${source}<br>
+<b>위치:</b> 라인 ${lineno}, 열 ${colno}<br>
+<b>스택 트레이스:</b><br>${error ? error.stack : 'N/A'}`;
+        document.body.appendChild(div);
+      }, 100);
+      return false;
+    };
+  </script>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <meta name="description" content="성경의 전체 족보(아담부터 예수 그리스도까지)를 자유로운 줌인/줌아웃과 함께 탐색하고, 각 인물에 대한 메모와 연구 자료를 기록 및 관리할 수 있는 웹 기반 족보 시각화 도구입니다.">
+  
+  <!-- Premium Fonts from Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="style_v16_v2.css?v=1643">
+</head>
+<body>
+
+  <div id="app-container">
+    
+    <!-- Header Title Panel -->
+    <header id="main-header">
+      <h1>성경 전체 족보 <small style="font-size: 11px; opacity: 0.5; vertical-align: middle;">v14.0</small></h1>
+      <span class="subtitle" id="stats">분석 중...</span>
+    </header>
+    
+    <!-- Search Panel -->
+    <div id="search-panel">
+      <input type="text" id="searchInput" class="search-box" placeholder="인물 이름으로 검색..." autocomplete="off">
+    </div>
+    
+    <!-- Main Scroll/Pan Viewer Container -->
+    <main id="viewer-container">
+      <div id="zoom-wrapper">
+        <div id="tree-board">
+          <!-- Background Connection Lines Layer -->
+          <svg id="svg-layer" xmlns="http://www.w3.org/2000/svg"></svg>
+          <!-- HTML Person Cards will be rendered here dynamically -->
+        </div>
+      </div>
+    </main>
+    
+    <!-- Bottom Float Control Bar -->
+    <div id="control-panel">
+      <button id="zoom-out" class="control-btn" title="축소">➖</button>
+      <span id="zoom-level" class="zoom-indicator">100%</span>
+      <button id="zoom-in" class="control-btn" title="확대">➕</button>
+      <div class="control-divider"></div>
+      <button id="zoom-reset" class="control-btn" title="원본 크기">🔄</button>
+      <button id="theme-toggle" class="control-btn" title="테마 변경">🌙</button>
+      <button id="style-editor-toggle" class="control-btn" title="선 디자인 편집기">🎨</button>
+      <button id="filter-panel-toggle" class="control-btn" title="계보 필터 설정">👁️</button>
+      <div class="control-divider"></div>
+      <button id="admin-lock-btn" class="control-btn" title="관리자 편집 모드 토글">🔒</button>
+    </div>
+    
+    <!-- Left Sliding Design Style Editor Panel -->
+    <aside id="style-editor-panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <h2>선 디자인 편집기</h2>
+          <p>연결선 스타일을 실시간 변경</p>
+        </div>
+        <button id="style-panel-close" class="close-btn" title="닫기">&times;</button>
+      </div>
+      <div class="panel-body">
+        <!-- 1. Connection Type -->
+        <section class="style-section">
+          <h3 class="panel-sec-title">연결선 형태 선택</h3>
+          <div class="style-control-group">
+            <label for="style-line-type">연결선 스타일</label>
+            <select id="style-line-type" class="style-select">
+              <option value="orthogonal" selected>직각 및 곡선 (Orthogonal)</option>
+              <option value="diagonal">직선 (Diagonal)</option>
+            </select>
+          </div>
+        </section>
+
+        <!-- 2. Color Customizations -->
+        <section class="style-section">
+          <h3 class="panel-sec-title">선 색상 변경</h3>
+          <div class="style-control-group">
+            <label for="style-line-color">일반 연결선</label>
+            <input type="color" id="style-line-color" value="#cbd5e1">
+          </div>
+          <div class="style-control-group">
+            <label for="style-main-line-color">메시아 직계선</label>
+            <input type="color" id="style-main-line-color" value="#ff7800">
+          </div>
+          <div class="style-control-group">
+            <label for="style-spouse-line-color">배우자 연결선</label>
+            <input type="color" id="style-spouse-line-color" value="#ef4444">
+          </div>
+        </section>
+        
+        <!-- 2. Curvature & Curving Controls -->
+        <section class="style-section">
+          <h3 class="panel-sec-title">두께 및 곡선 조절</h3>
+          <div class="style-control-group">
+            <div class="slider-label-row">
+              <label for="style-line-width">선 두께</label>
+              <span id="label-line-width">2px</span>
+            </div>
+            <input type="range" id="style-line-width" min="1" max="8" step="1" value="2">
+          </div>
+          <div class="style-control-group">
+            <div class="slider-label-row">
+              <label for="style-corner-radius">모서리 둥글기 (곡률)</label>
+              <span id="label-corner-radius">12px</span>
+            </div>
+            <input type="range" id="style-corner-radius" min="0" max="30" step="1" value="12">
+          </div>
+          <div class="style-control-group">
+            <div class="slider-label-row">
+              <label for="style-split-offset">분기선 높이 (선 이동)</label>
+              <span id="label-split-offset">45px</span>
+            </div>
+            <input type="range" id="style-split-offset" min="20" max="160" step="5" value="90">
+          </div>
+          <div class="style-control-group">
+            <div class="slider-label-row">
+              <label for="style-sibling-gap">아들들 간격 (픽셀)</label>
+              <span id="label-sibling-gap">7px</span>
+            </div>
+            <input type="range" id="style-sibling-gap" min="5" max="100" step="1" value="7">
+          </div>
+        </section>
+
+        <!-- 3. Line Editor (Custom Bends) -->
+        <section class="style-section" id="line-editor-section" style="display: none;">
+          <h3 class="panel-sec-title">선 개별 편집기</h3>
+          <div class="style-control-group" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+            <label for="style-line-edit-toggle" style="font-weight: 600; cursor: pointer;">선 편집 모드 활성화</label>
+            <input type="checkbox" id="style-line-edit-toggle" checked style="cursor: pointer; width: 18px; height: 18px;">
+          </div>
+          <div class="style-control-group" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+            <label for="style-grid-snap-toggle" style="font-weight: 600; cursor: pointer;">그리드 스냅 (10px)</label>
+            <input type="checkbox" id="style-grid-snap-toggle" checked style="cursor: pointer; width: 18px; height: 18px;">
+          </div>
+          <div style="display: flex; gap: 8px; margin-top: 12px;">
+            <button id="style-clear-selected-line-btn" class="style-action-btn danger" disabled style="flex: 1; padding: 8px; font-size: 11px; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid #ef4444; background: transparent; color: #ef4444; transition: all 0.2s ease;">선택선 초기화</button>
+            <button id="style-clear-all-lines-btn" class="style-action-btn danger" style="flex: 1; padding: 8px; font-size: 11px; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid #ef4444; background: #ef4444; color: #fff; transition: all 0.2s ease;">전체선 초기화</button>
+          </div>
+          <button id="style-delete-selected-line-btn" class="style-action-btn danger" disabled style="width: 100%; margin-top: 8px; padding: 8px; font-size: 11px; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid #ef4444; background: #ef4444; color: #fff; transition: all 0.2s ease; display: block;">선택한 연결선 삭제</button>
+        </section>
+
+        <!-- 4. Area Editor (Custom Polygons) -->
+        <section class="style-section" id="area-editor-section" style="display: none;">
+          <h3 class="panel-sec-title">영역(다각형) 편집기</h3>
+          <div class="style-control-group">
+            <label for="style-area-name">영역 이름</label>
+            <input type="text" id="style-area-name" class="style-input" style="width: 100%; padding: 8px; box-sizing: border-box; border-radius: 6px; border: 1px solid #cbd5e1; background: #f8fafc; font-size: 13px; font-family: inherit; font-weight: 500;" placeholder="영역 이름">
+          </div>
+          <div class="style-control-group">
+            <label for="style-area-color">영역 색상 (선 & 면)</label>
+            <input type="color" id="style-area-color" value="#f97316" style="width: 100%; height: 36px; border: 1px solid #cbd5e1; border-radius: 6px; padding: 2px; cursor: pointer; box-sizing: border-box; background: transparent;">
+          </div>
+          <div class="style-control-group">
+            <div class="slider-label-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+              <label for="style-area-opacity">면 불투명도</label>
+              <span id="label-area-opacity" style="font-size: 12px; font-weight: 600; color: #64748b;">0.03</span>
+            </div>
+            <input type="range" id="style-area-opacity" min="0" max="0.5" step="0.01" value="0.03" style="width: 100%; cursor: pointer;">
+          </div>
+          <div class="style-control-group">
+            <div class="slider-label-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+              <label for="style-area-stroke-width">테두리 두께</label>
+              <span id="label-area-stroke-width" style="font-size: 12px; font-weight: 600; color: #64748b;">2px</span>
+            </div>
+            <input type="range" id="style-area-stroke-width" min="1" max="10" step="1" value="2" style="width: 100%; cursor: pointer;">
+          </div>
+          <div class="style-control-group">
+            <label for="style-area-border">테두리 스타일</label>
+            <select id="style-area-border" class="style-select" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; background: #f8fafc; font-size: 13px; font-family: inherit; font-weight: 500; cursor: pointer;">
+              <option value="dashed">굵은 점선 (Dashed)</option>
+              <option value="dotted">촘촘한 점선 (Dotted)</option>
+              <option value="dashdot">일점쇄선 (Dash-Dot)</option>
+              <option value="solid">실선 (Solid)</option>
+            </select>
+          </div>
+          <div style="display: flex; gap: 8px; margin-top: 12px;">
+            <button id="style-reset-area-label-btn" class="style-action-btn" style="flex: 1; padding: 8px; font-size: 11px; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid #cbd5e1; background: #fff; color: #475569; transition: all 0.2s ease;">제목 위치 초기화</button>
+            <button id="style-delete-area-btn" class="style-action-btn danger" style="flex: 1; padding: 8px; font-size: 11px; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid #ef4444; background: #ef4444; color: #fff; transition: all 0.2s ease;">영역 삭제</button>
+          </div>
+        </section>
+      </div>
+      <div class="panel-footer">
+        <button id="style-reset-btn" class="cancel-btn" style="flex:1;">기본값 재설정</button>
+      </div>
+    </aside>
+    
+    <!-- Left Sliding Branch Filter Panel -->
+    <aside id="filter-panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <h2>계보 필터 설정</h2>
+          <p>지선 계보를 선택적으로 숨기거나 표시합니다</p>
+        </div>
+        <button id="filter-panel-close" class="close-btn" title="닫기">&times;</button>
+      </div>
+      <div class="panel-body">
+        <section class="filter-section">
+          <h3 class="panel-sec-title">지선 계보 선택</h3>
+          <div class="filter-group">
+            <label class="filter-item">
+              <input type="checkbox" id="filter-cain" checked>
+              <span class="filter-label">가인 자손 계보 (Cain)</span>
+            </label>
+            <label class="filter-item">
+              <input type="checkbox" id="filter-japheth" checked>
+              <span class="filter-label">야벳 자손 계보 (Japheth)</span>
+            </label>
+            <label class="filter-item">
+              <input type="checkbox" id="filter-ham" checked>
+              <span class="filter-label">함 자손 계보 (Ham)</span>
+            </label>
+            <label class="filter-item">
+              <input type="checkbox" id="filter-joktan" checked>
+              <span class="filter-label">욕단 자손 계보 (Joktan)</span>
+            </label>
+            <label class="filter-item">
+              <input type="checkbox" id="filter-keturah" checked>
+              <span class="filter-label">그두라 자손 계보 (Keturah)</span>
+            </label>
+            <label class="filter-item">
+              <input type="checkbox" id="filter-ishmael" checked>
+              <span class="filter-label">이스마엘 자손 계보 (Ishmael)</span>
+            </label>
+            <label class="filter-item">
+              <input type="checkbox" id="filter-esau" checked>
+              <span class="filter-label">에서(에돔) 자손 계보 (Esau)</span>
+            </label>
+            <label class="filter-item">
+              <input type="checkbox" id="filter-north_kings" checked>
+              <span class="filter-label">북이스라엘 왕 계보 (North Israel Kings)</span>
+            </label>
+            <label class="filter-item">
+              <input type="checkbox" id="filter-independent_1chr4" checked>
+              <span class="filter-label">대상 4장 독립 족보 (1 Chr 4 Lineages)</span>
+            </label>
+            <label class="filter-item">
+              <input type="checkbox" id="filter-levite_priests" checked>
+              <span class="filter-label">제사장 및 레위인 독립 족보 (Levite Priests)</span>
+            </label>
+            <label class="filter-item">
+              <input type="checkbox" id="filter-horite_chiefs" checked>
+              <span class="filter-label">호리 족속의 족장들 (Horite Chiefs)</span>
+            </label>
+            <label class="filter-item">
+              <input type="checkbox" id="filter-reuben_simeon" checked>
+              <span class="filter-label">르우벤 및 시므온 독립 족보 (Reuben & Simeon)</span>
+            </label>
+          </div>
+        </section>
+      </div>
+    </aside>
+    
+    
+    <!-- Admin Database Action Panel (Visible only in Admin Mode) -->
+    <div id="admin-actions-bar" style="display: none;">
+       <button id="admin-save-btn" class="admin-action-btn success" style="background: #10b981; border-color: #10b981; font-weight: bold; color: #ffffff; padding: 0 12px; border-radius: 6px; cursor: pointer;">💾 전체 저장</button>
+       <button id="admin-undo-btn" class="admin-action-btn primary" style="background: #4b5563; border-color: #4b5563; font-weight: bold; color: #ffffff; padding: 0 12px; border-radius: 6px; cursor: pointer; opacity: 0.5;" disabled>↩️ 되돌리기 (Ctrl+Z)</button>
+       <button id="admin-redo-btn" class="admin-action-btn primary" style="background: #4b5563; border-color: #4b5563; font-weight: bold; color: #ffffff; padding: 0 12px; border-radius: 6px; cursor: pointer; opacity: 0.5;" disabled>↪️ 다시 실행 (Ctrl+Y)</button>
+       <button id="admin-add-btn" class="admin-action-btn primary">➕ 인물 추가</button>
+       <button id="admin-add-note-btn" class="admin-action-btn primary">📝 텍스트 상자 추가</button>
+       <button id="admin-add-link-btn" class="admin-action-btn primary">🔗 시각적 연결 추가</button>
+       <button id="admin-add-junction-btn" class="admin-action-btn primary" style="background: #059669; border-color: #059669;">🟢 연결점(분기점) 추가</button>
+       <button id="admin-add-polygon-btn" class="admin-action-btn primary" style="background: #ea580c; border-color: #ea580c;">⬡ 영역(다각형) 추가</button>
+       <button id="admin-export-btn" class="admin-action-btn">📥 데이터 내보내기 (JSON)</button>
+      <button id="admin-import-btn" class="admin-action-btn">📤 데이터 가져오기</button>
+      <button id="admin-reset-btn" class="admin-action-btn danger">⚠️ 데이터 초기화</button>
+      <label class="admin-checkbox-label" style="display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; color: #f8fafc; cursor: pointer; padding: 0 8px; margin-left: auto;">
+        <input type="checkbox" id="admin-move-descendants-toggle" style="cursor: pointer; width: 14px; height: 14px;">
+        <span>자손 동시 이동 (Shift 키)</span>
+      </label>
+      <input type="file" id="import-file-input" accept=".json" style="display: none;">
+    </div>
+    
+    <!-- Sliding Study and Note Sidebar Panel -->
+    <aside id="study-panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <h2 id="panel-name">이름</h2>
+          <p id="panel-eng">English Name</p>
+        </div>
+        <button id="panel-close" class="close-btn" title="닫기">&times;</button>
+      </div>
+      
+      <div class="panel-body">
+        <!-- 1. Biblical context description -->
+        <section>
+          <h3 class="panel-sec-title">성경 속 인물 정보</h3>
+          <p id="panel-desc" class="desc-text">성경 관련 정보가 노출됩니다.</p>
+        </section>
+        
+        <!-- 2. Notes Editor -->
+        <section>
+          <h3 class="panel-sec-title">개인 연구 메모</h3>
+          <textarea id="note-text" class="note-textarea" placeholder="이 인물에 대한 메모나 생각들을 여기에 기록하세요. (자동 저장)"></textarea>
+        </section>
+        
+        <!-- 3. Study Resources Organizer -->
+        <section>
+          <h3 class="panel-sec-title">참고 링크 및 자료 정리</h3>
+          <div class="resource-input-wrapper">
+            <input type="text" id="resource-title" class="resource-input" placeholder="자료 설명 (예: 구절, 기사 제목)">
+            <input type="text" id="resource-url" class="resource-input" placeholder="링크 URL (http...)">
+            <button id="add-resource-btn" class="add-resource-btn">추가</button>
+          </div>
+          <ul id="resources-list" class="resources-list">
+            <!-- Resources list items rendered dynamically -->
+          </ul>
+        </section>
+      </div>
+      
+      <div class="panel-footer">
+        <button id="panel-cancel" class="cancel-btn">취소</button>
+        <button id="panel-save" class="save-btn">저장 완료</button>
+      </div>
+    </aside>
+
+    <!-- Admin Mode Instruction Banner -->
+    <div id="add-person-instruction" style="display: none; position: fixed; top: 130px; left: 50%; transform: translateX(-50%); background: rgba(30, 41, 59, 0.95); backdrop-filter: blur(4px); color: #ffffff; padding: 10px 20px; border-radius: 9999px; z-index: 1000; font-size: 13px; font-weight: 500; border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3); align-items: center; gap: 8px;">
+      💡 <span>추가할 자식의 부모 카드를 클릭하거나, 빈 공간을 클릭하여 새 조상을 시작하세요.</span>
+    </div>
+
+    <!-- Admin Form Modal (Overlay Form) -->
+    <div id="admin-modal" class="modal-overlay" style="display: none;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="modal-title">인물 정보 추가/수정</h2>
+          <button id="modal-close" class="close-btn">&times;</button>
+        </div>
+        <form id="admin-form" onsubmit="return false;">
+          <div id="relation-presets-container" style="display: none; background: var(--bg-panel); border: 1px solid var(--border-panel); padding: 10px; border-radius: 8px; margin: 0 16px 12px 16px; flex-direction: column; gap: 6px;">
+            <p style="margin: 0; font-size: 11px; color: var(--text-muted); font-weight: 600;">선택된 인물 연계 프리셋 (<span id="relation-target-name">이름</span>)</p>
+            <div style="display: flex; gap: 8px;">
+              <button type="button" id="preset-child-btn" class="admin-action-btn primary" style="font-size: 11px; padding: 6px 10px; margin: 0;">👶 자식으로 추가</button>
+              <button type="button" id="preset-spouse-btn" class="admin-action-btn primary" style="font-size: 11px; padding: 6px 10px; margin: 0;">💍 배우자로 추가</button>
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="form-id">ID (영문 고유식별자)*</label>
+              <input type="text" id="form-id" required placeholder="예: abraham, cain_son">
+            </div>
+            <div class="form-group">
+              <label for="form-name">이름 (한글)*</label>
+              <input type="text" id="form-name" required placeholder="예: 아브라함" list="bible-names-list" autocomplete="off">
+              <datalist id="bible-names-list"></datalist>
+            </div>
+            <div class="form-group">
+              <label for="form-eng">영어 이름</label>
+              <input type="text" id="form-eng" placeholder="예: Abraham">
+            </div>
+            <div class="form-group">
+              <label for="form-gender">성별*</label>
+              <select id="form-gender" required>
+                <option value="M">남성 (♂)</option>
+                <option value="F">여성 (♀)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="form-gen">세대 (아담=0)*</label>
+              <input type="number" id="form-gen" required min="0" max="100" step="0.01" value="0">
+            </div>
+            <div class="form-group">
+              <label for="form-col">열 위치 (소수점 3자리 지원)*</label>
+              <div style="display:flex; gap:8px; align-items:center;">
+                <input type="number" id="form-col" required step="0.001" value="0" placeholder="직계=0, 왼쪽=-1.5, 오른쪽=1.5" style="flex:1;">
+                <button type="button" id="form-col-auto-btn" class="admin-action-btn primary" style="margin:0; padding:0 12px; height:38px; font-size:12px;" title="부모 및 형제 기준으로 열 위치를 자동 계산합니다.">자동 계산</button>
+              </div>
+            </div>
+            <div class="form-group full-width" style="position: relative;">
+              <label for="form-parents">부모 ID (콤마로 구분, 최대 2명)</label>
+              <input type="text" id="form-parents" placeholder="예: adam, eve (생략 시 시조)" autocomplete="off">
+              <div id="parents-suggestions" class="autocomplete-suggestions"></div>
+            </div>
+            <div class="form-group full-width" style="position: relative;">
+              <label for="form-spouses">배우자 ID (콤마로 구분)</label>
+              <input type="text" id="form-spouses" placeholder="예: sarah, hagar" autocomplete="off">
+              <div id="spouses-suggestions" class="autocomplete-suggestions"></div>
+            </div>
+            <div class="form-group full-width">
+              <label for="form-desc">인물 설명</label>
+              <textarea id="form-desc" rows="3" placeholder="성경적 배경이나 인물에 대한 짧은 소개..."></textarea>
+            </div>
+            <div class="form-group full-width checkbox-group">
+              <input type="checkbox" id="form-main">
+              <label for="form-main">예수 그리스도 메시아 계보 직계 ("Main Line") 여부</label>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" id="form-delete-btn" class="modal-btn danger-outline" style="display: none;">삭제하기</button>
+            <div style="flex: 1;"></div>
+            <button type="button" id="modal-cancel" class="modal-btn">취소</button>
+            <button type="submit" id="modal-submit" class="modal-btn primary">확인</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+
+  </div>
+
+  <script src="data_v16_v2.js?v=1643"></script>
+  <script src="app_v16_v2.js?v=1643"></script>
+</body>
+</html>
