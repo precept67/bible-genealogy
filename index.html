@@ -727,7 +727,7 @@
                   window.location.hostname === 'tauri.localhost' || 
                   window.location.protocol.startsWith('file') ||
                   window.location.protocol.startsWith('asset');
-    window.API_BASE_URL = isTauri ? "http://161.33.18.142:3000" : "";
+    window.API_BASE_URL = isTauri ? "https://f.jubilee.or.kr" : "";
 
     // Synchronously fetch latest data from server and populate localStorage
     // This blocks the page load just enough to ensure the latest data is available before app.js runs.
@@ -806,6 +806,6 @@
       });
     }
   </script>
-  <script src="app_v16_v2.js?v=1730"></script>
+  <script src="app_v16_v2.js?v=1740"></script>
 </body>
 </html>
