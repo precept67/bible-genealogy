@@ -326,10 +326,6 @@ function handlePost(req, res, data, method) {
 function handleGet(req, res) {
   const url = req.url.split('?')[0];
 
-  if (url === '/api/temp/licenses') {
-    return sendJson(res, 200, readJson(LICENSES_FILE));
-  }
-
   // 1. Get My Info
   if (url === '/api/me') {
     const user = getUserFromReq(req);
