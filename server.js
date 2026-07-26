@@ -257,6 +257,14 @@ function handlePost(req, res, data, method) {
       return sendJson(res, 404, { error: '존재하지 않거나 유효하지 않은 라이선스 키입니다.' });
     }
     
+    // Check expiration date
+    if (license.expiryDate) {
+      const today = new Date().toISOString().split('T')[0]; // "YYYY-MM-DD"
+      if (today > license.expiryDate) {
+        return sendJson(res, 403, { error: `이 라이선스는 사용 기간이 만료되었습니다. (만료일: ${license.expiryDate})` });
+      }
+    }
+    
     if (license.registeredDevices.includes(machineId)) {
       return sendJson(res, 200, { success: true, message: '인증 성공' });
     }
@@ -276,7 +284,7 @@ function handlePost(req, res, data, method) {
     const user = getUserFromReq(req);
     if (!user || user.status !== 'admin') return sendJson(res, 403, { error: '관리자 권한이 필요합니다.' });
     
-    const { owner, maxDevices } = data;
+    const { owner, maxDevices, expiryDate } = data;
     if (!owner) return sendJson(res, 400, { error: '소유자 이름을 입력하세요.' });
     
     const licenses = readJson(LICENSES_FILE);
@@ -300,6 +308,7 @@ function handlePost(req, res, data, method) {
     licenses[newKey] = {
       owner: owner,
       maxDevices: parseInt(maxDevices) || 2,
+      expiryDate: expiryDate || "", // Save expiration date
       registeredDevices: [],
       createdAt: new Date().toISOString()
     };

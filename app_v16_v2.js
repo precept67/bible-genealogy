@@ -11673,21 +11673,21 @@ if (adminTabLicenses) {
 async function loadAdminLicenses() {
   if (!userToken) return;
   const listBody = document.getElementById('admin-license-list-body');
-  listBody.innerHTML = '<tr><td colspan="4" style="padding:10px; text-align:center;">로딩 중...</td></tr>';
+  listBody.innerHTML = '<tr><td colspan="5" style="padding:10px; text-align:center;">로딩 중...</td></tr>';
   
   try {
     const apiBase = window.API_BASE_URL || "";
     const res = await fetch(apiBase + '/api/admin/licenses', { headers: { 'Authorization': 'Bearer ' + userToken } });
     const data = await res.json();
     if (!res.ok) {
-      listBody.innerHTML = `<tr><td colspan="4" style="padding:10px; text-align:center; color:#ef4444;">${data.error || '목록을 불러오지 못했습니다.'}</td></tr>`;
+      listBody.innerHTML = `<tr><td colspan="5" style="padding:10px; text-align:center; color:#ef4444;">${data.error || '목록을 불러오지 못했습니다.'}</td></tr>`;
       return;
     }
     
     listBody.innerHTML = '';
     const keys = Object.keys(data.licenses);
     if (keys.length === 0) {
-      listBody.innerHTML = '<tr><td colspan="4" style="padding:10px; text-align:center;">발급된 라이선스가 없습니다.</td></tr>';
+      listBody.innerHTML = '<tr><td colspan="5" style="padding:10px; text-align:center;">발급된 라이선스가 없습니다.</td></tr>';
       return;
     }
     
@@ -11702,6 +11702,7 @@ async function loadAdminLicenses() {
       tr.innerHTML = `
         <td style="padding:10px; font-weight:bold; font-family:monospace;">${key}</td>
         <td style="padding:10px;">${lic.owner}</td>
+        <td style="padding:10px;">${lic.expiryDate ? lic.expiryDate : '무제한'}</td>
         <td style="padding:10px;">${devCount} / ${maxDev} 대</td>
         <td style="padding:10px; display:flex; gap:5px;">
           <button onclick="resetLicenseKey('${key}')" style="background:#e67e22; color:white; border:none; padding:4px 8px; cursor:pointer; font-weight:bold; border-radius:4px; font-size:12px;">기기 리셋</button>
@@ -11711,7 +11712,7 @@ async function loadAdminLicenses() {
       listBody.appendChild(tr);
     });
   } catch (e) {
-    listBody.innerHTML = '<tr><td colspan="4" style="padding:10px; text-align:center; color:#ef4444;">서버 연결 오류</td></tr>';
+    listBody.innerHTML = '<tr><td colspan="5" style="padding:10px; text-align:center; color:#ef4444;">서버 연결 오류</td></tr>';
   }
 }
 
@@ -11719,8 +11720,10 @@ async function loadAdminLicenses() {
 document.getElementById('new-license-btn')?.addEventListener('click', async () => {
   const ownerInput = document.getElementById('new-license-owner');
   const devInput = document.getElementById('new-license-devices');
+  const expiryInput = document.getElementById('new-license-expiry');
   const owner = ownerInput.value.trim();
   const maxDevices = devInput.value;
+  const expiryDate = expiryInput ? expiryInput.value : '';
   
   if (!owner) {
     alert("소유자 이름을 입력해 주세요.");
@@ -11735,12 +11738,13 @@ document.getElementById('new-license-btn')?.addEventListener('click', async () =
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + userToken
       },
-      body: JSON.stringify({ owner, maxDevices })
+      body: JSON.stringify({ owner, maxDevices, expiryDate })
     });
     const data = await res.json();
     if (res.ok) {
       alert(`새 라이선스가 발급되었습니다!\n키: ${data.licenseKey}`);
       ownerInput.value = '';
+      if (expiryInput) expiryInput.value = '';
       loadAdminLicenses();
     } else {
       alert(data.error || "발급 실패");
