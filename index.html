@@ -723,9 +723,11 @@
 
   <script src="data_v16_v2.js?v=1652"></script>
   <script>
-    // [데스크톱 앱 연동 설정] 빌드 시 여기에 서버의 도메인/IP 주소를 입력하면 앱이 서버 데이터를 정상 수신합니다.
-    // 예: window.API_BASE_URL = "http://12.34.56.78:3000";
-    window.API_BASE_URL = "";
+    var isTauri = window.location.protocol.startsWith('tauri') || 
+                  window.location.hostname === 'tauri.localhost' || 
+                  window.location.protocol.startsWith('file') ||
+                  window.location.protocol.startsWith('asset');
+    window.API_BASE_URL = isTauri ? "http://161.33.18.142:3000" : "";
 
     // Synchronously fetch latest data from server and populate localStorage
     // This blocks the page load just enough to ensure the latest data is available before app.js runs.
