@@ -11700,7 +11700,10 @@ async function loadAdminLicenses() {
       const maxDev = lic.maxDevices || 2;
       
       tr.innerHTML = `
-        <td style="padding:10px; font-weight:bold; font-family:monospace;">${key}</td>
+        <td style="padding:10px; font-weight:bold; font-family:monospace; display:flex; align-items:center; gap:8px;">
+          <span>${key}</span>
+          <button onclick="copyToClipboard('${key}')" style="background:#cbd5e1; color:#1e293b; border:none; padding:2px 6px; cursor:pointer; font-weight:600; border-radius:4px; font-size:10px;" onmouseover="this.style.background='#94a3b8'" onmouseout="this.style.background='#cbd5e1'">복사</button>
+        </td>
         <td style="padding:10px;">${lic.owner}</td>
         <td style="padding:10px;">${lic.expiryDate ? lic.expiryDate : '무제한'}</td>
         <td style="padding:10px;">${devCount} / ${maxDev} 대</td>
@@ -12215,5 +12218,25 @@ function renderSpawnerPanel(filterQuery = '') {
     "color: inherit; font-size: 14px;"
   );
 })();
+
+window.copyToClipboard = function(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    alert("라이선스 키가 클립보드에 복사되었습니다:\n" + text);
+  }).catch(err => {
+    var textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";  // Avoid scrolling to bottom
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      document.execCommand('copy');
+      alert("라이선스 키가 클립보드에 복사되었습니다:\n" + text);
+    } catch (e) {
+      alert("복사 실패 (직접 복사해 주세요): " + text);
+    }
+    document.body.removeChild(textArea);
+  });
+};
 
 
