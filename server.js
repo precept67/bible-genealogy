@@ -153,18 +153,36 @@ function handlePost(req, res, data, method) {
   // 5. Admin Save Global Tree (Sync)
   if (url === '/api/save') {
     const user = getUserFromReq(req);
-    if (!user || user.status !== 'admin') {
-      // Legacy fallback for old admin prompt if they didn't login properly yet
-      if (data.password === 'admin') {
-         // allow
-      } else {
-        return sendJson(res, 403, { error: '관리자 권한이 필요합니다.' });
+    let isAuthorized = false;
+    
+    if (user && user.status === 'admin') {
+      isAuthorized = true;
+    } else if (data.password) {
+      const users = readJson(USERS_FILE);
+      const admin = users['admin'];
+      if (admin && hashPassword(data.password) === admin.passwordHash) {
+        isAuthorized = true;
       }
+    }
+    
+    if (!isAuthorized) {
+      return sendJson(res, 403, { error: '관리자 권한이 필요합니다.' });
     }
     
     const payload = data.payload || data;
     fs.writeFileSync(DB_FILE, JSON.stringify(payload, null, 2), 'utf8');
     return sendJson(res, 200, { success: true });
+  }
+
+  // 5b. Verify Admin Password (for desktop app lock icon check)
+  if (url === '/api/admin/verify-password') {
+    const { password } = data;
+    const users = readJson(USERS_FILE);
+    const admin = users['admin'];
+    if (admin && hashPassword(password) === admin.passwordHash) {
+      return sendJson(res, 200, { success: true });
+    }
+    return sendJson(res, 401, { error: '올바르지 않은 관리자 비밀번호입니다.' });
   }
 
   if (url === '/api/admin/users/expiry') {

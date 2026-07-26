@@ -8350,21 +8350,35 @@ function updateStats() {
 // ==========================================
 
 function setupAdminMode() {
-  adminLockBtn.addEventListener('click', () => {
+  adminLockBtn.addEventListener('click', async () => {
     if (isAdminMode) {
       exitAdminMode();
       cachedAdminPassword = '';
     } else {
       if (currentUser && currentUser.status === 'admin') {
-        cachedAdminPassword = 'admin';
+        // If already authenticated via standard web login
+        cachedAdminPassword = 'admin'; 
         enterAdminMode();
       } else {
-        const pw = prompt("관리자 비밀번호를 입력하세요 (기본값: admin):", "");
-        if (pw === 'admin') {
-          cachedAdminPassword = pw;
-          enterAdminMode();
-        } else if (pw !== null) {
-          alert("비밀번호가 올바르지 않습니다.");
+        const pw = prompt("관리자 비밀번호를 입력하세요:", "");
+        if (pw === null) return;
+        
+        try {
+          const apiBase = window.API_BASE_URL || "";
+          const res = await fetch(apiBase + '/api/admin/verify-password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password: pw })
+          });
+          if (res.ok) {
+            cachedAdminPassword = pw;
+            enterAdminMode();
+          } else {
+            const data = await res.json();
+            alert(data.error || "비밀번호가 올바르지 않습니다.");
+          }
+        } catch (e) {
+          alert("서버 연결 실패. 네트워크 상태를 확인하세요.");
         }
       }
     }
