@@ -30,6 +30,10 @@ jobs:
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
 
+      - name: Install Rust macOS targets (Intel + Apple Silicon)
+        if: matrix.platform == 'macos-latest'
+        run: rustup target add x86_64-apple-darwin aarch64-apple-darwin
+
       - name: Install dependencies
         run: npm install
 
@@ -49,3 +53,4 @@ jobs:
           releaseBody: "Automated draft release containing Windows (.msi) and macOS (.dmg) installers."
           releaseDraft: true
           prerelease: false
+          args: ${{ matrix.platform == 'macos-latest' && '--target universal-apple-darwin' || '' }}
