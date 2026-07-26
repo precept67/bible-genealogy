@@ -7,6 +7,7 @@ const PORT = 3000;
 const DB_FILE = path.join(__dirname, 'database.json');
 const USERS_FILE = path.join(__dirname, 'users.json');
 const NOTES_FILE = path.join(__dirname, 'notes.json');
+const LICENSES_FILE = path.join(__dirname, 'licenses.json');
 
 // Helper to serve static files
 const mimeTypes = {
@@ -18,6 +19,7 @@ const mimeTypes = {
 // Initialize DBs
 if (!fs.existsSync(USERS_FILE)) fs.writeFileSync(USERS_FILE, JSON.stringify({}));
 if (!fs.existsSync(NOTES_FILE)) fs.writeFileSync(NOTES_FILE, JSON.stringify({}));
+if (!fs.existsSync(LICENSES_FILE)) fs.writeFileSync(LICENSES_FILE, JSON.stringify({}));
 
 function readJson(file) {
   try { return JSON.parse(fs.readFileSync(file, 'utf8')); } catch(e) { return {}; }
@@ -216,6 +218,108 @@ function handlePost(req, res, data, method) {
     return sendJson(res, 404, { error: 'User not found' });
   }
 
+  // 10. Verify Download Password
+  if (url === '/api/download/verify') {
+    const { password } = data;
+    if (password === 'bible777') {
+      return sendJson(res, 200, { success: true });
+    }
+    return sendJson(res, 401, { error: '올바르지 않은 다운로드 비밀번호입니다.' });
+  }
+
+  // 11. Verify License Key
+  if (url === '/api/license/verify') {
+    const { licenseKey, machineId } = data;
+    if (!licenseKey || !machineId) {
+      return sendJson(res, 400, { error: '라이선스 키와 기기 식별자가 필요합니다.' });
+    }
+    const licenses = readJson(LICENSES_FILE);
+    const license = licenses[licenseKey];
+    if (!license) {
+      return sendJson(res, 404, { error: '존재하지 않거나 유효하지 않은 라이선스 키입니다.' });
+    }
+    
+    if (license.registeredDevices.includes(machineId)) {
+      return sendJson(res, 200, { success: true, message: '인증 성공' });
+    }
+    
+    const maxDev = license.maxDevices || 2;
+    if (license.registeredDevices.length < maxDev) {
+      license.registeredDevices.push(machineId);
+      writeJson(LICENSES_FILE, licenses);
+      return sendJson(res, 200, { success: true, message: '새 기기 등록 완료 및 인증 성공' });
+    }
+    
+    return sendJson(res, 403, { error: `이미 최대 ${maxDev}대의 기기 등록이 차 있습니다. 추가 설치가 불가능합니다.` });
+  }
+
+  // 12. Admin Create License
+  if (url === '/api/admin/licenses/create' && method === 'POST') {
+    const user = getUserFromReq(req);
+    if (!user || user.status !== 'admin') return sendJson(res, 403, { error: '관리자 권한이 필요합니다.' });
+    
+    const { owner, maxDevices } = data;
+    if (!owner) return sendJson(res, 400, { error: '소유자 이름을 입력하세요.' });
+    
+    const licenses = readJson(LICENSES_FILE);
+    const generateKey = () => {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      let key = 'KEY';
+      for (let i = 0; i < 3; i++) {
+        key += '-';
+        for (let j = 0; j < 4; j++) {
+          key += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+      }
+      return key;
+    };
+    
+    let newKey = generateKey();
+    while (licenses[newKey]) {
+      newKey = generateKey();
+    }
+    
+    licenses[newKey] = {
+      owner: owner,
+      maxDevices: parseInt(maxDevices) || 2,
+      registeredDevices: [],
+      createdAt: new Date().toISOString()
+    };
+    
+    writeJson(LICENSES_FILE, licenses);
+    return sendJson(res, 200, { success: true, licenseKey: newKey });
+  }
+
+  // 13. Admin Reset License
+  if (url === '/api/admin/licenses/reset' && method === 'POST') {
+    const user = getUserFromReq(req);
+    if (!user || user.status !== 'admin') return sendJson(res, 403, { error: '관리자 권한이 필요합니다.' });
+    
+    const { licenseKey } = data;
+    const licenses = readJson(LICENSES_FILE);
+    if (licenses[licenseKey]) {
+      licenses[licenseKey].registeredDevices = [];
+      writeJson(LICENSES_FILE, licenses);
+      return sendJson(res, 200, { success: true });
+    }
+    return sendJson(res, 404, { error: 'License key not found' });
+  }
+
+  // 14. Admin Delete License
+  if (url === '/api/admin/licenses' && method === 'DELETE') {
+    const user = getUserFromReq(req);
+    if (!user || user.status !== 'admin') return sendJson(res, 403, { error: '관리자 권한이 필요합니다.' });
+    
+    const { licenseKey } = data;
+    const licenses = readJson(LICENSES_FILE);
+    if (licenses[licenseKey]) {
+      delete licenses[licenseKey];
+      writeJson(LICENSES_FILE, licenses);
+      return sendJson(res, 200, { success: true });
+    }
+    return sendJson(res, 404, { error: 'License key not found' });
+  }
+
   sendJson(res, 404, { error: 'Not Found' });
 }
 
@@ -251,6 +355,15 @@ function handleGet(req, res) {
       noteCount: Object.keys(notes[u] || {}).length
     }));
     return sendJson(res, 200, { users: userList });
+  }
+
+  // Admin Manage Licenses
+  if (url === '/api/admin/licenses') {
+    const user = getUserFromReq(req);
+    if (!user || user.status !== 'admin') return sendJson(res, 403, { error: '관리자 권한이 필요합니다.' });
+    
+    const licenses = readJson(LICENSES_FILE);
+    return sendJson(res, 200, { licenses });
   }
 
   // 4. Get Global Tree Data

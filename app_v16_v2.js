@@ -11572,7 +11572,269 @@ document.getElementById('toggle-relationship-highlight')?.addEventListener('chan
   }
 });
 
-window.addEventListener('DOMContentLoaded', () => {
+// ==========================================
+// Desktop App Licensing (DRM) Logic
+// ==========================================
+
+function getOrCreateMachineId() {
+  let machineId = localStorage.getItem('bible_genealogy_machine_id');
+  if (!machineId) {
+    machineId = 'device-' + Date.now() + '-' + Math.floor(Math.random() * 1000000);
+    localStorage.setItem('bible_genealogy_machine_id', machineId);
+  }
+  return machineId;
+}
+
+async function checkLicenseAndInit() {
+  const isDesktopApp = window.location.protocol.startsWith('tauri') || 
+                       window.location.protocol.startsWith('asset') || 
+                       window.location.protocol.startsWith('file') || 
+                       (window.API_BASE_URL && window.API_BASE_URL.length > 0);
+                       
+  if (!isDesktopApp) {
+    return true; // Not running in desktop mode, bypass
+  }
+
+  const machineId = getOrCreateMachineId();
+  const licenseKey = localStorage.getItem('bible_genealogy_license_key');
+
+  if (!licenseKey) {
+    showLicenseLock("프로그램 인증이 필요합니다. 발급받으신 라이선스 키를 입력해 주세요.");
+    return false;
+  }
+
+  try {
+    const apiBase = window.API_BASE_URL || "";
+    const res = await fetch(apiBase + '/api/license/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ licenseKey, machineId })
+    });
+    if (res.ok) {
+      document.getElementById('desktop-license-modal').style.display = 'none';
+      const appContainer = document.getElementById('app-container');
+      if (appContainer) appContainer.style.display = 'block';
+      return true;
+    } else {
+      const data = await res.json();
+      localStorage.removeItem('bible_genealogy_license_key');
+      showLicenseLock(data.error || "라이선스가 유효하지 않거나 한도를 초과했습니다.");
+      return false;
+    }
+  } catch (e) {
+    // Offline fallback if license key exists in local storage
+    console.warn("Network error during license check, running offline.", e);
+    document.getElementById('desktop-license-modal').style.display = 'none';
+    const appContainer = document.getElementById('app-container');
+    if (appContainer) appContainer.style.display = 'block';
+    return true;
+  }
+}
+
+function showLicenseLock(message) {
+  document.getElementById('desktop-license-modal').style.display = 'flex';
+  document.getElementById('license-message').innerText = message || "";
+  
+  if (authModal) authModal.style.display = 'none';
+  const appContainer = document.getElementById('app-container');
+  if (appContainer) appContainer.style.display = 'none';
+}
+
+// Bind Submit License Key Click
+document.getElementById('license-submit-btn')?.addEventListener('click', async () => {
+  const input = document.getElementById('license-key-input');
+  const licenseKey = input.value.trim().toUpperCase();
+  const messageEl = document.getElementById('license-message');
+  
+  if (!licenseKey) {
+    messageEl.innerText = "라이선스 키를 입력해 주세요.";
+    return;
+  }
+
+  messageEl.innerText = "인증 중...";
+  const machineId = getOrCreateMachineId();
+
+  try {
+    const apiBase = window.API_BASE_URL || "";
+    const res = await fetch(apiBase + '/api/license/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ licenseKey, machineId })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      localStorage.setItem('bible_genealogy_license_key', licenseKey);
+      messageEl.innerText = "인증에 성공했습니다! 프로그램을 로딩합니다.";
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } else {
+      messageEl.innerText = data.error || "인증 실패";
+    }
+  } catch (e) {
+    messageEl.innerText = "서버 연결 실패. 네트워크 상태를 확인하세요.";
+  }
+});
+
+// ==========================================
+// Admin License Panel Tab Logic
+// ==========================================
+
+const adminTabUsers = document.getElementById('admin-tab-users');
+const adminTabLicenses = document.getElementById('admin-tab-licenses');
+const adminUsersTabContent = document.getElementById('admin-users-tab-content');
+const adminLicensesTabContent = document.getElementById('admin-licenses-tab-content');
+
+if (adminTabUsers) {
+  adminTabUsers.addEventListener('click', () => {
+    adminTabUsers.style.background = '#3b82f6';
+    adminTabLicenses.style.background = '#64748b';
+    adminUsersTabContent.style.display = 'block';
+    adminLicensesTabContent.style.display = 'none';
+  });
+}
+
+if (adminTabLicenses) {
+  adminTabLicenses.addEventListener('click', () => {
+    adminTabLicenses.style.background = '#ef4444';
+    adminTabUsers.style.background = '#64748b';
+    adminUsersTabContent.style.display = 'none';
+    adminLicensesTabContent.style.display = 'block';
+    loadAdminLicenses();
+  });
+}
+
+async function loadAdminLicenses() {
+  if (!userToken) return;
+  const listBody = document.getElementById('admin-license-list-body');
+  listBody.innerHTML = '<tr><td colspan="4" style="padding:10px; text-align:center;">로딩 중...</td></tr>';
+  
+  try {
+    const apiBase = window.API_BASE_URL || "";
+    const res = await fetch(apiBase + '/api/admin/licenses', { headers: { 'Authorization': 'Bearer ' + userToken } });
+    const data = await res.json();
+    if (!res.ok) {
+      listBody.innerHTML = `<tr><td colspan="4" style="padding:10px; text-align:center; color:#ef4444;">${data.error || '목록을 불러오지 못했습니다.'}</td></tr>`;
+      return;
+    }
+    
+    listBody.innerHTML = '';
+    const keys = Object.keys(data.licenses);
+    if (keys.length === 0) {
+      listBody.innerHTML = '<tr><td colspan="4" style="padding:10px; text-align:center;">발급된 라이선스가 없습니다.</td></tr>';
+      return;
+    }
+    
+    keys.forEach(key => {
+      const lic = data.licenses[key];
+      const tr = document.createElement('tr');
+      tr.style.borderBottom = '1px solid #e2e8f0';
+      
+      const devCount = lic.registeredDevices.length;
+      const maxDev = lic.maxDevices || 2;
+      
+      tr.innerHTML = `
+        <td style="padding:10px; font-weight:bold; font-family:monospace;">${key}</td>
+        <td style="padding:10px;">${lic.owner}</td>
+        <td style="padding:10px;">${devCount} / ${maxDev} 대</td>
+        <td style="padding:10px; display:flex; gap:5px;">
+          <button onclick="resetLicenseKey('${key}')" style="background:#e67e22; color:white; border:none; padding:4px 8px; cursor:pointer; font-weight:bold; border-radius:4px; font-size:12px;">기기 리셋</button>
+          <button onclick="deleteLicenseKey('${key}')" style="background:#ef4444; color:white; border:none; padding:4px 8px; cursor:pointer; font-weight:bold; border-radius:4px; font-size:12px;">삭제</button>
+        </td>
+      `;
+      listBody.appendChild(tr);
+    });
+  } catch (e) {
+    listBody.innerHTML = '<tr><td colspan="4" style="padding:10px; text-align:center; color:#ef4444;">서버 연결 오류</td></tr>';
+  }
+}
+
+// Generate New License Key Click
+document.getElementById('new-license-btn')?.addEventListener('click', async () => {
+  const ownerInput = document.getElementById('new-license-owner');
+  const devInput = document.getElementById('new-license-devices');
+  const owner = ownerInput.value.trim();
+  const maxDevices = devInput.value;
+  
+  if (!owner) {
+    alert("소유자 이름을 입력해 주세요.");
+    return;
+  }
+  
+  try {
+    const apiBase = window.API_BASE_URL || "";
+    const res = await fetch(apiBase + '/api/admin/licenses/create', {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + userToken
+      },
+      body: JSON.stringify({ owner, maxDevices })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      alert(`새 라이선스가 발급되었습니다!\n키: ${data.licenseKey}`);
+      ownerInput.value = '';
+      loadAdminLicenses();
+    } else {
+      alert(data.error || "발급 실패");
+    }
+  } catch (e) {
+    alert("서버 연결 실패");
+  }
+});
+
+window.resetLicenseKey = async function(licenseKey) {
+  if (!confirm(`이 라이선스 키(${licenseKey})에 인증 등록된 모든 기기들을 리셋하시겠습니까?\n이후 기존 기기를 포함한 새로운 2대에서 재등록할 수 있습니다.`)) return;
+  try {
+    const apiBase = window.API_BASE_URL || "";
+    const res = await fetch(apiBase + '/api/admin/licenses/reset', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + userToken
+      },
+      body: JSON.stringify({ licenseKey })
+    });
+    if (res.ok) {
+      alert("등록 기기 초기화 완료!");
+      loadAdminLicenses();
+    } else {
+      const data = await res.json();
+      alert(data.error || "리셋 실패");
+    }
+  } catch (e) {
+    alert("서버 연결 실패");
+  }
+};
+
+window.deleteLicenseKey = async function(licenseKey) {
+  if (!confirm(`이 라이선스 키(${licenseKey})를 영구히 삭제하시겠습니까?\n이 키로 설치된 기존 프로그램들은 더 이상 인증되지 않고 잠기게 됩니다.`)) return;
+  try {
+    const apiBase = window.API_BASE_URL || "";
+    const res = await fetch(apiBase + '/api/admin/licenses', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + userToken
+      },
+      body: JSON.stringify({ licenseKey })
+    });
+    if (res.ok) {
+      alert("라이선스 삭제 완료!");
+      loadAdminLicenses();
+    } else {
+      const data = await res.json();
+      alert(data.error || "삭제 실패");
+    }
+  } catch (e) {
+    alert("서버 연결 실패");
+  }
+};
+
+window.addEventListener('DOMContentLoaded', async () => {
+  const isLicensed = await checkLicenseAndInit();
+  if (!isLicensed) return;
   validateSession();
   if (isAdminMode) {
     const toggleBtn = document.getElementById('spawner-panel-toggle-btn');

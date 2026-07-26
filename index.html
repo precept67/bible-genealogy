@@ -71,11 +71,11 @@
       <div style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px; font-size: 12px;">
         <p style="margin: 0 0 8px 0; color: #7f8c8d; font-weight: 600;">💻 데스크톱 앱 다운로드 설치</p>
         <div style="display: flex; gap: 15px; justify-content: center; align-items: center;">
-          <a href="/downloads/BibleGenealogy_Setup_x64.msi" style="color: #3498db; text-decoration: none; font-weight: bold; display: flex; align-items: center; gap: 4px;" download>
+          <a href="javascript:void(0)" id="download-win-btn" style="color: #3498db; text-decoration: none; font-weight: bold; display: flex; align-items: center; gap: 4px;">
             <span>🪟</span> Windows용
           </a>
           <span style="color: #ccc;">|</span>
-          <a href="/downloads/BibleGenealogy_macOS.dmg" style="color: #3498db; text-decoration: none; font-weight: bold; display: flex; align-items: center; gap: 4px;" download>
+          <a href="javascript:void(0)" id="download-mac-btn" style="color: #3498db; text-decoration: none; font-weight: bold; display: flex; align-items: center; gap: 4px;">
             <span>🍎</span> macOS용
           </a>
         </div>
@@ -83,15 +83,70 @@
     </div>
   </div>
 
+  <!-- Desktop App License Key Modal -->
+  <div id="desktop-license-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #0f172a; z-index: 20000; justify-content: center; align-items: center; font-family: 'Inter', sans-serif;">
+    <div style="background: white; padding: 40px; border-radius: 12px; width: 420px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); text-align: center; box-sizing: border-box;">
+      <span style="font-size: 48px; display: block; margin-bottom: 15px;">🔑</span>
+      <h2 style="margin-top: 0; margin-bottom: 10px; font-size: 22px; color: #1e293b;">프로그램 라이선스 인증</h2>
+      <p style="font-size: 13px; color: #64748b; line-height: 1.6; margin-bottom: 25px;">
+        본 프로그램은 정식 사용자만 이용하실 수 있습니다.<br>
+        발급받으신 16자리 라이선스 키를 입력해 주세요.<br>
+        (한 키당 최대 2대의 기기에서만 인증 및 실행 가능)
+      </p>
+      <input type="text" id="license-key-input" placeholder="KEY-XXXX-XXXX-XXXX" style="width: 100%; padding: 12px; margin-bottom: 20px; border: 2px solid #e2e8f0; border-radius: 6px; box-sizing: border-box; text-align: center; font-size: 16px; font-weight: bold; text-transform: uppercase;">
+      <button id="license-submit-btn" style="width: 100%; padding: 12px; background: #3b82f6; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 15px;">인증하기</button>
+      <p id="license-message" style="color: #ef4444; font-size: 13px; margin-top: 15px; min-height: 15px; margin-bottom: 0;"></p>
+    </div>
+  </div>
+
   <!-- Admin Approval Dashboard Modal -->
   <div id="admin-dashboard-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center;">
-    <div style="background: white; padding: 30px; border-radius: 12px; width: 600px; max-height: 80vh; overflow-y: auto;">
-      <h2 style="margin-top: 0; display: flex; justify-content: space-between;">
-        사용자 가입 승인
-        <button id="admin-dashboard-close-btn" style="background:none; border:none; font-size:20px; cursor:pointer;">&times;</button>
+    <div style="background: white; padding: 30px; border-radius: 12px; width: 700px; max-height: 80vh; overflow-y: auto; font-family: 'Inter', sans-serif;">
+      <h2 style="margin-top: 0; display: flex; justify-content: space-between; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; margin-bottom: 20px;">
+        설정 대시보드
+        <button id="admin-dashboard-close-btn" style="background:none; border:none; font-size:24px; cursor:pointer; color:#64748b;">&times;</button>
       </h2>
-      <div id="admin-user-list">
-        <!-- User list injected here -->
+      
+      <!-- Tab Headers -->
+      <div style="display: flex; gap: 15px; margin-bottom: 20px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">
+        <button id="admin-tab-users" style="padding: 8px 16px; background: #3b82f6; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">👥 가입 승인 및 회원 관리</button>
+        <button id="admin-tab-licenses" style="padding: 8px 16px; background: #64748b; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">🔑 데스크톱 라이선스 발급</button>
+      </div>
+
+      <!-- Users Tab Content -->
+      <div id="admin-users-tab-content">
+        <div id="admin-user-list">
+          <!-- User list injected here -->
+        </div>
+      </div>
+
+      <!-- Licenses Tab Content -->
+      <div id="admin-licenses-tab-content" style="display: none;">
+        <div style="background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
+          <h4 style="margin-top:0; margin-bottom:10px; font-size:15px; color:#1e293b;">신규 라이선스 키 생성</h4>
+          <div style="display:flex; gap:10px;">
+            <input type="text" id="new-license-owner" placeholder="소유자 이름 (예: 홍길동)" style="flex:1; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
+            <input type="number" id="new-license-devices" value="2" min="1" max="10" style="width: 80px; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; text-align: center;" title="최대 설치 대수">
+            <button id="new-license-btn" style="padding: 10px 20px; background: #10b981; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">발급하기</button>
+          </div>
+        </div>
+        
+        <h4 style="margin-top:0; margin-bottom:10px; font-size:15px; color:#1e293b;">발급된 라이선스 목록</h4>
+        <div style="overflow-x: auto;">
+          <table style="width:100%; border-collapse: collapse; text-align: left; font-size: 13px;">
+            <thead>
+              <tr style="background:#f1f5f9; border-bottom:2px solid #cbd5e1;">
+                <th style="padding:10px;">라이선스 키</th>
+                <th style="padding:10px;">소유자</th>
+                <th style="padding:10px;">기기 대수</th>
+                <th style="padding:10px; width:150px;">동작</th>
+              </tr>
+            </thead>
+            <tbody id="admin-license-list-body">
+              <!-- License list items injected here -->
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
@@ -679,7 +734,52 @@
     } catch(e) {
       console.log('API data not available, falling back to local files.');
     }
+
+    // Secure Download Handler
+    function triggerSecureDownload(platform) {
+      var pw = prompt("다운로드 비밀번호를 입력하세요:");
+      if (!pw) return;
+      
+      var xhr = new XMLHttpRequest();
+      var apiBase = window.API_BASE_URL || "";
+      xhr.open("POST", apiBase + "/api/download/verify", true);
+      xhr.setRequestHeader("Content-Type", "application/json");
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            var filename = platform === 'win' ? 'BibleGenealogy_Setup_x64.msi' : 'BibleGenealogy_macOS.dmg';
+            var link = document.createElement('a');
+            link.href = apiBase + '/downloads/' + filename;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            alert("다운로드가 시작되었습니다.");
+          } else {
+            var err = "인증 실패";
+            try { err = JSON.parse(xhr.responseText).error || err; } catch(e) {}
+            alert(err);
+          }
+        }
+      };
+      xhr.send(JSON.stringify({ password: pw }));
+    }
+
+    var winBtn = document.getElementById('download-win-btn');
+    var macBtn = document.getElementById('download-mac-btn');
+    if (winBtn) {
+      winBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        triggerSecureDownload('win');
+      });
+    }
+    if (macBtn) {
+      macBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        triggerSecureDownload('mac');
+      });
+    }
   </script>
-  <script src="app_v16_v2.js?v=1689"></script>
+  <script src="app_v16_v2.js?v=1710"></script>
 </body>
 </html>
