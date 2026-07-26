@@ -161,6 +161,7 @@
           <div style="display:flex; gap:10px;">
             <input type="text" id="new-license-owner" placeholder="소유자 이름 (예: 홍길동)" style="flex:1; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
             <input type="number" id="new-license-devices" value="2" min="1" max="10" style="width: 80px; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; text-align: center;" title="최대 설치 대수">
+            <input type="date" id="new-license-expiry" style="width: 140px; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;" title="만료일 (비워두면 무제한)">
             <button id="new-license-btn" style="padding: 10px 20px; background: #10b981; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">발급하기</button>
           </div>
         </div>
@@ -172,6 +173,7 @@
               <tr style="background:#f1f5f9; border-bottom:2px solid #cbd5e1;">
                 <th style="padding:10px;">라이선스 키</th>
                 <th style="padding:10px;">소유자</th>
+                <th style="padding:10px;">만료일</th>
                 <th style="padding:10px;">기기 대수</th>
                 <th style="padding:10px; width:150px;">동작</th>
               </tr>
@@ -801,6 +803,6 @@
       });
     }
   </script>
-  <script src="app_v16_v2.js?v=1750"></script>
+  <script src="app_v16_v2.js?v=1760"></script>
 </body>
 </html>
