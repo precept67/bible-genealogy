@@ -70,11 +70,11 @@
       <div style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px; font-size: 12px;">
         <p style="margin: 0 0 8px 0; color: #7f8c8d; font-weight: 600;">💻 데스크톱 앱 다운로드 설치</p>
         <div style="display: flex; gap: 15px; justify-content: center; align-items: center;">
-          <a href="javascript:void(0)" id="download-win-btn" style="color: #3498db; text-decoration: none; font-weight: bold; display: flex; align-items: center; gap: 4px;">
+          <a href="/downloads/BibleGenealogy_Setup_x64.msi" style="color: #3498db; text-decoration: none; font-weight: bold; display: flex; align-items: center; gap: 4px;" download>
             <span>🪟</span> Windows용
           </a>
           <span style="color: #ccc;">|</span>
-          <a href="javascript:void(0)" id="download-mac-btn" style="color: #3498db; text-decoration: none; font-weight: bold; display: flex; align-items: center; gap: 4px;">
+          <a href="/downloads/BibleGenealogy_macOS.dmg" style="color: #3498db; text-decoration: none; font-weight: bold; display: flex; align-items: center; gap: 4px;" download>
             <span>🍎</span> macOS용
           </a>
         </div>
@@ -733,52 +733,7 @@
     } catch(e) {
       console.log('API data not available, falling back to local files.');
     }
-
-    // Secure Download Handler
-    function triggerSecureDownload(platform) {
-      var pw = prompt("다운로드 비밀번호를 입력하세요:");
-      if (!pw) return;
-      
-      var xhr = new XMLHttpRequest();
-      var apiBase = window.API_BASE_URL || "";
-      xhr.open("POST", apiBase + "/api/download/verify", true);
-      xhr.setRequestHeader("Content-Type", "application/json");
-      xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4) {
-          if (xhr.status === 200) {
-            var filename = platform === 'win' ? 'BibleGenealogy_Setup_x64.msi' : 'BibleGenealogy_macOS.dmg';
-            var link = document.createElement('a');
-            link.href = apiBase + '/downloads/' + filename;
-            link.download = filename;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            alert("다운로드가 시작되었습니다.");
-          } else {
-            var err = "인증 실패";
-            try { err = JSON.parse(xhr.responseText).error || err; } catch(e) {}
-            alert(err);
-          }
-        }
-      };
-      xhr.send(JSON.stringify({ password: pw }));
-    }
-
-    var winBtn = document.getElementById('download-win-btn');
-    var macBtn = document.getElementById('download-mac-btn');
-    if (winBtn) {
-      winBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        triggerSecureDownload('win');
-      });
-    }
-    if (macBtn) {
-      macBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        triggerSecureDownload('mac');
-      });
-    }
   </script>
-  <script src="app_v16_v2.js?v=1720"></script>
+  <script src="app_v16_v2.js?v=1730"></script>
 </body>
 </html>
