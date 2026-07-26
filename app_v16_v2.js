@@ -10302,7 +10302,11 @@ function showAuthModal() {
   if (authModal) authModal.style.display = 'flex';
 }
 function hideAuthModal() {
-  if (!userToken) {
+  const isDesktop = window.location.protocol.startsWith('tauri') || 
+                    window.location.protocol.startsWith('asset') || 
+                    window.location.protocol.startsWith('file') || 
+                    (window.API_BASE_URL && window.API_BASE_URL.length > 0);
+  if (!userToken && !isDesktop) {
     alert('이 서비스는 회원 로그인 후 이용하실 수 있습니다.');
     return;
   }
@@ -11783,7 +11787,16 @@ window.deleteLicenseKey = async function(licenseKey) {
 window.addEventListener('DOMContentLoaded', async () => {
   const isLicensed = await checkLicenseAndInit();
   if (!isLicensed) return;
-  validateSession();
+
+  const isDesktop = window.location.protocol.startsWith('tauri') || 
+                    window.location.protocol.startsWith('asset') || 
+                    window.location.protocol.startsWith('file') || 
+                    (window.API_BASE_URL && window.API_BASE_URL.length > 0);
+  if (isDesktop) {
+    hideAuthModal();
+  } else {
+    validateSession();
+  }
   if (isAdminMode) {
     const toggleBtn = document.getElementById('spawner-panel-toggle-btn');
     if (toggleBtn) {
