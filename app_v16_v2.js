@@ -10303,59 +10303,9 @@ function showAuthModal() {
 }
 function hideAuthModal() {
   if (!userToken) {
-    const now = Date.now();
-    let trials = [];
-    try {
-      trials = JSON.parse(localStorage.getItem('guest_trial_timestamps') || '[]');
-    } catch (e) {
-      trials = [];
-    }
-    
-    // Filter trials within the last 24 hours (rolling 24-hour limit)
-    const oneDayAgo = now - 24 * 60 * 60 * 1000;
-    trials = trials.filter(t => t > oneDayAgo);
-    
-    // 1. Daily limit check (Max 10 times per day)
-    if (trials.length >= 10) {
-      alert('일일 비회원 무료 체험 한도(10회)를 모두 소진하셨습니다.\n내일 다시 이용하시거나 정식으로 가입해 주세요.');
-      return;
-    }
-    
-    // 2. Cooldown check between 5-trial blocks
-    if (trials.length >= 5) {
-      const fifthTrialTime = trials[4];
-      const cooldownMs = 10 * 60 * 1000; // 10 minutes
-      const timeElapsed = now - fifthTrialTime;
-      
-      if (timeElapsed < cooldownMs) {
-        const remainingCooldownMs = cooldownMs - timeElapsed;
-        const remainingMinutes = Math.ceil(remainingCooldownMs / 60000);
-        alert(`비회원 무료 체험 5회를 모두 사용하셨습니다.\n대기 시간: ${remainingMinutes}분 후에 다시 5회 체험(일일 최대 10회)을 하실 수 있습니다.`);
-        return;
-      }
-    }
-    
-    // Record current trial
-    trials.push(now);
-    localStorage.setItem('guest_trial_timestamps', JSON.stringify(trials));
-    
-    // Calculate remaining count in current block or overall daily limit
-    const currentBlockCount = trials.length % 5 === 0 ? 5 : trials.length % 5;
-    const currentBlockRemaining = 5 - currentBlockCount;
-    const dailyRemaining = 10 - trials.length;
-    
-    let alertMsg = `비회원 무료 체험을 시작합니다. (남은 체험 횟수: 이번 회차 ${currentBlockRemaining}회 / 오늘 총 ${dailyRemaining}회)\n1분 뒤에 체험이 종료됩니다.`;
-    if (trials.length === 5) {
-      alertMsg = `비회원 무료 체험을 시작합니다. (남은 체험 횟수: 이번 회차 0회 / 오늘 총 ${dailyRemaining}회)\n이번 체험이 끝나면 10분 대기 후에 다음 5회 이용이 가능합니다.\n1분 뒤에 체험이 종료됩니다.`;
-    }
-    alert(alertMsg);
-    
-    setTimeout(() => {
-      alert('비회원 체험 시간(1분)이 종료되었습니다.');
-      window.location.reload();
-    }, 60000);
+    alert('이 서비스는 회원 로그인 후 이용하실 수 있습니다.');
+    return;
   }
-  
   if (authModal) authModal.style.display = 'none';
 }
 
@@ -10423,9 +10373,7 @@ if (authUsername) authUsername.addEventListener('keydown', handleAuthEnter);
 if (authPassword) authPassword.addEventListener('keydown', handleAuthEnter);
 
 const authCloseBtn = document.getElementById('auth-close-btn');
-const authGuestBtn = document.getElementById('auth-guest-btn');
 if (authCloseBtn) authCloseBtn.addEventListener('click', hideAuthModal);
-if (authGuestBtn) authGuestBtn.addEventListener('click', hideAuthModal);
 
 if (authModal) {
   authModal.addEventListener('click', (e) => {
