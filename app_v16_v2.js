@@ -8287,6 +8287,61 @@ function setupStudyPanel() {
     closeStudyPanel();
   });
   
+  // Auto-save note on input in real-time
+  noteTextarea.addEventListener('input', () => {
+    if (!activePersonId) return;
+    
+    const noteContent = noteTextarea.value.trim();
+    if (noteContent) {
+      userNotes[activePersonId] = noteContent;
+    } else {
+      delete userNotes[activePersonId];
+    }
+    saveUserNotes();
+    
+    // Update badge on card or annotation
+    const card = document.getElementById(`card-${activePersonId}`);
+    if (card) {
+      let badge = card.querySelector('.card-note-badge');
+      if (noteContent) {
+        if (!badge) {
+          const badgeEl = document.createElement('div');
+          badgeEl.className = 'card-note-badge';
+          badgeEl.title = '메모 있음';
+          badgeEl.textContent = '📝';
+          card.appendChild(badgeEl);
+        }
+      } else {
+        if (badge) {
+          badge.remove();
+        }
+      }
+    } else {
+      const annotEl = document.getElementById(`annot-${activePersonId}`);
+      if (annotEl) {
+        let badge = annotEl.querySelector('.annot-note-badge');
+        if (noteContent) {
+          if (!badge) {
+            const badgeEl = document.createElement('div');
+            badgeEl.className = 'annot-note-badge';
+            badgeEl.title = '메모 있음';
+            badgeEl.textContent = '📝';
+            badgeEl.style.position = 'absolute';
+            badgeEl.style.top = '-8px';
+            badgeEl.style.right = '-8px';
+            badgeEl.style.fontSize = '12px';
+            badgeEl.style.zIndex = '100';
+            annotEl.appendChild(badgeEl);
+          }
+        } else {
+          if (badge) {
+            badge.remove();
+          }
+        }
+      }
+    }
+  });
+  
   addResourceBtn.addEventListener('click', () => {
     const titleInput = document.getElementById('resource-title');
     const urlInput = document.getElementById('resource-url');
