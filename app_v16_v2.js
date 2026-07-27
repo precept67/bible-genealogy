@@ -1929,8 +1929,7 @@ function nudgeSelectedPerson(amount, isVertical = false, forceMoveDescendants = 
   if (selectedPersonIds.size === 0) return;
   pushHistoryState();
   
-  const checkbox = document.getElementById('admin-move-descendants-toggle');
-  const moveDescendants = forceMoveDescendants || (checkbox && checkbox.checked);
+  const moveDescendants = false; // Enforce moving only selected objects
   
   let allTargets = new Set();
   selectedPersonIds.forEach(personId => {
@@ -1978,8 +1977,7 @@ function nudgePersonDirect(personId, amount, isVertical = false, adjustCamera = 
   
   selectedPersonId = personId;
   
-  const checkbox = document.getElementById('admin-move-descendants-toggle');
-  const moveDescendants = forceMoveDescendants || (checkbox && checkbox.checked);
+  const moveDescendants = false; // Enforce moving only selected objects
   
   let targets = [];
   if (moveDescendants) {
@@ -4827,8 +4825,7 @@ function renderTree() {
           updateTransform();
         }
         
-        const checkbox = document.getElementById('admin-move-descendants-toggle');
-        const moveDescendants = e.shiftKey || (checkbox && checkbox.checked);
+        const moveDescendants = false; // Enforce moving only selected objects
         
         descendantDragData = [];
         
