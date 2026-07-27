@@ -6192,7 +6192,8 @@ function renderCustomPolygons() {
   } else {
     polyGroup = document.createElementNS(svgNS, 'g');
     polyGroup.id = 'custom-polygons-group';
-    svgLayer.insertBefore(polyGroup, svgLayer.firstChild); // Render behind lines
+    const polygonsLayer = document.getElementById('svg-polygons-layer') || svgLayer;
+    polygonsLayer.appendChild(polyGroup);
   }
   
   customPolygons.forEach(poly => {
@@ -7556,6 +7557,12 @@ function updateTransform() {
     svgLayer.style.width = `${scaledWidth}px`;
     svgLayer.style.height = `${scaledHeight}px`;
     svgLayer.setAttribute("viewBox", `0 0 ${boardWidth} ${boardHeight}`);
+  }
+  const polygonsLayer = document.getElementById('svg-polygons-layer');
+  if (polygonsLayer) {
+    polygonsLayer.style.width = `${scaledWidth}px`;
+    polygonsLayer.style.height = `${scaledHeight}px`;
+    polygonsLayer.setAttribute("viewBox", `0 0 ${boardWidth} ${boardHeight}`);
   }
   
   // Scale cards

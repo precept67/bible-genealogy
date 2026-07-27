@@ -238,6 +238,16 @@ header .subtitle {
 }
 
 /* SVG Line Layer */
+#svg-polygons-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  max-width: none !important;
+  max-height: none !important;
+  overflow: visible !important;
+  pointer-events: none;
+  z-index: 2; /* Render below everything else */
+}
 #svg-layer {
   position: absolute;
   top: 0;
