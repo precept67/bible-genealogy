@@ -6211,6 +6211,15 @@ function renderCustomPolygons() {
     polygonsLayer.appendChild(polyGroup);
   }
   
+  const isLayerVisible = document.getElementById('toggle-layer-polygons')?.checked !== false;
+  if (polyGroup) {
+    polyGroup.style.display = isLayerVisible ? '' : 'none';
+  }
+  const polygonsLayer = document.getElementById('svg-polygons-layer');
+  if (polygonsLayer) {
+    polygonsLayer.style.display = isLayerVisible ? '' : 'none';
+  }
+  
   customPolygons.forEach(poly => {
     // Check if the polygon's lineage filter is off
     const baseGroup = poly.id.replace('poly-', '');
@@ -6288,6 +6297,7 @@ function renderCustomPolygons() {
     label.style.color = poly.color;
     label.style.borderColor = poly.color + '40'; // add opacity to border
     label.textContent = poly.label;
+    label.style.display = isLayerVisible ? '' : 'none';
     
     if (isAdminMode) {
       label.style.cursor = isSelected ? 'move' : 'pointer';
@@ -6384,6 +6394,7 @@ function renderCustomPolygons() {
         handle.style.left = `${pt.x * currentScale}px`;
         handle.style.top = `${pt.y * currentScale}px`;
         handle.title = "드래그하여 정점 이동, 더블클릭 또는 우클릭하여 삭제";
+        handle.style.display = isLayerVisible ? '' : 'none';
         
         handle.addEventListener('mousedown', (e) => {
           e.stopPropagation();
@@ -11579,6 +11590,19 @@ document.getElementById('toggle-layer-events')?.addEventListener('change', (e) =
 document.getElementById('toggle-layer-locations')?.addEventListener('change', (e) => {
   const layer = document.getElementById('layer-locations');
   if (layer) layer.style.display = e.target.checked ? '' : 'none';
+});
+document.getElementById('toggle-layer-polygons')?.addEventListener('change', (e) => {
+  const polyGroup = document.getElementById('custom-polygons-group');
+  if (polyGroup) polyGroup.style.display = e.target.checked ? '' : 'none';
+  
+  const polygonsLayer = document.getElementById('svg-polygons-layer');
+  if (polygonsLayer) polygonsLayer.style.display = e.target.checked ? '' : 'none';
+
+  const labels = document.querySelectorAll('.family-group-label');
+  labels.forEach(el => el.style.display = e.target.checked ? '' : 'none');
+  
+  const handles = document.querySelectorAll('.poly-vertex-handle');
+  handles.forEach(el => el.style.display = e.target.checked ? '' : 'none');
 });
 
 document.getElementById('toggle-relationship-highlight')?.addEventListener('change', (e) => {
