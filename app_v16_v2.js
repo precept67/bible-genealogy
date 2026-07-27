@@ -8728,7 +8728,82 @@ function setupAdminMode() {
     });
   }
 
+  // Layout Alignment Tools
+  const alignHeightBtn = document.getElementById('admin-align-height-btn');
+  if (alignHeightBtn) {
+    alignHeightBtn.addEventListener('click', alignSelectedHeights);
+  }
+  const distributeWidthBtn = document.getElementById('admin-distribute-width-btn');
+  if (distributeWidthBtn) {
+    distributeWidthBtn.addEventListener('click', distributeSelectedWidths);
+  }
+
   setupAutocomplete();
+}
+
+function alignSelectedHeights() {
+  if (selectedPersonIds.size < 2) {
+    showToast("📐 높이를 맞출 카드를 2개 이상 선택해 주세요. (Shift 키를 누른 채 클릭)");
+    return;
+  }
+  
+  pushHistoryState();
+  
+  const firstId = Array.from(selectedPersonIds)[0];
+  const firstChar = db.find(c => c.id === firstId);
+  if (!firstChar) return;
+  
+  const targetGen = firstChar.generation;
+  
+  selectedPersonIds.forEach(id => {
+    const char = db.find(c => c.id === id);
+    if (char) {
+      char.generation = targetGen;
+      char.isManual = true;
+    }
+  });
+  
+  saveDatabase();
+  initBoard();
+  renderTree();
+  showToast("📐 선택한 카드들의 높이가 동일하게 맞추어졌습니다.");
+}
+
+function distributeSelectedWidths() {
+  if (selectedPersonIds.size < 2) {
+    showToast("↔️ 간격을 맞출 카드를 2개 이상 선택해 주세요.");
+    return;
+  }
+  
+  pushHistoryState();
+  
+  const sortedChars = Array.from(selectedPersonIds)
+    .map(id => db.find(c => c.id === id))
+    .filter(Boolean)
+    .sort((a, b) => a.column - b.column);
+    
+  if (sortedChars.length >= 3) {
+    const leftCol = sortedChars[0].column;
+    const rightCol = sortedChars[sortedChars.length - 1].column;
+    const span = rightCol - leftCol;
+    const gap = span / (sortedChars.length - 1);
+    
+    sortedChars.forEach((char, idx) => {
+      char.column = parseFloat((leftCol + idx * gap).toFixed(3));
+      char.isManual = true;
+    });
+    showToast("↔️ 선택한 카드들 간의 간격이 균등하게 분배되었습니다.");
+  } else if (sortedChars.length === 2) {
+    // Set a standard 2.0 column gap
+    const leftCol = sortedChars[0].column;
+    sortedChars[1].column = parseFloat((leftCol + 2.0).toFixed(3));
+    sortedChars[1].isManual = true;
+    showToast("↔️ 두 카드 간의 간격을 기본 크기(2열)로 정렬했습니다.");
+  }
+  
+  saveDatabase();
+  initBoard();
+  renderTree();
 }
 
 function setupAutocomplete() {
