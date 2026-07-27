@@ -7947,7 +7947,10 @@
       "parents": [
         "kish"
       ],
-      "spouses": [],
+      "spouses": [
+        "ahinoam_saul",
+        "rizpah"
+      ],
       "desc": "이스라엘의 초대 왕. 교만함으로 여호와께 버림받음.",
       "isMain": false,
       "isManual": true,
@@ -8268,9 +8271,10 @@
       "engName": "Jonathan",
       "gender": "M",
       "generation": 28.34,
-      "column": 67.397,
+      "column": 64.0,
       "parents": [
-        "saul"
+        "saul",
+        "ahinoam_saul"
       ],
       "spouses": [],
       "desc": "사울의 아들. 다윗의 가장 진실한 친구이자 조력자.",
@@ -8284,9 +8288,10 @@
       "engName": "Ish-bosheth",
       "gender": "M",
       "generation": 28.34,
-      "column": 68.197,
+      "column": 67.2,
       "parents": [
-        "saul"
+        "saul",
+        "ahinoam_saul"
       ],
       "spouses": [],
       "desc": "사울 사후 마하나임에서 2년간 북이스라엘을 통치한 왕.",
@@ -8300,9 +8305,10 @@
       "engName": "Michal",
       "gender": "F",
       "generation": 28.34,
-      "column": 66.597,
+      "column": 70.2,
       "parents": [
-        "saul"
+        "saul",
+        "ahinoam_saul"
       ],
       "spouses": [],
       "desc": "사울 왕의 딸. 다윗 왕의 첫 번째 아내가 됨.",
@@ -8710,7 +8716,7 @@
       "engName": "Mephibosheth",
       "gender": "M",
       "generation": 29.34,
-      "column": 67.397,
+      "column": 64.0,
       "parents": [
         "jonathan"
       ],
@@ -15763,7 +15769,595 @@
       "isManual": true,
       "teachers": []
     }
-  ],
+    },
+    {
+      "id": "abdon_abiel",
+      "name": "압돈",
+      "engName": "Abdon",
+      "gender": "M",
+      "generation": 26.34,
+      "column": 61.0,
+      "parents": [
+        "abiel",
+        "maacah-abiel"
+      ],
+      "spouses": [],
+      "desc": "아비엘과 마아가의 아들.",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "zur_abiel",
+      "name": "술",
+      "engName": "Zur",
+      "gender": "M",
+      "generation": 26.34,
+      "column": 62.0,
+      "parents": [
+        "abiel",
+        "maacah-abiel"
+      ],
+      "spouses": [],
+      "desc": "아비엘과 마아가의 아들.",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "baal_abiel",
+      "name": "바알",
+      "engName": "Baal",
+      "gender": "M",
+      "generation": 26.34,
+      "column": 63.0,
+      "parents": [
+        "abiel",
+        "maacah-abiel"
+      ],
+      "spouses": [],
+      "desc": "아비엘과 마아가의 아들.",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "ahinoam_saul",
+      "name": "아히노암",
+      "engName": "Ahinoam",
+      "gender": "F",
+      "generation": 27.34,
+      "column": 66.8,
+      "parents": [],
+      "spouses": [
+        "saul"
+      ],
+      "desc": "아히마아스의 딸. 사울 왕의 아내.",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "rizpah",
+      "name": "리스바",
+      "engName": "Rizpah",
+      "gender": "F",
+      "generation": 27.34,
+      "column": 69.2,
+      "parents": [],
+      "spouses": [
+        "saul"
+      ],
+      "desc": "아야의 딸. 사울 왕의 첩.",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "malchishua_saul",
+      "name": "말기수아",
+      "engName": "Malchishua",
+      "gender": "M",
+      "generation": 28.34,
+      "column": 65.2,
+      "parents": [
+        "saul",
+        "ahinoam_saul"
+      ],
+      "spouses": [],
+      "desc": "사울 왕의 아들. 길보아산 전투에서 전사함.",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "abinadab_saul",
+      "name": "아비나답",
+      "engName": "Abinadab",
+      "gender": "M",
+      "generation": 28.34,
+      "column": 66.2,
+      "parents": [
+        "saul",
+        "ahinoam_saul"
+      ],
+      "spouses": [],
+      "desc": "사울 왕의 아들. 길보아산 전투에서 전사함.",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "eshbaal_saul",
+      "name": "에스바알",
+      "engName": "Eshbaal",
+      "gender": "M",
+      "generation": 28.34,
+      "column": 67.2,
+      "parents": [
+        "saul",
+        "ahinoam_saul"
+      ],
+      "spouses": [],
+      "desc": "사울 왕의 아들. 이스보셋 왕(대상 8:33).",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "merab_saul",
+      "name": "메랍",
+      "engName": "Merab",
+      "gender": "F",
+      "generation": 28.34,
+      "column": 68.2,
+      "parents": [
+        "saul",
+        "ahinoam_saul"
+      ],
+      "spouses": [
+        "adriel"
+      ],
+      "desc": "사울 왕의 큰딸. 아드리엘의 아내.",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "adriel",
+      "name": "아드리엘",
+      "engName": "Adriel",
+      "gender": "M",
+      "generation": 28.34,
+      "column": 69.2,
+      "parents": [],
+      "spouses": [
+        "merab_saul"
+      ],
+      "desc": "므홀랏 사람 바르실래의 아들. 메랍의 남편.",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "armoni",
+      "name": "알모니",
+      "engName": "Armoni",
+      "gender": "M",
+      "generation": 28.34,
+      "column": 71.5,
+      "parents": [
+        "saul",
+        "rizpah"
+      ],
+      "spouses": [],
+      "desc": "사울 왕과 리스바의 아들.",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "mephibosheth_saul",
+      "name": "므비보셋(사울아들)",
+      "engName": "Mephibosheth",
+      "gender": "M",
+      "generation": 28.34,
+      "column": 72.5,
+      "parents": [
+        "saul",
+        "rizpah"
+      ],
+      "spouses": [],
+      "desc": "사울 왕과 리스바의 아들. 요나단의 아들 므비보셋과 동명이인.",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "micah_saul",
+      "name": "미가",
+      "engName": "Micah",
+      "gender": "M",
+      "generation": 30.34,
+      "column": 64.0,
+      "parents": [
+        "mephibosheth"
+      ],
+      "spouses": [],
+      "desc": "요나단의 아들 므비보셋의 아들 (대상 8:34,35).",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "pithon",
+      "name": "비돈",
+      "engName": "Pithon",
+      "gender": "M",
+      "generation": 31.34,
+      "column": 61.5,
+      "parents": [
+        "micah_saul"
+      ],
+      "spouses": [],
+      "desc": "미가의 아들.",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "melech",
+      "name": "멜렉",
+      "engName": "Melech",
+      "gender": "M",
+      "generation": 31.34,
+      "column": 62.5,
+      "parents": [
+        "micah_saul"
+      ],
+      "spouses": [],
+      "desc": "미가의 아들.",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "tarea",
+      "name": "다레아",
+      "engName": "Tarea",
+      "gender": "M",
+      "generation": 31.34,
+      "column": 63.5,
+      "parents": [
+        "micah_saul"
+      ],
+      "spouses": [],
+      "desc": "미가의 아들 (대상 8:35 '다레아', 9:41 '다하레아').",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "ahaz_saul",
+      "name": "아하스",
+      "engName": "Ahaz",
+      "gender": "M",
+      "generation": 31.34,
+      "column": 64.8,
+      "parents": [
+        "micah_saul"
+      ],
+      "spouses": [],
+      "desc": "미가의 아들.",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "jehoaddah",
+      "name": "여호앗다",
+      "engName": "Jehoaddah",
+      "gender": "M",
+      "generation": 32.34,
+      "column": 64.8,
+      "parents": [
+        "ahaz_saul"
+      ],
+      "spouses": [],
+      "desc": "아하스의 아들 (대상 8:36 '여호앗다', 9:42 '야라').",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "alemeth_saul",
+      "name": "알레멧",
+      "engName": "Alemeth",
+      "gender": "M",
+      "generation": 33.34,
+      "column": 63.3,
+      "parents": [
+        "jehoaddah"
+      ],
+      "spouses": [],
+      "desc": "여호앗다의 아들.",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "azmaveth_saul",
+      "name": "아스마웹",
+      "engName": "Azmaveth",
+      "gender": "M",
+      "generation": 33.34,
+      "column": 64.8,
+      "parents": [
+        "jehoaddah"
+      ],
+      "spouses": [],
+      "desc": "여호앗다의 아들.",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "zimri_saul",
+      "name": "시므리",
+      "engName": "Zimri",
+      "gender": "M",
+      "generation": 33.34,
+      "column": 66.3,
+      "parents": [
+        "jehoaddah"
+      ],
+      "spouses": [],
+      "desc": "여호앗다의 아들.",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "moza_saul",
+      "name": "모사",
+      "engName": "Moza",
+      "gender": "M",
+      "generation": 34.34,
+      "column": 66.3,
+      "parents": [
+        "zimri_saul"
+      ],
+      "spouses": [],
+      "desc": "시므리의 아들.",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "binea",
+      "name": "비느아",
+      "engName": "Binea",
+      "gender": "M",
+      "generation": 35.34,
+      "column": 66.3,
+      "parents": [
+        "moza_saul"
+      ],
+      "spouses": [],
+      "desc": "모사의 아들.",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "raphah_saul",
+      "name": "라바",
+      "engName": "Raphah",
+      "gender": "M",
+      "generation": 36.34,
+      "column": 66.3,
+      "parents": [
+        "binea"
+      ],
+      "spouses": [],
+      "desc": "비느아의 아들 (대상 8:37 '라바', 9:43 '르바야').",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "eleasah_saul",
+      "name": "엘르아사",
+      "engName": "Eleasah",
+      "gender": "M",
+      "generation": 37.34,
+      "column": 66.3,
+      "parents": [
+        "raphah_saul"
+      ],
+      "spouses": [],
+      "desc": "라바의 아들.",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "azel",
+      "name": "아셀",
+      "engName": "Azel",
+      "gender": "M",
+      "generation": 38.34,
+      "column": 64.0,
+      "parents": [
+        "eleasah_saul"
+      ],
+      "spouses": [],
+      "desc": "엘르아사의 아들.",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "eshek",
+      "name": "에섹",
+      "engName": "Eshek",
+      "gender": "M",
+      "generation": 38.34,
+      "column": 68.6,
+      "parents": [
+        "eleasah_saul"
+      ],
+      "spouses": [],
+      "desc": "엘르아사의 아들.",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "azrikam_saul",
+      "name": "아리스감",
+      "engName": "Azrikam",
+      "gender": "M",
+      "generation": 39.34,
+      "column": 61.0,
+      "parents": [
+        "azel"
+      ],
+      "spouses": [],
+      "desc": "아셀의 아들.",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "bocheru",
+      "name": "보구루",
+      "engName": "Bocheru",
+      "gender": "M",
+      "generation": 39.34,
+      "column": 62.0,
+      "parents": [
+        "azel"
+      ],
+      "spouses": [],
+      "desc": "아셀의 아들.",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "ishmael_saul",
+      "name": "이스마엘",
+      "engName": "Ishmael",
+      "gender": "M",
+      "generation": 39.34,
+      "column": 63.0,
+      "parents": [
+        "azel"
+      ],
+      "spouses": [],
+      "desc": "아셀의 아들.",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "sheariah",
+      "name": "스아랴",
+      "engName": "Sheariah",
+      "gender": "M",
+      "generation": 39.34,
+      "column": 64.0,
+      "parents": [
+        "azel"
+      ],
+      "spouses": [],
+      "desc": "아셀의 아들.",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "obadiah_saul",
+      "name": "오바디야",
+      "engName": "Obadiah",
+      "gender": "M",
+      "generation": 39.34,
+      "column": 65.0,
+      "parents": [
+        "azel"
+      ],
+      "spouses": [],
+      "desc": "아셀의 아들.",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "hanan_saul",
+      "name": "하난",
+      "engName": "Hanan",
+      "gender": "M",
+      "generation": 39.34,
+      "column": 66.0,
+      "parents": [
+        "azel"
+      ],
+      "spouses": [],
+      "desc": "아셀의 아들.",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "ulam_saul",
+      "name": "울람",
+      "engName": "Ulam",
+      "gender": "M",
+      "generation": 39.34,
+      "column": 67.6,
+      "parents": [
+        "eshek"
+      ],
+      "spouses": [],
+      "desc": "에섹의 아들. 활을 잘 쏘는 용사.",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "jehush_saul",
+      "name": "여우스",
+      "engName": "Jehush",
+      "gender": "M",
+      "generation": 39.34,
+      "column": 68.6,
+      "parents": [
+        "eshek"
+      ],
+      "spouses": [],
+      "desc": "에섹의 아들.",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "eliphelet_saul",
+      "name": "엘리벨렛",
+      "engName": "Eliphelet",
+      "gender": "M",
+      "generation": 39.34,
+      "column": 69.6,
+      "parents": [
+        "eshek"
+      ],
+      "spouses": [],
+      "desc": "에섹의 아들.",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    }
+  ],,
   "events": [
     {
       "id": "ev-eden_sin",
