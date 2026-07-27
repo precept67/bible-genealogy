@@ -8298,8 +8298,6 @@ function setupStudyPanel() {
 }
 
 function openStudyPanel(personId) {
-  if (isAdminMode) return; // Prevent study panel from blocking edits in admin mode
-  
   activePersonId = personId;
   activeStudyPanelType = 'person';
   const char = db.find(c => c.id === personId);
