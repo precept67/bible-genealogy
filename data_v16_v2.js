@@ -14424,6 +14424,81 @@ const BIBLE_CHARACTERS = [
     "desc": "에섹의 아들.",
     "isMain": false,
     "isManual": true
+  },
+  {
+    "id": "shema_reuben",
+    "name": "세마",
+    "engName": "Shema",
+    "gender": "M",
+    "generation": 27.99,
+    "column": -35.2,
+    "parents": [
+      "joel_reuben"
+    ],
+    "spouses": [],
+    "desc": "요엘의 아들이며 아사스의 아버지. 대상 5:8.",
+    "isMain": false,
+    "isManual": true
+  },
+  {
+    "id": "azaz_reuben",
+    "name": "아사스",
+    "engName": "Azaz",
+    "gender": "M",
+    "generation": 28.99,
+    "column": -35.2,
+    "parents": [
+      "shema_reuben"
+    ],
+    "spouses": [],
+    "desc": "세마의 아들이며 벨라의 아버지. 대상 5:8.",
+    "isMain": false,
+    "isManual": true
+  },
+  {
+    "id": "bela_reuben",
+    "name": "벨라",
+    "engName": "Bela",
+    "gender": "M",
+    "generation": 29.99,
+    "column": -35.2,
+    "parents": [
+      "azaz_reuben"
+    ],
+    "spouses": [],
+    "desc": "아사스의 아들. 대상 5:8.",
+    "isMain": false,
+    "isManual": true
+  },
+  {
+    "id": "zechariah_reuben",
+    "name": "스가랴",
+    "engName": "Zechariah",
+    "gender": "M",
+    "generation": 29.99,
+    "column": -34.0,
+    "parents": [
+      "azaz_reuben"
+    ],
+    "spouses": [],
+    "desc": "여이엘의 형제이자 르우벤 지파의 우두머리. 대상 5:7.",
+    "isMain": false,
+    "isManual": true
+  },
+  {
+    "id": "jeiel_reuben",
+    "name": "여이엘",
+    "engName": "Jeiel",
+    "gender": "M",
+    "generation": 29.99,
+    "column": -32.8,
+    "parents": [
+      "azaz_reuben"
+    ],
+    "spouses": [],
+    "desc": "르우벤 지파 계보의 우두머리. 대상 5:7.",
+    "isMain": false,
+    "isManual": true
   }
 ]
 ;
