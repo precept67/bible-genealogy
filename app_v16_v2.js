@@ -3008,6 +3008,20 @@ function renderAnnotations() {
     // Apply border styles
     applyAnnotationBorder(el, annot);
     
+    // Render note badge if note exists
+    if (userNotes[annot.id]) {
+      const badgeEl = document.createElement('div');
+      badgeEl.className = 'annot-note-badge';
+      badgeEl.title = '메모 있음';
+      badgeEl.textContent = '📝';
+      badgeEl.style.position = 'absolute';
+      badgeEl.style.top = '-8px';
+      badgeEl.style.right = '-8px';
+      badgeEl.style.fontSize = '12px';
+      badgeEl.style.zIndex = '100';
+      el.appendChild(badgeEl);
+    }
+    
     // Add text element (using contenteditable div for perfect vertical centering and rich behavior)
     const textDiv = document.createElement('div');
     textDiv.className = 'annotation-text';
@@ -3301,7 +3315,7 @@ function renderAnnotations() {
       el.appendChild(resizeHandle);
     }
     
-    // Click to highlight related elements (only in Viewer Mode, not when editing in Admin Mode)
+    // Click to highlight related elements & open study memo panel
     el.addEventListener('click', (e) => {
       if (e.target.closest('.annotation-toolbar') || e.target.closest('.annot-resize-handle')) return;
       
@@ -3316,6 +3330,7 @@ function renderAnnotations() {
           highlightRelatedElementsForAnnotation(annot);
         }
       }
+      openLayerDetails(annot, 'annotation');
     });
 
     // Double-click to Edit (Figma style)
@@ -8233,6 +8248,29 @@ function setupStudyPanel() {
           badge.remove();
         }
       }
+    } else {
+      const annotEl = document.getElementById(`annot-${activePersonId}`);
+      if (annotEl) {
+        let badge = annotEl.querySelector('.annot-note-badge');
+        if (noteContent) {
+          if (!badge) {
+            const badgeEl = document.createElement('div');
+            badgeEl.className = 'annot-note-badge';
+            badgeEl.title = '메모 있음';
+            badgeEl.textContent = '📝';
+            badgeEl.style.position = 'absolute';
+            badgeEl.style.top = '-8px';
+            badgeEl.style.right = '-8px';
+            badgeEl.style.fontSize = '12px';
+            badgeEl.style.zIndex = '100';
+            annotEl.appendChild(badgeEl);
+          }
+        } else {
+          if (badge) {
+            badge.remove();
+          }
+        }
+      }
     }
     
     closeStudyPanel();
@@ -10762,24 +10800,30 @@ function openLayerDetails(data, type) {
   activeStudyPanelType = type;
   
   const infoTitleEl = document.getElementById('panel-info-title');
-  if (infoTitleEl) {
-    infoTitleEl.textContent = type === 'event' ? '성경 속 사건 정보' : '성경 속 장소 정보';
-  }
-  
   const titleEl = document.getElementById('panel-name');
   const engEl = document.getElementById('panel-eng');
   const descEl = document.getElementById('panel-desc');
   
-  if (titleEl) titleEl.innerHTML = `<span style="font-size: 0.8em; color: #888;">${type === 'event' ? '📜 사건' : '📍 장소'}</span><br>${cleanLayerName(data.name)}`;
-  if (engEl) engEl.textContent = type === 'event' ? 'Event' : 'Location';
-  
-  let descHtml = (data.desc || "상세 설명이 없습니다.").replace(/\n/g, '<br>');
-  if (data.refs && data.refs.length > 0) {
-    descHtml += `<br><br><strong>📖 관련 성구:</strong><ul>`;
-    data.refs.forEach(r => descHtml += `<li>${r}</li>`);
-    descHtml += `</ul>`;
+  if (type === 'annotation') {
+    if (infoTitleEl) infoTitleEl.textContent = '성경 족보 텍스트 상자';
+    if (titleEl) titleEl.innerHTML = `<span style="font-size: 0.8em; color: #888;">📝 텍스트 상자</span><br>${data.text || '내용 없음'}`;
+    if (engEl) engEl.textContent = 'Text Box';
+    if (descEl) descEl.innerHTML = '텍스트 상자 메모입니다. 아래에서 개인 연구 메모를 작성하고 참고 링크를 등록할 수 있습니다.';
+  } else {
+    if (infoTitleEl) {
+      infoTitleEl.textContent = type === 'event' ? '성경 속 사건 정보' : '성경 속 장소 정보';
+    }
+    if (titleEl) titleEl.innerHTML = `<span style="font-size: 0.8em; color: #888;">${type === 'event' ? '📜 사건' : '📍 장소'}</span><br>${cleanLayerName(data.name)}`;
+    if (engEl) engEl.textContent = type === 'event' ? 'Event' : 'Location';
+    
+    let descHtml = (data.desc || "상세 설명이 없습니다.").replace(/\n/g, '<br>');
+    if (data.refs && data.refs.length > 0) {
+      descHtml += `<br><br><strong>📖 관련 성구:</strong><ul>`;
+      data.refs.forEach(r => descHtml += `<li>${r}</li>`);
+      descHtml += `</ul>`;
+    }
+    if (descEl) descEl.innerHTML = descHtml;
   }
-  if (descEl) descEl.innerHTML = descHtml;
   
   const noteTextarea = document.getElementById('note-text');
   if (noteTextarea) {
