@@ -7911,7 +7911,10 @@
       "gender": "M",
       "generation": 26.34,
       "column": 67.797,
-      "parents": [],
+      "parents": [
+        "abiel",
+        "maacah-abiel"
+      ],
       "spouses": [],
       "desc": "베냐민 사람 아비엘의 아들. 초대 왕 사울의 아버지.",
       "isMain": false,
@@ -9730,7 +9733,7 @@
     },
     {
       "id": "jacob_joseph",
-      "name": "야겁",
+      "name": "야곱",
       "engName": "Jacob",
       "gender": "M",
       "generation": 60.81,
@@ -15592,6 +15595,173 @@
           "y": 4017.5190845898087
         }
       ]
+    },
+    {
+      "id": "abiel",
+      "name": "아비엘",
+      "engName": "Abiel",
+      "gender": "M",
+      "generation": 25.34,
+      "column": 66.5,
+      "parents": [],
+      "spouses": [
+        "maacah-abiel"
+      ],
+      "desc": "기브온의 조상(대상 9:35) 또는 여이엘. 마아가의 남편이며 기스, 넬 등의 아버지.",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "maacah-abiel",
+      "name": "마아가",
+      "engName": "Maacah",
+      "gender": "F",
+      "generation": 25.34,
+      "column": 67.7,
+      "parents": [],
+      "spouses": [
+        "abiel"
+      ],
+      "desc": "아비엘(여이엘)의 아내.",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "ner",
+      "name": "넬",
+      "engName": "Ner",
+      "gender": "M",
+      "generation": 26.34,
+      "column": 64.0,
+      "parents": [
+        "abiel",
+        "maacah-abiel"
+      ],
+      "spouses": [],
+      "desc": "아비엘과 마아가의 아들. 아브넬의 아버지.",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "nadab_abiel",
+      "name": "나답",
+      "engName": "Nadab",
+      "gender": "M",
+      "generation": 26.34,
+      "column": 65.0,
+      "parents": [
+        "abiel",
+        "maacah-abiel"
+      ],
+      "spouses": [],
+      "desc": "아비엘과 마아가의 아들.",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "gedor_abiel",
+      "name": "그돌",
+      "engName": "Gedor",
+      "gender": "M",
+      "generation": 26.34,
+      "column": 66.0,
+      "parents": [
+        "abiel",
+        "maacah-abiel"
+      ],
+      "spouses": [],
+      "desc": "아비엘과 마아가의 아들.",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "ahio_abiel",
+      "name": "아히오",
+      "engName": "Ahio",
+      "gender": "M",
+      "generation": 26.34,
+      "column": 67.0,
+      "parents": [
+        "abiel",
+        "maacah-abiel"
+      ],
+      "spouses": [],
+      "desc": "아비엘과 마아가의 아들.",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "zecher_abiel",
+      "name": "세겔",
+      "engName": "Zecher",
+      "gender": "M",
+      "generation": 26.34,
+      "column": 68.5,
+      "parents": [
+        "abiel",
+        "maacah-abiel"
+      ],
+      "spouses": [],
+      "desc": "아비엘과 마아가의 아들 (대상 8:31, 9:37 '스가랴').",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "mikloth_abiel",
+      "name": "미글롯",
+      "engName": "Mikloth",
+      "gender": "M",
+      "generation": 26.34,
+      "column": 69.5,
+      "parents": [
+        "abiel",
+        "maacah-abiel"
+      ],
+      "spouses": [],
+      "desc": "아비엘과 마아가의 아들. 시므아를 낳음.",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "shimeah_abiel",
+      "name": "시므아",
+      "engName": "Shimeah",
+      "gender": "M",
+      "generation": 26.34,
+      "column": 70.5,
+      "parents": [
+        "abiel",
+        "maacah-abiel"
+      ],
+      "spouses": [],
+      "desc": "아비엘과 마아가의 아들 (대상 8:32, 9:38 '시므암').",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    },
+    {
+      "id": "abner",
+      "name": "아브넬",
+      "engName": "Abner",
+      "gender": "M",
+      "generation": 27.34,
+      "column": 64.0,
+      "parents": [
+        "ner"
+      ],
+      "spouses": [],
+      "desc": "넬의 아들. 사울 왕의 군대장관(삼상 14:50).",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
     }
   ],
   "events": [
