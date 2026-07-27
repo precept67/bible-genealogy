@@ -246,7 +246,7 @@ header .subtitle {
   max-height: none !important;
   overflow: visible !important;
   pointer-events: none;
-  z-index: 2; /* Render below everything else */
+  z-index: 0; /* Render behind everything else, below locations */
 }
 #svg-layer {
   position: absolute;
