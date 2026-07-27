@@ -4111,6 +4111,7 @@ function renderJunctions() {
 
 // Ancestor Highlighting Engine
 function highlightAncestors(charId) {
+  if (isAdminMode) return;
   const ancestors = new Set();
   getAncestors(charId, ancestors);
   
@@ -7813,6 +7814,7 @@ function clearAllHighlights() {
 }
 
 function highlightRelatedElementsForAnnotation(annot) {
+  if (isAdminMode) return;
   const toggle = document.getElementById('toggle-relationship-highlight');
   if (toggle && !toggle.checked) return;
 
@@ -7920,6 +7922,7 @@ function highlightRelatedElementsForAnnotation(annot) {
 }
 
 function highlightRelatedElements(itemId, itemType) {
+  if (isAdminMode) return;
   const toggle = document.getElementById('toggle-relationship-highlight');
   if (toggle && !toggle.checked) return;
 
