@@ -4811,7 +4811,7 @@ function renderTree() {
         // Handle selection during drag start
         const isDraggedSelected = selectedPersonIds.has(char.id);
         if (!isDraggedSelected) {
-          if (!e.shiftKey && !e.ctrlKey && !e.metaKey) {
+          if (!e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
             selectedPersonIds.clear();
           }
           selectedPersonIds.add(char.id);
@@ -5025,7 +5025,7 @@ function renderTree() {
         openAdminFormWithParent(char.id);
       } else {
         if (isAdminMode) {
-          const isModifierPressed = e.shiftKey || e.ctrlKey || e.metaKey;
+          const isModifierPressed = e.shiftKey || e.ctrlKey || e.metaKey || e.altKey;
           if (isModifierPressed) {
             if (selectedPersonIds.has(char.id)) {
               selectedPersonIds.delete(char.id);
