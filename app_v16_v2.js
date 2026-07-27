@@ -1929,7 +1929,7 @@ function nudgeSelectedPerson(amount, isVertical = false, forceMoveDescendants = 
   if (selectedPersonIds.size === 0) return;
   pushHistoryState();
   
-  const moveDescendants = !forceMoveDescendants; // Move descendants by default, hold Shift key to move only selected card
+  const moveDescendants = forceMoveDescendants; // Move only selected card by default, hold Shift key to move descendants together
   
   let allTargets = new Set();
   selectedPersonIds.forEach(personId => {
@@ -1977,7 +1977,7 @@ function nudgePersonDirect(personId, amount, isVertical = false, adjustCamera = 
   
   selectedPersonId = personId;
   
-  const moveDescendants = !forceMoveDescendants; // Move descendants by default, hold Shift key to move only selected card
+  const moveDescendants = forceMoveDescendants; // Move only selected card by default, hold Shift key to move descendants together
   
   let targets = [];
   if (moveDescendants) {
@@ -4826,7 +4826,7 @@ function renderTree() {
           updateTransform();
         }
         
-        const moveDescendants = !e.altKey; // Move descendants by default, hold Alt key to move only selected card
+        const moveDescendants = e.shiftKey; // Move only selected card by default, hold Shift key to move descendants together
         
         descendantDragData = [];
         
