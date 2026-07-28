@@ -6271,29 +6271,79 @@ function renderCustomPolygons() {
     polyEl.style.pointerEvents = isAdminMode ? 'all' : 'none'; // Only interactive in Admin Mode
     polyGroup.appendChild(polyEl);
     
-    // Admin Click to select / Edit boundary
+    // Admin Drag entire polygon or Click to select / Edit boundary
     if (isAdminMode) {
-      polyEl.addEventListener('click', (e) => {
+      let dragStartPos = null;
+      let hasDragged = false;
+      
+      polyEl.addEventListener('mousedown', (e) => {
+        if (e.button !== 0 || isAddPolygonModeActive) return;
         e.stopPropagation();
         
-        const rect = treeBoard.getBoundingClientRect();
-        const clickX = (e.clientX - rect.left) / currentScale;
-        const clickY = (e.clientY - rect.top) / currentScale;
+        dragStartPos = { x: e.clientX, y: e.clientY };
+        hasDragged = false;
         
-        if (selectedPolygonId !== poly.id) {
-          selectedPolygonId = poly.id;
-          selectedLineKey = null;
-          selectedJunctionId = null;
-          renderTree();
-          updateTransform();
-          openStyleEditorPanel();
-          setTimeout(() => {
-            document.getElementById('area-editor-section')?.scrollIntoView({ behavior: 'smooth' });
-          }, 300);
-        } else {
-          // If already selected, try to insert a vertex
-          insertVertexOnClosestSegment(poly, clickX, clickY);
-        }
+        const startPoints = poly.points.map(pt => ({ x: pt.x, y: pt.y }));
+        
+        const onMouseMove = (moveEvt) => {
+          if (!dragStartPos) return;
+          let dx = (moveEvt.clientX - dragStartPos.x) / currentScale;
+          let dy = (moveEvt.clientY - dragStartPos.y) / currentScale;
+          
+          if (Math.abs(dx) > 2 || Math.abs(dy) > 2) {
+            if (!hasDragged) {
+              pushHistoryState();
+              hasDragged = true;
+            }
+          }
+          
+          if (hasDragged) {
+            if (isGridSnapActive) {
+              dx = Math.round(dx / 10) * 10;
+              dy = Math.round(dy / 10) * 10;
+            }
+            poly.points.forEach((pt, idx) => {
+              pt.x = startPoints[idx].x + dx;
+              pt.y = startPoints[idx].y + dy;
+            });
+            drawPolygonsRealTime();
+            updateLabelRealTime(poly);
+          }
+        };
+        
+        const onMouseUp = () => {
+          window.removeEventListener('mousemove', onMouseMove);
+          window.removeEventListener('mouseup', onMouseUp);
+          dragStartPos = null;
+          
+          if (hasDragged) {
+            saveCustomPolygons();
+            renderTree();
+            updateTransform();
+          } else {
+            // It was a simple click!
+            if (selectedPolygonId !== poly.id) {
+              selectedPolygonId = poly.id;
+              selectedLineKey = null;
+              selectedJunctionId = null;
+              renderTree();
+              updateTransform();
+              openStyleEditorPanel();
+              setTimeout(() => {
+                document.getElementById('area-editor-section')?.scrollIntoView({ behavior: 'smooth' });
+              }, 300);
+            } else {
+              // Already selected, try to insert a vertex
+              const rect = treeBoard.getBoundingClientRect();
+              const clickX = (e.clientX - rect.left) / currentScale;
+              const clickY = (e.clientY - rect.top) / currentScale;
+              insertVertexOnClosestSegment(poly, clickX, clickY);
+            }
+          }
+        };
+        
+        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mouseup', onMouseUp);
       });
     }
     
@@ -6433,11 +6483,30 @@ function renderCustomPolygons() {
             let dx = (moveEvt.clientX - dragStartX) / currentScale;
             let dy = (moveEvt.clientY - dragStartY) / currentScale;
             
-            if (moveEvt && moveEvt.shiftKey && (moveEvt.ctrlKey || moveEvt.metaKey)) {
-              if (Math.abs(dx) >= Math.abs(dy)) {
-                dy = 0;
-              } else {
-                dx = 0;
+            if (moveEvt && moveEvt.shiftKey) {
+              const dist = Math.hypot(dx, dy);
+              if (dist > 0) {
+                const angleRad = Math.atan2(dy, dx);
+                let angleDeg = angleRad * (180 / Math.PI);
+                if (angleDeg < 0) angleDeg += 360;
+                const quadrant = Math.floor(angleDeg / 90);
+                const relativeAngle = angleDeg % 90;
+                
+                // Snap to 0, 30, 45, 70, 90
+                const allowedBaseAngles = [0, 30, 45, 70, 90];
+                let closestBase = 0;
+                let minDiff = Infinity;
+                for (const base of allowedBaseAngles) {
+                  const diff = Math.abs(relativeAngle - base);
+                  if (diff < minDiff) {
+                    minDiff = diff;
+                    closestBase = base;
+                  }
+                }
+                const constrainedDeg = (quadrant * 90) + closestBase;
+                const constrainedRad = constrainedDeg * (Math.PI / 180);
+                dx = dist * Math.cos(constrainedRad);
+                dy = dist * Math.sin(constrainedRad);
               }
             }
             
@@ -8820,6 +8889,10 @@ function setupAdminMode() {
   if (distributeWidthBtn) {
     distributeWidthBtn.addEventListener('click', distributeSelectedWidths);
   }
+  const distributeHeightBtn = document.getElementById('admin-distribute-height-btn');
+  if (distributeHeightBtn) {
+    distributeHeightBtn.addEventListener('click', distributeSelectedHeights);
+  }
 
   setupAutocomplete();
 }
@@ -8882,6 +8955,43 @@ function distributeSelectedWidths() {
     sortedChars[1].column = parseFloat((leftCol + 2.0).toFixed(3));
     sortedChars[1].isManual = true;
     showToast("↔️ 두 카드 간의 간격을 기본 크기(2열)로 정렬했습니다.");
+  }
+  
+  saveDatabase();
+  initBoard();
+  renderTree();
+}
+
+function distributeSelectedHeights() {
+  if (selectedPersonIds.size < 2) {
+    showToast("↕️ 세로 간격을 맞출 카드를 2개 이상 선택해 주세요. (Shift 키를 누른 채 클릭)");
+    return;
+  }
+  
+  pushHistoryState();
+  
+  const sortedChars = Array.from(selectedPersonIds)
+    .map(id => db.find(c => c.id === id))
+    .filter(Boolean)
+    .sort((a, b) => a.generation - b.generation);
+    
+  if (sortedChars.length >= 3) {
+    const topGen = sortedChars[0].generation;
+    const bottomGen = sortedChars[sortedChars.length - 1].generation;
+    const span = bottomGen - topGen;
+    const gap = span / (sortedChars.length - 1);
+    
+    sortedChars.forEach((char, idx) => {
+      char.generation = parseFloat((topGen + idx * gap).toFixed(3));
+      char.isManual = true;
+    });
+    showToast("↕️ 선택한 카드들 간의 세로 간격이 균등하게 분배되었습니다.");
+  } else if (sortedChars.length === 2) {
+    // Set a standard 1.0 generation gap
+    const topGen = sortedChars[0].generation;
+    sortedChars[1].generation = parseFloat((topGen + 1.0).toFixed(3));
+    sortedChars[1].isManual = true;
+    showToast("↕️ 두 카드 간의 세로 간격을 기본 크기(1세대)로 정렬했습니다.");
   }
   
   saveDatabase();
