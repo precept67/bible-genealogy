@@ -8311,7 +8311,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Ish-bosheth",
     "gender": "M",
     "generation": 28.34,
-    "column": 67.2,
+    "column": 66.025,
     "parents": [
       "saul",
       "ahinoam_saul"
@@ -8328,7 +8328,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Michal",
     "gender": "F",
     "generation": 28.34,
-    "column": 70.2,
+    "column": 68.725,
     "parents": [
       "saul",
       "ahinoam_saul"
@@ -15228,7 +15228,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Malchishua",
     "gender": "M",
     "generation": 28.34,
-    "column": 65.2,
+    "column": 64.675,
     "parents": [
       "saul",
       "ahinoam_saul"
@@ -15245,7 +15245,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Abinadab",
     "gender": "M",
     "generation": 28.34,
-    "column": 66.2,
+    "column": 65.35,
     "parents": [
       "saul",
       "ahinoam_saul"
@@ -15262,7 +15262,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Eshbaal",
     "gender": "M",
     "generation": 28.34,
-    "column": 67.2,
+    "column": 66.7,
     "parents": [
       "saul",
       "ahinoam_saul"
@@ -15279,7 +15279,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Merab",
     "gender": "F",
     "generation": 28.34,
-    "column": 68.2,
+    "column": 67.375,
     "parents": [
       "saul",
       "ahinoam_saul"
@@ -15298,7 +15298,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Adriel",
     "gender": "M",
     "generation": 28.34,
-    "column": 69.2,
+    "column": 68.05,
     "parents": [],
     "spouses": [
       "merab_saul"
