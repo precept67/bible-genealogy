@@ -15314,7 +15314,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Armoni",
     "gender": "M",
     "generation": 28.34,
-    "column": 70.25,
+    "column": 68.9833,
     "parents": [
       "saul",
       "rizpah"
@@ -15331,7 +15331,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Mephibosheth",
     "gender": "M",
     "generation": 28.34,
-    "column": 70.925,
+    "column": 69.6583,
     "parents": [
       "saul",
       "rizpah"
