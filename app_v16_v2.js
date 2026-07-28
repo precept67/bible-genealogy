@@ -4311,32 +4311,24 @@ function initBoard() {
   if (db.length === 0) return;
   
   if (stableCenterX === null) {
-    // Find min/max generations and columns based on active db
-    // to ensure centerX remains consistent for the currently visible cards.
+    // Find min/max generations based on active db
     let minGen = 0;
     let maxGen = 0;
-    let minCol = 0;
-    let maxCol = 0;
     
     db.forEach(char => {
       if (char.generation > maxGen) maxGen = char.generation;
       if (char.generation < minGen) minGen = char.generation;
-      if (char.column > maxCol) maxCol = char.column;
-      if (char.column < minCol) minCol = char.column;
     });
     
-    // Add safety padding for custom additions/nudges
-    minCol -= 5;
-    maxCol += 5;
     maxGen += 2;
     
     // Total dimensions
     const totalGens = maxGen - minGen + 1;
-    const totalCols = maxCol - minCol + 1;
     
     stableBoardHeight = (totalGens * GEN_HEIGHT) + (BOARD_PADDING_Y * 2);
-    stableBoardWidth = (totalCols * COL_WIDTH) + (BOARD_PADDING_X * 2);
-    stableCenterX = stableBoardWidth / 2;
+    // Lock horizontal board width and center to the Messiah lineage (column 0) to avoid any layout shifts.
+    stableBoardWidth = 60000;
+    stableCenterX = 30000;
   }
   
   boardHeight = stableBoardHeight;
@@ -4414,44 +4406,69 @@ function initBoard() {
   });
   
   // Self-healing horizontal layout center shift auto-alignment
+  let lastCenterX = null;
   const lastCenterXStr = localStorage.getItem('bible_tree_last_center_x');
   if (lastCenterXStr !== null) {
-    const lastCenterX = parseFloat(lastCenterXStr);
-    if (!isNaN(lastCenterX) && Math.abs(centerX - lastCenterX) > 0.01) {
-      const deltaX = centerX - lastCenterX;
-      console.log(`[Auto-Alignment] Board center shifted by ${deltaX.toFixed(1)}px. Realigning lines, junctions, and polygons...`);
-      
-      // 1. Shift custom line bends
-      let bendsChanged = false;
-      Object.keys(lineBends).forEach(key => {
-        if (Array.isArray(lineBends[key])) {
-          lineBends[key].forEach(pt => {
+    lastCenterX = parseFloat(lastCenterXStr);
+  } else {
+    // Fallback: If localStorage center is missing (first load or imported database),
+    // calculate what the old dynamic stableCenterX would have been for the current database,
+    // so we can seamlessly align the existing database coordinates to the new fixed 30000 center!
+    let minCol = 0;
+    let maxCol = 0;
+    allChars.forEach(char => {
+      if (char.column > maxCol) maxCol = char.column;
+      if (char.column < minCol) minCol = char.column;
+    });
+    minCol -= 5;
+    maxCol += 5;
+    const totalCols = maxCol - minCol + 1;
+    const oldBoardWidth = (totalCols * COL_WIDTH) + (BOARD_PADDING_X * 2);
+    lastCenterX = oldBoardWidth / 2;
+  }
+  
+  if (lastCenterX !== null && !isNaN(lastCenterX) && Math.abs(centerX - lastCenterX) > 0.01) {
+    const deltaX = centerX - lastCenterX;
+    console.log(`[Auto-Alignment] Board center shifted by ${deltaX.toFixed(1)}px. Realigning lines, junctions, polygons, and annotations...`);
+    
+    // 1. Shift custom line bends
+    let bendsChanged = false;
+    Object.keys(lineBends).forEach(key => {
+      if (Array.isArray(lineBends[key])) {
+        lineBends[key].forEach(pt => {
+          pt.x += deltaX;
+        });
+        bendsChanged = true;
+      }
+    });
+    if (bendsChanged) saveLineBends();
+    
+    // 2. Shift canvas junctions
+    if (canvasJunctions.length > 0) {
+      canvasJunctions.forEach(jNode => {
+        jNode.x += deltaX;
+      });
+      saveCanvasJunctions();
+    }
+    
+    // 3. Shift custom polygons
+    if (customPolygons.length > 0) {
+      customPolygons.forEach(poly => {
+        if (Array.isArray(poly.points)) {
+          poly.points.forEach(pt => {
             pt.x += deltaX;
           });
-          bendsChanged = true;
         }
       });
-      if (bendsChanged) saveLineBends();
-      
-      // 2. Shift canvas junctions
-      if (canvasJunctions.length > 0) {
-        canvasJunctions.forEach(jNode => {
-          jNode.x += deltaX;
-        });
-        saveCanvasJunctions();
-      }
-      
-      // 3. Shift custom polygons
-      if (customPolygons.length > 0) {
-        customPolygons.forEach(poly => {
-          if (Array.isArray(poly.points)) {
-            poly.points.forEach(pt => {
-              pt.x += deltaX;
-            });
-          }
-        });
-        saveCustomPolygons();
-      }
+      saveCustomPolygons();
+    }
+    
+    // 4. Shift annotations
+    if (annotations && annotations.length > 0) {
+      annotations.forEach(annot => {
+        annot.x += deltaX;
+      });
+      saveAnnotations();
     }
   }
   localStorage.setItem('bible_tree_last_center_x', centerX);
