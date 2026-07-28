@@ -15588,7 +15588,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Azrikam",
     "gender": "M",
     "generation": 39.34,
-    "column": 61.0,
+    "column": 62.3125,
     "parents": [
       "azel"
     ],
@@ -15604,7 +15604,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Bocheru",
     "gender": "M",
     "generation": 39.34,
-    "column": 62.0,
+    "column": 62.9875,
     "parents": [
       "azel"
     ],
@@ -15620,7 +15620,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Ishmael",
     "gender": "M",
     "generation": 39.34,
-    "column": 63.0,
+    "column": 63.6625,
     "parents": [
       "azel"
     ],
@@ -15636,7 +15636,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Sheariah",
     "gender": "M",
     "generation": 39.34,
-    "column": 64.0,
+    "column": 64.3375,
     "parents": [
       "azel"
     ],
@@ -15652,7 +15652,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Obadiah",
     "gender": "M",
     "generation": 39.34,
-    "column": 65.0,
+    "column": 65.0125,
     "parents": [
       "azel"
     ],
@@ -15668,7 +15668,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Hanan",
     "gender": "M",
     "generation": 39.34,
-    "column": 66.0,
+    "column": 65.6875,
     "parents": [
       "azel"
     ],
@@ -15684,7 +15684,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Ulam",
     "gender": "M",
     "generation": 39.34,
-    "column": 67.6,
+    "column": 67.925,
     "parents": [
       "eshek"
     ],
@@ -15716,7 +15716,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Eliphelet",
     "gender": "M",
     "generation": 39.34,
-    "column": 69.6,
+    "column": 69.275,
     "parents": [
       "eshek"
     ],
