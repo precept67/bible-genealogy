@@ -203,9 +203,12 @@
     
     <!-- Main Scroll/Pan Viewer Container -->
     <main id="viewer-container">
-      <!-- Layer Control Panel (Floating) -->
-      <div id="layer-control-panel" class="layer-control-panel">
-        <h3 style="margin:0 0 10px 0; font-size: 14px; font-weight: 600; color: #333;">표시 레이어</h3>
+      <!-- Layer Toggle Controls Panel -->
+      <div class="layer-control-panel" style="z-index: 1000;">
+        <div class="layer-bar-drag-handle" style="font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; cursor: move; user-select: none; display: flex; align-items: center; justify-content: space-between;">
+          <span>레이어 표시 설정</span>
+          <span style="font-size: 10px; opacity: 0.5; margin-left: 8px;">⋮⋮</span>
+        </div>
         <label><input type="checkbox" id="toggle-layer-people" checked> 인물 족보</label>
         <label><input type="checkbox" id="toggle-layer-events" checked> 주요 사건 (Events)</label>
         <label><input type="checkbox" id="toggle-layer-locations" checked> 장소/지명 (Locations)</label>
@@ -471,6 +474,9 @@
     
     <!-- Admin Database Action Panel (Visible only in Admin Mode) -->
     <div id="admin-actions-bar" style="display: none;">
+       <div class="admin-bar-drag-handle" style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-align: center; border-bottom: 1px dashed var(--border-panel); padding-bottom: 6px; margin-bottom: 4px; cursor: move; user-select: none; display: flex; align-items: center; justify-content: center; gap: 4px;">
+         <span>⋮⋮ 관리자 도구 상자</span>
+       </div>
        <button id="admin-save-btn" class="admin-action-btn success" style="background: #10b981; border-color: #10b981; font-weight: bold; color: #ffffff; padding: 0 12px; border-radius: 6px; cursor: pointer;">💾 전체 저장</button>
        <button id="admin-undo-btn" class="admin-action-btn primary" style="background: #4b5563; border-color: #4b5563; font-weight: bold; color: #ffffff; padding: 0 12px; border-radius: 6px; cursor: pointer; opacity: 0.5;" disabled>↩️ 되돌리기 (Ctrl+Z)</button>
        <button id="admin-redo-btn" class="admin-action-btn primary" style="background: #4b5563; border-color: #4b5563; font-weight: bold; color: #ffffff; padding: 0 12px; border-radius: 6px; cursor: pointer; opacity: 0.5;" disabled>↪️ 다시 실행 (Ctrl+Y)</button>

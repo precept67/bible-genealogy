@@ -12160,6 +12160,14 @@ window.addEventListener('DOMContentLoaded', async () => {
   } else {
     validateSession();
   }
+  
+  // Make left panels draggable
+  const layerPanel = document.querySelector('.layer-control-panel');
+  if (layerPanel) makeElementDraggable(layerPanel, '.layer-bar-drag-handle');
+  
+  const adminPanel = document.getElementById('admin-actions-bar');
+  if (adminPanel) makeElementDraggable(adminPanel, '.admin-bar-drag-handle');
+
   if (isAdminMode) {
     const toggleBtn = document.getElementById('spawner-panel-toggle-btn');
     if (toggleBtn) {
@@ -12560,6 +12568,52 @@ function renderSpawnerPanel(filterQuery = '') {
     "color: inherit; font-size: 14px;"
   );
 })();
+
+function makeElementDraggable(el, handleSelector) {
+  const handle = el.querySelector(handleSelector) || el;
+  let isDragging = false;
+  let startX, startY, startLeft, startTop;
+  
+  handle.addEventListener('mousedown', (e) => {
+    if (e.button !== 0) return;
+    if (e.target.closest('button') || e.target.closest('input') || e.target.closest('select')) return;
+    
+    isDragging = true;
+    startX = e.clientX;
+    startY = e.clientY;
+    
+    const rect = el.getBoundingClientRect();
+    startLeft = rect.left;
+    startTop = rect.top;
+    
+    el.style.position = 'absolute';
+    el.style.left = `${startLeft}px`;
+    el.style.top = `${startTop}px`;
+    el.style.right = 'auto';
+    el.style.bottom = 'auto';
+    el.style.transform = 'none';
+    
+    e.preventDefault();
+    
+    const onMouseMove = (moveEvt) => {
+      if (!isDragging) return;
+      const dx = moveEvt.clientX - startX;
+      const dy = moveEvt.clientY - startY;
+      
+      el.style.left = `${startLeft + dx}px`;
+      el.style.top = `${startTop + dy}px`;
+    };
+    
+    const onMouseUp = () => {
+      isDragging = false;
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+    };
+    
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+  });
+}
 
 window.copyToClipboard = function(text) {
   navigator.clipboard.writeText(text).then(() => {
