@@ -15331,7 +15331,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Mephibosheth",
     "gender": "M",
     "generation": 28.34,
-    "column": 72.5,
+    "column": 72.175,
     "parents": [
       "saul",
       "rizpah"
