@@ -379,7 +379,9 @@
       "parents": [
         "lamech"
       ],
-      "spouses": [],
+      "spouses": [
+        "noah_wife"
+      ],
       "desc": "방주를 예비하여 온 세상의 대홍수 심판에서 인류의 명맥을 보존함.",
       "isMain": true,
       "teachers": []
@@ -394,7 +396,9 @@
       "parents": [
         "noah"
       ],
-      "spouses": [],
+      "spouses": [
+        "japheth_wife"
+      ],
       "desc": "창대하여 유럽과 아시아 여러 민족의 조상이 됨. 노아의 장자.",
       "isMain": false,
       "teachers": []
@@ -409,7 +413,9 @@
       "parents": [
         "noah"
       ],
-      "spouses": [],
+      "spouses": [
+        "ham_wife"
+      ],
       "desc": "가나안, 구스, 미스라임의 조상. 노아의 차남.",
       "isMain": false,
       "teachers": [],
@@ -425,7 +431,9 @@
       "parents": [
         "noah"
       ],
-      "spouses": [],
+      "spouses": [
+        "shem_wife"
+      ],
       "desc": "노아의 삼남. 아브라함과 다윗, 예수의 조상이 됨.",
       "isMain": true,
       "teachers": []
@@ -1121,7 +1129,7 @@
       "name": "나홀(형제)",
       "engName": "Nahor",
       "gender": "M",
-      "generation": 15.19,
+      "generation": 19.0,
       "column": 1.612,
       "parents": [
         "terah"
@@ -1155,7 +1163,7 @@
       "name": "하란",
       "engName": "Haran",
       "gender": "M",
-      "generation": 16.1,
+      "generation": 19.0,
       "column": -2.926,
       "parents": [
         "terah"
@@ -1223,7 +1231,7 @@
       "name": "시므란",
       "engName": "Zimran",
       "gender": "M",
-      "generation": 16.6,
+      "generation": 20.0,
       "column": -11.263,
       "parents": [
         "abraham",
@@ -1240,7 +1248,7 @@
       "name": "욕산",
       "engName": "Jokshan",
       "gender": "M",
-      "generation": 16.6,
+      "generation": 20.0,
       "column": -10.566,
       "parents": [
         "abraham",
@@ -1257,7 +1265,7 @@
       "name": "므단",
       "engName": "Medan",
       "gender": "M",
-      "generation": 16.6,
+      "generation": 20.0,
       "column": -9.789,
       "parents": [
         "abraham",
@@ -1274,7 +1282,7 @@
       "name": "미디안",
       "engName": "Midian",
       "gender": "M",
-      "generation": 16.6,
+      "generation": 20.0,
       "column": -8.089,
       "parents": [
         "abraham",
@@ -1291,7 +1299,7 @@
       "name": "이스박",
       "engName": "Ishbak",
       "gender": "M",
-      "generation": 16.6,
+      "generation": 20.0,
       "column": -7.372,
       "parents": [
         "abraham",
@@ -1308,7 +1316,7 @@
       "name": "수아",
       "engName": "Shuah",
       "gender": "M",
-      "generation": 16.6,
+      "generation": 20.0,
       "column": -6.671,
       "parents": [
         "abraham",
@@ -1325,7 +1333,7 @@
       "name": "롯",
       "engName": "Lot",
       "gender": "M",
-      "generation": 17.2,
+      "generation": 20.0,
       "column": -2.529,
       "parents": [
         "haran"
@@ -1359,7 +1367,7 @@
       "name": "밀가",
       "engName": "Milcah",
       "gender": "F",
-      "generation": 17.2,
+      "generation": 20.0,
       "column": -3.546,
       "parents": [
         "haran"
@@ -1375,7 +1383,7 @@
       "name": "브두엘",
       "engName": "Bethuel",
       "gender": "M",
-      "generation": 16.18,
+      "generation": 20.0,
       "column": 2.256,
       "parents": [
         "nahor",
@@ -1478,7 +1486,7 @@
       "name": "에돔(에서)",
       "engName": "Esau",
       "gender": "M",
-      "generation": 19,
+      "generation": 21.0,
       "column": -17.644,
       "parents": [
         "isaac",
@@ -1547,7 +1555,7 @@
       "name": "라반",
       "engName": "Laban",
       "gender": "M",
-      "generation": 17.18,
+      "generation": 21.0,
       "column": 1.756,
       "parents": [
         "bethuel"
@@ -1563,7 +1571,7 @@
       "name": "리브가",
       "engName": "Rebekah",
       "gender": "F",
-      "generation": 17.18,
+      "generation": 21.0,
       "column": 2.756,
       "parents": [
         "bethuel"
@@ -1579,7 +1587,7 @@
       "name": "모압",
       "engName": "Moab",
       "gender": "M",
-      "generation": 18.2,
+      "generation": 21.0,
       "column": -2.929,
       "parents": [
         "lot"
@@ -1595,7 +1603,7 @@
       "name": "벤암미",
       "engName": "Ben-Ammi",
       "gender": "M",
-      "generation": 18.2,
+      "generation": 21.0,
       "column": -2.129,
       "parents": [
         "lot"
@@ -1611,7 +1619,7 @@
       "name": "스바",
       "engName": "Sheba",
       "gender": "M",
-      "generation": 17.47,
+      "generation": 21.0,
       "column": -11.104,
       "parents": [
         "jokshan"
@@ -1627,7 +1635,7 @@
       "name": "드단",
       "engName": "Dedan",
       "gender": "M",
-      "generation": 17.47,
+      "generation": 21.0,
       "column": -10.442,
       "parents": [
         "jokshan"
@@ -1643,7 +1651,7 @@
       "name": "에바",
       "engName": "Ephah",
       "gender": "M",
-      "generation": 17.47,
+      "generation": 21.0,
       "column": -9.639,
       "parents": [
         "midian"
@@ -1659,7 +1667,7 @@
       "name": "에벨",
       "engName": "Epher",
       "gender": "M",
-      "generation": 17.47,
+      "generation": 21.0,
       "column": -8.976,
       "parents": [
         "midian"
@@ -1675,7 +1683,7 @@
       "name": "하녹",
       "engName": "Hanoch",
       "gender": "M",
-      "generation": 17.47,
+      "generation": 21.0,
       "column": -8.314,
       "parents": [
         "midian"
@@ -1691,7 +1699,7 @@
       "name": "아비다",
       "engName": "Abida",
       "gender": "M",
-      "generation": 17.47,
+      "generation": 21.0,
       "column": -7.651,
       "parents": [
         "midian"
@@ -1707,7 +1715,7 @@
       "name": "엘다아",
       "engName": "Eldaah",
       "gender": "M",
-      "generation": 17.47,
+      "generation": 21.0,
       "column": -6.989,
       "parents": [
         "midian"
@@ -1723,7 +1731,7 @@
       "name": "앗수르 족속",
       "engName": "Asshurim",
       "gender": "M",
-      "generation": 18.34,
+      "generation": 22.0,
       "column": -11.104,
       "parents": [
         "dedan_keturah"
@@ -1739,7 +1747,7 @@
       "name": "르두시 족속",
       "engName": "Letushim",
       "gender": "M",
-      "generation": 18.34,
+      "generation": 22.0,
       "column": -10.442,
       "parents": [
         "dedan_keturah"
@@ -1755,7 +1763,7 @@
       "name": "르웅미 족속",
       "engName": "Leummim",
       "gender": "M",
-      "generation": 18.34,
+      "generation": 22.0,
       "column": -9.779,
       "parents": [
         "dedan_keturah"
@@ -4733,7 +4741,7 @@
       "name": "레아",
       "engName": "Leah",
       "gender": "F",
-      "generation": 18.18,
+      "generation": 21.5,
       "column": 1.356,
       "parents": [
         "laban"
@@ -4749,7 +4757,7 @@
       "name": "라헬",
       "engName": "Rachel",
       "gender": "F",
-      "generation": 18.18,
+      "generation": 21.5,
       "column": 2.156,
       "parents": [
         "laban"
@@ -4765,7 +4773,7 @@
       "name": "엘리바스",
       "engName": "Eliphaz",
       "gender": "M",
-      "generation": 20,
+      "generation": 22.0,
       "column": -18.744,
       "parents": [
         "esau",
@@ -4784,7 +4792,7 @@
       "name": "르우엘",
       "engName": "Reuel",
       "gender": "M",
-      "generation": 20,
+      "generation": 22.0,
       "column": -15.323,
       "parents": [
         "esau",
@@ -4801,7 +4809,7 @@
       "name": "여우스",
       "engName": "Jeush",
       "gender": "M",
-      "generation": 20,
+      "generation": 22.0,
       "column": -13.823,
       "parents": [
         "esau",
@@ -4818,7 +4826,7 @@
       "name": "야알람",
       "engName": "Jalam",
       "gender": "M",
-      "generation": 20,
+      "generation": 22.0,
       "column": -13.094,
       "parents": [
         "esau",
@@ -4835,7 +4843,7 @@
       "name": "고라(에돔)",
       "engName": "Korah",
       "gender": "M",
-      "generation": 20,
+      "generation": 22.0,
       "column": -12.386,
       "parents": [
         "esau",
@@ -5051,7 +5059,7 @@
       "name": "데만",
       "engName": "Teman",
       "gender": "M",
-      "generation": 21,
+      "generation": 23.0,
       "column": -19.844,
       "parents": [
         "eliphaz"
@@ -5067,7 +5075,7 @@
       "name": "오말",
       "engName": "Omar",
       "gender": "M",
-      "generation": 21,
+      "generation": 23.0,
       "column": -19.144,
       "parents": [
         "eliphaz"
@@ -5083,7 +5091,7 @@
       "name": "스보",
       "engName": "Zepho",
       "gender": "M",
-      "generation": 21,
+      "generation": 23.0,
       "column": -18.444,
       "parents": [
         "eliphaz"
@@ -5099,7 +5107,7 @@
       "name": "가담",
       "engName": "Gatam",
       "gender": "M",
-      "generation": 21,
+      "generation": 23.0,
       "column": -17.744,
       "parents": [
         "eliphaz"
@@ -5115,7 +5123,7 @@
       "name": "그나스",
       "engName": "Kenaz",
       "gender": "M",
-      "generation": 21,
+      "generation": 23.0,
       "column": -17.044,
       "parents": [
         "eliphaz"
@@ -5131,7 +5139,7 @@
       "name": "아말렉",
       "engName": "Amalek",
       "gender": "M",
-      "generation": 21,
+      "generation": 23.0,
       "column": -20.544,
       "parents": [
         "eliphaz",
@@ -5148,7 +5156,7 @@
       "name": "나핫",
       "engName": "Nahath",
       "gender": "M",
-      "generation": 21,
+      "generation": 23.0,
       "column": -15.644,
       "parents": [
         "reuel"
@@ -5164,7 +5172,7 @@
       "name": "세라(에돔)",
       "engName": "Zerah",
       "gender": "M",
-      "generation": 21,
+      "generation": 23.0,
       "column": -16.344,
       "parents": [
         "reuel"
@@ -5180,7 +5188,7 @@
       "name": "삼마",
       "engName": "Shammah",
       "gender": "M",
-      "generation": 21,
+      "generation": 23.0,
       "column": -14.948,
       "parents": [
         "reuel"
@@ -5196,7 +5204,7 @@
       "name": "미사",
       "engName": "Mizzah",
       "gender": "M",
-      "generation": 21,
+      "generation": 23.0,
       "column": -14.256,
       "parents": [
         "reuel"
@@ -5299,7 +5307,10 @@
       "parents": [
         "perez"
       ],
-      "spouses": [],
+      "spouses": [
+        "machir_daughter",
+        "abiah_hezron"
+      ],
       "desc": "베레스의 아들.",
       "isMain": true,
       "isManual": true,
@@ -5381,7 +5392,10 @@
         "hezron",
         "abiah_hezron"
       ],
-      "spouses": [],
+      "spouses": [
+        "helah_ashhur",
+        "naarah_ashhur"
+      ],
       "desc": "헤스론과 아비야의 아들. 드고아의 조상(대상 2:24).",
       "isMain": false,
       "isManual": true,
@@ -8066,7 +8080,12 @@
         "bathsheba",
         "michal",
         "abigail_david",
-        "maachah_david"
+        "maachah_david",
+        "ahinoam_david",
+        "haggith_david",
+        "abital_david",
+        "eglah_david",
+        "other_wives_david"
       ],
       "desc": "이스라엘 제2대 성왕. 하나님 마음에 합한 자. 메시아 언약 수여자.",
       "isMain": true,
@@ -8738,7 +8757,8 @@
         "naamah_ammon"
       ],
       "spouses": [
-        "maacah"
+        "maacah",
+        "mahalath_rehoboam"
       ],
       "desc": "솔로몬의 아들. 어리석은 통치로 나라가 이스라엘과 유다로 분열됨.",
       "isMain": true,
@@ -14272,7 +14292,7 @@
     {
       "id": "Son",
       "name": "아들들",
-      "engName": "",
+      "engName": "Sons",
       "gender": "M",
       "generation": 26.01,
       "column": 43.586,
@@ -14947,710 +14967,6 @@
       "desc": "",
       "isMain": false,
       "isManual": true
-    }
-  ],
-  "lineBends": {
-    "bathsheba+david": [
-      {
-        "x": 15543.880000000001,
-        "y": 5970
-      }
-    ],
-    "rel-adam+eve": [
-      {
-        "x": 16443.88,
-        "y": 210
-      }
-    ],
-    "rel-jokshan": [
-      {
-        "x": 25123.88,
-        "y": 3810
-      }
-    ],
-    "rel-terah": [
-      {
-        "x": 18493.88,
-        "y": 3440
-      },
-      {
-        "x": 18593.88,
-        "y": 3140
-      }
-    ],
-    "rel-abraham+keturah": [
-      {
-        "x": 14053.880000000001,
-        "y": 3630
-      },
-      {
-        "x": 13543.880000000001,
-        "y": 3630
-      }
-    ],
-    "rel-abraham+hagar": [
-      {
-        "x": 17913.88,
-        "y": 3560
-      }
-    ],
-    "rel-terah->nahor": [
-      {
-        "x": 16593.88,
-        "y": 3450
-      },
-      {
-        "x": 16343.880000000001,
-        "y": 2770
-      }
-    ],
-    "rel-terah->haran": [
-      {
-        "x": 15533.880000000001,
-        "y": 3450
-      },
-      {
-        "x": 15423.880000000001,
-        "y": 2950
-      }
-    ],
-    "rel-bathsheba+david->nathan_bathsheba": [
-      {
-        "x": 18373.88,
-        "y": 5970
-      }
-    ],
-    "spouse-abraham+keturah": [
-      {
-        "x": 14730,
-        "y": 2930
-      },
-      {
-        "x": 14730,
-        "y": 3540
-      }
-    ],
-    "rel-isaac+rebekah->esau": [
-      {
-        "x": 12893.880000000001,
-        "y": 3810
-      },
-      {
-        "x": 12823.880000000001,
-        "y": 3430
-      }
-    ],
-    "rel-hezron+machir_daughter->segub_hezron": [
-      {
-        "x": 18683.88,
-        "y": 4510
-      }
-    ],
-    "rel-sheshan_ishi->ahlai_sheshan": [
-      {
-        "x": 15673.880000000001,
-        "y": 5760
-      },
-      {
-        "x": 15382.395625000001,
-        "y": 5791.5
-      }
-    ],
-    "rel-abraham+hagar->ishmael": [
-      {
-        "x": 14310,
-        "y": 3560
-      }
-    ],
-    "rel-hamutal+josiah->zedekiah": [
-      {
-        "x": 15650,
-        "y": 9130
-      }
-    ],
-    "rel-josiah+zebidah->jehoiakim": [
-      {
-        "x": 15850,
-        "y": 8850
-      }
-    ],
-    "rel-hamutal+josiah->jehoahaz": [
-      {
-        "x": 15670,
-        "y": 8720
-      }
-    ],
-    "rel-jehoiakim+nehushta->jeconiah": [
-      {
-        "x": 15860,
-        "y": 8980
-      }
-    ],
-    "rel-jeconiah->shealtiel": [
-      {
-        "x": 15900,
-        "y": 9110
-      },
-      {
-        "x": 15820,
-        "y": 9260
-      }
-    ]
-  },
-  "customVisualLines": [],
-  "canvasJunctions": [],
-  "spouseSplits": {
-    "adam+eve": 0.5660661764705925,
-    "gilead_conc+gilead_man": 0.0631371572066321,
-    "jacob+zilpah": 0.8562547987422477,
-    "bilhah+jacob": 0.95,
-    "jacob+rachel": 0.8936402261568482,
-    "abraham+keturah": 0.018,
-    "abraham+hagar": 0.02,
-    "basemath_esau+esau": 0.7556966021160495,
-    "esau+oholibamah": 0.9262121127118996,
-    "ahinoam_david+david": 0.8711067813637272,
-    "abigail_david+david": 0.9385042519485669,
-    "david+maachah_david": 0.95,
-    "david+other_wives_david": 0.95,
-    "david+eglah_david": 0.95,
-    "abital_david+david": 0.95,
-    "david+haggith_david": 0.95,
-    "abiah_hezron+hezron": 0.27929022873194187,
-    "chelubai+unknown_wife_caleb": 0.95,
-    "chelubai+maachah_concubine": 0.9443092186906878,
-    "chelubai+ephrath": 0.8366929567131333,
-    "chelubai+ephah_concubine": 0.8991033380681825,
-    "adah_cain+lamech_cain": 0.38115625000000364,
-    "lamech_cain+zillah_cain": 0.6499062500000037
-  },
-  "annotations": [
-    {
-      "id": "note-welcome",
-      "text": "성경 인물 족보 보드\n(마우스 드래그로 이동, 휠로 확대/축소)",
-      "x": -50,
-      "y": 40,
-      "width": 260,
-      "height": 55,
-      "fontSize": 13,
-      "bold": true,
-      "color": "#1e293b",
-      "bgColor": "#f8fafc"
-    },
-    {
-      "id": "note-1784793168468",
-      "text": "마태복음족보의 첫번째 14대",
-      "x": 15385,
-      "y": 3474,
-      "width": 253,
-      "height": 40,
-      "fontSize": 20,
-      "bold": false,
-      "color": "#ffffff",
-      "bgColor": "#6baef5",
-      "borderWidth": 1,
-      "align": "center",
-      "borderStyle": "dashed",
-      "relatedPeople": [
-        "nahshon",
-        "ram",
-        "perez",
-        "boaz",
-        "salmon",
-        "abraham",
-        "amminadab",
-        "jacob",
-        "obed",
-        "judah",
-        "isaac",
-        "jesse",
-        "david",
-        "hezron"
-      ],
-      "relatedEvents": [],
-      "relatedLocations": []
-    },
-    {
-      "id": "note-1784796431452",
-      "text": "마태복음 족보의  두번째 14대",
-      "x": 15287,
-      "y": 5804,
-      "width": 266,
-      "height": 38,
-      "fontSize": 20,
-      "bold": false,
-      "color": "#ffffff",
-      "bgColor": "#70a7ff",
-      "relatedPeople": [
-        "david",
-        "rehoboam",
-        "solomon",
-        "abijah",
-        "asa",
-        "jehoram",
-        "jehoshaphat",
-        "manasseh_king",
-        "amon",
-        "ahaz",
-        "jotham",
-        "josiah",
-        "uzziah",
-        "hezekiah"
-      ],
-      "relatedEvents": [],
-      "relatedLocations": []
-    },
-    {
-      "id": "note-1784797119640",
-      "text": "마태복음 족보의 세번째 14대",
-      "x": 15330,
-      "y": 9031,
-      "width": 266,
-      "height": 40,
-      "fontSize": 20,
-      "bold": false,
-      "color": "#f7f7f8",
-      "bgColor": "#70aaf5",
-      "relatedPeople": [
-        "matthan",
-        "zadok_gen56",
-        "zerubbabel",
-        "shealtiel",
-        "abiud",
-        "azor",
-        "achim",
-        "jacob_joseph",
-        "eleazar",
-        "eliakim",
-        "eliud",
-        "jeconiah",
-        "jesus",
-        "joseph_mary"
-      ],
-      "relatedEvents": [],
-      "relatedLocations": []
-    },
-    {
-      "id": "note-reuben-chiefs-title",
-      "text": "다른 시대 우두머리된 자",
-      "x": 7560,
-      "y": 5375,
-      "width": 240,
-      "height": 36,
-      "fontSize": 20,
-      "bold": true,
-      "italic": false,
-      "underline": false,
-      "align": "center",
-      "color": "#5c2407",
-      "bgColor": "transparent",
-      "borderStyle": "none",
-      "borderWidth": 0,
-      "borderColor": "",
-      "relatedPeople": [
-        "bela_reuben",
-        "zechariah_reuben",
-        "jeiel_reuben"
-      ],
-      "relatedEvents": [],
-      "relatedLocations": []
-    },
-    {
-      "id": "note-reuben-chiefs-ref",
-      "text": "대상 5:7-8",
-      "x": 7560,
-      "y": 5408,
-      "width": 240,
-      "height": 24,
-      "fontSize": 13,
-      "bold": true,
-      "italic": false,
-      "underline": false,
-      "align": "center",
-      "color": "#ef4444",
-      "bgColor": "transparent",
-      "borderStyle": "none",
-      "borderWidth": 0,
-      "borderColor": "",
-      "relatedPeople": [
-        "bela_reuben",
-        "zechariah_reuben",
-        "jeiel_reuben"
-      ],
-      "relatedEvents": [],
-      "relatedLocations": []
-    }
-  ],
-  "styleSettings": {
-    "lineColor": "#8a8a8a",
-    "mainLineColor": "#ff9705",
-    "spouseLineColor": "#ef4444",
-    "lineWidth": 3,
-    "cornerRadius": 12,
-    "splitOffset": 90,
-    "lineType": "orthogonal",
-    "siblingGap": 7
-  },
-  "customPolygons": [
-    {
-      "id": "poly-cain",
-      "label": "가인 자손 계열",
-      "color": "#b1dd8c",
-      "fillOpacity": 0.02,
-      "points": [
-        {
-          "x": 14530,
-          "y": 250
-        },
-        {
-          "x": 15359.64,
-          "y": 250
-        },
-        {
-          "x": 15359.64,
-          "y": 1460
-        },
-        {
-          "x": 14530,
-          "y": 1460
-        }
-      ],
-      "labelOffsetX": 7,
-      "labelOffsetY": 14
-    },
-    {
-      "id": "poly-japheth",
-      "label": "야벳 자손 (유럽/북방계 민족)",
-      "color": "#cce8b5",
-      "fillOpacity": 0.03,
-      "points": [
-        {
-          "x": 13340,
-          "y": 1860
-        },
-        {
-          "x": 14830,
-          "y": 1860
-        },
-        {
-          "x": 14830,
-          "y": 2340
-        },
-        {
-          "x": 13340,
-          "y": 2340
-        }
-      ],
-      "labelOffsetX": 0,
-      "labelOffsetY": 11
-    },
-    {
-      "id": "poly-ham",
-      "label": "함 자손 (가나안/아프리카계 민족)",
-      "color": "#ffc4ab",
-      "fillOpacity": 0.03,
-      "points": [
-        {
-          "x": 14860,
-          "y": 1860
-        },
-        {
-          "x": 15570,
-          "y": 1860
-        },
-        {
-          "x": 15570,
-          "y": 2340
-        },
-        {
-          "x": 14860,
-          "y": 2340
-        }
-      ],
-      "labelOffsetX": 0,
-      "labelOffsetY": 15
-    },
-    {
-      "id": "poly-joktan",
-      "label": "욕단 자손 (아라비아 부족 연합)",
-      "color": "#a8c6fe",
-      "fillOpacity": 0.03,
-      "points": [
-        {
-          "x": 13552.080000000002,
-          "y": 2579
-        },
-        {
-          "x": 15558.079999999998,
-          "y": 2579
-        },
-        {
-          "x": 15558.079999999998,
-          "y": 2881
-        },
-        {
-          "x": 13552.080000000002,
-          "y": 2881
-        }
-      ],
-      "labelOffsetX": -1,
-      "labelOffsetY": 14
-    },
-    {
-      "id": "poly-keturah",
-      "label": "그두라 자손 (미디안 등 아라비아 부족)",
-      "color": "#ffd877",
-      "fillOpacity": 0.03,
-      "points": [
-        {
-          "x": 13350,
-          "y": 3050
-        },
-        {
-          "x": 14640,
-          "y": 3050
-        },
-        {
-          "x": 14640,
-          "y": 3480
-        },
-        {
-          "x": 13350,
-          "y": 3480
-        }
-      ],
-      "labelOffsetX": 570,
-      "labelOffsetY": 12
-    },
-    {
-      "id": "poly-ishmael",
-      "label": "이스마엘 12방백 자손 (아랍 민족)",
-      "color": "#f5ec00",
-      "fillOpacity": 0.03,
-      "points": [
-        {
-          "x": 13453.880000000001,
-          "y": 3550
-        },
-        {
-          "x": 15582.079999999998,
-          "y": 3550.9999999999995
-        },
-        {
-          "x": 15583.880000000001,
-          "y": 3800
-        },
-        {
-          "x": 13453.880000000001,
-          "y": 3800
-        }
-      ],
-      "borderStyle": "dashdot",
-      "labelOffsetX": 5,
-      "labelOffsetY": 14
-    },
-    {
-      "id": "poly-esau",
-      "label": "에서(에돔) 자손 족장 계열",
-      "color": "#eab308",
-      "fillOpacity": 0.03,
-      "points": [
-        {
-          "x": 10707.599999999999,
-          "y": 3479
-        },
-        {
-          "x": 12869.64,
-          "y": 3480
-        },
-        {
-          "x": 12869.64,
-          "y": 3960
-        },
-        {
-          "x": 10707.599999999999,
-          "y": 3961
-        }
-      ],
-      "labelOffsetX": 8,
-      "labelOffsetY": 18
-    },
-    {
-      "id": "poly-mary",
-      "label": "마리아 계보 (누가복음 3장 혈통)",
-      "color": "#06b6d4",
-      "fillOpacity": 0.03,
-      "points": [
-        {
-          "x": 14175.880000000001,
-          "y": 6000
-        },
-        {
-          "x": 14415.880000000001,
-          "y": 6000
-        },
-        {
-          "x": 14415.880000000001,
-          "y": 11300
-        },
-        {
-          "x": 14165.880000000001,
-          "y": 11300
-        }
-      ]
-    },
-    {
-      "id": "poly-custom-1784385482819",
-      "label": "호리족속의 족장들(창 36:20-30)",
-      "color": "#c4bc00",
-      "fillOpacity": 0.01,
-      "points": [
-        {
-          "x": 10690,
-          "y": 3480
-        },
-        {
-          "x": 7000,
-          "y": 3480
-        },
-        {
-          "x": 7000,
-          "y": 3960
-        },
-        {
-          "x": 10690,
-          "y": 3960
-        }
-      ],
-      "borderStyle": "dashdot",
-      "labelOffsetX": -3731,
-      "labelOffsetY": 16
-    },
-    {
-      "id": "poly-custom-1784387765825",
-      "label": "르우벤 지파(창 46:9, 민 26:5-11, 대상 5:3-9)",
-      "color": "#f5ec00",
-      "fillOpacity": 0.03,
-      "points": [
-        {
-          "x": 6557.655624999999,
-          "y": 4018
-        },
-        {
-          "x": 7237.65856617011,
-          "y": 4018
-        },
-        {
-          "x": 7229.639999999999,
-          "y": 6290
-        },
-        {
-          "x": 6559.639999999999,
-          "y": 6290
-        }
-      ],
-      "labelOffsetX": 7,
-      "labelOffsetY": 16,
-      "borderStyle": "dashdot",
-      "strokeWidth": 2
-    },
-    {
-      "id": "poly-custom-1784395334424",
-      "label": "2. 시므온 지파(창 46:10, 민 26:12,13, 대상 4:24-38)",
-      "color": "#22c55e",
-      "fillOpacity": 0.03,
-      "points": [
-        {
-          "x": 7247.98076923077,
-          "y": 4017.8605769230776
-        },
-        {
-          "x": 7247.98076923077,
-          "y": 8707.091346153848
-        },
-        {
-          "x": 7844.953407934545,
-          "y": 8707.091346153848
-        },
-        {
-          "x": 7840,
-          "y": 4750
-        },
-        {
-          "x": 7460,
-          "y": 4750
-        },
-        {
-          "x": 7460.187442816168,
-          "y": 4366.862125660399
-        },
-        {
-          "x": 8240.293659187737,
-          "y": 4366.862125660399
-        },
-        {
-          "x": 8240.293659187737,
-          "y": 4017.829991321004
-        }
-      ],
-      "labelOffsetX": -963.0769230769232,
-      "labelOffsetY": 10.76923076923077
-    },
-    {
-      "id": "poly-custom-1784395624003",
-      "label": "3 레위 지파(창 46:11, 민 26:16-25, 대상 23:7-24, 스 7:1-5)",
-      "color": "#f97316",
-      "fillOpacity": 0.03,
-      "points": [
-        {
-          "x": 8252.596153846154,
-          "y": 4014.7836538461543
-        },
-        {
-          "x": 8252.596153846154,
-          "y": 4387.142200913312
-        },
-        {
-          "x": 7473.916938675823,
-          "y": 4387.142200913312
-        },
-        {
-          "x": 7473.916938675823,
-          "y": 4696.387760001995
-        },
-        {
-          "x": 7888.389211191322,
-          "y": 4696.387760001995
-        },
-        {
-          "x": 7888.389211191322,
-          "y": 11119.646857731523
-        },
-        {
-          "x": 10340,
-          "y": 11120
-        },
-        {
-          "x": 10290,
-          "y": 4940
-        },
-        {
-          "x": 12971.249828314174,
-          "y": 4934.783462505303
-        },
-        {
-          "x": 12971.249828314174,
-          "y": 4511.473889593867
-        },
-        {
-          "x": 12790.960438225535,
-          "y": 4511.473889593867
-        },
-        {
-          "x": 12790.960438225535,
-          "y": 4017.5190845898087
-        }
-      ]
     },
     {
       "id": "abiel",
@@ -16485,6 +15801,726 @@
       "isMain": false,
       "isManual": true,
       "teachers": []
+    },
+    {
+      "id": "gideon_wife",
+      "name": "기드온의 아내들",
+      "engName": "Gideon's wives",
+      "gender": "F",
+      "generation": 25.5,
+      "column": 44.0,
+      "parents": [],
+      "spouses": [
+        "gideon_man"
+      ],
+      "desc": "기드온의 많은 아내들 (사사기 8:30).",
+      "isMain": false,
+      "isManual": true,
+      "teachers": []
+    }
+  ],
+  "lineBends": {
+    "bathsheba+david": [
+      {
+        "x": 15543.880000000001,
+        "y": 5970
+      }
+    ],
+    "rel-adam+eve": [
+      {
+        "x": 16443.88,
+        "y": 210
+      }
+    ],
+    "rel-jokshan": [
+      {
+        "x": 25123.88,
+        "y": 3810
+      }
+    ],
+    "rel-terah": [
+      {
+        "x": 18493.88,
+        "y": 3440
+      },
+      {
+        "x": 18593.88,
+        "y": 3140
+      }
+    ],
+    "rel-abraham+keturah": [
+      {
+        "x": 14053.880000000001,
+        "y": 3630
+      },
+      {
+        "x": 13543.880000000001,
+        "y": 3630
+      }
+    ],
+    "rel-abraham+hagar": [
+      {
+        "x": 17913.88,
+        "y": 3560
+      }
+    ],
+    "rel-terah->nahor": [
+      {
+        "x": 16593.88,
+        "y": 3450
+      },
+      {
+        "x": 16343.880000000001,
+        "y": 2770
+      }
+    ],
+    "rel-terah->haran": [
+      {
+        "x": 15533.880000000001,
+        "y": 3450
+      },
+      {
+        "x": 15423.880000000001,
+        "y": 2950
+      }
+    ],
+    "rel-bathsheba+david->nathan_bathsheba": [
+      {
+        "x": 18373.88,
+        "y": 5970
+      }
+    ],
+    "spouse-abraham+keturah": [
+      {
+        "x": 14730,
+        "y": 2930
+      },
+      {
+        "x": 14730,
+        "y": 3540
+      }
+    ],
+    "rel-isaac+rebekah->esau": [
+      {
+        "x": 12893.880000000001,
+        "y": 3810
+      },
+      {
+        "x": 12823.880000000001,
+        "y": 3430
+      }
+    ],
+    "rel-hezron+machir_daughter->segub_hezron": [
+      {
+        "x": 18683.88,
+        "y": 4510
+      }
+    ],
+    "rel-sheshan_ishi->ahlai_sheshan": [
+      {
+        "x": 15673.880000000001,
+        "y": 5760
+      },
+      {
+        "x": 15382.395625000001,
+        "y": 5791.5
+      }
+    ],
+    "rel-abraham+hagar->ishmael": [
+      {
+        "x": 14310,
+        "y": 3560
+      }
+    ],
+    "rel-hamutal+josiah->zedekiah": [
+      {
+        "x": 15650,
+        "y": 9130
+      }
+    ],
+    "rel-josiah+zebidah->jehoiakim": [
+      {
+        "x": 15850,
+        "y": 8850
+      }
+    ],
+    "rel-hamutal+josiah->jehoahaz": [
+      {
+        "x": 15670,
+        "y": 8720
+      }
+    ],
+    "rel-jehoiakim+nehushta->jeconiah": [
+      {
+        "x": 15860,
+        "y": 8980
+      }
+    ],
+    "rel-jeconiah->shealtiel": [
+      {
+        "x": 15900,
+        "y": 9110
+      },
+      {
+        "x": 15820,
+        "y": 9260
+      }
+    ]
+  },
+  "customVisualLines": [],
+  "canvasJunctions": [],
+  "spouseSplits": {
+    "adam+eve": 0.5660661764705925,
+    "gilead_conc+gilead_man": 0.0631371572066321,
+    "jacob+zilpah": 0.8562547987422477,
+    "bilhah+jacob": 0.95,
+    "jacob+rachel": 0.8936402261568482,
+    "abraham+keturah": 0.018,
+    "abraham+hagar": 0.02,
+    "basemath_esau+esau": 0.7556966021160495,
+    "esau+oholibamah": 0.9262121127118996,
+    "ahinoam_david+david": 0.8711067813637272,
+    "abigail_david+david": 0.9385042519485669,
+    "david+maachah_david": 0.95,
+    "david+other_wives_david": 0.95,
+    "david+eglah_david": 0.95,
+    "abital_david+david": 0.95,
+    "david+haggith_david": 0.95,
+    "abiah_hezron+hezron": 0.27929022873194187,
+    "chelubai+unknown_wife_caleb": 0.95,
+    "chelubai+maachah_concubine": 0.9443092186906878,
+    "chelubai+ephrath": 0.8366929567131333,
+    "chelubai+ephah_concubine": 0.8991033380681825,
+    "adah_cain+lamech_cain": 0.38115625000000364,
+    "lamech_cain+zillah_cain": 0.6499062500000037
+  },
+  "annotations": [
+    {
+      "id": "note-welcome",
+      "text": "성경 인물 족보 보드\n(마우스 드래그로 이동, 휠로 확대/축소)",
+      "x": -50,
+      "y": 40,
+      "width": 260,
+      "height": 55,
+      "fontSize": 13,
+      "bold": true,
+      "color": "#1e293b",
+      "bgColor": "#f8fafc"
+    },
+    {
+      "id": "note-1784793168468",
+      "text": "마태복음족보의 첫번째 14대",
+      "x": 15385,
+      "y": 3474,
+      "width": 253,
+      "height": 40,
+      "fontSize": 20,
+      "bold": false,
+      "color": "#ffffff",
+      "bgColor": "#6baef5",
+      "borderWidth": 1,
+      "align": "center",
+      "borderStyle": "dashed",
+      "relatedPeople": [
+        "nahshon",
+        "ram",
+        "perez",
+        "boaz",
+        "salmon",
+        "abraham",
+        "amminadab",
+        "jacob",
+        "obed",
+        "judah",
+        "isaac",
+        "jesse",
+        "david",
+        "hezron"
+      ],
+      "relatedEvents": [],
+      "relatedLocations": []
+    },
+    {
+      "id": "note-1784796431452",
+      "text": "마태복음 족보의  두번째 14대",
+      "x": 15287,
+      "y": 5804,
+      "width": 266,
+      "height": 38,
+      "fontSize": 20,
+      "bold": false,
+      "color": "#ffffff",
+      "bgColor": "#70a7ff",
+      "relatedPeople": [
+        "david",
+        "rehoboam",
+        "solomon",
+        "abijah",
+        "asa",
+        "jehoram",
+        "jehoshaphat",
+        "manasseh_king",
+        "amon",
+        "ahaz",
+        "jotham",
+        "josiah",
+        "uzziah",
+        "hezekiah"
+      ],
+      "relatedEvents": [],
+      "relatedLocations": []
+    },
+    {
+      "id": "note-1784797119640",
+      "text": "마태복음 족보의 세번째 14대",
+      "x": 15330,
+      "y": 9031,
+      "width": 266,
+      "height": 40,
+      "fontSize": 20,
+      "bold": false,
+      "color": "#f7f7f8",
+      "bgColor": "#70aaf5",
+      "relatedPeople": [
+        "matthan",
+        "zadok_gen56",
+        "zerubbabel",
+        "shealtiel",
+        "abiud",
+        "azor",
+        "achim",
+        "jacob_joseph",
+        "eleazar",
+        "eliakim",
+        "eliud",
+        "jeconiah",
+        "jesus",
+        "joseph_mary"
+      ],
+      "relatedEvents": [],
+      "relatedLocations": []
+    },
+    {
+      "id": "note-reuben-chiefs-title",
+      "text": "다른 시대 우두머리된 자",
+      "x": 7560,
+      "y": 5375,
+      "width": 240,
+      "height": 36,
+      "fontSize": 20,
+      "bold": true,
+      "italic": false,
+      "underline": false,
+      "align": "center",
+      "color": "#5c2407",
+      "bgColor": "transparent",
+      "borderStyle": "none",
+      "borderWidth": 0,
+      "borderColor": "",
+      "relatedPeople": [
+        "bela_reuben",
+        "zechariah_reuben",
+        "jeiel_reuben"
+      ],
+      "relatedEvents": [],
+      "relatedLocations": []
+    },
+    {
+      "id": "note-reuben-chiefs-ref",
+      "text": "대상 5:7-8",
+      "x": 7560,
+      "y": 5408,
+      "width": 240,
+      "height": 24,
+      "fontSize": 13,
+      "bold": true,
+      "italic": false,
+      "underline": false,
+      "align": "center",
+      "color": "#ef4444",
+      "bgColor": "transparent",
+      "borderStyle": "none",
+      "borderWidth": 0,
+      "borderColor": "",
+      "relatedPeople": [
+        "bela_reuben",
+        "zechariah_reuben",
+        "jeiel_reuben"
+      ],
+      "relatedEvents": [],
+      "relatedLocations": []
+    }
+  ],
+  "styleSettings": {
+    "lineColor": "#8a8a8a",
+    "mainLineColor": "#ff9705",
+    "spouseLineColor": "#ef4444",
+    "lineWidth": 3,
+    "cornerRadius": 12,
+    "splitOffset": 90,
+    "lineType": "orthogonal",
+    "siblingGap": 7
+  },
+  "customPolygons": [
+    {
+      "id": "poly-cain",
+      "label": "가인 자손 계열",
+      "color": "#b1dd8c",
+      "fillOpacity": 0.02,
+      "points": [
+        {
+          "x": 14530,
+          "y": 250
+        },
+        {
+          "x": 15359.64,
+          "y": 250
+        },
+        {
+          "x": 15359.64,
+          "y": 1460
+        },
+        {
+          "x": 14530,
+          "y": 1460
+        }
+      ],
+      "labelOffsetX": 7,
+      "labelOffsetY": 14
+    },
+    {
+      "id": "poly-japheth",
+      "label": "야벳 자손 (유럽/북방계 민족)",
+      "color": "#cce8b5",
+      "fillOpacity": 0.03,
+      "points": [
+        {
+          "x": 13340,
+          "y": 1860
+        },
+        {
+          "x": 14830,
+          "y": 1860
+        },
+        {
+          "x": 14830,
+          "y": 2340
+        },
+        {
+          "x": 13340,
+          "y": 2340
+        }
+      ],
+      "labelOffsetX": 0,
+      "labelOffsetY": 11
+    },
+    {
+      "id": "poly-ham",
+      "label": "함 자손 (가나안/아프리카계 민족)",
+      "color": "#ffc4ab",
+      "fillOpacity": 0.03,
+      "points": [
+        {
+          "x": 14860,
+          "y": 1860
+        },
+        {
+          "x": 15570,
+          "y": 1860
+        },
+        {
+          "x": 15570,
+          "y": 2340
+        },
+        {
+          "x": 14860,
+          "y": 2340
+        }
+      ],
+      "labelOffsetX": 0,
+      "labelOffsetY": 15
+    },
+    {
+      "id": "poly-joktan",
+      "label": "욕단 자손 (아라비아 부족 연합)",
+      "color": "#a8c6fe",
+      "fillOpacity": 0.03,
+      "points": [
+        {
+          "x": 13552.080000000002,
+          "y": 2579
+        },
+        {
+          "x": 15558.079999999998,
+          "y": 2579
+        },
+        {
+          "x": 15558.079999999998,
+          "y": 2881
+        },
+        {
+          "x": 13552.080000000002,
+          "y": 2881
+        }
+      ],
+      "labelOffsetX": -1,
+      "labelOffsetY": 14
+    },
+    {
+      "id": "poly-keturah",
+      "label": "그두라 자손 (미디안 등 아라비아 부족)",
+      "color": "#ffd877",
+      "fillOpacity": 0.03,
+      "points": [
+        {
+          "x": 13350,
+          "y": 3050
+        },
+        {
+          "x": 14640,
+          "y": 3050
+        },
+        {
+          "x": 14640,
+          "y": 3480
+        },
+        {
+          "x": 13350,
+          "y": 3480
+        }
+      ],
+      "labelOffsetX": 570,
+      "labelOffsetY": 12
+    },
+    {
+      "id": "poly-ishmael",
+      "label": "이스마엘 12방백 자손 (아랍 민족)",
+      "color": "#f5ec00",
+      "fillOpacity": 0.03,
+      "points": [
+        {
+          "x": 13453.880000000001,
+          "y": 3550
+        },
+        {
+          "x": 15582.079999999998,
+          "y": 3550.9999999999995
+        },
+        {
+          "x": 15583.880000000001,
+          "y": 3800
+        },
+        {
+          "x": 13453.880000000001,
+          "y": 3800
+        }
+      ],
+      "borderStyle": "dashdot",
+      "labelOffsetX": 5,
+      "labelOffsetY": 14
+    },
+    {
+      "id": "poly-esau",
+      "label": "에서(에돔) 자손 족장 계열",
+      "color": "#eab308",
+      "fillOpacity": 0.03,
+      "points": [
+        {
+          "x": 10707.599999999999,
+          "y": 3479
+        },
+        {
+          "x": 12869.64,
+          "y": 3480
+        },
+        {
+          "x": 12869.64,
+          "y": 3960
+        },
+        {
+          "x": 10707.599999999999,
+          "y": 3961
+        }
+      ],
+      "labelOffsetX": 8,
+      "labelOffsetY": 18
+    },
+    {
+      "id": "poly-mary",
+      "label": "마리아 계보 (누가복음 3장 혈통)",
+      "color": "#06b6d4",
+      "fillOpacity": 0.03,
+      "points": [
+        {
+          "x": 14175.880000000001,
+          "y": 6000
+        },
+        {
+          "x": 14415.880000000001,
+          "y": 6000
+        },
+        {
+          "x": 14415.880000000001,
+          "y": 11300
+        },
+        {
+          "x": 14165.880000000001,
+          "y": 11300
+        }
+      ]
+    },
+    {
+      "id": "poly-custom-1784385482819",
+      "label": "호리족속의 족장들(창 36:20-30)",
+      "color": "#c4bc00",
+      "fillOpacity": 0.01,
+      "points": [
+        {
+          "x": 10690,
+          "y": 3480
+        },
+        {
+          "x": 7000,
+          "y": 3480
+        },
+        {
+          "x": 7000,
+          "y": 3960
+        },
+        {
+          "x": 10690,
+          "y": 3960
+        }
+      ],
+      "borderStyle": "dashdot",
+      "labelOffsetX": -3731,
+      "labelOffsetY": 16
+    },
+    {
+      "id": "poly-custom-1784387765825",
+      "label": "르우벤 지파(창 46:9, 민 26:5-11, 대상 5:3-9)",
+      "color": "#f5ec00",
+      "fillOpacity": 0.03,
+      "points": [
+        {
+          "x": 6557.655624999999,
+          "y": 4018
+        },
+        {
+          "x": 7237.65856617011,
+          "y": 4018
+        },
+        {
+          "x": 7229.639999999999,
+          "y": 6290
+        },
+        {
+          "x": 6559.639999999999,
+          "y": 6290
+        }
+      ],
+      "labelOffsetX": 7,
+      "labelOffsetY": 16,
+      "borderStyle": "dashdot",
+      "strokeWidth": 2
+    },
+    {
+      "id": "poly-custom-1784395334424",
+      "label": "2. 시므온 지파(창 46:10, 민 26:12,13, 대상 4:24-38)",
+      "color": "#22c55e",
+      "fillOpacity": 0.03,
+      "points": [
+        {
+          "x": 7247.98076923077,
+          "y": 4017.8605769230776
+        },
+        {
+          "x": 7247.98076923077,
+          "y": 8707.091346153848
+        },
+        {
+          "x": 7844.953407934545,
+          "y": 8707.091346153848
+        },
+        {
+          "x": 7840,
+          "y": 4750
+        },
+        {
+          "x": 7460,
+          "y": 4750
+        },
+        {
+          "x": 7460.187442816168,
+          "y": 4366.862125660399
+        },
+        {
+          "x": 8240.293659187737,
+          "y": 4366.862125660399
+        },
+        {
+          "x": 8240.293659187737,
+          "y": 4017.829991321004
+        }
+      ],
+      "labelOffsetX": -963.0769230769232,
+      "labelOffsetY": 10.76923076923077
+    },
+    {
+      "id": "poly-custom-1784395624003",
+      "label": "3 레위 지파(창 46:11, 민 26:16-25, 대상 23:7-24, 스 7:1-5)",
+      "color": "#f97316",
+      "fillOpacity": 0.03,
+      "points": [
+        {
+          "x": 8252.596153846154,
+          "y": 4014.7836538461543
+        },
+        {
+          "x": 8252.596153846154,
+          "y": 4387.142200913312
+        },
+        {
+          "x": 7473.916938675823,
+          "y": 4387.142200913312
+        },
+        {
+          "x": 7473.916938675823,
+          "y": 4696.387760001995
+        },
+        {
+          "x": 7888.389211191322,
+          "y": 4696.387760001995
+        },
+        {
+          "x": 7888.389211191322,
+          "y": 11119.646857731523
+        },
+        {
+          "x": 10340,
+          "y": 11120
+        },
+        {
+          "x": 10290,
+          "y": 4940
+        },
+        {
+          "x": 12971.249828314174,
+          "y": 4934.783462505303
+        },
+        {
+          "x": 12971.249828314174,
+          "y": 4511.473889593867
+        },
+        {
+          "x": 12790.960438225535,
+          "y": 4511.473889593867
+        },
+        {
+          "x": 12790.960438225535,
+          "y": 4017.5190845898087
+        }
+      ]
     }
   ],
   "events": [

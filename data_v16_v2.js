@@ -17,7 +17,8 @@ const BIBLE_CHARACTERS = [
       "eve"
     ],
     "desc": "하나님이 흙으로 창조하신 인류의 첫 조상.",
-    "isMain": true
+    "isMain": true,
+    "teachers": []
   },
   {
     "id": "eve",
@@ -31,7 +32,8 @@ const BIBLE_CHARACTERS = [
       "adam"
     ],
     "desc": "아담의 갈빗대로 지음 받은 모든 산 자의 어머니.",
-    "isMain": true
+    "isMain": true,
+    "teachers": []
   },
   {
     "id": "seth",
@@ -46,22 +48,25 @@ const BIBLE_CHARACTERS = [
     ],
     "spouses": [],
     "desc": "아벨 대신 주신 아들. 예배와 언약 계승의 시작.",
-    "isMain": true
+    "isMain": true,
+    "teachers": []
   },
   {
     "id": "cain",
     "name": "가인",
     "engName": "Cain",
     "gender": "M",
-    "generation": 1,
-    "column": -3.6,
+    "generation": 1.02,
+    "column": -3.342,
     "parents": [
       "adam",
       "eve"
     ],
     "spouses": [],
     "desc": "인류 최초의 살인자. 농경 문명의 시작.",
-    "isMain": false
+    "isMain": false,
+    "teachers": [],
+    "isManual": true
   },
   {
     "id": "abel",
@@ -76,7 +81,8 @@ const BIBLE_CHARACTERS = [
     ],
     "spouses": [],
     "desc": "가인에게 죽임 당한 의로운 목자.",
-    "isMain": false
+    "isMain": false,
+    "teachers": []
   },
   {
     "id": "enoch_cain",
@@ -84,13 +90,15 @@ const BIBLE_CHARACTERS = [
     "engName": "Enoch",
     "gender": "M",
     "generation": 2,
-    "column": -3.6,
+    "column": -3.342,
     "parents": [
       "cain"
     ],
     "spouses": [],
     "desc": "가인이 성을 쌓고 아들의 이름을 딴 성.",
-    "isMain": false
+    "isMain": false,
+    "teachers": [],
+    "isManual": true
   },
   {
     "id": "enosh",
@@ -104,7 +112,8 @@ const BIBLE_CHARACTERS = [
     ],
     "spouses": [],
     "desc": "셋의 아들. 이때부터 여호와의 이름을 부르기 시작함.",
-    "isMain": true
+    "isMain": true,
+    "teachers": []
   },
   {
     "id": "irad",
@@ -112,13 +121,15 @@ const BIBLE_CHARACTERS = [
     "engName": "Irad",
     "gender": "M",
     "generation": 3,
-    "column": -3.6,
+    "column": -3.342,
     "parents": [
       "enoch_cain"
     ],
     "spouses": [],
     "desc": "에녹의 아들. 가인 계열 성읍 문명 지도자.",
-    "isMain": false
+    "isMain": false,
+    "teachers": [],
+    "isManual": true
   },
   {
     "id": "kenan",
@@ -132,7 +143,8 @@ const BIBLE_CHARACTERS = [
     ],
     "spouses": [],
     "desc": "에노스의 아들. 경건한 조상들의 반열.",
-    "isMain": true
+    "isMain": true,
+    "teachers": []
   },
   {
     "id": "mehujael",
@@ -140,13 +152,15 @@ const BIBLE_CHARACTERS = [
     "engName": "Mehujael",
     "gender": "M",
     "generation": 4,
-    "column": -3.6,
+    "column": -3.342,
     "parents": [
       "irad"
     ],
     "spouses": [],
     "desc": "이라드의 아들.",
-    "isMain": false
+    "isMain": false,
+    "teachers": [],
+    "isManual": true
   },
   {
     "id": "mahalalel",
@@ -161,7 +175,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "게난의 아들. '하나님을 찬양하는 자'라는 뜻.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "methushael",
@@ -169,13 +184,15 @@ const BIBLE_CHARACTERS = [
     "engName": "Methushael",
     "gender": "M",
     "generation": 5,
-    "column": -3.6,
+    "column": -3.342,
     "parents": [
       "mehujael"
     ],
     "spouses": [],
     "desc": "므후야엘의 아들.",
-    "isMain": false
+    "isMain": false,
+    "teachers": [],
+    "isManual": true
   },
   {
     "id": "jared",
@@ -189,7 +206,8 @@ const BIBLE_CHARACTERS = [
     ],
     "spouses": [],
     "desc": "마할랄렐의 아들.",
-    "isMain": true
+    "isMain": true,
+    "teachers": []
   },
   {
     "id": "lamech_cain",
@@ -197,7 +215,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Lamech",
     "gender": "M",
     "generation": 6,
-    "column": -3.6,
+    "column": -3.342,
     "parents": [
       "methushael"
     ],
@@ -207,7 +225,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "최초로 두 아내를 취한 자. 살인을 노래하는 검가 작가.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "adah_cain",
@@ -215,14 +234,15 @@ const BIBLE_CHARACTERS = [
     "engName": "Adah",
     "gender": "F",
     "generation": 6,
-    "column": -5.1,
+    "column": -4.642,
     "parents": [],
     "spouses": [
       "lamech_cain"
     ],
     "desc": "라멕의 첫 번째 아내.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zillah_cain",
@@ -230,14 +250,15 @@ const BIBLE_CHARACTERS = [
     "engName": "Zillah",
     "gender": "F",
     "generation": 6,
-    "column": -2.1,
+    "column": -2.042,
     "parents": [],
     "spouses": [
       "lamech_cain"
     ],
     "desc": "라멕의 두 번째 아내.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "enoch",
@@ -251,7 +272,8 @@ const BIBLE_CHARACTERS = [
     ],
     "spouses": [],
     "desc": "300년간 하나님과 동행한 후 죽음을 보지 않고 승천함.",
-    "isMain": true
+    "isMain": true,
+    "teachers": []
   },
   {
     "id": "jabal",
@@ -259,7 +281,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Jabal",
     "gender": "M",
     "generation": 7,
-    "column": -4.7,
+    "column": -4.442,
     "parents": [
       "lamech_cain",
       "adah_cain"
@@ -267,7 +289,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "가축을 치는 장막 거주자의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jubal",
@@ -275,7 +298,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Jubal",
     "gender": "M",
     "generation": 7,
-    "column": -4,
+    "column": -3.742,
     "parents": [
       "lamech_cain",
       "adah_cain"
@@ -283,7 +306,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "수금과 퉁소를 잡는 모든 자의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "tubalcain",
@@ -291,7 +315,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Tubal-cain",
     "gender": "M",
     "generation": 7,
-    "column": -3.2,
+    "column": -2.942,
     "parents": [
       "lamech_cain",
       "zillah_cain"
@@ -299,7 +323,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "구리와 쇠로 여러 가지 기구를 만드는 자의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "naamah",
@@ -307,7 +332,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Naamah",
     "gender": "F",
     "generation": 7,
-    "column": -2.4,
+    "column": -2.142,
     "parents": [
       "lamech_cain",
       "zillah_cain"
@@ -315,7 +340,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "가인 계열의 딸. '아름답다'는 뜻.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "methuselah",
@@ -329,7 +355,8 @@ const BIBLE_CHARACTERS = [
     ],
     "spouses": [],
     "desc": "성경 인물 중 가장 장수한 인물 (969세 사망).",
-    "isMain": true
+    "isMain": true,
+    "teachers": []
   },
   {
     "id": "lamech",
@@ -343,7 +370,8 @@ const BIBLE_CHARACTERS = [
     ],
     "spouses": [],
     "desc": "므두셀라의 아들. 노아의 아버지.",
-    "isMain": true
+    "isMain": true,
+    "teachers": []
   },
   {
     "id": "noah",
@@ -355,9 +383,12 @@ const BIBLE_CHARACTERS = [
     "parents": [
       "lamech"
     ],
-    "spouses": [],
+    "spouses": [
+      "noah_wife"
+    ],
     "desc": "방주를 예비하여 온 세상의 대홍수 심판에서 인류의 명맥을 보존함.",
-    "isMain": true
+    "isMain": true,
+    "teachers": []
   },
   {
     "id": "japheth",
@@ -369,9 +400,12 @@ const BIBLE_CHARACTERS = [
     "parents": [
       "noah"
     ],
-    "spouses": [],
+    "spouses": [
+      "japheth_wife"
+    ],
     "desc": "창대하여 유럽과 아시아 여러 민족의 조상이 됨. 노아의 장자.",
-    "isMain": false
+    "isMain": false,
+    "teachers": []
   },
   {
     "id": "ham",
@@ -379,13 +413,17 @@ const BIBLE_CHARACTERS = [
     "engName": "Ham",
     "gender": "M",
     "generation": 10,
-    "column": -3.6,
+    "column": -2.3,
     "parents": [
       "noah"
     ],
-    "spouses": [],
+    "spouses": [
+      "ham_wife"
+    ],
     "desc": "가나안, 구스, 미스라임의 조상. 노아의 차남.",
-    "isMain": false
+    "isMain": false,
+    "teachers": [],
+    "isManual": true
   },
   {
     "id": "shem",
@@ -397,9 +435,12 @@ const BIBLE_CHARACTERS = [
     "parents": [
       "noah"
     ],
-    "spouses": [],
+    "spouses": [
+      "shem_wife"
+    ],
     "desc": "노아의 삼남. 아브라함과 다윗, 예수의 조상이 됨.",
-    "isMain": true
+    "isMain": true,
+    "teachers": []
   },
   {
     "id": "gomer",
@@ -413,7 +454,8 @@ const BIBLE_CHARACTERS = [
     ],
     "spouses": [],
     "desc": "야벳의 맏아들.",
-    "isMain": false
+    "isMain": false,
+    "teachers": []
   },
   {
     "id": "magog",
@@ -427,7 +469,8 @@ const BIBLE_CHARACTERS = [
     ],
     "spouses": [],
     "desc": "유라시아 북부 민족의 조상.",
-    "isMain": false
+    "isMain": false,
+    "teachers": []
   },
   {
     "id": "madai",
@@ -441,7 +484,8 @@ const BIBLE_CHARACTERS = [
     ],
     "spouses": [],
     "desc": "메대 민족(페르시아 서부)의 조상.",
-    "isMain": false
+    "isMain": false,
+    "teachers": []
   },
   {
     "id": "javan",
@@ -455,7 +499,8 @@ const BIBLE_CHARACTERS = [
     ],
     "spouses": [],
     "desc": "그리스 및 이오니아 민족의 조상.",
-    "isMain": false
+    "isMain": false,
+    "teachers": []
   },
   {
     "id": "tubal",
@@ -469,7 +514,8 @@ const BIBLE_CHARACTERS = [
     ],
     "spouses": [],
     "desc": "야벳의 다섯째 아들. 소아시아 지역 종족의 조상.",
-    "isMain": false
+    "isMain": false,
+    "teachers": []
   },
   {
     "id": "meshech",
@@ -483,7 +529,8 @@ const BIBLE_CHARACTERS = [
     ],
     "spouses": [],
     "desc": "야벳의 여섯째 아들. 흑해 북부 종족의 조상.",
-    "isMain": false
+    "isMain": false,
+    "teachers": []
   },
   {
     "id": "tiras",
@@ -497,7 +544,8 @@ const BIBLE_CHARACTERS = [
     ],
     "spouses": [],
     "desc": "야벳의 일곱째 아들. 에게해 주변 및 트라키아 종족의 조상.",
-    "isMain": false
+    "isMain": false,
+    "teachers": []
   },
   {
     "id": "cush",
@@ -505,13 +553,15 @@ const BIBLE_CHARACTERS = [
     "engName": "Cush",
     "gender": "M",
     "generation": 11,
-    "column": -5.4,
+    "column": -3.3,
     "parents": [
       "ham"
     ],
     "spouses": [],
     "desc": "함의 첫째 아들. 에티오피아 및 아프리카계 조상.",
-    "isMain": false
+    "isMain": false,
+    "teachers": [],
+    "isManual": true
   },
   {
     "id": "mizraim",
@@ -519,13 +569,15 @@ const BIBLE_CHARACTERS = [
     "engName": "Mizraim",
     "gender": "M",
     "generation": 11,
-    "column": -4.2,
+    "column": -2.6,
     "parents": [
       "ham"
     ],
     "spouses": [],
     "desc": "이집트 민족의 조상.",
-    "isMain": false
+    "isMain": false,
+    "teachers": [],
+    "isManual": true
   },
   {
     "id": "put",
@@ -533,13 +585,15 @@ const BIBLE_CHARACTERS = [
     "engName": "Put",
     "gender": "M",
     "generation": 11,
-    "column": -3,
+    "column": -1.9,
     "parents": [
       "ham"
     ],
     "spouses": [],
     "desc": "리비아 지역 민족의 조상.",
-    "isMain": false
+    "isMain": false,
+    "teachers": [],
+    "isManual": true
   },
   {
     "id": "canaan",
@@ -547,13 +601,15 @@ const BIBLE_CHARACTERS = [
     "engName": "Canaan",
     "gender": "M",
     "generation": 11,
-    "column": -1.8,
+    "column": -1.2,
     "parents": [
       "ham"
     ],
     "spouses": [],
     "desc": "가나안 족속의 조상. 노아로부터 저주를 받음.",
-    "isMain": false
+    "isMain": false,
+    "teachers": [],
+    "isManual": true
   },
   {
     "id": "arpachshad",
@@ -567,7 +623,8 @@ const BIBLE_CHARACTERS = [
     ],
     "spouses": [],
     "desc": "대홍수 2년 후에 태어난 셈의 아들.",
-    "isMain": true
+    "isMain": true,
+    "teachers": []
   },
   {
     "id": "ashkenaz",
@@ -581,7 +638,8 @@ const BIBLE_CHARACTERS = [
     ],
     "spouses": [],
     "desc": "고멜의 첫째 아들. 흑해 북쪽 아스케나즈 종족의 조상.",
-    "isMain": false
+    "isMain": false,
+    "teachers": []
   },
   {
     "id": "riphath",
@@ -595,7 +653,8 @@ const BIBLE_CHARACTERS = [
     ],
     "spouses": [],
     "desc": "고멜의 둘째 아들.",
-    "isMain": false
+    "isMain": false,
+    "teachers": []
   },
   {
     "id": "togarmah",
@@ -609,7 +668,8 @@ const BIBLE_CHARACTERS = [
     ],
     "spouses": [],
     "desc": "고멜의 셋째 아들. 아르메니아 및 소아시아 동부 종족의 조상.",
-    "isMain": false
+    "isMain": false,
+    "teachers": []
   },
   {
     "id": "elishah",
@@ -623,7 +683,8 @@ const BIBLE_CHARACTERS = [
     ],
     "spouses": [],
     "desc": "야완의 첫째 아들. 그리스 해안 지대 종족의 조상.",
-    "isMain": false
+    "isMain": false,
+    "teachers": []
   },
   {
     "id": "tarshish",
@@ -637,7 +698,8 @@ const BIBLE_CHARACTERS = [
     ],
     "spouses": [],
     "desc": "야완의 둘째 아들. 스페인 타르테소스 또는 지중해 서부 종족의 조상.",
-    "isMain": false
+    "isMain": false,
+    "teachers": []
   },
   {
     "id": "kittim",
@@ -651,7 +713,8 @@ const BIBLE_CHARACTERS = [
     ],
     "spouses": [],
     "desc": "야완의 셋째 아들. 키프로스섬 및 지중해 동부 종족의 조상.",
-    "isMain": false
+    "isMain": false,
+    "teachers": []
   },
   {
     "id": "dodanim",
@@ -665,7 +728,8 @@ const BIBLE_CHARACTERS = [
     ],
     "spouses": [],
     "desc": "야완의 넷째 아들. 로도스섬 주변 종족의 조상.",
-    "isMain": false
+    "isMain": false,
+    "teachers": []
   },
   {
     "id": "nimrod",
@@ -673,13 +737,15 @@ const BIBLE_CHARACTERS = [
     "engName": "Nimrod",
     "gender": "M",
     "generation": 12,
-    "column": -5.4,
+    "column": -3.3,
     "parents": [
       "cush"
     ],
     "spouses": [],
     "desc": "세상의 첫 용사요, 여호와 앞의 특이한 사냥꾼. 바벨탑 주도자.",
-    "isMain": false
+    "isMain": false,
+    "teachers": [],
+    "isManual": true
   },
   {
     "id": "shelah",
@@ -693,7 +759,8 @@ const BIBLE_CHARACTERS = [
     ],
     "spouses": [],
     "desc": "아르박삿의 아들.",
-    "isMain": true
+    "isMain": true,
+    "teachers": []
   },
   {
     "id": "eber",
@@ -707,7 +774,8 @@ const BIBLE_CHARACTERS = [
     ],
     "spouses": [],
     "desc": "히브리(Hebrew) 민족이라는 명칭의 유래가 된 조상.",
-    "isMain": true
+    "isMain": true,
+    "teachers": []
   },
   {
     "id": "peleg",
@@ -721,7 +789,8 @@ const BIBLE_CHARACTERS = [
     ],
     "spouses": [],
     "desc": "그 시대에 바벨탑 사건으로 세상 민족들이 나뉘었음.",
-    "isMain": true
+    "isMain": true,
+    "teachers": []
   },
   {
     "id": "joktan",
@@ -736,7 +805,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "벨렉의 형제. 아라비아 민족들의 조상이 됨.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "almodad",
@@ -751,7 +821,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "욕단의 첫째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "sheleph",
@@ -766,7 +837,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "욕단의 둘째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "hazarmaveth",
@@ -781,7 +853,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "욕단의 셋째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jerah",
@@ -796,7 +869,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "욕단의 넷째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "hadoram",
@@ -811,7 +885,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "욕단의 다섯째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "diklah",
@@ -826,7 +901,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "욕단의 여섯째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "obal",
@@ -841,7 +917,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "욕단의 일곱째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "abimael",
@@ -856,7 +933,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "욕단의 여덟째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "sheba_joktan",
@@ -871,7 +949,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "욕단의 아홉째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ophir",
@@ -886,7 +965,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "욕단의 열째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "havilah_joktan",
@@ -901,7 +981,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "욕단의 열한째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jobab",
@@ -916,7 +997,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "욕단의 열두째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "reu",
@@ -930,7 +1012,8 @@ const BIBLE_CHARACTERS = [
     ],
     "spouses": [],
     "desc": "벨렉의 아들.",
-    "isMain": true
+    "isMain": true,
+    "teachers": []
   },
   {
     "id": "serug",
@@ -944,7 +1027,8 @@ const BIBLE_CHARACTERS = [
     ],
     "spouses": [],
     "desc": "르우의 아들. 우상 숭배가 본격화된 시대의 조상.",
-    "isMain": true
+    "isMain": true,
+    "teachers": []
   },
   {
     "id": "nahor_ancestor",
@@ -958,7 +1042,8 @@ const BIBLE_CHARACTERS = [
     ],
     "spouses": [],
     "desc": "스룩의 아들. 아브라함의 할아버지.",
-    "isMain": true
+    "isMain": true,
+    "teachers": []
   },
   {
     "id": "terah",
@@ -972,7 +1057,8 @@ const BIBLE_CHARACTERS = [
     ],
     "spouses": [],
     "desc": "갈대아 우르에서 바벨론 우상을 만들던 아버지. 하란에서 사망.",
-    "isMain": true
+    "isMain": true,
+    "teachers": []
   },
   {
     "id": "abraham",
@@ -991,7 +1077,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "믿음의 조상. 갈대아 우르를 떠나 가나안으로 향한 언약의 사람.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "sarah",
@@ -1006,7 +1093,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "열국의 어머니. 90세에 하나님의 약속대로 이삭을 출산함.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "hagar",
@@ -1021,7 +1109,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "사라의 여종. 아브라함의 서자 이스마엘을 낳음.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "keturah",
@@ -1036,14 +1125,15 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "사라 사후 아브라함이 맞이한 후처. 미디안을 포함한 여섯 아들을 낳음.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "nahor",
     "name": "나홀(형제)",
     "engName": "Nahor",
     "gender": "M",
-    "generation": 15.19,
+    "generation": 19.0,
     "column": 1.612,
     "parents": [
       "terah"
@@ -1053,7 +1143,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "아브라함의 형제. 하란에 잔류함.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "milcah",
@@ -1068,14 +1159,15 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "나홀의 아내. 하란의 딸.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "haran",
     "name": "하란",
     "engName": "Haran",
     "gender": "M",
-    "generation": 16.1,
+    "generation": 19.0,
     "column": -2.926,
     "parents": [
       "terah"
@@ -1083,7 +1175,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "갈대아 우르에서 먼저 죽은 아브라함의 형제. 롯의 아버지.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "isaac",
@@ -1101,7 +1194,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "약속의 독자. 모리아 산에서 번제물로 드려졌던 자.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "rebekah",
@@ -1116,7 +1210,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "이삭의 아내. 브두엘의 딸.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ishmael",
@@ -1132,14 +1227,15 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아브라함의 장자였으나 육신을 따라 태어나 약속의 상속에서 제외됨.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zimran",
     "name": "시므란",
     "engName": "Zimran",
     "gender": "M",
-    "generation": 16.6,
+    "generation": 20.0,
     "column": -11.263,
     "parents": [
       "abraham",
@@ -1148,14 +1244,15 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "그두라의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jokshan",
     "name": "욕산",
     "engName": "Jokshan",
     "gender": "M",
-    "generation": 16.6,
+    "generation": 20.0,
     "column": -10.566,
     "parents": [
       "abraham",
@@ -1164,14 +1261,15 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "그두라의 아들. 스바와 드단의 아버지.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "medan",
     "name": "므단",
     "engName": "Medan",
     "gender": "M",
-    "generation": 16.6,
+    "generation": 20.0,
     "column": -9.789,
     "parents": [
       "abraham",
@@ -1180,14 +1278,15 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "그두라의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "midian",
     "name": "미디안",
     "engName": "Midian",
     "gender": "M",
-    "generation": 16.6,
+    "generation": 20.0,
     "column": -8.089,
     "parents": [
       "abraham",
@@ -1196,14 +1295,15 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "미디안 족속의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ishbak",
     "name": "이스박",
     "engName": "Ishbak",
     "gender": "M",
-    "generation": 16.6,
+    "generation": 20.0,
     "column": -7.372,
     "parents": [
       "abraham",
@@ -1212,14 +1312,15 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "그두라의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shuah",
     "name": "수아",
     "engName": "Shuah",
     "gender": "M",
-    "generation": 16.6,
+    "generation": 20.0,
     "column": -6.671,
     "parents": [
       "abraham",
@@ -1228,14 +1329,15 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "그두라의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "lot",
     "name": "롯",
     "engName": "Lot",
     "gender": "M",
-    "generation": 17.2,
+    "generation": 20.0,
     "column": -2.529,
     "parents": [
       "haran"
@@ -1245,7 +1347,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "아브라함의 조카. 소돔과 고모라 멸망 때 구출됨.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "lot_wife",
@@ -1260,14 +1363,15 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "뒤를 돌아보아 소금 기둥이 됨.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "milcah_daughter",
     "name": "밀가",
     "engName": "Milcah",
     "gender": "F",
-    "generation": 17.2,
+    "generation": 20.0,
     "column": -3.546,
     "parents": [
       "haran"
@@ -1275,14 +1379,15 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "하란의 딸. 나홀의 아내가 됨.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "bethuel",
     "name": "브두엘",
     "engName": "Bethuel",
     "gender": "M",
-    "generation": 16.18,
+    "generation": 20.0,
     "column": 2.256,
     "parents": [
       "nahor",
@@ -1291,7 +1396,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "나홀 and 밀가의 아들. 리브가와 라반의 아버지.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jacob",
@@ -1312,7 +1418,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "이스라엘이라 이름을 바꾼 언약의 후손. 12지파의 아버지.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "leah",
@@ -1327,7 +1434,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "야곱의 아내. 라반의 딸.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "rachel",
@@ -1342,7 +1450,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "야곱의 아내. 라반의 딸.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "bilhah",
@@ -1357,7 +1466,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "라헬의 몸종이자 야곱의 첩. 단과 납탈리를 낳음.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zilpah",
@@ -1372,14 +1482,15 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "레아의 몸종이자 야곱의 첩. 갓과 아셀을 낳음.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "esau",
     "name": "에돔(에서)",
     "engName": "Esau",
     "gender": "M",
-    "generation": 19,
+    "generation": 21.0,
     "column": -17.644,
     "parents": [
       "isaac",
@@ -1392,7 +1503,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "이삭의 장자. 팥죽 한 그릇에 장자권을 팔고 에돔 민족의 조상이 됨.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "adah_esau",
@@ -1407,7 +1519,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "에서의 아내. 엘론의 딸.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "basemath_esau",
@@ -1422,7 +1535,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "에서의 아내. 이스마엘의 딸.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "oholibamah",
@@ -1437,14 +1551,15 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "에서의 아내. 아나의 딸.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "laban",
     "name": "라반",
     "engName": "Laban",
     "gender": "M",
-    "generation": 17.18,
+    "generation": 21.0,
     "column": 1.756,
     "parents": [
       "bethuel"
@@ -1452,14 +1567,15 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "리브가의 오라버니이자 레아와 라헬의 아버지. 야곱의 외삼촌.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "rebekah_daughter",
     "name": "리브가",
     "engName": "Rebekah",
     "gender": "F",
-    "generation": 17.18,
+    "generation": 21.0,
     "column": 2.756,
     "parents": [
       "bethuel"
@@ -1467,14 +1583,15 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "브두엘의 딸. 이삭의 아내가 됨.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "moab",
     "name": "모압",
     "engName": "Moab",
     "gender": "M",
-    "generation": 18.2,
+    "generation": 21.0,
     "column": -2.929,
     "parents": [
       "lot"
@@ -1482,14 +1599,15 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "롯의 큰딸에게서 태어난 모압 족속의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "benammi",
     "name": "벤암미",
     "engName": "Ben-Ammi",
     "gender": "M",
-    "generation": 18.2,
+    "generation": 21.0,
     "column": -2.129,
     "parents": [
       "lot"
@@ -1497,14 +1615,15 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "롯의 작은딸에게서 태어난 암몬 족속의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "sheba_keturah",
     "name": "스바",
     "engName": "Sheba",
     "gender": "M",
-    "generation": 17.47,
+    "generation": 21.0,
     "column": -11.104,
     "parents": [
       "jokshan"
@@ -1512,14 +1631,15 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "욕산의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "dedan_keturah",
     "name": "드단",
     "engName": "Dedan",
     "gender": "M",
-    "generation": 17.47,
+    "generation": 21.0,
     "column": -10.442,
     "parents": [
       "jokshan"
@@ -1527,14 +1647,15 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "욕산의 아들. 아브라함의 손자.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ephah",
     "name": "에바",
     "engName": "Ephah",
     "gender": "M",
-    "generation": 17.47,
+    "generation": 21.0,
     "column": -9.639,
     "parents": [
       "midian"
@@ -1542,14 +1663,15 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "미디안의 첫째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "epher_midian",
     "name": "에벨",
     "engName": "Epher",
     "gender": "M",
-    "generation": 17.47,
+    "generation": 21.0,
     "column": -8.976,
     "parents": [
       "midian"
@@ -1557,14 +1679,15 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "미디안의 둘째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "hanoch_midian",
     "name": "하녹",
     "engName": "Hanoch",
     "gender": "M",
-    "generation": 17.47,
+    "generation": 21.0,
     "column": -8.314,
     "parents": [
       "midian"
@@ -1572,14 +1695,15 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "미디안의 셋째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "abida",
     "name": "아비다",
     "engName": "Abida",
     "gender": "M",
-    "generation": 17.47,
+    "generation": 21.0,
     "column": -7.651,
     "parents": [
       "midian"
@@ -1587,14 +1711,15 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "미디안의 넷째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "eldaah",
     "name": "엘다아",
     "engName": "Eldaah",
     "gender": "M",
-    "generation": 17.47,
+    "generation": 21.0,
     "column": -6.989,
     "parents": [
       "midian"
@@ -1602,14 +1727,15 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "미디안의 다섯째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "asshurim",
     "name": "앗수르 족속",
     "engName": "Asshurim",
     "gender": "M",
-    "generation": 18.34,
+    "generation": 22.0,
     "column": -11.104,
     "parents": [
       "dedan_keturah"
@@ -1617,14 +1743,15 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "드단의 아들. 앗수르 족속의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "letushim",
     "name": "르두시 족속",
     "engName": "Letushim",
     "gender": "M",
-    "generation": 18.34,
+    "generation": 22.0,
     "column": -10.442,
     "parents": [
       "dedan_keturah"
@@ -1632,14 +1759,15 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "드단의 아들. 르두시 족속의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "leummim",
     "name": "르웅미 족속",
     "engName": "Leummim",
     "gender": "M",
-    "generation": 18.34,
+    "generation": 22.0,
     "column": -9.779,
     "parents": [
       "dedan_keturah"
@@ -1647,7 +1775,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "드단의 아들. 르웅미 족속의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "mahalath",
@@ -1662,7 +1791,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "이스마엘의 딸이자 느바욧의 누이. 에서의 아내.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "nebaioth",
@@ -1677,7 +1807,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "이스마엘의 첫째 아들. 유목민 느바욧 부족의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "kedar",
@@ -1692,7 +1823,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "이스마엘의 둘째 아들. 유목 성향의 강력한 게달 부족의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "adbeel",
@@ -1707,7 +1839,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "이스마엘의 셋째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "mibsam",
@@ -1722,7 +1855,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "이스마엘의 넷째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "mishma",
@@ -1737,7 +1871,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "이스마엘의 다섯째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "dumah",
@@ -1752,7 +1887,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "이스마엘의 여섯째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "massa",
@@ -1767,7 +1903,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "이스마엘의 일곱째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "hadad",
@@ -1782,7 +1919,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "이스마엘의 여덟째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "tema",
@@ -1797,7 +1935,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "이스마엘의 아홉째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jetur",
@@ -1812,7 +1951,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "이스마엘의 열째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "naphish",
@@ -1827,7 +1967,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "이스마엘의 열한째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "kedemah",
@@ -1842,7 +1983,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "이스마엘의 열두째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "reuben",
@@ -1858,7 +2000,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "야곱의 장자. 서모 빌하와의 죄로 장자권을 상실함.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "hanoch_reuben",
@@ -1873,7 +2016,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "르우벤의 첫째 아들. 하녹 종족의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "pallu_reuben",
@@ -1888,7 +2032,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "르우벤의 둘째 아들. 발루 종족의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "hezron_reuben",
@@ -1903,7 +2048,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "르우벤의 셋째 아들. 헤스론 종족의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "carmi_reuben",
@@ -1918,7 +2064,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "르우벤의 넷째 아들. 갈미 종족의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "hanochites",
@@ -1933,7 +2080,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "르우벤의 아들 하녹에게서 나온 종족.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "palluites",
@@ -1948,7 +2096,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "르우벤의 아들 발루에게서 나온 종족.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "hezronites",
@@ -1963,7 +2112,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "르우벤의 아들 헤스론에게서 나온 종족.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "carmites",
@@ -1978,7 +2128,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "르우벤의 아들 갈미에게서 나온 종족.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "eliab_reuben",
@@ -1993,7 +2144,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "발루의 아들이자 다단과 아비람의 아버지.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "nemuel_reuben",
@@ -2008,7 +2160,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "엘리압의 아들. 레위의 느무엘과 다른 인물.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "dathan_reuben",
@@ -2023,7 +2176,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "모세와 아론에게 반역하여 땅이 갈라져 죽임 당함.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "abiram_reuben",
@@ -2038,7 +2192,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "다단과 함께 반역에 참여했다가 심판을 받아 죽임 당함.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "simeon",
@@ -2054,7 +2209,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "야곱의 둘째 아들. 레위와 함께 세겜 학살을 주도함.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jemuel_simeon",
@@ -2069,7 +2225,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "시므온의 첫째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jamin_simeon",
@@ -2084,7 +2241,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "시므온의 둘째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ohad_simeon",
@@ -2099,7 +2257,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "시므온의 셋째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jachin_simeon",
@@ -2114,7 +2273,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "시므온의 넷째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zohar_simeon",
@@ -2129,7 +2289,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "시므온의 다섯째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shaul_simeon",
@@ -2144,7 +2305,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "시므온의 여섯째 아들. 가나안 여인의 소생.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shallum_simeon",
@@ -2159,7 +2321,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "사울의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "mibsam_simeon",
@@ -2174,7 +2337,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "살룸의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "mishma_simeon",
@@ -2189,7 +2353,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "미스마의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "hammuel_simeon",
@@ -2204,7 +2369,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "미스마의 아들. 삭굴의 아버지.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zaccur_simeon",
@@ -2219,7 +2385,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "함무엘의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shimei_simeon",
@@ -2234,7 +2401,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "삭굴의 아들. 아들 16명과 딸 6명을 둠.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "desc_shimei",
@@ -2249,7 +2417,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "시므이의 많은 자녀들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "levi",
@@ -2265,7 +2434,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "야곱의 셋째 아들. 제사장 지파의 조상이 됨.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "gershon_levi",
@@ -2280,7 +2450,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "레위의 첫째 아들. 게르손 자손의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "libni_gershon",
@@ -2295,7 +2466,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "게르손의 첫째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shimei_gershon",
@@ -2310,7 +2482,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "게르손의 둘째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "yahath_libni",
@@ -2325,7 +2498,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "립니의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "segub_libni",
@@ -2340,7 +2514,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "립니의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ohel_libni",
@@ -2355,7 +2530,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "립니의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shelomith_libni",
@@ -2370,7 +2546,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "립니의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "haziel_libni",
@@ -2385,7 +2562,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "립니의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "haran_libni",
@@ -2400,7 +2578,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "립니의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jahath_libni2",
@@ -2415,7 +2594,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "립니의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zina_libni",
@@ -2430,7 +2610,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "립니의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jeush_libni",
@@ -2445,7 +2626,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "립니의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "beriah_libni",
@@ -2460,7 +2642,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "립니의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "merari_levi",
@@ -2475,7 +2658,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "레위의 셋째 아들. 므라리 자손의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "mahli_merari",
@@ -2490,7 +2674,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "므라리의 첫째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "mushi_merari",
@@ -2505,7 +2690,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "므라리의 둘째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "eleazar_mahli",
@@ -2520,7 +2706,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "마흘리의 첫째 아들. 아들이 없이 딸만 두고 죽음.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "kish_mahli",
@@ -2535,7 +2722,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "마흘리의 둘째 아들. 여라므엘의 아버지.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jerahmeel_kish",
@@ -2550,7 +2738,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "기스의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "mahli_mushi",
@@ -2565,7 +2754,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "무시의 첫째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "eder_mushi",
@@ -2580,7 +2770,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "무시의 둘째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jeremoth_mushi",
@@ -2595,7 +2786,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "무시의 셋째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "judah",
@@ -2614,7 +2806,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "넷째 아들. 형제들의 중보자이자 다윗과 예수 그리스도의 왕권 지파.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "tamar",
@@ -2629,7 +2822,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "유다의 며느리였으나 대를 잇기 위해 시아버지 유다에게서 쌍둥이를 낳음.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "dan",
@@ -2645,7 +2839,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "단 지파의 조상. 훗날 우상 숭배의 중심지가 됨.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "naphtali",
@@ -2661,7 +2856,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "납달리 지파의 조상. 아름다운 소리를 발하는 자.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jahzeel",
@@ -2676,7 +2872,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "납달리의 첫째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "guni",
@@ -2691,7 +2888,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "납달리의 둘째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jezer",
@@ -2706,7 +2904,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "납달리의 셋째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shillem",
@@ -2721,7 +2920,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "납달리의 넷째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "gad",
@@ -2737,7 +2937,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "갓 지파의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ziphion_gad",
@@ -2752,7 +2953,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "갓의 첫째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "haggi_gad",
@@ -2767,7 +2969,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "갓의 둘째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shuni_gad",
@@ -2782,7 +2985,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "갓의 셋째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ezbon_gad",
@@ -2797,7 +3001,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "갓의 넷째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "eri_gad",
@@ -2812,7 +3017,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "갓의 다섯째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "arodi_gad",
@@ -2827,7 +3033,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "갓의 여섯째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "areli_gad",
@@ -2842,7 +3049,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "갓의 일곱째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "asher",
@@ -2858,7 +3066,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아셀 지파의 조상. 기름진 음식을 낼 자.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "imnah_asher",
@@ -2873,7 +3082,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아셀의 첫째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ishvah_asher",
@@ -2888,7 +3098,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아셀의 둘째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ishvi_asher",
@@ -2903,7 +3114,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아셀의 셋째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "beriah_asher",
@@ -2918,7 +3130,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아셀의 넷째 아들. 헤벨과 말기엘의 아버지.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "serah_asher",
@@ -2933,7 +3146,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아셀의 딸.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "heber_beriah",
@@ -2948,7 +3162,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "브리아의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "malchiel_beriah",
@@ -2963,7 +3178,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "브리아의 아들. 비르사잇의 아버지.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "japhlet_heber",
@@ -2978,7 +3194,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "헤벨의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shomer_heber",
@@ -2993,7 +3210,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "헤벨의 아들 (세멜).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "hotham_heber",
@@ -3008,7 +3226,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "헤벨의 아들 (헬렘).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shua_heber",
@@ -3023,7 +3242,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "헤벨의 딸.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "birzaith_malchiel",
@@ -3038,7 +3258,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "말기엘의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "pasach_japhlet",
@@ -3053,7 +3274,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "야블렛의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "bimhal_japhlet",
@@ -3068,7 +3290,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "야블렛의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ashvath_japhlet",
@@ -3083,7 +3306,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "야블렛의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ahi_shomer",
@@ -3098,7 +3322,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "소멜의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "rohgah_shomer",
@@ -3113,7 +3338,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "소멜의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "hubbah_shomer",
@@ -3128,7 +3354,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "소멜의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "aram_shomer",
@@ -3143,7 +3370,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "소멜의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zophah_hotham",
@@ -3158,7 +3386,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "호담의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "imna_hotham",
@@ -3173,7 +3402,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "호담의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shelesh_hotham",
@@ -3188,7 +3418,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "호담의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "amal_hotham",
@@ -3203,7 +3434,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "호담의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "suah_zophah",
@@ -3218,7 +3450,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "소바의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "harnepher_zophah",
@@ -3233,7 +3466,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "소바의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shual_zophah",
@@ -3248,7 +3482,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "소바의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "beri_zophah",
@@ -3263,7 +3498,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "소바의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "imrah_zophah",
@@ -3278,7 +3514,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "소바의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "bezer_zophah",
@@ -3293,7 +3530,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "소바의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "hod_zophah",
@@ -3308,7 +3546,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "소바의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shamma_zophah",
@@ -3323,7 +3562,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "소바의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shilshah_zophah",
@@ -3338,7 +3578,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "소바의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ithran_zophah",
@@ -3353,7 +3594,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "소바의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "beera_zophah",
@@ -3368,7 +3610,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "소바의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "issachar",
@@ -3384,7 +3627,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "잇사갈 지파의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "tola_issachar",
@@ -3399,7 +3643,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "잇사갈의 첫째 아들. 돌라 종족의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "puah_issachar",
@@ -3414,7 +3659,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "잇사갈의 둘째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jashub_issachar",
@@ -3429,7 +3675,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "잇사갈의 셋째 아들 (야숩).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shimron_issachar",
@@ -3444,7 +3691,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "잇사갈의 넷째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "uzzi_tola",
@@ -3459,7 +3707,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "돌라의 첫째 아들. 용사.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "rephaiah_tola",
@@ -3474,7 +3723,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "돌라의 둘째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jeriel_tola",
@@ -3489,7 +3739,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "돌라의 셋째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jahmai_tola",
@@ -3504,7 +3755,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "돌라의 넷째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ibsam_tola",
@@ -3519,7 +3771,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "돌라의 다섯째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shemuel_tola",
@@ -3534,7 +3787,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "돌라의 여섯째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "izrahiah_uzzi",
@@ -3549,7 +3803,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "웃시의 아들이자 우두머리.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "michael_izrahiah",
@@ -3564,7 +3819,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "이스라히야의 첫째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "obadiah_izrahiah",
@@ -3579,7 +3835,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "이스라히야의 둘째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "joel_izrahiah",
@@ -3594,7 +3851,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "이스라히야의 셋째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "isshiah_izrahiah",
@@ -3609,7 +3867,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "이스라히야의 넷째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zebulun",
@@ -3625,7 +3884,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "스불론 지파의 조상. 해변에 거주하며 배를 대는 자.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "sered_zebulun",
@@ -3640,7 +3900,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "스불론의 첫째 아들. 세렛 종족의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "elon_zebulun",
@@ -3655,7 +3916,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "스불론의 둘째 아들. 엘론 종족의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jahleel_zebulun",
@@ -3670,7 +3932,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "스불론의 셋째 아들. 얄르엘 종족의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "dinah",
@@ -3686,7 +3949,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "야곱의 유일한 딸. 세겜 추장 사건으로 시므온 and 레위가 분노함.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "joseph",
@@ -3704,7 +3968,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "꿈의 사람. 형제들에 의해 이집트에 팔렸으나 국무총리가 되어 가문을 구함.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "asenath",
@@ -3719,7 +3984,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "이집트 온의 제사장 보디베라의 딸이자 요셉의 아내.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "benjamin",
@@ -3735,7 +4001,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "야곱의 막내 아들. 오른손의 아들이라는 뜻.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "bela",
@@ -3750,7 +4017,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "베냐민의 맏아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "becher",
@@ -3765,7 +4033,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "베냐민의 둘째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ashbel",
@@ -3780,7 +4049,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "베냐민의 셋째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "gera_benjamin",
@@ -3795,7 +4065,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "베냐민의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "naaman_benjamin",
@@ -3810,7 +4081,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "베냐민의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ehi",
@@ -3825,7 +4097,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "베냐민의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "rosh",
@@ -3840,7 +4113,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "베냐민의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "muppim",
@@ -3855,7 +4129,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "베냐민의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "huppim",
@@ -3870,7 +4145,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "베냐민의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ard",
@@ -3885,7 +4161,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "베냐민의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "addar",
@@ -3900,7 +4177,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "벨라의 아들 (대상 8:3).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "gera_bela1",
@@ -3915,7 +4193,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "벨라의 아들 (대상 8:3).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "abihud",
@@ -3930,7 +4209,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "벨라의 아들 (대상 8:3).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "abihua",
@@ -3945,7 +4225,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "벨라의 아들 (대상 8:4).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "naaman_bela",
@@ -3960,7 +4241,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "벨라의 아들 (대상 8:4).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ahoah",
@@ -3975,7 +4257,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "벨라의 아들 (대상 8:4).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "gera_bela2",
@@ -3990,7 +4273,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "벨라의 아들 (대상 8:5).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shephuphan",
@@ -4005,7 +4289,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "벨라의 아들 (대상 8:5).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "huram",
@@ -4020,7 +4305,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "벨라의 아들 (대상 8:5).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ezbon",
@@ -4035,7 +4321,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "벨라의 아들 (대상 7:7).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "uzzi",
@@ -4050,7 +4337,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "벨라의 아들 (대상 7:7).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "uzziel_bela",
@@ -4065,7 +4353,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "벨라의 아들 (대상 7:7).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jerimoth_bela",
@@ -4080,7 +4369,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "벨라의 아들 (대상 7:7).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "iri",
@@ -4095,7 +4385,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "벨라의 아들 (대상 7:7).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zemirah",
@@ -4110,7 +4401,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "베겔의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "joash_becher",
@@ -4125,7 +4417,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "베겔의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "eliezer",
@@ -4140,7 +4433,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "베겔의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "elioenai",
@@ -4155,7 +4449,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "베겔의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "omri_becher",
@@ -4170,7 +4465,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "베겔의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jerimoth_becher",
@@ -4185,7 +4481,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "베겔의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "abijah_becher",
@@ -4200,7 +4497,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "베겔의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "anathoth",
@@ -4215,7 +4513,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "베겔의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "alemeth",
@@ -4230,7 +4529,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "베겔의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "bilhan_benjamin",
@@ -4245,7 +4545,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아스벨(여디아엘)의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jeush_bilhan",
@@ -4260,7 +4561,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "빌한의 첫째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "benjamin_bilhan",
@@ -4275,7 +4577,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "빌한의 둘째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ehud_bilhan",
@@ -4290,7 +4593,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "빌한의 셋째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "chenaanah",
@@ -4305,7 +4609,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "빌한의 넷째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zethan",
@@ -4320,7 +4625,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "빌한의 다섯째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "tharshish",
@@ -4335,7 +4641,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "빌한의 여섯째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ahishahar",
@@ -4350,7 +4657,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "빌한의 일곱째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "naaman_ehud",
@@ -4365,7 +4673,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "에훗의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ahijah_ehud",
@@ -4380,7 +4689,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "에훗의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "gera_ehud",
@@ -4395,7 +4705,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "에훗의 아들. 포로로 잡혀간 집안의 지도자.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "uzza_gera",
@@ -4410,7 +4721,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "게라의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ahihud_gera",
@@ -4425,14 +4737,15 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "게라의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "leah_daughter",
     "name": "레아",
     "engName": "Leah",
     "gender": "F",
-    "generation": 18.18,
+    "generation": 21.5,
     "column": 1.356,
     "parents": [
       "laban"
@@ -4440,14 +4753,15 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "라반의 첫째 딸. 야곱의 아내가 됨.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "rachel_daughter",
     "name": "라헬",
     "engName": "Rachel",
     "gender": "F",
-    "generation": 18.18,
+    "generation": 21.5,
     "column": 2.156,
     "parents": [
       "laban"
@@ -4455,14 +4769,15 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "라반의 둘째 딸. 야곱의 아내가 됨.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "eliphaz",
     "name": "엘리바스",
     "engName": "Eliphaz",
     "gender": "M",
-    "generation": 20,
+    "generation": 22.0,
     "column": -18.744,
     "parents": [
       "esau",
@@ -4473,14 +4788,15 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "에서의 첫째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "reuel",
     "name": "르우엘",
     "engName": "Reuel",
     "gender": "M",
-    "generation": 20,
+    "generation": 22.0,
     "column": -15.323,
     "parents": [
       "esau",
@@ -4489,14 +4805,15 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "에서의 둘째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jeush",
     "name": "여우스",
     "engName": "Jeush",
     "gender": "M",
-    "generation": 20,
+    "generation": 22.0,
     "column": -13.823,
     "parents": [
       "esau",
@@ -4505,14 +4822,15 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "에서의 셋째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jalam",
     "name": "야알람",
     "engName": "Jalam",
     "gender": "M",
-    "generation": 20,
+    "generation": 22.0,
     "column": -13.094,
     "parents": [
       "esau",
@@ -4521,14 +4839,15 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "에서의 넷째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "korah_edom",
     "name": "고라(에돔)",
     "engName": "Korah",
     "gender": "M",
-    "generation": 20,
+    "generation": 22.0,
     "column": -12.386,
     "parents": [
       "esau",
@@ -4537,7 +4856,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "에서의 다섯째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "timna",
@@ -4552,7 +4872,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "엘리바스의 첩.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "kohath",
@@ -4567,7 +4888,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "레위의 둘째 아들. 모세와 아론의 할아버지.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "perez",
@@ -4583,7 +4905,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "유다와 다말의 아들. 터치고 나왔다는 의미의 이름.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zerah",
@@ -4599,7 +4922,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "베레스의 쌍둥이 형제. 홍색 실을 손에 맸던 자.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zimri_zerah",
@@ -4614,7 +4938,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "세라의 아들(대상 2:6).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ethan_zerah",
@@ -4629,7 +4954,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "세라의 아들(대상 2:6). 지혜로운 자.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "heman_zerah",
@@ -4644,7 +4970,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "세라의 아들(대상 2:6). 지혜로운 자.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "calcol_zerah",
@@ -4659,7 +4986,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "세라의 아들(대상 2:6). 지혜로운 자.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "dara_zerah",
@@ -4674,7 +5002,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "세라의 아들(대상 2:6). 지혜로운 자.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "azariah_ethan",
@@ -4689,7 +5018,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "에단의 아들(대상 2:8).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "manasseh",
@@ -4708,7 +5038,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "요셉의 장남. 하나님이 내 고난을 잊게 하셨다는 뜻.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ephraim",
@@ -4724,14 +5055,15 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "요셉의 차남. 야곱에게 장자의 축복을 우선 받음.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "teman",
     "name": "데만",
     "engName": "Teman",
     "gender": "M",
-    "generation": 21,
+    "generation": 23.0,
     "column": -19.844,
     "parents": [
       "eliphaz"
@@ -4739,14 +5071,15 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "엘리바스의 첫째 아들. 에돔의 족장.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "omar",
     "name": "오말",
     "engName": "Omar",
     "gender": "M",
-    "generation": 21,
+    "generation": 23.0,
     "column": -19.144,
     "parents": [
       "eliphaz"
@@ -4754,14 +5087,15 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "엘리바스의 둘째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zepho",
     "name": "스보",
     "engName": "Zepho",
     "gender": "M",
-    "generation": 21,
+    "generation": 23.0,
     "column": -18.444,
     "parents": [
       "eliphaz"
@@ -4769,14 +5103,15 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "엘리바스의 셋째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "gatam",
     "name": "가담",
     "engName": "Gatam",
     "gender": "M",
-    "generation": 21,
+    "generation": 23.0,
     "column": -17.744,
     "parents": [
       "eliphaz"
@@ -4784,14 +5119,15 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "엘리바스의 넷째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "kenaz",
     "name": "그나스",
     "engName": "Kenaz",
     "gender": "M",
-    "generation": 21,
+    "generation": 23.0,
     "column": -17.044,
     "parents": [
       "eliphaz"
@@ -4799,14 +5135,15 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "엘리바스의 다섯째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "amalek",
     "name": "아말렉",
     "engName": "Amalek",
     "gender": "M",
-    "generation": 21,
+    "generation": 23.0,
     "column": -20.544,
     "parents": [
       "eliphaz",
@@ -4815,14 +5152,15 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아말렉 족속의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "nahath",
     "name": "나핫",
     "engName": "Nahath",
     "gender": "M",
-    "generation": 21,
+    "generation": 23.0,
     "column": -15.644,
     "parents": [
       "reuel"
@@ -4830,14 +5168,15 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "르우엘의 첫째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zerah_edom",
     "name": "세라(에돔)",
     "engName": "Zerah",
     "gender": "M",
-    "generation": 21,
+    "generation": 23.0,
     "column": -16.344,
     "parents": [
       "reuel"
@@ -4845,14 +5184,15 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "르우엘의 둘째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shammah",
     "name": "삼마",
     "engName": "Shammah",
     "gender": "M",
-    "generation": 21,
+    "generation": 23.0,
     "column": -14.948,
     "parents": [
       "reuel"
@@ -4860,14 +5200,15 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "르우엘의 셋째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "mizzah",
     "name": "미사",
     "engName": "Mizzah",
     "gender": "M",
-    "generation": 21,
+    "generation": 23.0,
     "column": -14.256,
     "parents": [
       "reuel"
@@ -4875,7 +5216,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "르우엘의 넷째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "amram",
@@ -4892,7 +5234,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "고핫의 아들이자 모세, 아론의 아버지.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jochebed",
@@ -4907,7 +5250,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "모세의 어머니. 갈상자에 모세를 담아 나일강에 띄운 여인.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "izhar",
@@ -4922,7 +5266,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "고핫의 아들. 아므람의 형제.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "hebron_kohath",
@@ -4937,7 +5282,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "고핫의 셋째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "uzziel_kohath",
@@ -4952,7 +5298,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "고핫의 넷째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "hezron",
@@ -4964,10 +5311,14 @@ const BIBLE_CHARACTERS = [
     "parents": [
       "perez"
     ],
-    "spouses": [],
+    "spouses": [
+      "machir_daughter",
+      "abiah_hezron"
+    ],
     "desc": "베레스의 아들.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "machir_daughter",
@@ -4982,7 +5333,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "길레앗의 아버지 마길의 딸.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "segub_hezron",
@@ -4998,7 +5350,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "헤스론과 마길의 딸의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jair_segub",
@@ -5013,7 +5366,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "스굽의 아들. 길레앗 땅에서 스물세 성읍을 가졌던 자.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "abiah_hezron",
@@ -5028,7 +5382,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "헤스론의 아내. 아스훌의 어머니(대상 2:24).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ashhur_hezron",
@@ -5041,10 +5396,14 @@ const BIBLE_CHARACTERS = [
       "hezron",
       "abiah_hezron"
     ],
-    "spouses": [],
+    "spouses": [
+      "helah_ashhur",
+      "naarah_ashhur"
+    ],
     "desc": "헤스론과 아비야의 아들. 드고아의 조상(대상 2:24).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jerahmeel_hezron",
@@ -5061,7 +5420,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "헤스론의 맏아들(대상 2:9, 2:25).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "atarah_jerahmeel",
@@ -5076,7 +5436,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "여라무엘의 다른 아내. 오남의 어머니(대상 2:26).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ram_jerahmeel",
@@ -5091,7 +5452,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "여라무엘의 장자(대상 2:25). 헤스론의 아들 람과 동명이인.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "bunah_jerahmeel",
@@ -5106,7 +5468,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "여라무엘의 아들(대상 2:25).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "oren_jerahmeel",
@@ -5121,7 +5484,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "여라무엘의 아들(대상 2:25).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ozem_jerahmeel",
@@ -5136,7 +5500,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "여라무엘의 아들(대상 2:25). 이새의 아들 오셈과 동명이인.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ahijah_jerahmeel",
@@ -5151,7 +5516,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "여라무엘의 아들(대상 2:25).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "onam_jerahmeel",
@@ -5167,7 +5533,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "여라무엘과 그의 아내 아다라의 아들(대상 2:26).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "maaz_ram",
@@ -5182,7 +5549,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "여라무엘의 아들 람의 아들(대상 2:27).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jamin_ram",
@@ -5197,7 +5565,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "여라무엘의 아들 람의 아들(대상 2:27). 시므온의 아들 야민과 동명이인.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "eker_ram",
@@ -5212,7 +5581,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "여라무엘의 아들 람의 아들(대상 2:27).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shammai_onam",
@@ -5227,7 +5597,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "오남의 아들(대상 2:28).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jada_onam",
@@ -5242,7 +5613,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "오남의 아들(대상 2:28).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "nadab_shammai",
@@ -5257,7 +5629,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "삼매의 아들(대상 2:28).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jeder_jada",
@@ -5272,7 +5645,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "야다의 아들(대상 2:32). 아들이 없이 죽음.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jonathan_jada",
@@ -5287,7 +5661,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "야다의 아들(대상 2:32).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "seled_nadab",
@@ -5302,7 +5677,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "나답의 아들(대상 2:30). 아들이 없이 죽음.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "appaim_nadab",
@@ -5317,7 +5693,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "나답의 아들(대상 2:30).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "peleth_jonathan",
@@ -5332,7 +5709,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "요나단의 아들(대상 2:33).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zaza_jonathan",
@@ -5347,7 +5725,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "요나단의 아들(대상 2:33).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ishi_appaim",
@@ -5362,7 +5741,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "압바임의 아들(대상 2:31).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "sheshan_ishi",
@@ -5377,7 +5757,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "이시의 아들(대상 2:31). 아들이 없고 딸들만 둠.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jarha_egyptian",
@@ -5394,7 +5775,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "세산의 딸(대상 2:34).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ahlai_sheshan",
@@ -5409,7 +5791,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "세산의 애굽 종(대상 2:34). 주인의 딸 야르하와 결혼함.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "attai_jarha",
@@ -5425,7 +5808,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "야르하와 알래의 아들(대상 2:35).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "nathan_attai",
@@ -5440,7 +5824,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "앗대의 아들(대상 2:36).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zabad_nathan",
@@ -5455,7 +5840,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "나단의 아들(대상 2:37).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ephlal_zabad",
@@ -5470,7 +5856,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "사밧의 아들(대상 2:37).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "obed_ephlal",
@@ -5485,7 +5872,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "에블랄의 아들(대상 2:38).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jehu_obed",
@@ -5500,7 +5888,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "오벳의 아들(대상 2:38). 북이스라엘 왕 예후와 동명이인.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "azariah_jehu",
@@ -5515,7 +5904,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "예후의 아들(대상 2:38).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "helez_azariah",
@@ -5530,7 +5920,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아사랴의 아들(대상 2:39).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "eleasah_helez",
@@ -5545,7 +5936,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "헬레스의 아들(대상 2:39).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "sisamai_eleasah",
@@ -5560,7 +5952,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "엘르아사의 아들(대상 2:40).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shallum_sisamai",
@@ -5575,7 +5968,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "시스매의 아들(대상 2:40). 북이스라엘 왕 살룸과 동명이인.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jekamiah_shallum",
@@ -5590,7 +5984,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "살룸의 아들(대상 2:41).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "elishama_jekamiah",
@@ -5605,7 +6000,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "여가먀의 아들(대상 2:41). 다윗의 아들 엘리사마와 동명이인.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "helah_ashhur",
@@ -5620,7 +6016,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "드고아의 아버지 아스훌의 아내(대상 4:5).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "naarah_ashhur",
@@ -5635,7 +6032,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "드고아의 아버지 아스훌의 아내(대상 4:5).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zereth_ashhur",
@@ -5651,7 +6049,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아스훌과 헬라의 아들(대상 4:7).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "izohar_ashhur",
@@ -5667,7 +6066,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아스훌과 헬라의 아들(대상 4:7).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ethnan_ashhur",
@@ -5683,7 +6083,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아스훌과 헬라의 아들(대상 4:7).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "tekoa_ashhur",
@@ -5698,7 +6099,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "헤스론과 아비야의 아들 아스훌의 아들. 드고아의 조상(대상 2:24).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ahuzzam_ashhur",
@@ -5714,7 +6116,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아스훌과 나아라의 아들(대상 4:6).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "hepher_ashhur",
@@ -5730,7 +6133,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아스훌과 나아라의 아들(대상 4:6). 헤벨 종족의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "temeni_ashhur",
@@ -5746,7 +6150,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아스훌과 나아라의 아들(대상 4:6).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "haahashtari_ashhur",
@@ -5762,7 +6167,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아스훌과 나아라의 아들(대상 4:6).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "chelubai",
@@ -5784,7 +6190,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "헤스론의 아들. 갈렙이라고도 불림.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "azubah_caleb",
@@ -5799,7 +6206,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "갈렙의 아내.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jerioth",
@@ -5814,7 +6222,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "갈렙의 아내.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ephrath",
@@ -5829,7 +6238,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "갈렙의 아내. 아수바 사망 후 결혼.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ephah_concubine",
@@ -5844,7 +6254,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "갈렙의 첩.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "maachah_concubine",
@@ -5859,7 +6270,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "갈렙의 첩.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "unknown_wife_caleb",
@@ -5874,7 +6286,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "갈렙의 아내 (악사의 어머니).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jesher_caleb",
@@ -5890,7 +6303,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "갈렙과 아수바의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shobab_caleb",
@@ -5906,7 +6320,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "갈렙과 아수바의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ardon_caleb",
@@ -5922,7 +6337,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "갈렙과 아수바의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "hur_caleb",
@@ -5938,7 +6354,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "갈렙과 에브라다의 맏아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "uri_caleb",
@@ -5953,7 +6370,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "훌의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "bezalel_uri",
@@ -5968,7 +6386,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "성막을 제작한 정교한 장인.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shobal_caleb",
@@ -5983,7 +6402,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "기럇여아림의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "reaiah_shobal",
@@ -5998,7 +6418,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "소발의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jahath_reaiah",
@@ -6013,7 +6434,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "르아야의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ahumai_jahath",
@@ -6028,7 +6450,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "야하트의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "lahad_jahath",
@@ -6043,7 +6466,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "야하트의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zorathites",
@@ -6059,7 +6483,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "소라 땅에 정착한 자손들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "kirjath_jearim_shobal",
@@ -6074,7 +6499,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "기럇여아림의 주민들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ithrites",
@@ -6089,7 +6515,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "기럇여아림의 한 가문.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "puthites",
@@ -6104,7 +6531,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "기럇여아림의 한 가문.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shumathites",
@@ -6119,7 +6547,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "기럇여아림의 한 가문.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "mishraites",
@@ -6134,7 +6563,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "기럇여아림의 한 가문.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "haroeh_shobal",
@@ -6149,7 +6579,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "소발의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "manaheth_shobal",
@@ -6164,7 +6595,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "소발의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "salma_caleb",
@@ -6177,9 +6609,11 @@ const BIBLE_CHARACTERS = [
       "hur_caleb"
     ],
     "spouses": [],
-    "desc": "베들레헴의 조상. 역대상 2:51, 역대상 2:54\n'아버지(Father)'의 뜻: 고대 히브리 족보에서 특정 지명의 '아버지'라고 표현하는 것은 그 사람이 그 성읍(도시)을 건설했거나, 그 지역을 개척하여 다스린 우두머리(조상)라는 뜻입니다. 현대인의 성경이나 공동번역 등의 번역본에서는 이해를 돕기 위해 \"베들레헴의 창설자인 살마\"로 번역하고 있습니다.",
+    "desc": "베들레헴의 조상. 역대상 2:51, 역대상 2:54
+'아버지(Father)'의 뜻: 고대 히브리 족보에서 특정 지명의 '아버지'라고 표현하는 것은 그 사람이 그 성읍(도시)을 건설했거나, 그 지역을 개척하여 다스린 우두머리(조상)라는 뜻입니다. 현대인의 성경이나 공동번역 등의 번역본에서는 이해를 돕기 위해 \"베들레헴의 창설자인 살마\"로 번역하고 있습니다.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "bethlehem_salma",
@@ -6194,7 +6628,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "베들레헴 가문.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "netophathites_salma",
@@ -6209,7 +6644,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "느도바 사람들의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ataroth_salma",
@@ -6224,7 +6660,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "요압 가문과 관련된 성읍.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "manahethites_salma",
@@ -6239,7 +6676,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "마하낫 가문.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "hareph_caleb",
@@ -6254,7 +6692,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "벳가델의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "bethgader_hareph",
@@ -6269,7 +6708,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "벳가델 가문.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "haran_ephah",
@@ -6285,7 +6725,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "갈렙과 에바의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "moza_ephah",
@@ -6301,7 +6742,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "갈렙과 에바의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "gazez_ephah",
@@ -6317,7 +6759,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "갈렙과 에바의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "gazez_haran",
@@ -6332,7 +6775,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "하란의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "sheber_maachah",
@@ -6348,7 +6792,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "갈렙과 마아가의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "tirhanah_maachah",
@@ -6364,7 +6809,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "갈렙과 마아가의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shaaph_maachah",
@@ -6380,7 +6826,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "갈렙과 마아가의 아들 (맛만나 조상).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "sheva_maachah",
@@ -6396,7 +6843,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "갈렙과 마아가의 아들 (막베나/기브아 조상).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "madmannah_shaaph",
@@ -6411,7 +6859,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "사압의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "machbenah_sheva",
@@ -6426,7 +6875,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "스와의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "gibea_sheva",
@@ -6441,7 +6891,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "스와의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "achsah_daughter",
@@ -6457,7 +6908,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "갈렙의 딸. 온니엘과 결혼함.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "aaron",
@@ -6475,7 +6927,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "이스라엘 초대 대제사장. 모세의 대언자요 형.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "elisheba",
@@ -6490,7 +6943,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "아론의 아내. 아민아답의 딸.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "moses",
@@ -6508,7 +6962,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "출애굽의 영도자요 율법 수여자. 시내산 언약의 중보자.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zipporah",
@@ -6523,7 +6978,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "미디안 제사장 이드로의 딸이자 모세의 아내.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "miriam",
@@ -6539,7 +6995,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "여선지자. 모세와 아론의 누이.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shelomith_izhar",
@@ -6554,7 +7011,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "이스할의 첫째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "korah",
@@ -6569,7 +7027,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "모세와 아론에게 반역하다 땅이 갈라져 삼킴을 당함.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "nepheg_izhar",
@@ -6584,7 +7043,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "이스할의 셋째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zichri_izhar",
@@ -6599,7 +7059,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "이스할의 넷째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jeriah_hebron",
@@ -6614,7 +7075,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "헤브론의 첫째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "amariah_hebron",
@@ -6629,7 +7091,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "헤브론의 둘째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jahaziel_hebron",
@@ -6644,7 +7107,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "헤브론의 셋째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jekameam_hebron",
@@ -6659,7 +7123,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "헤브론의 넷째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "micah_uzziel",
@@ -6674,7 +7139,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "웃시엘의 첫째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "isshiah_uzziel",
@@ -6689,7 +7155,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "웃시엘의 둘째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "mishael_uzziel",
@@ -6704,7 +7171,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "웃시엘의 셋째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "elzaphan_uzziel",
@@ -6719,7 +7187,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "웃시엘의 넷째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "sithri_uzziel",
@@ -6734,7 +7203,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "웃시엘의 다섯째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "assir_korah",
@@ -6749,7 +7219,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "고라의 첫째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "elkanah_korah",
@@ -6764,7 +7235,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "고라의 둘째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "abiasaph_korah",
@@ -6779,7 +7251,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "고라의 셋째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ram",
@@ -6794,7 +7267,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "헤스론의 아들.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "nadab",
@@ -6810,7 +7284,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아론의 장남. 여호와께서 명하지 않은 다른 불을 드리다 심판 받아 사망.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "abihu",
@@ -6826,7 +7301,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아론의 차남. 형 나답과 함께 다른 불을 드려 사망.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "eleazar_priest",
@@ -6842,7 +7318,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아론의 삼남. 아론 사후 2대 대제사장이 됨.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ithamar",
@@ -6858,7 +7335,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아론의 막내 아들. 성막 물품을 계수하고 관리함.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "gershom",
@@ -6874,7 +7352,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "모세의 첫째 아들. '내가 이방에서 객이 되었다'는 뜻.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "eliezer_moses",
@@ -6890,7 +7369,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "모세의 둘째 아들. '하나님이 나를 도우사 바로의 칼에서 구하셨다'는 뜻.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shebuel_gershom",
@@ -6905,7 +7385,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "게르솜의 아들. 성전 곳간을 맡은 자 (스므엘).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "rehabiah_shebuel",
@@ -6920,7 +7401,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "스바엘의 아들. 엘리에셀의 아들 르하뱌와 다른 인물.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jeshaiah_rehabiah",
@@ -6935,7 +7417,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "르하뱌의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "joram_jeshaiah",
@@ -6950,7 +7433,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "여샤야의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zichri_joram",
@@ -6965,7 +7449,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "요람의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shelomith_zichri",
@@ -6980,7 +7465,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "시그리의 아들. 다윗 왕 때 성물 곳간을 관장함.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "phinehas_priest",
@@ -6995,7 +7481,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "3대 대제사장. 여호와의 질투심으로 음행 사건을 심판하여 평화의 언약을 받음.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "abishua_priest",
@@ -7010,7 +7497,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "4대 대제사장.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "bukki_priest",
@@ -7025,7 +7513,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "5대 대제사장.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "uzzi_priest",
@@ -7040,7 +7529,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "6대 대제사장.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zerahiah_priest",
@@ -7055,7 +7545,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "7대 대제사장.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "meraioth_priest",
@@ -7070,7 +7561,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "8대 대제사장.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "amariah_priest1",
@@ -7085,7 +7577,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "9대 대제사장.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ahitub_priest1",
@@ -7100,7 +7593,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "10대 대제사장.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zadok_priest1",
@@ -7115,7 +7609,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "다윗 and 솔로몬 시대의 충성스러운 대제사장. 사독 계열의 시조.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ahimaaz_priest",
@@ -7130,7 +7625,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "사독의 아들. 다윗의 전령.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "azariah_priest1",
@@ -7145,7 +7641,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "솔로몬 성전의 대제사장.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "johanan_priest",
@@ -7160,7 +7657,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "대제사장.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "azariah_priest2",
@@ -7175,7 +7673,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "솔로몬 성전에서 제사장 직분을 행한 자.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "amariah_priest2",
@@ -7190,7 +7689,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "대제사장.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ahitub_priest2",
@@ -7205,7 +7705,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "대제사장.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zadok_priest2",
@@ -7220,7 +7721,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "대제사장.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shallum_priest",
@@ -7235,7 +7737,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "대제사장 (살룸/므슐람).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "hilkiah_priest",
@@ -7250,7 +7753,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "요시야 왕 시절 성전 정화 중 율법책을 발견한 대제사장.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "azariah_priest3",
@@ -7265,7 +7769,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "대제사장.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "seraiah_priest",
@@ -7280,7 +7785,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "예루살렘 함락 시 느부갓네살에 의해 죽임 당한 마지막 대제사장.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jehozadak_priest",
@@ -7295,7 +7801,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "바벨론 포로로 잡혀간 대제사장. 학개의 동역자 여호수아의 아버지.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "amminadab",
@@ -7310,7 +7817,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "광야 행진 시 유다 지파 지도자 아론의 장인.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "nahshon",
@@ -7325,7 +7833,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "유다 지파의 방백. 광야 여정에서 첫째로 헌물을 드림.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "salmon",
@@ -7342,7 +7851,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "가나안 정복의 지도자 중 하나. 여리고 기생 라합과 결혼함.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "rahab",
@@ -7357,7 +7867,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "여리고 기생. 이스라엘 정탐꾼을 숨겨주어 구원을 얻고 예수 조상이 됨.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "boaz",
@@ -7375,7 +7886,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "유력한 자. 이방 여인 룻의 기업 무를 자(Goel)가 됨.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ruth",
@@ -7391,7 +7903,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "모압 여인. 나오미를 따라 이스라엘로 와 다윗 왕의 증조모가 됨.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "obed",
@@ -7407,7 +7920,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "보아스와 룻의 아들. 다윗의 할아버지.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "kish",
@@ -7423,7 +7937,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "베냐민 사람 아비엘의 아들. 초대 왕 사울의 아버지.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jesse",
@@ -7438,7 +7953,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "베들레헴 주민. 다윗을 비롯한 여덟 아들의 아버지.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "saul",
@@ -7456,7 +7972,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "이스라엘의 초대 왕. 교만함으로 여호와께 버림받음.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "eliab_jesse",
@@ -7471,7 +7988,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "이새의 장남. 용모가 뛰어남.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "abinadab_jesse",
@@ -7486,7 +8004,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "이새의 차남.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shimea_jesse",
@@ -7501,7 +8020,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "이새의 셋째 아들 (삼마).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "nethaneel_jesse",
@@ -7516,7 +8036,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "이새의 넷째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "raddai_jesse",
@@ -7531,7 +8052,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "이새의 다섯째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ozem_jesse",
@@ -7546,7 +8068,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "이새의 여섯째 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "david",
@@ -7562,11 +8085,17 @@ const BIBLE_CHARACTERS = [
       "bathsheba",
       "michal",
       "abigail_david",
-      "maachah_david"
+      "maachah_david",
+      "ahinoam_david",
+      "haggith_david",
+      "abital_david",
+      "eglah_david",
+      "other_wives_david"
     ],
     "desc": "이스라엘 제2대 성왕. 하나님 마음에 합한 자. 메시아 언약 수여자.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zeruiah",
@@ -7581,7 +8110,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "다윗의 누이. 요압, 아비새, 아사헬 삼형제의 어머니.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "abigail_jesse",
@@ -7596,7 +8126,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "다윗의 누이.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "abihail_eliab",
@@ -7611,7 +8142,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "엘리압의 딸. 르호보암 왕의 아내가 됨.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "bathsheba",
@@ -7626,7 +8158,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "우리야의 아내였으나 다윗과의 비극 후 솔로몬을 낳아 왕위를 계승시킴.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "michal",
@@ -7641,7 +8174,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "다윗 왕의 아내. 사울 왕의 딸.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ahinoam_david",
@@ -7656,7 +8190,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "이스르엘 여인. 다윗의 아내.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "abigail_david",
@@ -7671,7 +8206,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "갈멜 여인. 나발의 아내였으나 다윗의 아내가 됨.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "maachah_david",
@@ -7686,7 +8222,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "그술 왕 달매의 딸. 다윗의 아내.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "haggith_david",
@@ -7701,7 +8238,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "다윗의 아내. 아도니야의 어머니.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "abital_david",
@@ -7716,7 +8254,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "다윗의 아내. 스바댜의 어머니.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "eglah_david",
@@ -7731,7 +8270,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "다윗의 아내. 이드르암의 어머니.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "other_wives_david",
@@ -7746,7 +8286,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "다윗의 다른 아내들과 첩들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jonathan",
@@ -7762,7 +8303,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "사울의 아들. 다윗의 가장 진실한 친구이자 조력자.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ishbosheth",
@@ -7778,7 +8320,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "사울 사후 마하나임에서 2년간 북이스라엘을 통치한 왕.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "michal_daughter",
@@ -7794,7 +8337,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "사울 왕의 딸. 다윗 왕의 첫 번째 아내가 됨.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shimea_bathsheba",
@@ -7811,7 +8355,8 @@ const BIBLE_CHARACTERS = [
     "desc": "다윗과 밧세바의 아들.",
     "isMain": false,
     "isManual": true,
-    "nudgeX": 0
+    "nudgeX": 0,
+    "teachers": []
   },
   {
     "id": "shobab_bathsheba",
@@ -7828,7 +8373,8 @@ const BIBLE_CHARACTERS = [
     "desc": "다윗과 밧세바의 아들.",
     "isMain": false,
     "isManual": true,
-    "nudgeX": 0
+    "nudgeX": 0,
+    "teachers": []
   },
   {
     "id": "amnon_david",
@@ -7845,7 +8391,8 @@ const BIBLE_CHARACTERS = [
     "desc": "다윗의 장남. 다말을 범한 후 압살롬에게 살해됨.",
     "isMain": false,
     "isManual": true,
-    "nudgeX": 0
+    "nudgeX": 0,
+    "teachers": []
   },
   {
     "id": "daniel_david",
@@ -7862,7 +8409,8 @@ const BIBLE_CHARACTERS = [
     "desc": "다윗의 차남 (길랍).",
     "isMain": false,
     "isManual": true,
-    "nudgeX": 0
+    "nudgeX": 0,
+    "teachers": []
   },
   {
     "id": "absalom_david",
@@ -7879,7 +8427,8 @@ const BIBLE_CHARACTERS = [
     "desc": "다윗의 삼남. 반역을 꾀했으나 요압에게 죽임 당함.",
     "isMain": false,
     "isManual": true,
-    "nudgeX": 0
+    "nudgeX": 0,
+    "teachers": []
   },
   {
     "id": "tamar_david",
@@ -7896,7 +8445,8 @@ const BIBLE_CHARACTERS = [
     "desc": "압살롬의 누이. 암논에게 욕을 당함.",
     "isMain": false,
     "isManual": true,
-    "nudgeX": 0
+    "nudgeX": 0,
+    "teachers": []
   },
   {
     "id": "maachah_absalom",
@@ -7911,7 +8461,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "압살롬의 딸. 르호보암의 아내이자 아비야의 어머니.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "adonijah_david",
@@ -7928,7 +8479,8 @@ const BIBLE_CHARACTERS = [
     "desc": "다윗의 넷째 아들. 왕위를 스스로 노렸으나 솔로몬에게 처형당함.",
     "isMain": false,
     "isManual": true,
-    "nudgeX": 0
+    "nudgeX": 0,
+    "teachers": []
   },
   {
     "id": "shephatiah_david",
@@ -7945,7 +8497,8 @@ const BIBLE_CHARACTERS = [
     "desc": "다윗의 다섯째 아들.",
     "isMain": false,
     "isManual": true,
-    "nudgeX": 0
+    "nudgeX": 0,
+    "teachers": []
   },
   {
     "id": "ithream_david",
@@ -7962,7 +8515,8 @@ const BIBLE_CHARACTERS = [
     "desc": "다윗의 여섯째 아들.",
     "isMain": false,
     "isManual": true,
-    "nudgeX": 0
+    "nudgeX": 0,
+    "teachers": []
   },
   {
     "id": "ibhar_david",
@@ -7979,7 +8533,8 @@ const BIBLE_CHARACTERS = [
     "desc": "다윗의 아들.",
     "isMain": false,
     "isManual": true,
-    "nudgeX": 0
+    "nudgeX": 0,
+    "teachers": []
   },
   {
     "id": "elishua_david",
@@ -7996,7 +8551,8 @@ const BIBLE_CHARACTERS = [
     "desc": "다윗의 아들.",
     "isMain": false,
     "isManual": true,
-    "nudgeX": 0
+    "nudgeX": 0,
+    "teachers": []
   },
   {
     "id": "eliphelet_david1",
@@ -8013,7 +8569,8 @@ const BIBLE_CHARACTERS = [
     "desc": "다윗의 아들.",
     "isMain": false,
     "isManual": true,
-    "nudgeX": 0
+    "nudgeX": 0,
+    "teachers": []
   },
   {
     "id": "nogah_david",
@@ -8030,7 +8587,8 @@ const BIBLE_CHARACTERS = [
     "desc": "다윗의 아들.",
     "isMain": false,
     "isManual": true,
-    "nudgeX": 0
+    "nudgeX": 0,
+    "teachers": []
   },
   {
     "id": "nepheg_david",
@@ -8047,7 +8605,8 @@ const BIBLE_CHARACTERS = [
     "desc": "다윗의 아들.",
     "isMain": false,
     "isManual": true,
-    "nudgeX": 0
+    "nudgeX": 0,
+    "teachers": []
   },
   {
     "id": "japhia_david",
@@ -8064,7 +8623,8 @@ const BIBLE_CHARACTERS = [
     "desc": "다윗의 아들.",
     "isMain": false,
     "isManual": true,
-    "nudgeX": 0
+    "nudgeX": 0,
+    "teachers": []
   },
   {
     "id": "elishama_david",
@@ -8081,7 +8641,8 @@ const BIBLE_CHARACTERS = [
     "desc": "다윗의 아들.",
     "isMain": false,
     "isManual": true,
-    "nudgeX": 0
+    "nudgeX": 0,
+    "teachers": []
   },
   {
     "id": "eliada_david",
@@ -8098,7 +8659,8 @@ const BIBLE_CHARACTERS = [
     "desc": "다윗의 아들.",
     "isMain": false,
     "isManual": true,
-    "nudgeX": 0
+    "nudgeX": 0,
+    "teachers": []
   },
   {
     "id": "eliphelet_david2",
@@ -8115,7 +8677,8 @@ const BIBLE_CHARACTERS = [
     "desc": "다윗의 아들.",
     "isMain": false,
     "isManual": true,
-    "nudgeX": 0
+    "nudgeX": 0,
+    "teachers": []
   },
   {
     "id": "solomon",
@@ -8134,7 +8697,8 @@ const BIBLE_CHARACTERS = [
     "desc": "지혜의 왕. 예루살렘 성전을 건축함. 말년에 우상 숭배의 죄를 범함.",
     "isMain": true,
     "isManual": true,
-    "nudgeX": 0
+    "nudgeX": 0,
+    "teachers": []
   },
   {
     "id": "naamah_ammon",
@@ -8149,7 +8713,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "암몬 여인. 르호보암 왕의 어머니.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "nathan",
@@ -8166,7 +8731,8 @@ const BIBLE_CHARACTERS = [
     "desc": "다윗과 밧세바의 아들. 누가복음 3장에 수록된 예수의 모계 조상.",
     "isMain": false,
     "isManual": true,
-    "nudgeX": 0
+    "nudgeX": 0,
+    "teachers": []
   },
   {
     "id": "mephibosheth",
@@ -8181,7 +8747,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "요나단의 아들. 두 발을 다 절며 다윗 왕의 상에서 먹음.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "rehoboam",
@@ -8195,11 +8762,13 @@ const BIBLE_CHARACTERS = [
       "naamah_ammon"
     ],
     "spouses": [
-      "maacah"
+      "maacah",
+      "mahalath_rehoboam"
     ],
     "desc": "솔로몬의 아들. 어리석은 통치로 나라가 이스라엘과 유다로 분열됨.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "maacah",
@@ -8214,7 +8783,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "압살롬의 손녀이자 르호보암의 아내. 아비야의 어머니.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "mahalath_rehoboam",
@@ -8228,7 +8798,8 @@ const BIBLE_CHARACTERS = [
       "rehoboam"
     ],
     "desc": "여리못과 아비하일의 딸(대하 11:18). 르호보암 왕의 아내.",
-    "isMain": false
+    "isMain": false,
+    "teachers": []
   },
   {
     "id": "taphath",
@@ -8243,7 +8814,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "솔로몬 왕의 딸. 아비나답의 아들(벤아비나답)의 아내가 됨(왕상 4:11).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "basemath",
@@ -8258,7 +8830,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "솔로몬 왕의 딸. 아히마아스의 아내가 됨(왕상 4:15).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "abijah",
@@ -8274,7 +8847,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "르호보암의 아들. 북이스라엘 여로보암과의 전쟁에서 여호와를 의지해 승리함.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jeush_rehoboam",
@@ -8290,7 +8864,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "르호보암과 마할랏의 아들(대하 11:19).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shemariah_rehoboam",
@@ -8306,7 +8881,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "르호보암과 마할랏의 아들(대하 11:19).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zaham_rehoboam",
@@ -8322,7 +8898,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "르호보암과 마할랏의 아들(대하 11:19).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "attai_rehoboam",
@@ -8338,7 +8915,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "르호보암과 마아가의 아들(대하 11:20).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ziza_rehoboam",
@@ -8354,7 +8932,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "르호보암과 마아가의 아들(대하 11:20).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shelomith_rehoboam",
@@ -8370,7 +8949,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "르호보암과 마아가의 아들(대하 11:20).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "asa",
@@ -8387,7 +8967,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "유다의 선한 왕. 종교 개혁을 단행하고 태후 마아가의 위를 폐함.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "azubah_asa",
@@ -8402,7 +8983,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "아사 왕의 아내. 여호사밧 왕의 어머니.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jehoshaphat",
@@ -8418,7 +9000,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "종교 및 사법 개혁을 단행한 경건한 왕. 북이스라엘 아합 가문과 사돈을 맺음.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jehoram",
@@ -8435,7 +9018,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "여호사밧의 아들. 아합의 딸 아달랴와 결혼해 유다에 우상 숭배를 들여옴.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "athaliah",
@@ -8450,7 +9034,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "아합 and 이세벨의 딸. 남편 사후 왕실 씨를 말리고 왕위를 찬탈했던 여인.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "azariah1_jehoshaphat",
@@ -8465,7 +9050,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "여호사밧 왕의 아들(대하 21:2).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jehiel_jehoshaphat",
@@ -8480,7 +9066,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "여호사밧 왕의 아들(대하 21:2).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zechariah_jehoshaphat",
@@ -8495,7 +9082,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "여호사밧 왕의 아들(대하 21:2).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "azariah2_jehoshaphat",
@@ -8510,7 +9098,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "여호사밧 왕의 아들(대하 21:2). 아사랴의 동명이인 형제.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "michael_jehoshaphat",
@@ -8525,7 +9114,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "여호사밧 왕의 아들(대하 21:2).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shephatiah_jehoshaphat",
@@ -8540,7 +9130,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "여호사밧 왕의 아들(대하 21:2). 성경에는 스바댜로 기록됨.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ahaziah",
@@ -8558,7 +9149,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "북이스라엘 예후의 혁명 때 예후에게 살해당한 유다 왕.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zibiah",
@@ -8573,7 +9165,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "브엘세바 출신. 요아스 왕의 어머니.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jehosheba",
@@ -8588,7 +9181,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "여호람 왕의 딸이자 아하시야의 누이. 제사장 여호야다의 아내. 요아스를 숨겨 키움(왕하 11:2).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jehoiada",
@@ -8606,7 +9200,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "남유다의 대제사장. 여호세바의 남편. 아달랴를 축출하고 요아스를 왕위로 옹립함.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "joash",
@@ -8624,7 +9219,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "고모 여호세바가 아달랴의 살육에서 성전에 숨겨 키운 유일한 왕손.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jehoaddan",
@@ -8639,7 +9235,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "예루살렘 출신 요아스의 아내. 아마샤의 어머니.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "amaziah",
@@ -8657,7 +9254,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "에돔 전쟁에서 승리했으나 에돔 우상을 가져와 음란히 섬김.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jecholiah",
@@ -8672,7 +9270,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "아마샤 왕의 아내. 웃시야 왕의 어머니.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "uzziah",
@@ -8690,7 +9289,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "아사랴라고도 함. 나라를 부강케 했으나 교만하여 제사하려다 문둥병에 걸림.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jerusha",
@@ -8705,7 +9305,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "사독의 딸이자 웃시야 왕의 아내.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jotham",
@@ -8721,7 +9322,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "웃시야의 아들. 성전 윗문을 건축하고 정직히 행함.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ahaz",
@@ -8738,7 +9340,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "유다 최악의 우상 숭배 왕. 아들을 불 가운데로 지나가게 함.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "abijah_queen",
@@ -8753,7 +9356,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "스가랴의 딸. 히스기야 왕의 어머니.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "hezekiah",
@@ -8771,7 +9375,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "위대한 신앙 개혁가. 앗수르 군대 18만 5천을 물리치고 수명 15년 연장 응답 받음.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "hephzibah",
@@ -8786,7 +9391,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "히스기야 왕의 아내. 므낫세 왕의 어머니.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "manasseh_king",
@@ -8804,7 +9410,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "유다 중 가장 오래 통치(55년)했으나 가증한 우상을 섬겨 멸망을 자초함. 훗날 포로 중 회개함.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "meshullemeth",
@@ -8819,7 +9426,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "하루스의 딸. 아몬 왕의 어머니.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "amon",
@@ -8837,7 +9445,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "므낫세의 아들. 아비의 행위를 본받아 악을 행하다 부하들에게 시해당함.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jedidah",
@@ -8852,7 +9461,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "아다야의 딸. 요시야 왕의 어머니.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "josiah",
@@ -8871,7 +9481,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "유다의 마지막 등불. 성전 수리 중 율법책을 발견하여 신앙 개혁을 단행함.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "hamutal",
@@ -8886,7 +9497,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "요시야의 아내. 여호아하스와 시드기야의 어머니.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zebidah",
@@ -8901,7 +9513,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "요시야의 아내. 여호야김의 어머니.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jehoahaz",
@@ -8917,7 +9530,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "요시야의 아들. 3달간 통치 후 이집트로 끌려가 사망.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jehoiakim",
@@ -8935,7 +9549,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "본명은 엘리아김. 바벨론의 침공으로 쇠사슬에 묶여 끌려감.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "nehushta",
@@ -8950,7 +9565,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "여호야김의 아내. 여고냐(여호야긴)의 어머니.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zedekiah",
@@ -8966,7 +9582,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "유다 마지막 왕. 바벨론 군대에 두 눈이 뽑힌 채 포로로 잡혀감.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jeconiah",
@@ -8982,7 +9599,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "바벨론에 끌려가 감옥에서 37년 후 석방되어 왕의 대접을 받음. 포로기 계승자.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shealtiel",
@@ -8997,7 +9615,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "여고냐의 아들. 포로 생활 중 메시아 계보 계승.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zerubbabel",
@@ -9012,7 +9631,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "바벨론 포로에서 귀환한 총독. 예루살렘 제2성전을 재건함.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "abiud",
@@ -9027,7 +9647,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "스룹바벨의 아들.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "eliakim",
@@ -9042,7 +9663,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아비훗의 아들.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "azor",
@@ -9057,7 +9679,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "엘리아김의 아들.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zadok_gen56",
@@ -9072,7 +9695,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아소르의 아들.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "achim",
@@ -9087,7 +9711,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "사독의 아들.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "eliud",
@@ -9102,7 +9727,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아킴의 아들.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "eleazar",
@@ -9117,7 +9743,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "엘리웃의 아들.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "matthan",
@@ -9132,11 +9759,12 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "요셉의 할아버지. 야곱의 아들.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jacob_joseph",
-    "name": "야겁",
+    "name": "야곱",
     "engName": "Jacob",
     "gender": "M",
     "generation": 60.81,
@@ -9147,7 +9775,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "맛단의 아들. 마리아의 남편 요셉의 아버지.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "heli",
@@ -9162,7 +9791,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "마리아의 친아버지. 누가복음 예수 족보의 마지막 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "joseph_mary",
@@ -9179,7 +9809,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "목수. 마리아의 남편이자 예수님의 법적 아버지.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "mary",
@@ -9196,7 +9827,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "동정녀 성령으로 예수를 잉태하여 순종함으로 하나님의 뜻을 이룬 복된 여인.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jesus",
@@ -9212,7 +9844,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "구주, 그리스도, 살아계신 하나님의 아들. 율법의 마침이자 성경의 주인공.",
     "isMain": true,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "mattatha",
@@ -9227,7 +9860,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "나단의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "menna",
@@ -9242,7 +9876,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "누가복음 3장에 기록된 예수의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "melea",
@@ -9257,7 +9892,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "누가복음 3장에 기록된 예수의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "eliakim_luke",
@@ -9272,7 +9908,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "누가복음 3장에 기록된 예수의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jonam",
@@ -9287,7 +9924,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "누가복음 3장에 기록된 예수의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "joseph_luke1",
@@ -9302,7 +9940,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "누가복음 3장에 기록된 예수의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "judah_luke1",
@@ -9317,7 +9956,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "누가복음 3장에 기록된 예수의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "simeon_luke",
@@ -9332,7 +9972,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "누가복음 3장에 기록된 예수의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "levi_luke1",
@@ -9347,7 +9988,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "누가복음 3장에 기록된 예수의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "matthat_luke1",
@@ -9362,7 +10004,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "누가복음 3장에 기록된 예수의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jorim",
@@ -9377,7 +10020,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "누가복음 3장에 기록된 예수의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "eliezer_luke",
@@ -9392,7 +10036,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "누가복음 3장에 기록된 예수의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "joshua_luke",
@@ -9407,7 +10052,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "누가복음 3장에 기록된 예수의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "er_luke",
@@ -9422,7 +10068,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "누가복음 3장에 기록된 예수의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "elmadam",
@@ -9437,7 +10084,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "누가복음 3장에 기록된 예수의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "cosam",
@@ -9452,7 +10100,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "누가복음 3장에 기록된 예수의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "addi",
@@ -9467,7 +10116,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "누가복음 3장에 기록된 예수의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "melchi_luke1",
@@ -9482,7 +10132,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "누가복음 3장에 기록된 예수의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "neri",
@@ -9497,7 +10148,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "스알디엘의 눅 계열 친부.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shealtiel_luke",
@@ -9512,7 +10164,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "네리의 아들. 스룹바벨의 아버지 (눅 계열).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zerubbabel_luke",
@@ -9527,7 +10180,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "스알디엘의 아들 (눅 계열).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "rhesa",
@@ -9542,7 +10196,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "스룹바벨의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "joanan",
@@ -9557,7 +10212,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "누가복음 3장에 기록된 예수의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "joda",
@@ -9572,7 +10228,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "누가복음 3장에 기록된 예수의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "josech",
@@ -9587,7 +10244,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "누가복음 3장에 기록된 예수의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "semein",
@@ -9602,7 +10260,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "누가복음 3장에 기록된 예수의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "mattathias_luke1",
@@ -9617,7 +10276,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "누가복음 3장에 기록된 예수의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "maath",
@@ -9632,7 +10292,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "누가복음 3장에 기록된 예수의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "naggai",
@@ -9647,7 +10308,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "누가복음 3장에 기록된 예수의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "esli",
@@ -9662,7 +10324,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "누가복음 3장에 기록된 예수의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "nahum",
@@ -9677,7 +10340,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "누가복음 3장에 기록된 예수의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "amos",
@@ -9692,7 +10356,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "누가복음 3장에 기록된 예수의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "mattathias_luke2",
@@ -9707,7 +10372,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "누가복음 3장에 기록된 예수의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "joseph_luke2",
@@ -9722,7 +10388,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "누가복음 3장에 기록된 예수의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jannai",
@@ -9737,7 +10404,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "누가복음 3장에 기록된 예수의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "melchi_luke2",
@@ -9752,7 +10420,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "누가복음 3장에 기록된 예수의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "levi_luke2",
@@ -9767,7 +10436,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "누가복음 3장에 기록된 예수의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "matthat_luke2",
@@ -9782,7 +10452,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "헬리의 아버지. 누가복음 3장에 기록된 예수의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shuthelah_eph",
@@ -9797,7 +10468,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "에브라임의 첫째 아들. 에브라임의 주요 가계.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ezer_eph",
@@ -9812,7 +10484,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "에브라임의 아들. 가드 원주민에게 가축을 빼앗으려다 죽임을 당함.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "elead_eph",
@@ -9827,7 +10500,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "에브라임의 아들. 가드 원주민에게 가축을 빼앗으려다 죽임을 당함.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "beriah_eph",
@@ -9842,7 +10516,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "에브라임의 아들. 그의 집안이 재앙(악)에 빠졌을 때 낳았다는 뜻.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "sheerah_eph",
@@ -9857,7 +10532,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "에브라임의 딸. 우, 아래 벧호론과 우센세에라를 건설함.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "bered_eph",
@@ -9872,7 +10548,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "수델라의 아들. 에브라임의 직계 후손.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "rephah_eph",
@@ -9887,7 +10564,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "브라아의 아들. 여호수아의 직계 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "resheph_eph",
@@ -9902,7 +10580,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "브라아의 아들. 여호수아의 직계 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "tahath1_eph",
@@ -9917,7 +10596,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "베렛의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "telah_eph",
@@ -9932,7 +10612,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "레셉의 아들. 여호수아의 직계 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "deborah_eph",
@@ -9945,7 +10626,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "4대 사사. 여선지자. 에브라임 산지 라맛과 벧엘 사이 거주하며 40년간 다스림.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "eleadah_eph",
@@ -9960,7 +10642,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "다핫의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "tahan_eph",
@@ -9975,7 +10658,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "델라의 아들. 여호수아의 직계 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "tahath2_eph",
@@ -9990,7 +10674,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "엘르아다의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ladan_eph",
@@ -10005,7 +10690,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "다한의 아들. 여호수아의 조부의 조부.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "abdon_eph",
@@ -10018,7 +10704,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "11대 사사. 에브라임 산지 비라돈 출신. 8년간 다스림.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zabad_eph",
@@ -10033,7 +10720,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "다핫의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ammihud_eph",
@@ -10048,7 +10736,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "라단의 아들. 여호수아의 증조부.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shuthelah2_eph",
@@ -10063,7 +10752,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "사밧의 아들. 수델라 가계의 완성.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "elishama_eph",
@@ -10078,7 +10768,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "암미훗의 아들. 에브라임 지파의 우두머리이자 여호수아의 조부.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "nun_eph",
@@ -10093,7 +10784,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "엘리사마의 아들. 에브라임 지파 지휘관이자 여호수아의 친부.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "joshua_eph",
@@ -10108,7 +10800,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "눈의 아들(본명 호세아). 모세의 수계자이자 가나안 정복전쟁을 이끈 위대한 지도자.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "man_wife",
@@ -10123,7 +10816,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "므낫세의 아내.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "man_concubine",
@@ -10138,7 +10832,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "므낫세의 아람 첩.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "asriel_man",
@@ -10154,7 +10849,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "므낫세와 그의 아내의 아들. 아스리엘 종족의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zelophehad1_man",
@@ -10170,7 +10866,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "므낫세의 둘째 아들. 딸들만 낳음(대상 7:15).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "machir_man",
@@ -10188,7 +10885,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "므낫세와 아람 첩의 아들. 길르앗의 아버지.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "maacah_man",
@@ -10203,7 +10901,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "마길의 아내.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "gilead_man",
@@ -10222,7 +10921,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "마길과 마아가의 아들. 길르앗 종족의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "gilead_conc",
@@ -10237,7 +10937,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "길르앗의 첩(기생).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "gilead_wife",
@@ -10252,7 +10953,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "길르앗의 아내.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "hammoleketh_man",
@@ -10268,7 +10970,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "마길의 딸. 길르앗의 누이. '여왕'이라는 뜻.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "peresh_man",
@@ -10284,7 +10987,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "마길과 마아가의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "sheresh_man",
@@ -10300,7 +11004,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "마길과 마아가의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jephthah_man",
@@ -10316,7 +11021,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "8대 사사. 길르앗의 아들. 큰 용사였으나 기생의 몸에서 태어나 쫓겨났다가 사사가 됨.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "iezer_man",
@@ -10331,7 +11037,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "길르앗의 아들. 아비에셀 종족의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "helek_man",
@@ -10346,7 +11053,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "길르앗의 아들. 헬렉 종족의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "asriel2_man",
@@ -10361,7 +11069,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "길르앗의 아들. 아스리엘 종족의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shechem_man",
@@ -10376,7 +11085,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "길르앗의 아들. 세겜 종족의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shemida_man",
@@ -10391,7 +11101,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "길르앗의 아들. 스미다 종족의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "hepher_man",
@@ -10406,7 +11117,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "길르앗의 아들. 헤벨 종족의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ishhod_man",
@@ -10421,7 +11133,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "함몰레겟의 아들. '영광의 사람'이라는 뜻.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "joash_man",
@@ -10436,7 +11149,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "함몰레겟의 아들. 아비에셀 사람 요아스. 기드온의 아버지.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "mahlah_man",
@@ -10451,7 +11165,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "함몰레겟의 딸.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ulam_man",
@@ -10466,7 +11181,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "세레스의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "rakem_man",
@@ -10481,7 +11197,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "세레스의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jair_man",
@@ -10494,7 +11211,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "길르앗 사람 야일. 22년간 이스라엘을 다스린 사사.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ahian_man",
@@ -10509,7 +11227,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "스미다의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shechem2_man",
@@ -10524,7 +11243,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "스미다의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "likhi_man",
@@ -10539,7 +11259,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "스미다의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "aniam_man",
@@ -10554,7 +11275,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "스미다의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zelophehad2_man",
@@ -10569,7 +11291,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "헤벨의 아들. 아들이 없이 딸들만 낳고 광야에서 죽음.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "gideon_man",
@@ -10587,7 +11310,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "5대 사사(여룹바알). 미디안과의 전쟁을 승리로 이끈 위대한 사사.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "gideon_conc",
@@ -10602,7 +11326,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "기드온의 세겜 첩.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "bedan_man",
@@ -10617,7 +11342,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "울람의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "mahlah_d",
@@ -10632,7 +11358,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "슬로브핫의 첫째 딸. 여성의 상속권을 요구하여 하나님의 규례를 세움.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "noah_d",
@@ -10647,7 +11374,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "슬로브핫의 둘째 딸.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "hoglah_d",
@@ -10662,7 +11390,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "슬로브핫의 셋째 딸.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "milcah_d",
@@ -10677,7 +11406,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "슬로브핫의 넷째 딸.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "tirzah_d",
@@ -10692,7 +11422,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "슬로브핫의 다섯째 딸.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jether_man",
@@ -10708,7 +11439,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "기드온의 장남. 어려서 적장을 죽이지 못하고 두려워함.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jotham_man",
@@ -10724,7 +11456,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "기드온의 막내 아들. 아비멜렉의 학살에서 유일하게 생존하여 그리심 산에서 요담의 우화를 선포함.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "abimelech_man",
@@ -10740,7 +11473,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "기드온의 첩의 아들. 형제 70명을 학살하고 스스로 왕이 된 자.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "nebat",
@@ -10755,7 +11489,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "여로보암 1세의 아버지.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zeruah_nebat",
@@ -10770,7 +11505,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "느밧의 아내. 과부.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jeroboam1",
@@ -10786,7 +11522,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "북이스라엘의 초대 왕. 금송아지 우상을 만듦.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "nadab_jeroboam",
@@ -10801,7 +11538,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "북이스라엘 2대 왕.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "abijah_jeroboam",
@@ -10816,7 +11554,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "여로보암의 아들. 병들어 사망.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "baasha",
@@ -10831,7 +11570,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "북이스라엘 3대 왕. 나답을 죽이고 왕이 됨.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "elah_baasha",
@@ -10846,7 +11586,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "북이스라엘 4대 왕. 시므리에게 피살됨.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zimri",
@@ -10861,7 +11602,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "북이스라엘 5대 왕. 7일간 통치 후 자결.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "omri",
@@ -10876,7 +11618,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "북이스라엘 6대 왕. 사마리아를 수도로 정함.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ahab",
@@ -10893,7 +11636,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "북이스라엘 7대 왕. 바알 우상 숭배의 극치를 달림.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jezebel",
@@ -10908,7 +11652,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "아합의 아내. 시돈 왕 엣바알의 딸. 바알 숭배자.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ahaziah_ahab",
@@ -10924,7 +11669,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "북이스라엘 8대 왕.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jehoram_ahab",
@@ -10940,7 +11686,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "북이스라엘 9대 왕. 예후에게 죽임 당함.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jehu",
@@ -10955,7 +11702,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "북이스라엘 10대 왕. 아합 가문을 심판함.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jehoahaz_jehu",
@@ -10970,7 +11718,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "북이스라엘 11대 왕.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jehoash_jehoahaz",
@@ -10985,7 +11734,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "북이스라엘 12대 왕.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jeroboam2",
@@ -11000,7 +11750,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "북이스라엘 13대 왕. 번영기를 이끔.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zechariah_jeroboam2",
@@ -11015,7 +11766,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "북이스라엘 14대 왕. 살룸에게 피살됨.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shallum",
@@ -11030,7 +11782,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "북이스라엘 15대 왕. 1개월간 통치.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "menahem",
@@ -11045,7 +11798,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "북이스라엘 16대 왕.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "pekahiah",
@@ -11060,7 +11814,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "북이스라엘 17대 왕.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "pekah",
@@ -11075,7 +11830,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "북이스라엘 18대 왕.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "hoshea",
@@ -11090,7 +11846,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "북이스라엘의 마지막 19대 왕.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "chelub_suhah",
@@ -11103,7 +11860,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "수하의 형. 대상 4:11.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "mehir_chelub",
@@ -11118,7 +11876,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "글룹의 아들. 에스돈의 아버지.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "eshton_mehir",
@@ -11133,7 +11892,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "므힐의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "dehinnah_eshton",
@@ -11148,7 +11908,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "에스돈의 아들. 레가 사람의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "bethrapha_dehinnah",
@@ -11163,7 +11924,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "디힌나의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "paseah_dehinnah",
@@ -11178,7 +11940,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "디힌나의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "irnahash_dehinnah",
@@ -11193,7 +11956,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "디힌나의 아들. 이르나하스 성읍의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jephunneh",
@@ -11206,7 +11970,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "갈렙과 그나스의 아버지.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "caleb_jephunneh",
@@ -11221,7 +11986,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "여분네의 아들. 가나안 정탐꾼. 글루배라하는 갈렙과 동명이인",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "kenaz_jephunneh",
@@ -11236,7 +12002,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "여분네의 아들. 옷니엘과 스라야의 아버지.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "iru_caleb",
@@ -11251,7 +12018,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "갈렙의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "elah_caleb",
@@ -11266,7 +12034,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "갈렙의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "naam_caleb",
@@ -11281,7 +12050,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "갈렙의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "achsah_caleb",
@@ -11296,7 +12066,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "갈렙의 딸.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "kenaz_elah",
@@ -11311,7 +12082,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "엘라의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "othniel_kenaz",
@@ -11326,7 +12098,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "이스라엘의 초대 사사. 그나스의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "seraiah_kenaz",
@@ -11341,7 +12114,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "그나스의 아들. 요압의 아버지.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "hathath_othniel",
@@ -11356,7 +12130,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "옷니엘의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "meonothai_othniel",
@@ -11371,7 +12146,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "옷니엘의 아들. 오브라의 아버지.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ophrah_meonothai",
@@ -11386,7 +12162,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "므오노대의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "joab_seraiah",
@@ -11401,7 +12178,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "스라야의 아들. 게하라심(장인들 골짜기)의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jehalelyel",
@@ -11414,7 +12192,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "유다 지손. 대상 4:16.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ziph_jehalelyel",
@@ -11429,7 +12208,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "여할렐렐의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ziphah_jehalelyel",
@@ -11444,7 +12224,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "여할렐렐의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "tiria_jehalelyel",
@@ -11459,7 +12240,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "여할렐렐의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "asarel_jehalelyel",
@@ -11474,7 +12256,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "여할렐렐의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ezrah_juda",
@@ -11487,7 +12270,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "유다 자손. 대상 4:17.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jether_ezrah",
@@ -11502,50 +12286,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "에스라의 아들.",
     "isMain": false,
-    "isManual": true
-  },
-  {
-    "id": "zibeon_chief",
-    "name": "시브온",
-    "engName": "Zibeon",
-    "gender": "M",
-    "generation": 20,
-    "column": -29.793,
-    "parents": [],
-    "spouses": [],
-    "desc": "호리 족장. 세일의 아들. 창 36:20.",
-    "isMain": false,
-    "isManual": true
-  },
-  {
-    "id": "aiah_zibeon",
-    "name": "아야",
-    "engName": "Aiah",
-    "gender": "M",
-    "generation": 21,
-    "column": -30.138,
-    "parents": [
-      "zibeon_chief"
-    ],
-    "spouses": [],
-    "desc": "시브온의 아들.",
-    "isMain": false,
-    "isManual": true
-  },
-  {
-    "id": "anah_zibeon",
-    "name": "아나",
-    "engName": "Anah",
-    "gender": "M",
-    "generation": 21,
-    "column": -29.438,
-    "parents": [
-      "zibeon_chief"
-    ],
-    "spouses": [],
-    "desc": "시브온의 아들. 광야에서 온천을 발견한 자.",
-    "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "mered_ezrah",
@@ -11563,7 +12305,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "에스라의 아들. 두 아내를 맞이함.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "epher_ezrah",
@@ -11578,7 +12321,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "에스라의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jalon_ezrah",
@@ -11593,7 +12337,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "에스라의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "bithiah_mered",
@@ -11608,7 +12353,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "바로의 딸. 메렛의 아내.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jehudijah_mered",
@@ -11623,7 +12369,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "유다 여인. 메렛의 아내.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "miriam_mered",
@@ -11639,7 +12386,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "메렛과 비다아의 딸.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shammai_mered",
@@ -11655,7 +12403,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "메렛과 비다아의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ishbah_mered",
@@ -11671,7 +12420,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "메렛과 비다아의 아들. 에스도모아의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jered_mered",
@@ -11687,7 +12437,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "메렛과 여후디야의 아들. 그돌의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "heber_mered",
@@ -11703,7 +12454,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "메렛과 여후디야의 아들. 소고의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jekuthiel_mered",
@@ -11719,7 +12471,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "메렛과 여후디야의 아들. 사노아의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "parent_hodiah_wife",
@@ -11732,7 +12485,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "비다아와 나함의 부모.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "sister_nahum",
@@ -11749,7 +12503,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "나함의 누이. 호디야의 아내.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "naham",
@@ -11764,7 +12519,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "호디야 아내의 남동생(또는 형제).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "hodiah",
@@ -11779,7 +12535,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "대상 4:19.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "sons_hodiah",
@@ -11795,7 +12552,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "호디야와 그의 아내의 아들들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "keilah_hodiah",
@@ -11810,7 +12568,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "호디야의 아들. 그일라 사람의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "eshtemoa_hodiah",
@@ -11825,7 +12584,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "호디야의 아들. 마아가 사람 에스드모아의 조상.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shimon",
@@ -11838,7 +12598,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "유다 자손. 대상 4:20.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "amnon_shimon",
@@ -11853,7 +12614,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "시몬의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "rinnah_shimon",
@@ -11868,7 +12630,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "시몬의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "benhanan_shimon",
@@ -11883,7 +12646,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "시몬의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "tilon_shimon",
@@ -11898,7 +12662,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "시몬의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ishi_1chr4",
@@ -11911,7 +12676,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "유다 자손. 대상 4:20.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zoheth_ishi",
@@ -11926,7 +12692,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "이시의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "benzoheth_ishi",
@@ -11941,7 +12708,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "이시의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jehoiarib_div",
@@ -11954,7 +12722,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "1반열 제사장. 대상 24:7.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jedaiah_div",
@@ -11969,7 +12738,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "2반열 제사장.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "harim_div",
@@ -11984,7 +12754,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "3반열 제사장.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "seorim_div",
@@ -11999,7 +12770,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "4반열 제사장.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "malchijah_div",
@@ -12014,7 +12786,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "5반열 제사장.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "mijamin_div",
@@ -12029,7 +12802,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "6반열 제사장.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "hakkoz_div",
@@ -12044,7 +12818,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "7반열 제사장.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "abijah_div",
@@ -12059,7 +12834,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "8반열 제사장. 신약 사가랴의 반열.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jeshua_div",
@@ -12074,7 +12850,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "9반열 제사장.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shecaniah_div",
@@ -12089,7 +12866,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "10반열 제사장.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "eliashib_div",
@@ -12104,7 +12882,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "11반열 제사장.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jakim_div",
@@ -12119,7 +12898,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "12반열 제사장.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "huppah_div",
@@ -12134,7 +12914,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "13반열 제사장.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jeshebeab_div",
@@ -12149,7 +12930,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "14반열 제사장.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "bilgah_div",
@@ -12164,7 +12946,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "15반열 제사장.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "immer_div",
@@ -12179,7 +12962,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "16반열 제사장.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "hezir_div",
@@ -12194,7 +12978,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "17반열 제사장.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "happizzez_div",
@@ -12209,7 +12994,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "18반열 제사장.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "pethahiah_div",
@@ -12224,7 +13010,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "19반열 제사장.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jehezkel_div",
@@ -12239,7 +13026,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "20반열 제사장.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jachin_div",
@@ -12254,7 +13042,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "21반열 제사장.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "gamul_div",
@@ -12269,7 +13058,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "22반열 제사장.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "delaiah_div",
@@ -12284,7 +13074,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "23반열 제사장.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "maaziah_div",
@@ -12299,7 +13090,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "24반열 제사장.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zechariah_priest_div",
@@ -12316,7 +13108,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "아비야 반열의 제사장. 세례 요한의 아버지.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "elizabeth_priest_div",
@@ -12331,7 +13124,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "아론의 자손. 사가랴의 아내.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "john_baptist",
@@ -12347,7 +13141,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "사가랴와 엘리사벳의 아들. 주의 길을 예비한 자.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "abinadab_ark",
@@ -12360,7 +13155,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "기럇여아림 사람. 법궤를 보관함.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "eleazar_abinadab",
@@ -12375,7 +13171,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아비나답의 아들. 법궤를 지키도록 구별됨.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "uzzah_abinadab",
@@ -12390,7 +13187,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아비나답의 아들. 법궤를 만져서 사하심.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ahio_abinadab",
@@ -12405,7 +13203,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아비나답의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "eli_priest",
@@ -12416,9 +13215,44 @@ const BIBLE_CHARACTERS = [
     "column": -28.932,
     "parents": [],
     "spouses": [],
-    "desc": "실로의 제사장 겸 사사.\n관련 본문: 사무엘상 1-4장\n\n1. 엘리의 신분과 역할\n    이스라엘의 대제사장: 실로 성소에서 여호와를 섬김(사무엘상 1:9).\n    이스라엘의 사사(40년간 통치, 사무엘상 4:18).\n    한나의 기도를 축복하여 사무엘이 태어나는 계기 제공(사무엘상 1:17).\n\n2. 엘리의 문제점\n*자녀 교육 실패\n  아들들(홉니와 비느하스)이 제사장 직분을 남용하고 악행을 저지름(사무엘상 2:12-17).\n  성소에서 제사를 멸시하고, 고기를 강제로 빼앗음(사무엘상 2:15-17).\n  회막에서 여인들과 동침하는 등 타락(사무엘상 2:22).\n  엘리는 이를 약하게 꾸짖었지만 강력한 조치를 취하지 않음(사무엘상 2:23-25).\n* 영적 둔감함\n  하나님께서 한나의 기도를 오해하고, 술 취했다고 잘못 판단(사무엘상 1:13-14).\n  하나님의 경고를 듣고도 적극적인 회개나 개혁을 하지 않음(사무엘상 2:27-36).\n* 하나님의 심판\n  하나님의 사람(선지자)이 경고: 엘리 가문이 영원히 제사장직을 감당하지 못할 것(삼상 2:30-34).\n  사무엘을 통해 다시 경고받음: 홉니와 비느하스가 같은 날 죽을 것(삼상 3:11-14).\n\n3. 엘리의 죽음과 가문의 몰락\n  * 블레셋과의 전투에서 언약궤를 함부로 사용하려다 패배(삼상 4:1-11).\n  * 홉니와 비느하스 사망, 언약궤가 빼앗김(삼상 4:11).\n  * 소식을 듣고 충격을 받아 의자에서 넘어져 목이 부러져 죽음(98세, 삼상 4:18).\n  * 비느하스의 아내가 \"이가봇\"(여호와의 영광이 떠났다)이라는 이름을 아들에게 지으며 엘리 가문의 몰락을 선언(삼상 4:21-22).\n\n4. 엘리의 평가와 교훈\n* 긍정적인 면\n    한나를 축복하여 사무엘이 태어나는 계기 제공(사무엘상 1:17).\n    사무엘을 양육하며 하나님께 헌신하게 함(사무엘상 3:1-9).\n* 부정적인 면\n    자녀 교육 실패 → 홉니와 비느하스의 타락 방치.\n    영적 무기력 → 하나님의 경고를 받고도 적극적인 회개 없이 수동적인 태도 유지.\n    무책임한 지도력 → 제사장으로서 이스라엘의 신앙을 제대로 지도하지 못함.",
+    "desc": "실로의 제사장 겸 사사.
+관련 본문: 사무엘상 1-4장
+
+1. 엘리의 신분과 역할
+    이스라엘의 대제사장: 실로 성소에서 여호와를 섬김(사무엘상 1:9).
+    이스라엘의 사사(40년간 통치, 사무엘상 4:18).
+    한나의 기도를 축복하여 사무엘이 태어나는 계기 제공(사무엘상 1:17).
+
+2. 엘리의 문제점
+*자녀 교육 실패
+  아들들(홉니와 비느하스)이 제사장 직분을 남용하고 악행을 저지름(사무엘상 2:12-17).
+  성소에서 제사를 멸시하고, 고기를 강제로 빼앗음(사무엘상 2:15-17).
+  회막에서 여인들과 동침하는 등 타락(사무엘상 2:22).
+  엘리는 이를 약하게 꾸짖었지만 강력한 조치를 취하지 않음(사무엘상 2:23-25).
+* 영적 둔감함
+  하나님께서 한나의 기도를 오해하고, 술 취했다고 잘못 판단(사무엘상 1:13-14).
+  하나님의 경고를 듣고도 적극적인 회개나 개혁을 하지 않음(사무엘상 2:27-36).
+* 하나님의 심판
+  하나님의 사람(선지자)이 경고: 엘리 가문이 영원히 제사장직을 감당하지 못할 것(삼상 2:30-34).
+  사무엘을 통해 다시 경고받음: 홉니와 비느하스가 같은 날 죽을 것(삼상 3:11-14).
+
+3. 엘리의 죽음과 가문의 몰락
+  * 블레셋과의 전투에서 언약궤를 함부로 사용하려다 패배(삼상 4:1-11).
+  * 홉니와 비느하스 사망, 언약궤가 빼앗김(삼상 4:11).
+  * 소식을 듣고 충격을 받아 의자에서 넘어져 목이 부러져 죽음(98세, 삼상 4:18).
+  * 비느하스의 아내가 \"이가봇\"(여호와의 영광이 떠났다)이라는 이름을 아들에게 지으며 엘리 가문의 몰락을 선언(삼상 4:21-22).
+
+4. 엘리의 평가와 교훈
+* 긍정적인 면
+    한나를 축복하여 사무엘이 태어나는 계기 제공(사무엘상 1:17).
+    사무엘을 양육하며 하나님께 헌신하게 함(사무엘상 3:1-9).
+* 부정적인 면
+    자녀 교육 실패 → 홉니와 비느하스의 타락 방치.
+    영적 무기력 → 하나님의 경고를 받고도 적극적인 회개 없이 수동적인 태도 유지.
+    무책임한 지도력 → 제사장으로서 이스라엘의 신앙을 제대로 지도하지 못함.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "hophni_eli",
@@ -12433,7 +13267,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "엘리의 아들. 악행을 저지름.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "phinehas_eli",
@@ -12450,7 +13285,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "엘리의 아들. 전쟁에서 사망.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "wife_phinehas_eli",
@@ -12465,7 +13301,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "비느하스의 아내.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ichabod_phinehas",
@@ -12481,7 +13318,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "비느하스의 아들. '영광이 떠났다'는 뜻.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ahitub_phinehas",
@@ -12497,7 +13335,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "비느하스의 아들. 사독과 아히야의 아버지.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zadok_ahitub_eli",
@@ -12512,7 +13351,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아히둡의 아들. 다윗 왕 때의 대제사장.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ahijah_ahitub_eli",
@@ -12527,7 +13367,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아히둡의 아들. 아비아달의 아버지.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ahimaaz_zadok_eli",
@@ -12542,7 +13383,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "사독의 아들. 전령. 삼하 15:27",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "abiathar_ahijah_eli",
@@ -12557,7 +13399,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아히야의 아들. 다윗을 도운 제사장.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jonathan_abiathar",
@@ -12572,7 +13415,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아비아달의 아들. 다윗의 아들 아도니야에게 급보를 전함.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "lotan_chief",
@@ -12585,7 +13429,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "호리 족장. 세일의 아들. 창 36:20.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "timna_lotan",
@@ -12600,7 +13445,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "딤나의 아들",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "hori_lotan",
@@ -12615,7 +13461,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "로단의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "hemam_lotan",
@@ -12630,7 +13477,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "로단의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shobal_chief",
@@ -12643,7 +13491,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "호리 족장. 세일의 아들. 창 36:20.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "alvan_shobal",
@@ -12658,7 +13507,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "소발의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "manahath_shobal",
@@ -12673,7 +13523,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "소발의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ebal_shobal",
@@ -12688,7 +13539,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "소발의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shepho_shobal",
@@ -12703,7 +13555,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "소발의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "onam_shobal",
@@ -12718,7 +13571,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "소발의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zibeon_chief",
@@ -12731,7 +13585,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "호리 족장. 세일의 아들. 창 36:20. (개역한글: 시브온)",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "aiah_zibeon",
@@ -12746,7 +13601,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "시뵨의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "anah_zibeon",
@@ -12761,7 +13617,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "시뵨의 아들. 광야에서 온천을 발견한 자.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "anah_chief",
@@ -12774,7 +13631,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "호리 족장. 세일의 아들. 창 36:20.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "dishon_anah",
@@ -12789,7 +13647,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아나의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "oholibamah_anah",
@@ -12804,7 +13663,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아니족장의 아들",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "dishon_chief",
@@ -12817,7 +13677,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "호리 족장. 세일의 아들. 창 36:20.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "hemdan_dishon",
@@ -12832,7 +13693,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "디손의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "eshban_dishon",
@@ -12847,7 +13709,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "디손의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ithran_dishon",
@@ -12862,7 +13725,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "디손의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "cheran_dishon",
@@ -12877,7 +13741,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "디손의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ezer_chief",
@@ -12890,7 +13755,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "호리 족장. 세일의 아들. 창 36:20.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "bilhan_ezer",
@@ -12905,7 +13771,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "에셀의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zaavan_ezer",
@@ -12920,7 +13787,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "에셀의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "akan_ezer",
@@ -12935,7 +13803,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "에셀의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "dishan_chief",
@@ -12948,7 +13817,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "호리 족장. 세일의 아들. 창 36:20.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "uz_dishan",
@@ -12963,7 +13833,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "디산의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "aran_dishan",
@@ -12978,7 +13849,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "디산의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "joel_reuben",
@@ -12991,7 +13863,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "르우벤 자손. 대상 5:4.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shemaiah_joel",
@@ -13006,7 +13879,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "요엘의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "gog_shemaiah",
@@ -13021,7 +13895,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "스마야의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shimei_gog",
@@ -13036,7 +13911,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "곡의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "micah_shimei",
@@ -13051,7 +13927,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "시므이의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "reaiah_micah",
@@ -13066,7 +13943,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "미가의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "baal_reaiah",
@@ -13081,7 +13959,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "르아야의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "beerah_baal",
@@ -13096,7 +13975,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "바알의 아들. 앗수르 왕 디글랏빌레셀에게 사로잡힘.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "meshobab_simeon",
@@ -13109,7 +13989,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "시므온 지파 지도자. 대상 4:34.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jamlech_meshobab",
@@ -13124,7 +14005,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "시므온 지파 지도자.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "amashiah_jamlech",
@@ -13139,7 +14021,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "요사의 아버지.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "joshah_amashiah",
@@ -13154,7 +14037,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아마시야의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "joel_joshah",
@@ -13169,7 +14053,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "요사의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "asiel_joel",
@@ -13184,7 +14069,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "요엘의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "seraiah_asiel",
@@ -13199,7 +14085,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아시엘의 아들. 요시비야의 아버지.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "joshibiah_seraiah",
@@ -13214,7 +14101,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "스라야의 아들. 예후의 아버지.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jehu_joshibiah",
@@ -13229,7 +14117,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "요시비야의 아들. 시므온 지파 지도자.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "elioenai_jehu",
@@ -13244,7 +14133,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "예후의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jaakobah_elioenai",
@@ -13259,7 +14149,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "엘료에내의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jeshohaiah_jaakobah",
@@ -13274,7 +14165,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "야아고바의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "asaiah_jeshohaiah",
@@ -13289,7 +14181,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "여소하야의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "adiel_asaiah",
@@ -13304,7 +14197,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아사야의 아들. 여시미엘의 아버지.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jesimiel_adiel",
@@ -13319,7 +14213,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아디엘의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "benaiah_jesimiel",
@@ -13334,7 +14229,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "여시미엘의 아들. 스마야의 아버지.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shemaiah_benaiah",
@@ -13349,7 +14245,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "브나야의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shimri_shemaiah",
@@ -13364,7 +14261,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "스마야의 아들. 여다야의 아버지.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jedaiah_shimri",
@@ -13379,7 +14277,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "시므리의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "allon_jedaiah",
@@ -13394,7 +14293,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "여다야의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shiphi_allon",
@@ -13409,7 +14309,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "알론의 아들. 시사의 아버지.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ziza_shiphi",
@@ -13424,12 +14325,13 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "시비의 아들. 시므온 지파 지도자.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "Son",
     "name": "아들들",
-    "engName": "",
+    "engName": "Sons",
     "gender": "M",
     "generation": 26.01,
     "column": 43.586,
@@ -13440,7 +14342,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "naomi",
@@ -13455,7 +14358,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "mahion",
@@ -13473,7 +14377,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "Elimelech",
@@ -13488,7 +14393,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "Chilion",
@@ -13504,7 +14410,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "hamul",
@@ -13519,7 +14426,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "역대상 2:5",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "Shua_daughter",
@@ -13534,7 +14442,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "er",
@@ -13550,7 +14459,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "onan",
@@ -13566,7 +14476,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shelah-1",
@@ -13582,7 +14493,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "er-1",
@@ -13597,7 +14509,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "laadah",
@@ -13612,7 +14525,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "lecah",
@@ -13627,7 +14541,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "mareshah",
@@ -13642,7 +14557,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "koz",
@@ -13655,7 +14571,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "anub",
@@ -13670,7 +14587,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zobebah",
@@ -13685,7 +14603,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "harum",
@@ -13700,7 +14619,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "aharhel",
@@ -13713,6 +14633,376 @@ const BIBLE_CHARACTERS = [
       "harum"
     ],
     "spouses": [],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "teachers": []
+  },
+  {
+    "id": "noah_wife",
+    "name": "노아의 아내",
+    "engName": "Noah_wife",
+    "gender": "F",
+    "generation": 9,
+    "column": -1.371,
+    "parents": [],
+    "spouses": [
+      "noah"
+    ],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "teachers": []
+  },
+  {
+    "id": "shem_wife",
+    "name": "셈의 아내",
+    "engName": "Shem_wife",
+    "gender": "F",
+    "generation": 10,
+    "column": 0.9,
+    "parents": [],
+    "spouses": [
+      "shem"
+    ],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "teachers": []
+  },
+  {
+    "id": "ham_wife",
+    "name": "함의 아내",
+    "engName": "Ham_wife",
+    "gender": "F",
+    "generation": 10,
+    "column": -1.221,
+    "parents": [],
+    "spouses": [
+      "ham"
+    ],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "teachers": []
+  },
+  {
+    "id": "japheth_wife",
+    "name": "야벳의 아내",
+    "engName": "Japheth_wife",
+    "gender": "F",
+    "generation": 10.01,
+    "column": -6.913,
+    "parents": [],
+    "spouses": [
+      "japheth"
+    ],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "teachers": []
+  },
+  {
+    "id": "peter",
+    "name": "베드로",
+    "engName": "Peter",
+    "gender": "M",
+    "generation": 64.29,
+    "column": -8.9,
+    "parents": [],
+    "spouses": [],
+    "teachers": [
+      "jesus"
+    ],
+    "desc": "",
+    "isMain": false,
+    "isManual": true
+  },
+  {
+    "id": "John_the_Baptist",
+    "name": "세례요한",
+    "engName": "John the Baptist",
+    "gender": "M",
+    "generation": 62.8,
+    "column": -7.583,
+    "parents": [
+      "Zechariah",
+      "Elizabeth"
+    ],
+    "spouses": [],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "teachers": []
+  },
+  {
+    "id": "Zechariah",
+    "name": "사가랴",
+    "engName": "Zechariah",
+    "gender": "M",
+    "generation": 61.81,
+    "column": -8.033,
+    "parents": [],
+    "spouses": [
+      "Elizabeth"
+    ],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "teachers": []
+  },
+  {
+    "id": "Elizabeth",
+    "name": "엘리사벳",
+    "engName": "Elizabeth",
+    "gender": "F",
+    "generation": 61.81,
+    "column": -7.133,
+    "parents": [],
+    "spouses": [
+      "Zechariah"
+    ],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "teachers": []
+  },
+  {
+    "id": "Andrew",
+    "name": "안드레",
+    "engName": "Andrew",
+    "gender": "M",
+    "generation": 64.29,
+    "column": -7.108,
+    "parents": [],
+    "spouses": [],
+    "teachers": [
+      "jesus"
+    ],
+    "desc": "",
+    "isMain": false,
+    "isManual": true
+  },
+  {
+    "id": "james",
+    "name": "야고보",
+    "engName": "James",
+    "gender": "M",
+    "generation": 64.29,
+    "column": -5.725,
+    "parents": [],
+    "spouses": [],
+    "teachers": [
+      "jesus"
+    ],
+    "desc": "",
+    "isMain": false,
+    "isManual": true
+  },
+  {
+    "id": "john",
+    "name": "요한",
+    "engName": "John",
+    "gender": "M",
+    "generation": 64.29,
+    "column": -4.967,
+    "parents": [],
+    "spouses": [],
+    "teachers": [
+      "jesus"
+    ],
+    "desc": "",
+    "isMain": false,
+    "isManual": true
+  },
+  {
+    "id": "philip",
+    "name": "빌립",
+    "engName": "philip",
+    "gender": "M",
+    "generation": 64.29,
+    "column": -4.229,
+    "parents": [],
+    "spouses": [],
+    "teachers": [
+      "jesus"
+    ],
+    "desc": "",
+    "isMain": false,
+    "isManual": true
+  },
+  {
+    "id": "bartholomew",
+    "name": "바돌로매",
+    "engName": "bartholomew",
+    "gender": "M",
+    "generation": 64.29,
+    "column": -3.504,
+    "parents": [],
+    "spouses": [],
+    "teachers": [
+      "jesus"
+    ],
+    "desc": "",
+    "isMain": false,
+    "isManual": true
+  },
+  {
+    "id": "thomas",
+    "name": "도마",
+    "engName": "thomas",
+    "gender": "M",
+    "generation": 64.29,
+    "column": -2.767,
+    "parents": [],
+    "spouses": [],
+    "teachers": [
+      "jesus"
+    ],
+    "desc": "",
+    "isMain": false,
+    "isManual": true
+  },
+  {
+    "id": "matthew",
+    "name": "마태",
+    "engName": "Matthew",
+    "gender": "M",
+    "generation": 64.29,
+    "column": -2.013,
+    "parents": [],
+    "spouses": [],
+    "teachers": [
+      "jesus"
+    ],
+    "desc": "",
+    "isMain": false,
+    "isManual": true
+  },
+  {
+    "id": "james_alphaeus",
+    "name": "야고보",
+    "engName": "james_alphaeus",
+    "gender": "M",
+    "generation": 64.29,
+    "column": -1.241,
+    "parents": [],
+    "spouses": [],
+    "teachers": [
+      "jesus"
+    ],
+    "desc": "알패오의 아들",
+    "isMain": false,
+    "isManual": true
+  },
+  {
+    "id": "thaddaeus",
+    "name": "다대오",
+    "engName": "thaddaeus",
+    "gender": "M",
+    "generation": 64.28,
+    "column": -0.475,
+    "parents": [],
+    "spouses": [],
+    "teachers": [
+      "jesus"
+    ],
+    "desc": "",
+    "isMain": false,
+    "isManual": true
+  },
+  {
+    "id": "simon",
+    "name": "시몬",
+    "engName": "simon",
+    "gender": "M",
+    "generation": 64.28,
+    "column": 0.279,
+    "parents": [],
+    "spouses": [],
+    "teachers": [
+      "jesus"
+    ],
+    "desc": "가나안인/셀롯",
+    "isMain": false,
+    "isManual": true
+  },
+  {
+    "id": "judas_lscariot",
+    "name": "가룟 유다",
+    "engName": "judas lscariot",
+    "gender": "M",
+    "generation": 64.27,
+    "column": 1.038,
+    "parents": [],
+    "spouses": [],
+    "teachers": [
+      "jesus"
+    ],
+    "desc": "",
+    "isMain": false,
+    "isManual": true
+  },
+  {
+    "id": "matthias",
+    "name": "맛디아",
+    "engName": "matthias",
+    "gender": "M",
+    "generation": 64.27,
+    "column": 2.563,
+    "parents": [],
+    "spouses": [],
+    "teachers": [
+      "jesus"
+    ],
+    "desc": "",
+    "isMain": false,
+    "isManual": true
+  },
+  {
+    "id": "paul",
+    "name": "바울",
+    "engName": "Paul",
+    "gender": "M",
+    "generation": 64.27,
+    "column": 3.963,
+    "parents": [],
+    "spouses": [],
+    "teachers": [
+      "jesus"
+    ],
+    "desc": "",
+    "isMain": false,
+    "isManual": true
+  },
+  {
+    "id": "cornelius",
+    "name": "고넬료",
+    "engName": "cornelius",
+    "gender": "M",
+    "generation": 65.18,
+    "column": -8.9,
+    "parents": [],
+    "spouses": [],
+    "teachers": [
+      "peter"
+    ],
+    "desc": "",
+    "isMain": false,
+    "isManual": true
+  },
+  {
+    "id": "A_man_lame_from_birth",
+    "name": "나면서 못 걷는 자",
+    "engName": "A man lame from birth",
+    "gender": "M",
+    "generation": 65.46,
+    "column": -9.979,
+    "parents": [],
+    "spouses": [],
+    "teachers": [
+      "peter"
+    ],
     "desc": "",
     "isMain": false,
     "isManual": true
@@ -13730,7 +15020,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "기브온의 조상(대상 9:35) 또는 여이엘. 마아가의 남편이며 기스, 넬 등의 아버지.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "maacah-abiel",
@@ -13745,7 +15036,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "아비엘(여이엘)의 아내.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ner",
@@ -13761,7 +15053,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아비엘과 마아가의 아들. 아브넬의 아버지.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "nadab_abiel",
@@ -13777,7 +15070,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아비엘과 마아가의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "gedor_abiel",
@@ -13793,7 +15087,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아비엘과 마아가의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ahio_abiel",
@@ -13809,7 +15104,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아비엘과 마아가의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zecher_abiel",
@@ -13825,7 +15121,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아비엘과 마아가의 아들 (대상 8:31, 9:37 '스가랴').",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "mikloth_abiel",
@@ -13841,7 +15138,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아비엘과 마아가의 아들. 시므아를 낳음.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shimeah_abiel",
@@ -13857,7 +15155,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아비엘과 마아가의 아들 (대상 8:32, 9:38 '시므암').",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "abner",
@@ -13872,7 +15171,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "넬의 아들. 사울 왕의 군대장관(삼상 14:50).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "abdon_abiel",
@@ -13888,7 +15188,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아비엘과 마아가의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zur_abiel",
@@ -13904,7 +15205,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아비엘과 마아가의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "baal_abiel",
@@ -13920,7 +15222,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아비엘과 마아가의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ahinoam_saul",
@@ -13935,7 +15238,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "아히마아스의 딸. 사울 왕의 아내.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "rizpah",
@@ -13950,7 +15254,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "아야의 딸. 사울 왕의 첩.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "malchishua_saul",
@@ -13966,7 +15271,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "사울 왕의 아들. 길보아산 전투에서 전사함.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "abinadab_saul",
@@ -13982,7 +15288,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "사울 왕의 아들. 길보아산 전투에서 전사함.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "eshbaal_saul",
@@ -13998,7 +15305,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "사울 왕의 아들. 이스보셋 왕(대상 8:33).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "merab_saul",
@@ -14016,7 +15324,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "사울 왕의 큰딸. 아드리엘의 아내.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "adriel",
@@ -14031,7 +15340,8 @@ const BIBLE_CHARACTERS = [
     ],
     "desc": "므홀랏 사람 바르실래의 아들. 메랍의 남편.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "armoni",
@@ -14047,7 +15357,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "사울 왕과 리스바의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "mephibosheth_saul",
@@ -14063,7 +15374,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "사울 왕과 리스바의 아들. 요나단의 아들 므비보셋과 동명이인.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "micah_saul",
@@ -14078,7 +15390,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "요나단의 아들 므비보셋의 아들 (대상 8:34,35).",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "pithon",
@@ -14093,7 +15406,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "미가의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "melech",
@@ -14108,7 +15422,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "미가의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "tarea",
@@ -14123,7 +15438,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "미가의 아들 (대상 8:35 '다레아', 9:41 '다하레아').",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ahaz_saul",
@@ -14138,7 +15454,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "미가의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jehoaddah",
@@ -14153,7 +15470,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아하스의 아들 (대상 8:36 '여호앗다', 9:42 '야라').",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "alemeth_saul",
@@ -14168,7 +15486,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "여호앗다의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "azmaveth_saul",
@@ -14183,7 +15502,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "여호앗다의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zimri_saul",
@@ -14198,7 +15518,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "여호앗다의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "moza_saul",
@@ -14213,7 +15534,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "시므리의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "binea",
@@ -14228,7 +15550,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "모사의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "raphah_saul",
@@ -14243,7 +15566,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "비느아의 아들 (대상 8:37 '라바', 9:43 '르바야').",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "eleasah_saul",
@@ -14258,7 +15582,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "라바의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "azel",
@@ -14273,7 +15598,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "엘르아사의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "eshek",
@@ -14288,7 +15614,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "엘르아사의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "azrikam_saul",
@@ -14303,7 +15630,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아셀의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "bocheru",
@@ -14318,7 +15646,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아셀의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ishmael_saul",
@@ -14333,7 +15662,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아셀의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "sheariah",
@@ -14348,7 +15678,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아셀의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "obadiah_saul",
@@ -14363,7 +15694,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아셀의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "hanan_saul",
@@ -14378,7 +15710,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아셀의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "ulam_saul",
@@ -14393,7 +15726,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "에섹의 아들. 활을 잘 쏘는 용사.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jehush_saul",
@@ -14408,7 +15742,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "에섹의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "eliphelet_saul",
@@ -14423,7 +15758,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "에섹의 아들.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "shema_reuben",
@@ -14438,7 +15774,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "요엘의 아들이며 아사스의 아버지. 대상 5:8.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "azaz_reuben",
@@ -14453,7 +15790,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "세마의 아들이며 벨라의 아버지. 대상 5:8.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "bela_reuben",
@@ -14468,7 +15806,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "아사스의 아들. 대상 5:8.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "zechariah_reuben",
@@ -14483,7 +15822,8 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "여이엘의 형제이자 르우벤 지파의 우두머리. 대상 5:7.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
   },
   {
     "id": "jeiel_reuben",
@@ -14498,7 +15838,24 @@ const BIBLE_CHARACTERS = [
     "spouses": [],
     "desc": "르우벤 지파 계보의 우두머리. 대상 5:7.",
     "isMain": false,
-    "isManual": true
+    "isManual": true,
+    "teachers": []
+  },
+  {
+    "id": "gideon_wife",
+    "name": "기드온의 아내들",
+    "engName": "Gideon's wives",
+    "gender": "F",
+    "generation": 25.5,
+    "column": 44.0,
+    "parents": [],
+    "spouses": [
+      "gideon_man"
+    ],
+    "desc": "기드온의 많은 아내들 (사사기 8:30).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": []
   }
 ]
 ;
