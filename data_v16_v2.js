@@ -7928,7 +7928,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Kish",
     "gender": "M",
     "generation": 26.34,
-    "column": 67.797,
+    "column": 66.0167,
     "parents": [
       "abiel",
       "maacah-abiel"
@@ -15010,7 +15010,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Ner",
     "gender": "M",
     "generation": 26.34,
-    "column": 64.0,
+    "column": 63.15,
     "parents": [
       "abiel",
       "maacah-abiel"
@@ -15027,7 +15027,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Nadab",
     "gender": "M",
     "generation": 26.34,
-    "column": 65.0,
+    "column": 63.8667,
     "parents": [
       "abiel",
       "maacah-abiel"
@@ -15044,7 +15044,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Gedor",
     "gender": "M",
     "generation": 26.34,
-    "column": 66.0,
+    "column": 64.5833,
     "parents": [
       "abiel",
       "maacah-abiel"
@@ -15061,7 +15061,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Ahio",
     "gender": "M",
     "generation": 26.34,
-    "column": 67.0,
+    "column": 65.3,
     "parents": [
       "abiel",
       "maacah-abiel"
@@ -15078,7 +15078,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Zecher",
     "gender": "M",
     "generation": 26.34,
-    "column": 68.5,
+    "column": 66.7333,
     "parents": [
       "abiel",
       "maacah-abiel"
@@ -15095,7 +15095,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Mikloth",
     "gender": "M",
     "generation": 26.34,
-    "column": 69.5,
+    "column": 67.45,
     "parents": [
       "abiel",
       "maacah-abiel"
@@ -15112,7 +15112,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Shimeah",
     "gender": "M",
     "generation": 26.34,
-    "column": 70.5,
+    "column": 68.1667,
     "parents": [
       "abiel",
       "maacah-abiel"
@@ -15162,7 +15162,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Zur",
     "gender": "M",
     "generation": 26.34,
-    "column": 62.0,
+    "column": 61.7167,
     "parents": [
       "abiel",
       "maacah-abiel"
@@ -15179,7 +15179,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Baal",
     "gender": "M",
     "generation": 26.34,
-    "column": 63.0,
+    "column": 62.4333,
     "parents": [
       "abiel",
       "maacah-abiel"
