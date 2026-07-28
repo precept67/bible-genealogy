@@ -6286,6 +6286,10 @@ function renderCustomPolygons() {
           selectedJunctionId = null;
           renderTree();
           updateTransform();
+          openStyleEditorPanel();
+          setTimeout(() => {
+            document.getElementById('area-editor-section')?.scrollIntoView({ behavior: 'smooth' });
+          }, 300);
         } else {
           // If already selected, try to insert a vertex
           insertVertexOnClosestSegment(poly, clickX, clickY);
@@ -6325,6 +6329,10 @@ function renderCustomPolygons() {
         selectedJunctionId = null;
         renderTree();
         updateTransform();
+        openStyleEditorPanel();
+        setTimeout(() => {
+          document.getElementById('area-editor-section')?.scrollIntoView({ behavior: 'smooth' });
+        }, 300);
       });
 
       // Drag label to adjust title position
@@ -9158,6 +9166,10 @@ function completePolygonCreation() {
   selectedPolygonId = polyId;
   renderTree();
   updateTransform();
+  openStyleEditorPanel();
+  setTimeout(() => {
+    document.getElementById('area-editor-section')?.scrollIntoView({ behavior: 'smooth' });
+  }, 300);
   showToast(`"${name}" 영역이 추가되었습니다.`);
 }
 

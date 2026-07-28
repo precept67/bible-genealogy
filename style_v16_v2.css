@@ -1855,6 +1855,7 @@ header .subtitle {
 /* Custom Polygon selection highlighting */
 .family-group-panel-poly {
   transition: fill-opacity 0.2s, stroke-width 0.2s;
+  pointer-events: visiblePainted;
 }
 
 .family-group-panel-poly.poly-selected {
