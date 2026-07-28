@@ -15327,7 +15327,7 @@ const BIBLE_CHARACTERS = [
   },
   {
     "id": "mephibosheth_saul",
-    "name": "므비보셋(사울아들)",
+    "name": "므비보셋",
     "engName": "Mephibosheth",
     "gender": "M",
     "generation": 28.34,
