@@ -1114,7 +1114,7 @@
       "engName": "Keturah",
       "gender": "F",
       "generation": 15.6,
-      "column": -12.229,
+      "column": -11.0,
       "parents": [],
       "spouses": [
         "abraham"
@@ -1232,7 +1232,7 @@
       "engName": "Zimran",
       "gender": "M",
       "generation": 20.0,
-      "column": -11.263,
+      "column": -12.8,
       "parents": [
         "abraham",
         "keturah"
@@ -1249,7 +1249,7 @@
       "engName": "Jokshan",
       "gender": "M",
       "generation": 20.0,
-      "column": -10.566,
+      "column": -12.1,
       "parents": [
         "abraham",
         "keturah"
@@ -1266,7 +1266,7 @@
       "engName": "Medan",
       "gender": "M",
       "generation": 20.0,
-      "column": -9.789,
+      "column": -11.4,
       "parents": [
         "abraham",
         "keturah"
@@ -1283,7 +1283,7 @@
       "engName": "Midian",
       "gender": "M",
       "generation": 20.0,
-      "column": -8.089,
+      "column": -10.7,
       "parents": [
         "abraham",
         "keturah"
@@ -1300,7 +1300,7 @@
       "engName": "Ishbak",
       "gender": "M",
       "generation": 20.0,
-      "column": -7.372,
+      "column": -10.0,
       "parents": [
         "abraham",
         "keturah"
@@ -1317,7 +1317,7 @@
       "engName": "Shuah",
       "gender": "M",
       "generation": 20.0,
-      "column": -6.671,
+      "column": -9.3,
       "parents": [
         "abraham",
         "keturah"
@@ -1620,7 +1620,7 @@
       "engName": "Sheba",
       "gender": "M",
       "generation": 21.0,
-      "column": -11.104,
+      "column": -12.4,
       "parents": [
         "jokshan"
       ],
@@ -1636,7 +1636,7 @@
       "engName": "Dedan",
       "gender": "M",
       "generation": 21.0,
-      "column": -10.442,
+      "column": -11.8,
       "parents": [
         "jokshan"
       ],
@@ -1652,7 +1652,7 @@
       "engName": "Ephah",
       "gender": "M",
       "generation": 21.0,
-      "column": -9.639,
+      "column": -10.9,
       "parents": [
         "midian"
       ],
@@ -1668,7 +1668,7 @@
       "engName": "Epher",
       "gender": "M",
       "generation": 21.0,
-      "column": -8.976,
+      "column": -10.5,
       "parents": [
         "midian"
       ],
@@ -1684,7 +1684,7 @@
       "engName": "Hanoch",
       "gender": "M",
       "generation": 21.0,
-      "column": -8.314,
+      "column": -10.1,
       "parents": [
         "midian"
       ],
@@ -1700,7 +1700,7 @@
       "engName": "Abida",
       "gender": "M",
       "generation": 21.0,
-      "column": -7.651,
+      "column": -9.7,
       "parents": [
         "midian"
       ],
@@ -1716,7 +1716,7 @@
       "engName": "Eldaah",
       "gender": "M",
       "generation": 21.0,
-      "column": -6.989,
+      "column": -9.3,
       "parents": [
         "midian"
       ],
@@ -1732,7 +1732,7 @@
       "engName": "Asshurim",
       "gender": "M",
       "generation": 22.0,
-      "column": -11.104,
+      "column": -12.4,
       "parents": [
         "dedan_keturah"
       ],
@@ -1748,7 +1748,7 @@
       "engName": "Letushim",
       "gender": "M",
       "generation": 22.0,
-      "column": -10.442,
+      "column": -11.8,
       "parents": [
         "dedan_keturah"
       ],
@@ -1764,7 +1764,7 @@
       "engName": "Leummim",
       "gender": "M",
       "generation": 22.0,
-      "column": -9.779,
+      "column": -11.2,
       "parents": [
         "dedan_keturah"
       ],
@@ -15848,16 +15848,6 @@
         "y": 3140
       }
     ],
-    "rel-abraham+keturah": [
-      {
-        "x": 14053.880000000001,
-        "y": 3630
-      },
-      {
-        "x": 13543.880000000001,
-        "y": 3630
-      }
-    ],
     "rel-abraham+hagar": [
       {
         "x": 17913.88,
@@ -15888,16 +15878,6 @@
       {
         "x": 18373.88,
         "y": 5970
-      }
-    ],
-    "spouse-abraham+keturah": [
-      {
-        "x": 14730,
-        "y": 2930
-      },
-      {
-        "x": 14730,
-        "y": 3540
       }
     ],
     "rel-isaac+rebekah->esau": [
@@ -16273,20 +16253,20 @@
       "fillOpacity": 0.03,
       "points": [
         {
-          "x": 13350,
+          "x": 12630,
           "y": 3050
         },
         {
-          "x": 14640,
+          "x": 13590,
           "y": 3050
         },
         {
-          "x": 14640,
-          "y": 3480
+          "x": 13590,
+          "y": 3550
         },
         {
-          "x": 13350,
-          "y": 3480
+          "x": 12630,
+          "y": 3550
         }
       ],
       "labelOffsetX": 570,

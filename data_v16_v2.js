@@ -1118,7 +1118,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Keturah",
     "gender": "F",
     "generation": 15.6,
-    "column": -12.229,
+    "column": -11.0,
     "parents": [],
     "spouses": [
       "abraham"
@@ -1236,7 +1236,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Zimran",
     "gender": "M",
     "generation": 20.0,
-    "column": -11.263,
+    "column": -12.8,
     "parents": [
       "abraham",
       "keturah"
@@ -1253,7 +1253,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Jokshan",
     "gender": "M",
     "generation": 20.0,
-    "column": -10.566,
+    "column": -12.1,
     "parents": [
       "abraham",
       "keturah"
@@ -1270,7 +1270,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Medan",
     "gender": "M",
     "generation": 20.0,
-    "column": -9.789,
+    "column": -11.4,
     "parents": [
       "abraham",
       "keturah"
@@ -1287,7 +1287,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Midian",
     "gender": "M",
     "generation": 20.0,
-    "column": -8.089,
+    "column": -10.7,
     "parents": [
       "abraham",
       "keturah"
@@ -1304,7 +1304,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Ishbak",
     "gender": "M",
     "generation": 20.0,
-    "column": -7.372,
+    "column": -10.0,
     "parents": [
       "abraham",
       "keturah"
@@ -1321,7 +1321,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Shuah",
     "gender": "M",
     "generation": 20.0,
-    "column": -6.671,
+    "column": -9.3,
     "parents": [
       "abraham",
       "keturah"
@@ -1624,7 +1624,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Sheba",
     "gender": "M",
     "generation": 21.0,
-    "column": -11.104,
+    "column": -12.4,
     "parents": [
       "jokshan"
     ],
@@ -1640,7 +1640,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Dedan",
     "gender": "M",
     "generation": 21.0,
-    "column": -10.442,
+    "column": -11.8,
     "parents": [
       "jokshan"
     ],
@@ -1656,7 +1656,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Ephah",
     "gender": "M",
     "generation": 21.0,
-    "column": -9.639,
+    "column": -10.9,
     "parents": [
       "midian"
     ],
@@ -1672,7 +1672,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Epher",
     "gender": "M",
     "generation": 21.0,
-    "column": -8.976,
+    "column": -10.5,
     "parents": [
       "midian"
     ],
@@ -1688,7 +1688,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Hanoch",
     "gender": "M",
     "generation": 21.0,
-    "column": -8.314,
+    "column": -10.1,
     "parents": [
       "midian"
     ],
@@ -1704,7 +1704,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Abida",
     "gender": "M",
     "generation": 21.0,
-    "column": -7.651,
+    "column": -9.7,
     "parents": [
       "midian"
     ],
@@ -1720,7 +1720,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Eldaah",
     "gender": "M",
     "generation": 21.0,
-    "column": -6.989,
+    "column": -9.3,
     "parents": [
       "midian"
     ],
@@ -1736,7 +1736,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Asshurim",
     "gender": "M",
     "generation": 22.0,
-    "column": -11.104,
+    "column": -12.4,
     "parents": [
       "dedan_keturah"
     ],
@@ -1752,7 +1752,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Letushim",
     "gender": "M",
     "generation": 22.0,
-    "column": -10.442,
+    "column": -11.8,
     "parents": [
       "dedan_keturah"
     ],
@@ -1768,7 +1768,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Leummim",
     "gender": "M",
     "generation": 22.0,
-    "column": -9.779,
+    "column": -11.2,
     "parents": [
       "dedan_keturah"
     ],
