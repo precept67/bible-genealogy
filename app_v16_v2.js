@@ -12510,23 +12510,7 @@ function renderSpawnerPanel(filterQuery = '') {
     }
   }
 
-  // 6. Docked DevTools size-based detection
-  window.addEventListener('resize', () => {
-    if (!devToolsProtectionEnabled) return;
-    const threshold = 160;
-    if ((window.outerWidth - window.innerWidth > threshold) || (window.outerHeight - window.innerHeight > threshold)) {
-      document.body.innerHTML = `
-        <div style="display:flex; flex-direction:column; justify-content:center; align-items:center; height:100vh; background-color:#0f172a; color:#f8fafc; font-family:sans-serif; text-align:center; padding: 20px;">
-          <span style="font-size: 50px; margin-bottom: 20px;">🛑</span>
-          <h1 style="font-size:24px; margin-bottom:10px; color:#ef4444;">보안 감지로 인한 화면 차단</h1>
-          <p style="font-size:14px; color:#94a3b8; line-height:1.6; max-width:480px;">
-            본 사이트의 무단 코드 수집 및 족보 유출을 방지하기 위해 개발자 도구 감지 시 화면을 일시적으로 차단합니다.<br>
-            개발자 도구를 닫은 후 새로고침(F5)해 주시기 바랍니다.
-          </p>
-        </div>
-      `;
-    }
-  });
+
   
   // 7. DevTools Debugger Loop (Freezes page execution if DevTools is open)
   function startDebuggerLoop() {
