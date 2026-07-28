@@ -7928,7 +7928,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Kish",
     "gender": "M",
     "generation": 26.34,
-    "column": 66.0167,
+    "column": 65.725,
     "parents": [
       "abiel",
       "maacah-abiel"
@@ -15010,7 +15010,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Ner",
     "gender": "M",
     "generation": 26.34,
-    "column": 63.15,
+    "column": 63.025,
     "parents": [
       "abiel",
       "maacah-abiel"
@@ -15027,7 +15027,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Nadab",
     "gender": "M",
     "generation": 26.34,
-    "column": 63.8667,
+    "column": 63.7,
     "parents": [
       "abiel",
       "maacah-abiel"
@@ -15044,7 +15044,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Gedor",
     "gender": "M",
     "generation": 26.34,
-    "column": 64.5833,
+    "column": 64.375,
     "parents": [
       "abiel",
       "maacah-abiel"
@@ -15061,7 +15061,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Ahio",
     "gender": "M",
     "generation": 26.34,
-    "column": 65.3,
+    "column": 65.05,
     "parents": [
       "abiel",
       "maacah-abiel"
@@ -15078,7 +15078,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Zecher",
     "gender": "M",
     "generation": 26.34,
-    "column": 66.7333,
+    "column": 66.4,
     "parents": [
       "abiel",
       "maacah-abiel"
@@ -15095,7 +15095,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Mikloth",
     "gender": "M",
     "generation": 26.34,
-    "column": 67.45,
+    "column": 67.075,
     "parents": [
       "abiel",
       "maacah-abiel"
@@ -15112,7 +15112,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Shimeah",
     "gender": "M",
     "generation": 26.34,
-    "column": 68.1667,
+    "column": 67.75,
     "parents": [
       "abiel",
       "maacah-abiel"
@@ -15162,7 +15162,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Zur",
     "gender": "M",
     "generation": 26.34,
-    "column": 61.7167,
+    "column": 61.675,
     "parents": [
       "abiel",
       "maacah-abiel"
@@ -15179,7 +15179,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Baal",
     "gender": "M",
     "generation": 26.34,
-    "column": 62.4333,
+    "column": 62.35,
     "parents": [
       "abiel",
       "maacah-abiel"
@@ -15811,8 +15811,8 @@ const BIBLE_CHARACTERS = [
     "name": "기드온의 아내들",
     "engName": "Gideon's wives",
     "gender": "F",
-    "generation": 25.5,
-    "column": 44.0,
+    "generation": 27.01,
+    "column": 44.3397,
     "parents": [],
     "spouses": [
       "gideon_man"
