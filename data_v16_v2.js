@@ -4394,7 +4394,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Zemirah",
     "gender": "M",
     "generation": 24.03,
-    "column": 62.448,
+    "column": 62.5475,
     "parents": [
       "becher"
     ],
@@ -4410,7 +4410,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Joash",
     "gender": "M",
     "generation": 24.03,
-    "column": 63.148,
+    "column": 63.2225,
     "parents": [
       "becher"
     ],
@@ -4426,7 +4426,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Eliezer",
     "gender": "M",
     "generation": 24.03,
-    "column": 63.847,
+    "column": 63.8975,
     "parents": [
       "becher"
     ],
@@ -4442,7 +4442,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Elioenai",
     "gender": "M",
     "generation": 24.03,
-    "column": 64.547,
+    "column": 64.5725,
     "parents": [
       "becher"
     ],
@@ -4458,7 +4458,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Omri",
     "gender": "M",
     "generation": 24.03,
-    "column": 65.217,
+    "column": 65.2475,
     "parents": [
       "becher"
     ],
@@ -4474,7 +4474,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Jerimoth",
     "gender": "M",
     "generation": 24.03,
-    "column": 65.948,
+    "column": 65.9225,
     "parents": [
       "becher"
     ],
@@ -4490,7 +4490,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Abijah",
     "gender": "M",
     "generation": 24.03,
-    "column": 66.648,
+    "column": 66.5975,
     "parents": [
       "becher"
     ],
@@ -4506,7 +4506,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Anathoth",
     "gender": "M",
     "generation": 24.03,
-    "column": 67.347,
+    "column": 67.2725,
     "parents": [
       "becher"
     ],
@@ -4522,7 +4522,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Alemeth",
     "gender": "M",
     "generation": 24.03,
-    "column": 68.047,
+    "column": 67.9475,
     "parents": [
       "becher"
     ],
