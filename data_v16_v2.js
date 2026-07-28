@@ -4170,7 +4170,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Addar",
     "gender": "M",
     "generation": 24.03,
-    "column": 52.602,
+    "column": 52.7645,
     "parents": [
       "bela"
     ],
@@ -4186,7 +4186,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Gera",
     "gender": "M",
     "generation": 24.03,
-    "column": 53.302,
+    "column": 53.4395,
     "parents": [
       "bela"
     ],
@@ -4202,7 +4202,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Abihud",
     "gender": "M",
     "generation": 24.03,
-    "column": 54.002,
+    "column": 54.1145,
     "parents": [
       "bela"
     ],
@@ -4218,7 +4218,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Abihua",
     "gender": "M",
     "generation": 24.03,
-    "column": 54.702,
+    "column": 54.7895,
     "parents": [
       "bela"
     ],
@@ -4234,7 +4234,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Naaman",
     "gender": "M",
     "generation": 24.03,
-    "column": 55.402,
+    "column": 55.4645,
     "parents": [
       "bela"
     ],
@@ -4250,7 +4250,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Ahoah",
     "gender": "M",
     "generation": 24.03,
-    "column": 56.102,
+    "column": 56.1395,
     "parents": [
       "bela"
     ],
@@ -4266,7 +4266,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Gera",
     "gender": "M",
     "generation": 24.03,
-    "column": 56.802,
+    "column": 56.8145,
     "parents": [
       "bela"
     ],
@@ -4282,7 +4282,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Shephuphan",
     "gender": "M",
     "generation": 24.03,
-    "column": 57.502,
+    "column": 57.4895,
     "parents": [
       "bela"
     ],
@@ -4298,7 +4298,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Huram",
     "gender": "M",
     "generation": 24.03,
-    "column": 58.202,
+    "column": 58.1645,
     "parents": [
       "bela"
     ],
@@ -4314,7 +4314,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Ezbon",
     "gender": "M",
     "generation": 24.03,
-    "column": 58.902,
+    "column": 58.8395,
     "parents": [
       "bela"
     ],
@@ -4330,7 +4330,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Uzzi",
     "gender": "M",
     "generation": 24.03,
-    "column": 59.602,
+    "column": 59.5145,
     "parents": [
       "bela"
     ],
@@ -4346,7 +4346,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Uzziel",
     "gender": "M",
     "generation": 24.03,
-    "column": 60.302,
+    "column": 60.1895,
     "parents": [
       "bela"
     ],
@@ -4362,7 +4362,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Jerimoth",
     "gender": "M",
     "generation": 24.03,
-    "column": 61.002,
+    "column": 60.8645,
     "parents": [
       "bela"
     ],
@@ -4378,7 +4378,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Iri",
     "gender": "M",
     "generation": 24.03,
-    "column": 61.702,
+    "column": 61.5395,
     "parents": [
       "bela"
     ],
