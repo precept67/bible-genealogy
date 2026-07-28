@@ -8328,7 +8328,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Michal",
     "gender": "F",
     "generation": 28.34,
-    "column": 68.725,
+    "column": 68.9333,
     "parents": [
       "saul",
       "ahinoam_saul"
@@ -15298,7 +15298,7 @@ const BIBLE_CHARACTERS = [
     "engName": "Adriel",
     "gender": "M",
     "generation": 28.34,
-    "column": 68.05,
+    "column": 68.2583,
     "parents": [],
     "spouses": [
       "merab_saul"
