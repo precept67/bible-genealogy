@@ -4821,16 +4821,8 @@ function renderTree() {
     const subtitle = `${char.engName}${descText}`;
     
     const editOverlayHTML = isAdminMode ? `
-      <div class="card-edit-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 4px; padding: 6px; box-sizing: border-box; transform: translateZ(0); will-change: transform; pointer-events: none; opacity: 0; transition: opacity 0.2s ease; z-index: 15;">
-        <div class="card-edit-overlay-btns">
-          <button class="card-edit-btn" onmousedown="event.preventDefault(); event.stopPropagation();" ontouchstart="event.preventDefault(); event.stopPropagation();" onclick="event.stopPropagation(); openAdminForm('${char.id}')" title="상세 정보 수정">✏️</button>
-        </div>
-        <div class="card-nudge-grid">
-          <button class="nudge-btn" onmousedown="event.preventDefault(); event.stopPropagation();" ontouchstart="event.preventDefault(); event.stopPropagation();" onclick="event.stopPropagation(); nudgePersonDirect('${char.id}', -0.1, false, false, event ? event.shiftKey : false)" title="왼쪽 Nudge (◀)">◀</button>
-          <button class="nudge-btn" onmousedown="event.preventDefault(); event.stopPropagation();" ontouchstart="event.preventDefault(); event.stopPropagation();" onclick="event.stopPropagation(); nudgePersonDirect('${char.id}', -0.1, true, false, event ? event.shiftKey : false)" title="위쪽 Nudge (▲)">▲</button>
-          <button class="nudge-btn" onmousedown="event.preventDefault(); event.stopPropagation();" ontouchstart="event.preventDefault(); event.stopPropagation();" onclick="event.stopPropagation(); nudgePersonDirect('${char.id}', 0.1, true, false, event ? event.shiftKey : false)" title="아래쪽 Nudge (▼)">▼</button>
-          <button class="nudge-btn" onmousedown="event.preventDefault(); event.stopPropagation();" ontouchstart="event.preventDefault(); event.stopPropagation();" onclick="event.stopPropagation(); nudgePersonDirect('${char.id}', 0.1, false, false, event ? event.shiftKey : false)" title="오른쪽 Nudge (▶)">▶</button>
-        </div>
+      <div class="card-edit-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); border-radius: 10px; display: flex; align-items: center; justify-content: center; padding: 6px; box-sizing: border-box; transform: translateZ(0); will-change: transform; pointer-events: none; opacity: 0; transition: opacity 0.2s ease; z-index: 15;">
+        <button class="card-edit-btn" onmousedown="event.preventDefault(); event.stopPropagation();" ontouchstart="event.preventDefault(); event.stopPropagation();" onclick="event.stopPropagation(); openAdminForm('${char.id}')" title="상세 정보 수정">✏️</button>
       </div>
     ` : '';
 
