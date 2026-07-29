@@ -8263,11 +8263,20 @@ function setupSearch() {
       ...(showLocations ? locations.map(l => ({...l, dataType: 'location'})) : [])
     ];
     
-    // First, find the first partial match for immediate auto-highlighting
-    const partialMatch = combinedData.find(item => 
-      item.name.toLowerCase().includes(query) || 
-      (item.engName && item.engName.toLowerCase().includes(query))
-    );
+    // Find the best match, prioritizing exact match -> starts-with match -> contains match
+    let partialMatch = combinedData.find(item => item.name.toLowerCase() === query);
+    if (!partialMatch) {
+      partialMatch = combinedData.find(item => item.engName && item.engName.toLowerCase() === query);
+    }
+    if (!partialMatch) {
+      partialMatch = combinedData.find(item => item.name.toLowerCase().startsWith(query));
+    }
+    if (!partialMatch) {
+      partialMatch = combinedData.find(item => 
+        item.name.toLowerCase().includes(query) || 
+        (item.engName && item.engName.toLowerCase().includes(query))
+      );
+    }
     
     if (partialMatch) {
       if (partialMatch.dataType === 'person') {
