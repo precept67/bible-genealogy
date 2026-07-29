@@ -3238,6 +3238,44 @@ function renderAnnotations() {
     });
     toolbar.appendChild(auraBtn);
     
+    // Copy/Duplicate button
+    const copyBtn = document.createElement('button');
+    copyBtn.className = 'annot-btn';
+    copyBtn.innerHTML = '📋';
+    copyBtn.title = '이 텍스트 상자 복제 (동일 스타일로 복사)';
+    copyBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      pushHistoryState();
+      
+      const newId = 'annotation_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+      const newAnnot = {
+        id: newId,
+        text: (annot.text || '') + ' (복사본)',
+        x: (annot.x || 0) + 30,
+        y: (annot.y || 0) + 30,
+        width: annot.width || 180,
+        height: annot.height || 60,
+        fontSize: annot.fontSize || 14,
+        bold: annot.bold || false,
+        italic: annot.italic || false,
+        underline: annot.underline || false,
+        align: annot.align || 'center',
+        borderStyle: annot.borderStyle || 'dashed',
+        borderWidth: annot.borderWidth || 1,
+        color: annot.color || '#1e293b',
+        bgColor: annot.bgColor || '#ffffff',
+        borderColor: annot.borderColor || '#cbd5e1',
+        auraEnabled: annot.auraEnabled !== false
+      };
+      
+      annotations.push(newAnnot);
+      saveAnnotations();
+      renderAnnotations();
+      drawConnections();
+      showToast("📋 텍스트 상자가 동일한 스타일로 복제되었습니다.");
+    });
+    toolbar.appendChild(copyBtn);
+    
     // Delete button
     const delBtn = document.createElement('button');
     delBtn.className = 'annot-btn';
