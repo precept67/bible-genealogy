@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>성경 인물 족보 시각화 연구 도구</title>
+  <title>열린족보이야기</title>
   <script>
     window.onerror = function(message, source, lineno, colno, error) {
       setTimeout(function() {
@@ -46,37 +46,94 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
   
   <!-- Main Stylesheet -->
-  <link rel="stylesheet" href="style_v16_v2.css?v=1690">
+  <link rel="stylesheet" href="style_v16_v2.css?v=1930">
 </head>
 <body>
+
+  <!-- Premium Landing Page Overlay -->
+  <div id="landing-page" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); z-index: 9999; justify-content: center; align-items: center; font-family: 'Inter', sans-serif; color: white; box-sizing: border-box; padding: 20px; overflow-y: auto;">
+    <div style="max-width: 800px; width: 100%; text-align: center; margin: auto; padding: 40px 20px;">
+      
+      <!-- Top Bar (No button here anymore) -->
+
+      <!-- Main Visual & Header -->
+      <div style="margin-bottom: 40px;">
+        <img src="/app_logo.png" alt="열린족보이야기 로고" style="height: 100px; width: 100px; border-radius: 24px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); object-fit: cover;">
+        <h1 style="font-family: 'Outfit', sans-serif; font-size: 40px; font-weight: 800; letter-spacing: -0.03em; margin: 0 0 16px 0; background: linear-gradient(to right, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+          열린족보이야기
+        </h1>
+        <p style="font-size: 18px; line-height: 1.6; color: #94a3b8; max-width: 600px; margin: 0 auto;">
+          아담부터 예수 그리스도에 이르는 성경의 전체 계보를<br>
+          자유로운 확대/축소와 함께 탐색하고 연구하는 시각화 플랫폼
+        </p>
+      </div>
+
+      <!-- Features Brief -->
+      <div style="display: flex; gap: 20px; justify-content: center; margin-bottom: 25px; flex-wrap: wrap;">
+        <div id="landing-feature-messiah" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); padding: 12px 24px; border-radius: 12px; font-size: 14px; color: #f0f9ff; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(56, 189, 248, 0.15)'; this.style.borderColor='rgba(56, 189, 248, 0.4)';" onmouseout="this.style.background='rgba(255,255,255,0.04)'; this.style.borderColor='rgba(255,255,255,0.1)';" title="족보에서 어떻게 강조되는지 화면으로 보기">
+          ✨ 메시아 직계선 강조
+        </div>
+        <div id="landing-feature-memo" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); padding: 12px 24px; border-radius: 12px; font-size: 14px; color: #f0f9ff; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(56, 189, 248, 0.15)'; this.style.borderColor='rgba(56, 189, 248, 0.4)';" onmouseout="this.style.background='rgba(255,255,255,0.04)'; this.style.borderColor='rgba(255,255,255,0.1)';" title="인물 상세 메모 및 자료 연동 화면 보기">
+          📝 인물별 개인 연구 메모
+        </div>
+        <div id="landing-feature-filter" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); padding: 12px 24px; border-radius: 12px; font-size: 14px; color: #f0f9ff; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(56, 189, 248, 0.15)'; this.style.borderColor='rgba(56, 189, 248, 0.4)';" onmouseout="this.style.background='rgba(255,255,255,0.04)'; this.style.borderColor='rgba(255,255,255,0.1)';" title="특정 계보만 걸러서 보기 기능 체험하기">
+          📐 맞춤형 지파 필터
+        </div>
+      </div>
+
+      <!-- Demo Info Notice -->
+      <div style="font-size: 12px; color: #64748b; margin-bottom: 35px; text-align: center;">
+        ※ 위 버튼을 클릭하면 5분 동안 실제 프로그램을 웹에서 미리 체험해 보실 수 있습니다.
+      </div>
+
+      <!-- Download Cards Container -->
+      <div style="display: flex; gap: 24px; justify-content: center; margin-bottom: 30px; flex-wrap: wrap;">
+        
+        <!-- Windows Card -->
+        <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 16px 24px; width: 280px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-5px)';" onmouseout="this.style.transform='translateY(0)';">
+          <h3 style="margin: 0 0 4px 0; font-size: 16px; font-weight: 600;">Windows용 데스크톱</h3>
+          <p style="font-size: 12px; color: #64748b; margin: 0 0 12px 0;">Windows 10 / 11 지원 (x64)</p>
+          <a href="/downloads/BibleGenealogy_Setup_x64.msi" style="display: block; width: 100%; padding: 10px; background: #0284c7; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 13px; transition: background 0.2s; box-shadow: 0 4px 12px rgba(2,132,199,0.3);" onmouseover="this.style.background='#0369a1';" onmouseout="this.style.background='#0284c7';" download>
+            Windows용 설치파일 다운로드
+          </a>
+        </div>
+
+        <!-- macOS Card -->
+        <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 16px 24px; width: 280px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-5px)';" onmouseout="this.style.transform='translateY(0)';">
+          <h3 style="margin: 0 0 4px 0; font-size: 16px; font-weight: 600;">macOS용 데스크톱</h3>
+          <p style="font-size: 12px; color: #64748b; margin: 0 0 12px 0;">Apple Silicon & Intel 지원 (Universal)</p>
+          <a href="/downloads/BibleGenealogy_macOS.dmg" style="display: block; width: 100%; padding: 10px; background: #0284c7; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 13px; transition: background 0.2s; box-shadow: 0 4px 12px rgba(2,132,199,0.3);" onmouseover="this.style.background='#0369a1';" onmouseout="this.style.background='#0284c7';" download>
+            macOS용 설치파일 다운로드
+          </a>
+        </div>
+
+      </div>
+
+      <!-- Security / Warning link -->
+      <div style="font-size: 13px; margin-bottom: 10px;">
+        <a href="javascript:void(0)" id="landing-install-guide-link" style="color: #f97316; text-decoration: underline; font-weight: 600;">⚠️ 첫 설치 시 보안 차단 경고 해결 방법 (필독!)</a>
+      </div>
+
+    </div>
+
+    <!-- Hidden Admin Login Link at the very bottom center of viewport -->
+    <div style="position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); font-size: 11px; opacity: 0.25; z-index: 10000;">
+      <a href="javascript:void(0)" id="landing-login-btn" style="color: #94a3b8; text-decoration: none; cursor: pointer; font-weight: 400; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.7';" onmouseout="this.style.opacity='1';">관리자 로그인</a>
+    </div>
+
+    </div>
+  </div>
 
   <!-- Auth Modal -->
   <div id="auth-modal" style="display: flex; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 10000; justify-content: center; align-items: center;">
     <div style="background: white; padding: 40px; border-radius: 12px; width: 360px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); text-align: center; position: relative;">
       <span id="auth-close-btn" style="position: absolute; top: 15px; right: 20px; font-size: 28px; color: #999; cursor: pointer; font-weight: 300; line-height: 1;" onmouseover="this.style.color='#333'" onmouseout="this.style.color='#999'">&times;</span>
-      <h2 style="margin-top: 0; margin-bottom: 15px; font-size: 24px;">성경 족보 묵상</h2>
+      <img src="/app_logo.png" alt="로고" style="height: 60px; width: 60px; border-radius: 12px; margin: 0 auto 15px auto; display: block; object-fit: cover;">
+      <h2 style="margin-top: 0; margin-bottom: 15px; font-size: 24px;">열린족보이야기</h2>
       <input type="text" id="auth-username" placeholder="아이디" style="width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box;">
       <input type="password" id="auth-password" placeholder="비밀번호" style="width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box;">
       <button id="auth-login-btn" style="width: 100%; padding: 12px; background: #3498db; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-bottom: 10px;">기존 회원 로그인</button>
-      <button id="auth-register-btn" style="width: 100%; padding: 12px; background: #ecf0f1; color: #999; border: none; border-radius: 6px; font-weight: bold; cursor: not-allowed; text-decoration: line-through;" disabled title="현재 신규 가입이 중단되었습니다.">새로 가입하기 (중단)</button>
       <p id="auth-message" style="color: #e74c3c; font-size: 13px; margin-top: 15px; height: 15px;"></p>
-      
-      <!-- Desktop App Download Area -->
-      <div style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px; font-size: 12px;">
-        <p style="margin: 0 0 8px 0; color: #7f8c8d; font-weight: 600;">💻 데스크톱 앱 다운로드 설치</p>
-        <div style="display: flex; gap: 15px; justify-content: center; align-items: center;">
-          <a href="/downloads/BibleGenealogy_Setup_x64.msi" style="color: #3498db; text-decoration: none; font-weight: bold; display: flex; align-items: center; gap: 4px;" download>
-            <span>🪟</span> Windows용
-          </a>
-          <span style="color: #ccc;">|</span>
-          <a href="/downloads/BibleGenealogy_macOS.dmg" style="color: #3498db; text-decoration: none; font-weight: bold; display: flex; align-items: center; gap: 4px;" download>
-            <span>🍎</span> macOS용
-          </a>
-        </div>
-        <div style="margin-top: 10px; text-align: center;">
-          <a href="javascript:void(0)" id="show-install-guide-link" style="color: #e67e22; text-decoration: underline; font-weight: 600; font-size: 11px;">⚠️ 첫 설치 시 보안 경고 해결 방법 (필독!)</a>
-        </div>
-      </div>
     </div>
   </div>
 
@@ -191,7 +248,8 @@
     
     <!-- Header Title Panel -->
     <header id="main-header">
-      <h1>성경 전체 족보 <small style="font-size: 11px; opacity: 0.5; vertical-align: middle;">v14.0</small></h1>
+      <img src="/app_logo.png" alt="로고" style="height: 24px; width: 24px; border-radius: 6px; object-fit: cover;">
+      <h1>열린족보이야기 <small style="font-size: 11px; opacity: 0.5; vertical-align: middle;">v14.0</small></h1>
       <span class="subtitle" id="stats">분석 중...</span>
     </header>
     
@@ -210,8 +268,8 @@
           <span style="font-size: 10px; opacity: 0.5; margin-left: 8px;">⋮⋮</span>
         </div>
         <label><input type="checkbox" id="toggle-layer-people" checked> 인물 족보</label>
-        <label><input type="checkbox" id="toggle-layer-events" checked> 주요 사건 (Events)</label>
-        <label><input type="checkbox" id="toggle-layer-locations" checked> 장소/지명 (Locations)</label>
+        <label><input type="checkbox" id="toggle-layer-events"> 주요 사건 (Events)</label>
+        <label><input type="checkbox" id="toggle-layer-locations"> 장소/지명 (Locations)</label>
         <label><input type="checkbox" id="toggle-layer-polygons" checked> 영역 (Areas)</label>
         <input type="checkbox" id="toggle-relationship-highlight" checked style="display: none;">
       </div>
@@ -237,11 +295,11 @@
               <marker id="arrow-highlight" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                 <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#ff7a00" />
               </marker>
-              <!-- 전도사 화살표 (메시아 직계선 색상과 동조) -->
+              <!-- 전도자 화살표 (전도자 연결선 색상과 동조) -->
               <marker id="preacher-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--line-main-color)" />
+                <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--preacher-line-color)" />
               </marker>
-              <!-- 전도사 하이라이트 상태 화살표 -->
+              <!-- 전도자 하이라이트 상태 화살표 -->
               <marker id="preacher-arrow-highlight" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                 <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--text-accent)" />
               </marker>
@@ -250,24 +308,37 @@
           <!-- HTML Person Cards will be rendered here dynamically -->
           
           <!-- New Transparent Layers -->
-          <div id="layer-events" class="transparent-layer"></div>
-          <div id="layer-locations" class="transparent-layer"></div>
+          <div id="layer-events" class="transparent-layer" style="display: none;"></div>
+          <div id="layer-locations" class="transparent-layer" style="display: none;"></div>
         </div>
       </div>
     </main>
     
-    <!-- Bottom Float Control Bar -->
     <div id="control-panel">
-      <button id="zoom-out" class="control-btn" title="축소">➖</button>
+      <button id="zoom-out" class="control-btn" title="축소">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12" /></svg>
+      </button>
       <span id="zoom-level" class="zoom-indicator">100%</span>
-      <button id="zoom-in" class="control-btn" title="확대">➕</button>
+      <button id="zoom-in" class="control-btn" title="확대">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+      </button>
       <div class="control-divider"></div>
-      <button id="zoom-reset" class="control-btn" title="원본 크기">🔄</button>
-      <button id="theme-toggle" class="control-btn" title="테마 변경">🌙</button>
-      <button id="filter-panel-toggle" class="control-btn" title="계보 필터 설정">👁️</button>
+      <button id="zoom-reset" class="control-btn" title="원본 크기">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+      </button>
+      <button id="theme-toggle" class="control-btn" title="테마 변경">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>
+      </button>
+      <button id="filter-panel-toggle" class="control-btn" title="계보 필터 설정">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+      </button>
       <div id="admin-divider" class="control-divider" style="display: none;"></div>
-      <button id="admin-lock-btn" class="control-btn" title="관리자 편집 모드 토글" style="display: none;">🔒</button>
-      <button id="user-logout-btn" class="control-btn" title="로그아웃" style="margin-left: 4px;">🚪</button>
+      <button id="admin-lock-btn" class="control-btn" title="관리자 편집 모드 토글" style="display: none;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+      </button>
+      <button id="user-logout-btn" class="control-btn" title="로그아웃" style="margin-left: 4px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+      </button>
     </div>
     
     <!-- Left Sliding Design Style Editor Panel -->
@@ -306,6 +377,10 @@
           <div class="style-control-group">
             <label for="style-spouse-line-color">배우자 연결선</label>
             <input type="color" id="style-spouse-line-color" value="#ef4444">
+          </div>
+          <div class="style-control-group">
+            <label for="style-preacher-line-color">전도자 연결선</label>
+            <input type="color" id="style-preacher-line-color" value="#ff7800">
           </div>
         </section>
         
@@ -358,6 +433,13 @@
             <button id="style-clear-all-lines-btn" class="style-action-btn danger" style="flex: 1; padding: 8px; font-size: 11px; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid #ef4444; background: #ef4444; color: #fff; transition: all 0.2s ease;">전체선 초기화</button>
           </div>
           <button id="style-delete-selected-line-btn" class="style-action-btn danger" disabled style="width: 100%; margin-top: 8px; padding: 8px; font-size: 11px; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid #ef4444; background: #ef4444; color: #fff; transition: all 0.2s ease; display: block;">선택한 연결선 삭제</button>
+          <div id="style-line-zorder-group" style="margin-top: 12px; display: none;">
+            <label style="font-weight: 600; font-size: 12px; color: var(--text-main); margin-bottom: 4px; display: block;">선 레이어 순서 (상하 관계)</label>
+            <div style="display: flex; gap: 8px;">
+              <button id="style-line-bring-front-btn" class="style-action-btn primary" style="flex: 1; padding: 6px; font-size: 11px; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid #7c3aed; background: #7c3aed; color: #fff;">맨 앞으로 보내기 ⬆️</button>
+              <button id="style-line-send-back-btn" class="style-action-btn secondary" style="flex: 1; padding: 6px; font-size: 11px; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid #cbd5e1; background: transparent; color: var(--text-main);">맨 뒤로 보내기 ⬇️</button>
+            </div>
+          </div>
         </section>
 
         <!-- 4. Area Editor (Custom Polygons) -->
@@ -610,7 +692,7 @@
               <div id="spouses-suggestions" class="autocomplete-suggestions"></div>
             </div>
             <div class="form-group full-width" style="position: relative;">
-              <label for="form-teachers">전도사 ID 목록 (콤마로 구분)</label>
+              <label for="form-teachers">전도자 ID 목록 (콤마로 구분)</label>
               <input type="text" id="form-teachers" placeholder="예: jesus, paul" autocomplete="off">
               <div id="teachers-suggestions" class="autocomplete-suggestions"></div>
             </div>
@@ -741,8 +823,8 @@
     // This blocks the page load just enough to ensure the latest data is available before app.js runs.
     try {
       var req = new XMLHttpRequest();
-      var apiBase = window.API_BASE_URL || "";
-      req.open('GET', apiBase + '/api/data?t=' + new Date().getTime(), false); // false = synchronous
+      var dataUrl = isTauri ? 'database.json' : '/api/data';
+      req.open('GET', dataUrl + '?t=' + new Date().getTime(), false); // false = synchronous
       req.send(null);
       if (req.status === 200) {
         var parsed = JSON.parse(req.responseText);
@@ -781,7 +863,45 @@
         }
       }
     } catch(e) {
-      console.log('API data not available, falling back to local files.');
+      console.log('API data not available, falling back to local database.json.');
+      try {
+        var localReq = new XMLHttpRequest();
+        localReq.open('GET', 'database.json?t=' + new Date().getTime(), false);
+        localReq.send(null);
+        if (localReq.status === 200) {
+          var parsed = JSON.parse(localReq.responseText);
+          if (parsed && parsed.db) {
+            var characterEdits = {};
+            var customCharacters = [];
+            var canonIds = {};
+            if (typeof BIBLE_CHARACTERS !== 'undefined') {
+              BIBLE_CHARACTERS.forEach(function(c) {
+                canonIds[c.id] = true;
+              });
+            }
+            parsed.db.forEach(function(c) {
+              if (canonIds[c.id]) {
+                characterEdits[c.id] = c;
+              } else {
+                customCharacters.push(c);
+              }
+            });
+            window.localStorage.setItem('bible_tree_character_edits', JSON.stringify(characterEdits));
+            window.localStorage.setItem('bible_tree_custom_characters', JSON.stringify(customCharacters));
+            if(parsed.lineBends) window.localStorage.setItem('bible_tree_line_bends', JSON.stringify(parsed.lineBends));
+            if(parsed.customVisualLines) window.localStorage.setItem('bible_tree_custom_visual_lines', JSON.stringify(parsed.customVisualLines));
+            if(parsed.canvasJunctions) window.localStorage.setItem('bible_tree_canvas_junctions', JSON.stringify(parsed.canvasJunctions));
+            if(parsed.spouseSplits) window.localStorage.setItem('bible_tree_spouse_splits', JSON.stringify(parsed.spouseSplits));
+            if(parsed.annotations) window.localStorage.setItem('bible_tree_annotations', JSON.stringify(parsed.annotations));
+            if(parsed.styleSettings) window.localStorage.setItem('bible_tree_style_settings', JSON.stringify(parsed.styleSettings));
+            if(parsed.customPolygons) window.localStorage.setItem('bible_tree_custom_polygons', JSON.stringify(parsed.customPolygons));
+            if(parsed.events) window.localStorage.setItem('bible_tree_events', JSON.stringify(parsed.events));
+            if(parsed.locations) window.localStorage.setItem('bible_tree_locations', JSON.stringify(parsed.locations));
+          }
+        }
+      } catch(innerErr) {
+        console.error('Failed to load local database.json fallback:', innerErr);
+      }
     }
 
     // Installation Guide Modal Handlers
@@ -813,7 +933,47 @@
         }
       });
     }
+
+    // Landing Page Event Listeners
+    var landingLoginBtn = document.getElementById('landing-login-btn');
+    var landingInstallGuideLink = document.getElementById('landing-install-guide-link');
+    if (landingLoginBtn) {
+      landingLoginBtn.addEventListener('click', function() {
+        if (typeof showAuthModal === 'function') {
+          showAuthModal();
+        } else {
+          var modal = document.getElementById('auth-modal');
+          if (modal) modal.style.display = 'flex';
+        }
+      });
+    }
+    if (landingInstallGuideLink) {
+      landingInstallGuideLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (guideModal) guideModal.style.display = 'flex';
+      });
+    }
+
+    // Landing Page Feature Demos
+    var featureMessiah = document.getElementById('landing-feature-messiah');
+    var featureMemo = document.getElementById('landing-feature-memo');
+    var featureFilter = document.getElementById('landing-feature-filter');
+    if (featureMessiah) {
+      featureMessiah.addEventListener('click', function() {
+        if (typeof window.demoFeature === 'function') window.demoFeature('messiah');
+      });
+    }
+    if (featureMemo) {
+      featureMemo.addEventListener('click', function() {
+        if (typeof window.demoFeature === 'function') window.demoFeature('memo');
+      });
+    }
+    if (featureFilter) {
+      featureFilter.addEventListener('click', function() {
+        if (typeof window.demoFeature === 'function') window.demoFeature('filter');
+      });
+    }
   </script>
-  <script src="app_v16_v2.js?v=1920"></script>
+  <script src="app_v16_v2.js?v=1939"></script>
 </body>
 </html>

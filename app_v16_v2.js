@@ -1108,6 +1108,7 @@ let styleSettings = {
   lineColor: '#ff7800',
   mainLineColor: '#ff7800',
   spouseLineColor: '#ef4444',
+  preacherLineColor: '#ff7800',
   lineWidth: 3,
   cornerRadius: 12,
   splitOffset: 90,
@@ -1155,6 +1156,7 @@ let selectedJunctionId = null; // Currently selected junction node ID
 let isAddLinkModeActive = false; // Add Link mode toggle state
 let linkSourceId = null; // Source element ID for link drawing
 let spouseSplits = {}; // Custom horizontal split ratios for spouse connector lines
+let lineZIndices = {}; // Custom z-order weights for connection lines (maps line key to numeric z-index)
 let coupleMidpoints = {}; // Midpoints for spouse lines
 let customPolygons = []; // Custom arbitrary polygons (filled regions)
 let selectedPolygonId = null; // Selected custom polygon ID
@@ -1172,18 +1174,19 @@ let boardHeight = 0;
 // Filter Settings
 const charGroups = {};
 let activeFilters = {
-  cain: true,
-  japheth: true,
-  ham: true,
-  joktan: true,
-  keturah: true,
-  ishmael: true,
-  esau: true,
-  north_kings: true,
-  independent_1chr4: true,
-  levite_priests: true,
-  horite_chiefs: true,
-  reuben_simeon: true
+  cain: false,
+  japheth: false,
+  ham: false,
+  joktan: false,
+  keturah: false,
+  ishmael: false,
+  esau: false,
+  mary: false,
+  north_kings: false,
+  independent_1chr4: false,
+  levite_priests: false,
+  horite_chiefs: false,
+  reuben_simeon: false
 };
 
 // Undo / Redo Stacks for Admin Actions
@@ -1489,7 +1492,7 @@ function deleteSelectedLine() {
       showToast("연결선이 삭제되었습니다.");
     }
   } else if (isTeacherLine) {
-    if (confirm("선택한 전도사 연결선을 삭제하시겠습니까?\n이 작업은 해당 인물의 전도사 ID 목록에서 상대방을 해제(삭제)합니다.")) {
+    if (confirm("선택한 전도자 연결선을 삭제하시겠습니까?\n이 작업은 해당 인물의 전도자 ID 목록에서 상대방을 해제(삭제)합니다.")) {
       pushHistoryState();
       const prefix = selectedLineKey.startsWith('teacher-') ? 'teacher-' : 'preacher-';
       const relContent = selectedLineKey.replace(prefix, '');
@@ -1511,7 +1514,7 @@ function deleteSelectedLine() {
       saveLineBends();
       initBoard();
       renderTree();
-      showToast("선택한 전도사 연결선이 해제되었습니다.");
+      showToast("선택한 전도자 연결선이 해제되었습니다.");
     }
   } else if (isSingleRelationLine) {
     if (confirm("선택한 인물의 가족 관계선(부모-자녀 연결선)을 삭제하시겠습니까?\n이 작업은 해당 인물 한 명의 부모 관계 데이터를 해제(삭제)합니다.")) {
@@ -1762,6 +1765,7 @@ const styleResetBtn = document.getElementById('style-reset-btn');
 const inputLineColor = document.getElementById('style-line-color');
 const inputMainLineColor = document.getElementById('style-main-line-color');
 const inputSpouseLineColor = document.getElementById('style-spouse-line-color');
+const inputPreacherLineColor = document.getElementById('style-preacher-line-color');
 const inputLineWidth = document.getElementById('style-line-width');
 const inputCornerRadius = document.getElementById('style-corner-radius');
 const inputSplitOffset = document.getElementById('style-split-offset');
@@ -2210,6 +2214,7 @@ function initDatabase() {
   loadEvents();
   loadLocations();
   loadLineBends();
+  loadLineZIndices();
   loadSpouseSplits();
   loadCustomVisualLines();
   loadCanvasJunctions();
@@ -2257,7 +2262,10 @@ function saveDatabase() {
   // Helper to check if a group is hidden
   const isGroupHidden = (group) => {
     if (!group) return false;
-    return activeFilters[group] === false;
+    if (isFilterModeActive()) {
+      return activeFilters[group] !== true;
+    }
+    return false;
   };
   
   // 1. Process current db (active/visible items)
@@ -2391,6 +2399,27 @@ function loadLineBends() {
 function saveLineBends() {
   localStorage.setItem('bible_tree_line_bends', JSON.stringify(lineBends));
   autoSaveToServer();
+}
+
+function saveLineZIndices() {
+  localStorage.setItem('bible_tree_line_zindices', JSON.stringify(lineZIndices));
+  autoSaveToServer();
+}
+
+function loadLineZIndices() {
+  const saved = localStorage.getItem('bible_tree_line_zindices');
+  if (saved) {
+    try {
+      lineZIndices = JSON.parse(saved);
+      if (!lineZIndices || typeof lineZIndices !== 'object' || Array.isArray(lineZIndices)) {
+        lineZIndices = {};
+      }
+    } catch (e) {
+      lineZIndices = {};
+    }
+  } else {
+    lineZIndices = {};
+  }
 }
 
 function loadSpouseSplits() {
@@ -2993,7 +3022,8 @@ function renderAnnotations() {
   annotations.forEach(annot => {
     const el = document.createElement('div');
     el.id = `annot-${annot.id}`;
-    el.className = 'canvas-annotation';
+    const filterClass = getAnnotationFilterClass(annot);
+    el.className = `canvas-annotation ${filterClass}`;
     el.dataset.x = annot.x;
     el.dataset.y = annot.y;
     el.style.width = `${annot.width}px`;
@@ -3045,11 +3075,6 @@ function renderAnnotations() {
     textDiv.style.overflow = 'hidden';
     textDiv.style.boxSizing = 'border-box';
     textDiv.style.padding = '4px 8px';
-    
-    textDiv.addEventListener('input', () => {
-      annot.text = textDiv.innerText;
-      saveAnnotations();
-    });
     
     el.appendChild(textDiv);
     
@@ -3369,34 +3394,63 @@ function renderAnnotations() {
       openLayerDetails(annot, 'annotation');
     });
 
-    // Double-click to Edit (Figma style)
+    // Double-click to Edit (Figma style with a simple textarea)
     el.addEventListener('dblclick', (e) => {
       if (!isAdminMode) return;
       if (e.target.closest('.annotation-toolbar') || e.target.closest('.annot-resize-handle')) return;
       
       e.stopPropagation();
       el.classList.add('editing');
-      textDiv.contentEditable = 'true';
+      textDiv.style.display = 'none';
       
+      const textarea = document.createElement('textarea');
+      textarea.className = 'annotation-edit-textarea';
+      textarea.value = annot.text || '';
+      textarea.style.position = 'absolute';
+      textarea.style.top = '0';
+      textarea.style.left = '0';
+      textarea.style.width = '100%';
+      textarea.style.height = '100%';
+      textarea.style.border = 'none';
+      textarea.style.outline = 'none';
+      textarea.style.background = 'transparent';
+      textarea.style.color = annot.color || '#1e293b';
+      textarea.style.fontSize = `${annot.fontSize || 14}px`;
+      textarea.style.fontWeight = annot.bold ? 'bold' : 'normal';
+      textarea.style.fontStyle = annot.italic ? 'italic' : 'normal';
+      textarea.style.textDecoration = annot.underline ? 'underline' : 'none';
+      textarea.style.textAlign = annot.align || 'center';
+      textarea.style.fontFamily = 'inherit';
+      textarea.style.boxSizing = 'border-box';
+      textarea.style.padding = '8px';
+      textarea.style.resize = 'none';
+      textarea.style.overflow = 'hidden';
+      textarea.style.zIndex = '10';
+      
+      const saveAndClose = () => {
+        if (textarea.parentNode) {
+          annot.text = textarea.value;
+          textDiv.innerText = annot.text;
+          textarea.remove();
+          textDiv.style.display = 'flex';
+          el.classList.remove('editing');
+          saveAnnotations();
+        }
+      };
+      
+      textarea.addEventListener('blur', saveAndClose);
+      textarea.addEventListener('keydown', (evt) => {
+        if (evt.key === 'Escape') {
+          evt.stopPropagation();
+          saveAndClose();
+        }
+      });
+      
+      el.appendChild(textarea);
       setTimeout(() => {
-        textDiv.focus();
-        try {
-          const range = document.createRange();
-          const sel = window.getSelection();
-          range.selectNodeContents(textDiv);
-          range.collapse(false); // collapse to end
-          sel.removeAllRanges();
-          sel.addRange(range);
-        } catch(err) {}
+        textarea.focus();
+        textarea.select();
       }, 10);
-    });
-
-    // Save on blur
-    textDiv.addEventListener('blur', () => {
-      el.classList.remove('editing');
-      textDiv.contentEditable = 'false';
-      annot.text = textDiv.innerText;
-      saveAnnotations();
     });
 
     // Drag handlers
@@ -4172,13 +4226,23 @@ function highlightAncestors(charId) {
     }
   });
   
-  // Highlight spouse connector paths
+  // Highlight spouse connector paths and circles
   document.querySelectorAll('.spouse-connector').forEach(path => {
     const spouseIdsAttr = path.getAttribute('data-spouse-ids');
     if (spouseIdsAttr) {
       const ids = spouseIdsAttr.split(',');
       if (ids.every(id => ancestors.has(id))) {
         path.classList.add('line-highlight');
+      }
+    }
+  });
+  
+  document.querySelectorAll('.spouse-node-circle').forEach(circle => {
+    const spouseIdsAttr = circle.getAttribute('data-spouse-ids');
+    if (spouseIdsAttr) {
+      const ids = spouseIdsAttr.split(',');
+      if (ids.every(id => ancestors.has(id))) {
+        circle.classList.add('line-highlight');
       }
     }
   });
@@ -4192,9 +4256,16 @@ function clearHighlight() {
   
   const studyPanel = document.getElementById('study-panel');
   if (studyPanel && studyPanel.classList.contains('active') && activePersonId && activeStudyPanelType) {
-    highlightRelatedElements(activePersonId, activeStudyPanelType);
+    if (activeStudyPanelType === 'annotation') {
+      const annot = annotations.find(a => a.id === activePersonId);
+      if (annot) {
+        highlightRelatedElementsForAnnotation(annot);
+      }
+    } else {
+      highlightRelatedElements(activePersonId, activeStudyPanelType);
+    }
   } else {
-    document.querySelectorAll('.connector-line, .spouse-connector').forEach(path => {
+    document.querySelectorAll('.connector-line, .spouse-connector, .spouse-node-circle').forEach(path => {
       path.classList.remove('line-highlight');
     });
   }
@@ -4241,6 +4312,10 @@ function initStyleSettings() {
         styleSettings.lineColor = '#ff7800';
         changed = true;
       }
+      if (!styleSettings.preacherLineColor) {
+        styleSettings.preacherLineColor = '#ff7800';
+        changed = true;
+      }
       if (styleSettings.lineWidth === 2 || typeof styleSettings.lineWidth !== 'number' || isNaN(styleSettings.lineWidth) || styleSettings.lineWidth < 1) {
         styleSettings.lineWidth = 3;
         changed = true;
@@ -4271,6 +4346,7 @@ function applyStyleSettings() {
   let activeLineColor = styleSettings.lineColor;
   let activeMainLineColor = styleSettings.mainLineColor;
   let activeSpouseLineColor = styleSettings.spouseLineColor;
+  let activePreacherLineColor = styleSettings.preacherLineColor || '#ff7800';
   
   if (isDark) {
     if (activeLineColor === '#ff7800') activeLineColor = '#f97316';
@@ -4278,18 +4354,21 @@ function applyStyleSettings() {
     
     if (activeMainLineColor === '#ff7800') activeMainLineColor = '#f97316';
     if (activeSpouseLineColor === '#ef4444') activeSpouseLineColor = '#f87171';
+    if (activePreacherLineColor === '#ff7800') activePreacherLineColor = '#f97316';
   }
   
   // Set CSS Variables on root element
   document.documentElement.style.setProperty('--line-color', activeLineColor);
   document.documentElement.style.setProperty('--line-main-color', activeMainLineColor);
   document.documentElement.style.setProperty('--spouse-line-color', activeSpouseLineColor);
+  document.documentElement.style.setProperty('--preacher-line-color', activePreacherLineColor);
   document.documentElement.style.setProperty('--line-width', `${styleSettings.lineWidth}px`);
   
   // Update inputs values
   inputLineColor.value = styleSettings.lineColor;
   inputMainLineColor.value = styleSettings.mainLineColor;
   inputSpouseLineColor.value = styleSettings.spouseLineColor;
+  if (inputPreacherLineColor) inputPreacherLineColor.value = styleSettings.preacherLineColor || '#ff7800';
   
   inputLineWidth.value = styleSettings.lineWidth;
   inputCornerRadius.value = styleSettings.cornerRadius;
@@ -4667,27 +4746,331 @@ function getCharacterGroup(char) {
   return charGroups[char.id] || null;
 }
 
+function isFilterModeActive() {
+  return Object.values(activeFilters).some(val => val === true);
+}
+
+function isPointInPolygon(point, vs) {
+  const x = point.x, y = point.y;
+  let inside = false;
+  for (let i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+    const xi = vs[i].x, yi = vs[i].y;
+    const xj = vs[j].x, yj = vs[j].y;
+    const intersect = ((yi > y) !== (yj > y))
+        && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+    if (intersect) inside = !inside;
+  }
+  return inside;
+}
+
+const TRIBE_KEYWORDS = {
+  "르우벤": "reuben",
+  "시므온": "simeon",
+  "레위": "levi",
+  "유다": "judah",
+  "잇사갈": "issachar",
+  "스불론": "zebulun",
+  "단": "dan",
+  "베냐민": "benjamin",
+  "납달리": "naphtali",
+  "갓": "gad",
+  "아셀": "asher",
+  "므낫세": "joseph",
+  "에브라임": "joseph"
+};
+
+function getTribeId(charId) {
+  const sonsOfJacob = ['reuben', 'simeon', 'levi', 'judah', 'issachar', 'zebulun', 'dan', 'joseph', 'benjamin', 'naphtali', 'gad', 'asher'];
+  
+  let queue = [charId];
+  let visited = new Set();
+  while (queue.length > 0) {
+    const currentId = queue.shift();
+    if (visited.has(currentId)) continue;
+    visited.add(currentId);
+    
+    if (sonsOfJacob.includes(currentId)) {
+      return currentId;
+    }
+    
+    const c = db.find(x => x.id === currentId);
+    if (c && c.parents) {
+      c.parents.forEach(pId => {
+        if (!visited.has(pId)) {
+          queue.push(pId);
+        }
+      });
+    }
+  }
+  return null;
+}
+
+function getElementFilterClass(id) {
+  if (!isFilterModeActive()) return "";
+  if (typeof id !== 'string') return "";
+  if (id.startsWith('annot-')) {
+    const annotId = id.replace('annot-', '');
+    const annot = annotations.find(a => a.id === annotId);
+    return annot ? getAnnotationFilterClass(annot) : "filter-inactive";
+  }
+  const char = db.find(c => c.id === id);
+  if (char) {
+    return getCharacterFilterClass(id);
+  }
+  return "filter-inactive";
+}
+
+function getCharacterFilterClass(charId) {
+  if (!isFilterModeActive()) return "";
+  
+  const char = db.find(c => c.id === charId);
+  if (!char) return "filter-inactive";
+  
+  // 1. Check built-in filters
+  const group = getCharacterGroup(char);
+  if (group && activeFilters[group] === true) {
+    return "";
+  }
+  
+  // 2. Check custom polygon filters geometrically
+  const coords = coordinates[charId];
+  if (coords) {
+    const charTribe = getTribeId(charId);
+    for (const poly of customPolygons) {
+      const baseGroup = poly.id.replace('poly-', '');
+      if (activeFilters[baseGroup] === true) {
+        if (poly.points && poly.points.length >= 3) {
+          if (isPointInPolygon(coords, poly.points)) {
+            let isTribeMatch = true;
+            if (poly.label) {
+              for (const [kw, tId] of Object.entries(TRIBE_KEYWORDS)) {
+                if (poly.label.includes(kw)) {
+                  if (charTribe && charTribe !== tId) {
+                    isTribeMatch = false;
+                  }
+                  break;
+                }
+              }
+            }
+            if (isTribeMatch) {
+              return "";
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  return "filter-inactive";
+}
+
+function getSpouseFilterClass(charId1, charId2) {
+  if (!isFilterModeActive()) return "";
+  
+  const char1 = db.find(c => c.id === charId1);
+  const char2 = db.find(c => c.id === charId2);
+  const group1 = char1 ? getCharacterGroup(char1) : null;
+  const group2 = char2 ? getCharacterGroup(char2) : null;
+  if ((group1 && activeFilters[group1] === true) || (group2 && activeFilters[group2] === true)) {
+    return "";
+  }
+  
+  // Check custom polygon filters geometrically for spouses
+  for (const charId of [charId1, charId2]) {
+    if (!charId) continue;
+    const coords = coordinates[charId];
+    if (coords) {
+      for (const poly of customPolygons) {
+        const baseGroup = poly.id.replace('poly-', '');
+        if (activeFilters[baseGroup] === true) {
+          if (poly.points && poly.points.length >= 3) {
+            if (isPointInPolygon(coords, poly.points)) {
+              return "";
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  return "filter-inactive";
+}
+
+function getChildLineFilterClass(childId, parentIds) {
+  if (!isFilterModeActive()) return "";
+  if (getCharacterFilterClass(childId) === "filter-inactive") {
+    return "filter-inactive";
+  }
+  if (parentIds && parentIds.length > 0) {
+    const anyParentActive = parentIds.some(pId => getCharacterFilterClass(pId) === "");
+    if (!anyParentActive) {
+      return "filter-inactive";
+    }
+  }
+  return "";
+}
+
+function getAnnotationFilterClass(annot) {
+  if (!isFilterModeActive()) return "";
+  
+  // Matthew's genealogy specific boxes should always fade out when any filter is active
+  if (annot.id === 'note-1784793168468' || annot.id === 'note-1784796431452' || annot.id === 'note-1784797119640') {
+    return "filter-inactive";
+  }
+  
+  // 1. Check if the annotation itself is inside an active custom polygon
+  const annotPoint = {
+    x: annot.x + (annot.width || 0) / 2,
+    y: annot.y + (annot.height || 0) / 2
+  };
+  
+  for (const poly of customPolygons) {
+    const baseGroup = poly.id.replace('poly-', '');
+    if (activeFilters[baseGroup] === true) {
+      if (poly.points && poly.points.length >= 3) {
+        if (isPointInPolygon(annotPoint, poly.points)) {
+          return "";
+        }
+      }
+    }
+  }
+  
+  // 2. Check related people if any
+  if (annot.relatedPeople && annot.relatedPeople.length > 0) {
+    const hasActivePerson = annot.relatedPeople.some(pId => {
+      return getCharacterFilterClass(pId) === "";
+    });
+    if (hasActivePerson) {
+      return "";
+    }
+  } else {
+    // 3. Fallback: If no relatedPeople, check the closest character card (within 1200px)
+    let minD = Infinity;
+    let closestId = null;
+    db.forEach(c => {
+      const coords = coordinates[c.id];
+      if (coords) {
+        const d = Math.hypot(coords.x - annotPoint.x, coords.y - annotPoint.y);
+        if (d < minD) {
+          minD = d;
+          closestId = c.id;
+        }
+      }
+    });
+    if (closestId && minD < 1200) {
+      if (getCharacterFilterClass(closestId) === "") {
+        return "";
+      }
+    } else if (minD >= 1200) {
+      return ""; // General board header/welcome note far from any character stays active
+    }
+  }
+  
+  return "filter-inactive";
+}
+
+function getEventFilterClass(ev) {
+  if (!isFilterModeActive()) return "";
+  
+  // 1. Check custom polygons geometrically
+  const evPoint = { x: ev.x || 0, y: ev.y || 0 };
+  for (const poly of customPolygons) {
+    const baseGroup = poly.id.replace('poly-', '');
+    if (activeFilters[baseGroup] === true) {
+      if (poly.points && poly.points.length >= 3) {
+        if (isPointInPolygon(evPoint, poly.points)) {
+          return "";
+        }
+      }
+    }
+  }
+  
+  // 2. Check related people if any
+  if (ev.relatedPeople && ev.relatedPeople.length > 0) {
+    const hasActivePerson = ev.relatedPeople.some(pId => {
+      return getCharacterFilterClass(pId) === "";
+    });
+    if (hasActivePerson) {
+      return "";
+    }
+  } else {
+    // 3. Fallback: If no relatedPeople, check closest card
+    let minD = Infinity;
+    let closestId = null;
+    db.forEach(c => {
+      const coords = coordinates[c.id];
+      if (coords) {
+        const d = Math.hypot(coords.x - evPoint.x, coords.y - evPoint.y);
+        if (d < minD) {
+          minD = d;
+          closestId = c.id;
+        }
+      }
+    });
+    if (closestId && minD < 1200) {
+      if (getCharacterFilterClass(closestId) === "") {
+        return "";
+      }
+    } else if (minD >= 1200) {
+      return "";
+    }
+  }
+  
+  return "filter-inactive";
+}
+
+function getLocationFilterClass(loc) {
+  if (!isFilterModeActive()) return "";
+  
+  // 1. Check custom polygons geometrically
+  const locPoint = { x: loc.x || 0, y: loc.y || 0 };
+  for (const poly of customPolygons) {
+    const baseGroup = poly.id.replace('poly-', '');
+    if (activeFilters[baseGroup] === true) {
+      if (poly.points && poly.points.length >= 3) {
+        if (isPointInPolygon(locPoint, poly.points)) {
+          return "";
+        }
+      }
+    }
+  }
+  
+  // 2. Check related people if any
+  if (loc.relatedPeople && loc.relatedPeople.length > 0) {
+    const hasActivePerson = loc.relatedPeople.some(pId => {
+      return getCharacterFilterClass(pId) === "";
+    });
+    if (hasActivePerson) {
+      return "";
+    }
+  } else {
+    // 3. Fallback: If no relatedPeople, check closest card
+    let minD = Infinity;
+    let closestId = null;
+    db.forEach(c => {
+      const coords = coordinates[c.id];
+      if (coords) {
+        const d = Math.hypot(coords.x - locPoint.x, coords.y - locPoint.y);
+        if (d < minD) {
+          minD = d;
+          closestId = c.id;
+        }
+      }
+    });
+    if (closestId && minD < 1200) {
+      if (getCharacterFilterClass(closestId) === "") {
+        return "";
+      }
+    } else if (minD >= 1200) {
+      return "";
+    }
+  }
+  
+  return "filter-inactive";
+}
+
 function applyFilters() {
   initDatabase();
-  
-  // Filter out characters belonging to hidden lineages
-  db = db.filter(char => {
-    const group = getCharacterGroup(char);
-    if (group === 'cain' && !activeFilters.cain) return false;
-    if (group === 'japheth' && !activeFilters.japheth) return false;
-    if (group === 'ham' && !activeFilters.ham) return false;
-    if (group === 'joktan' && !activeFilters.joktan) return false;
-    if (group === 'keturah' && !activeFilters.keturah) return false;
-    if (group === 'ishmael' && !activeFilters.ishmael) return false;
-    if (group === 'esau' && !activeFilters.esau) return false;
-    if (group === 'north_kings' && !activeFilters.north_kings) return false;
-    if (group === 'independent_1chr4' && !activeFilters.independent_1chr4) return false;
-    if (group === 'levite_priests' && !activeFilters.levite_priests) return false;
-    if (group === 'horite_chiefs' && !activeFilters.horite_chiefs) return false;
-    if (group === 'reuben_simeon' && !activeFilters.reuben_simeon) return false;
-    return true;
-  });
-  
   initBoard();
   renderTree();
   updateTransform();
@@ -4701,6 +5084,9 @@ function setupFilters() {
   // Toggle panel
   toggleBtn.addEventListener('click', () => {
     filterPanel.classList.toggle('active');
+    if (filterPanel.classList.contains('active')) {
+      renderFilterItems();
+    }
   });
   
   closeBtn.addEventListener('click', () => {
@@ -4713,26 +5099,105 @@ function setupFilters() {
     try {
       const parsed = JSON.parse(savedFilters);
       if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-        activeFilters = parsed;
+        activeFilters = { ...activeFilters, ...parsed };
       }
     } catch (err) {
       console.error("Failed to parse saved filters", err);
     }
   }
-  
-  // Sync checkboxes
-  const groups = ['cain', 'japheth', 'ham', 'joktan', 'keturah', 'ishmael', 'esau', 'north_kings', 'independent_1chr4', 'levite_priests', 'horite_chiefs', 'reuben_simeon'];
-  groups.forEach(group => {
-    const cb = document.getElementById(`filter-${group}`);
-    if (cb) {
-      cb.checked = activeFilters[group];
-      cb.addEventListener('change', (e) => {
-        activeFilters[group] = e.target.checked;
+
+  // One-time reset migration to default all filters to false (for the new invert/fade-out branch highlight logic)
+  if (!localStorage.getItem('bible_tree_filters_reset_v3')) {
+    Object.keys(activeFilters).forEach(k => {
+      activeFilters[k] = false;
+    });
+    localStorage.setItem('bible_tree_filters', JSON.stringify(activeFilters));
+    localStorage.setItem('bible_tree_filters_reset_v3', 'true');
+  }
+
+  function renderFilterItems() {
+    const filterGroupEl = filterPanel.querySelector('.filter-group');
+    if (!filterGroupEl) return;
+    filterGroupEl.innerHTML = '';
+
+    const builtInGroups = [
+      { id: 'cain', label: '가인 자손 계보 (Cain)' },
+      { id: 'japheth', label: '야벳 자손 계보 (Japheth)' },
+      { id: 'ham', label: '함 자손 계보 (Ham)' },
+      { id: 'joktan', label: '욕단 자손 계보 (Joktan)' },
+      { id: 'keturah', label: '그두라 자손 계보 (Keturah)' },
+      { id: 'ishmael', label: '이스마엘 자손 계보 (Ishmael)' },
+      { id: 'esau', label: '에서(에돔) 자손 계보 (Esau)' },
+      { id: 'mary', label: '마리아 계보 (누가복음 3장 혈통 / Mary)' },
+      { id: 'north_kings', label: '북이스라엘 왕 계보 (North Israel Kings)' },
+      { id: 'independent_1chr4', label: '대상 4장 독립 족보 (1 Chr 4 Lineages)' },
+      { id: 'levite_priests', label: '제사장 및 레위인 독립 족보 (Levite Priests)' },
+      { id: 'horite_chiefs', label: '호리 족속의 족장들 (Horite Chiefs)' },
+      { id: 'reuben_simeon', label: '르우벤 및 시므온 독립 족보 (Reuben & Simeon)' }
+    ];
+
+    const allFilters = [...builtInGroups];
+
+    // Add custom polygons dynamically
+    customPolygons.forEach(poly => {
+      const baseGroup = poly.id.replace('poly-', '');
+      if (!builtInGroups.some(g => g.id === baseGroup)) {
+        allFilters.push({
+          id: baseGroup,
+          label: poly.label || `영역 (${baseGroup})`,
+          isCustom: true
+        });
+      }
+    });
+
+    allFilters.forEach(group => {
+      if (activeFilters[group.id] === undefined) {
+        activeFilters[group.id] = false;
+      }
+
+      const labelEl = document.createElement('label');
+      labelEl.className = 'filter-item';
+
+      const input = document.createElement('input');
+      input.type = 'checkbox';
+      input.id = `filter-${group.id}`;
+      input.checked = activeFilters[group.id];
+
+      const span = document.createElement('span');
+      span.className = 'filter-label';
+      span.textContent = group.label;
+
+      labelEl.appendChild(input);
+      labelEl.appendChild(span);
+      filterGroupEl.appendChild(labelEl);
+
+      input.addEventListener('change', (e) => {
+        activeFilters[group.id] = e.target.checked;
         localStorage.setItem('bible_tree_filters', JSON.stringify(activeFilters));
         applyFilters();
+        
+        if (e.target.checked) {
+          // Automatically open study panel on the right
+          let poly = customPolygons.find(p => p.id === `poly-${group.id}` || p.id === group.id || p.id.replace('poly-', '') === group.id);
+          if (!poly) {
+            poly = {
+              id: `poly-${group.id}`,
+              label: group.label
+            };
+          }
+          openLayerDetails(poly, 'polygon');
+        } else {
+          // Close study panel if it was open for this group
+          const targetId = `poly-${group.id}`;
+          if (activePersonId === targetId || activePersonId === group.id) {
+            closeStudyPanel();
+          }
+        }
       });
-    }
-  });
+    });
+  }
+
+  renderFilterItems();
 }
 
 function updateTreeLayout() {
@@ -4798,6 +5263,10 @@ function renderTree() {
     const card = document.createElement('div');
     card.id = `card-${char.id}`;
     card.className = `person-card ${char.gender === 'M' ? 'male' : 'female'}`;
+    const filterClass = getCharacterFilterClass(char.id);
+    if (filterClass) {
+      card.classList.add(filterClass);
+    }
     if (char.isMain) {
       card.classList.add('main-line');
     }
@@ -5311,6 +5780,7 @@ function renderTree() {
 function drawConnections() {
   svgLayer.innerHTML = "";
   const svgNS = "http://www.w3.org/2000/svg";
+  const pathsToDraw = [];
   const spouseCirclesToDraw = [];
   const drawnSpouses = new Set();
   const parentGroups = {};
@@ -5355,11 +5825,11 @@ function drawConnections() {
         let vertices = [{ x: x1, y: y1 }, ...(customBends || []), { x: x2, y: y2 }];
         let pathD = getRoundedCornersPath(vertices, styleSettings.cornerRadius);
         
+        const spouseFilterClass = getSpouseFilterClass(char.id, spouseId);
         path.setAttribute("d", pathD);
-        path.setAttribute("class", `spouse-connector ${selectedLineKey === spouseKey ? 'line-highlight' : ''}`);
+        path.setAttribute("class", `spouse-connector ${selectedLineKey === spouseKey ? 'line-highlight' : ''} ${spouseFilterClass}`);
         path.setAttribute("data-spouse-ids", `${char.id},${spouseId}`);
         path.style.pointerEvents = 'none'; // Visible path doesn't capture clicks
-        svgLayer.appendChild(path);
         
         // Transparent thick helper path for easy selection
         const helperPath = document.createElementNS(svgNS, "path");
@@ -5367,6 +5837,7 @@ function drawConnections() {
         helperPath.setAttribute("fill", "none");
         helperPath.setAttribute("stroke", "transparent");
         helperPath.setAttribute("stroke-width", "14");
+        helperPath.setAttribute("class", spouseFilterClass);
         helperPath.style.pointerEvents = 'stroke';
         helperPath.style.cursor = 'pointer';
         
@@ -5393,7 +5864,11 @@ function drawConnections() {
           drawConnections();
         });
         
-        svgLayer.appendChild(helperPath);
+        pathsToDraw.push({
+          key: spouseKey,
+          elements: [path, helperPath],
+          zIndex: lineZIndices[spouseKey] || 0
+        });
         
         // Midpoint with custom spouse split ratio along the bent path
         const ratio = spouseSplits[spousePair] !== undefined ? spouseSplits[spousePair] : 0.5;
@@ -5409,7 +5884,9 @@ function drawConnections() {
         circle.setAttribute("fill", "#fff");
         circle.setAttribute("stroke", "var(--spouse-line-color)");
         circle.setAttribute("stroke-width", "2");
-        circle.setAttribute("class", "spouse-node-circle");
+        circle.setAttribute("class", `spouse-node-circle ${selectedLineKey === spouseKey ? 'line-highlight' : ''} ${spouseFilterClass}`);
+        circle.setAttribute("data-spouse-ids", `${char.id},${spouseId}`);
+        circle.id = `circle-${char.id}-${spouseId}`;
         
         if (isAdminMode) {
           circle.style.cursor = 'ew-resize';
@@ -5552,12 +6029,12 @@ function drawConnections() {
         }
       }
       
+      const filterClass = getChildLineFilterClass(childId, parentIds);
       childPath.setAttribute("d", pathD);
-      childPath.setAttribute("class", `connector-line ${isChildMain ? 'main-line' : ''} ${selectedLineKey === key ? 'line-highlight' : ''}`);
+      childPath.setAttribute("class", `connector-line ${isChildMain ? 'main-line' : ''} ${selectedLineKey === key ? 'line-highlight' : ''} ${filterClass}`);
       childPath.setAttribute("data-parent-key", parentKey);
       childPath.setAttribute("data-child-id", childId);
       childPath.style.pointerEvents = 'none'; // Visible path doesn't capture clicks
-      svgLayer.appendChild(childPath);
       
       // Transparent thick helper path for easy selection
       const helperPath = document.createElementNS(svgNS, "path");
@@ -5565,6 +6042,7 @@ function drawConnections() {
       helperPath.setAttribute("fill", "none");
       helperPath.setAttribute("stroke", "transparent");
       helperPath.setAttribute("stroke-width", "14");
+      helperPath.setAttribute("class", filterClass);
       helperPath.style.pointerEvents = 'stroke';
       helperPath.style.cursor = 'pointer';
       
@@ -5591,7 +6069,11 @@ function drawConnections() {
         drawConnections();
       });
       
-      svgLayer.appendChild(helperPath);
+      pathsToDraw.push({
+        key: key,
+        elements: [childPath, helperPath],
+        zIndex: lineZIndices[key] || 0
+      });
     } else {
       // Multiple children: draw individual rounded orthogonal lines to each child
       validChildrenIds.forEach(childId => {
@@ -5616,13 +6098,13 @@ function drawConnections() {
           }
         }
         
+        const filterClass = getChildLineFilterClass(childId, parentIds);
         childPath.setAttribute("d", pathD);
         const isSelected = selectedLineKey === childRelationKey;
-        childPath.setAttribute("class", `connector-line ${isChildMain ? 'main-line' : ''} ${isSelected ? 'line-highlight' : ''}`);
+        childPath.setAttribute("class", `connector-line ${isChildMain ? 'main-line' : ''} ${isSelected ? 'line-highlight' : ''} ${filterClass}`);
         childPath.setAttribute("data-parent-key", parentKey);
         childPath.setAttribute("data-child-id", childId);
         childPath.style.pointerEvents = 'none'; // Visible path doesn't capture clicks
-        svgLayer.appendChild(childPath);
         
         // Transparent thick helper path for easy selection
         const helperPath = document.createElementNS(svgNS, "path");
@@ -5630,6 +6112,7 @@ function drawConnections() {
         helperPath.setAttribute("fill", "none");
         helperPath.setAttribute("stroke", "transparent");
         helperPath.setAttribute("stroke-width", "14");
+        helperPath.setAttribute("class", filterClass);
         helperPath.style.pointerEvents = 'stroke';
         helperPath.style.cursor = 'pointer';
         
@@ -5656,19 +6139,29 @@ function drawConnections() {
           drawConnections();
         });
         
-        svgLayer.appendChild(helperPath);
+        pathsToDraw.push({
+          key: childRelationKey,
+          elements: [childPath, helperPath],
+          zIndex: lineZIndices[childRelationKey] || 0
+        });
       });
     }
   });
   
-  // Draw deferred spouse node circles so they render on top of all spouse/parent-child connector lines
-  spouseCirclesToDraw.forEach(c => svgLayer.appendChild(c));
-  
   // Draw Preacher/Discipleship lines
-  drawTeacherConnections(svgNS, true);
+  drawTeacherConnections(svgNS, true, pathsToDraw);
 
   // 4. Render Custom Visual Lines (Logos style)
-  renderCustomVisualLines(svgNS, true);
+  renderCustomVisualLines(svgNS, true, pathsToDraw);
+  
+  // Sort and append all connector lines by z-index
+  pathsToDraw.sort((a, b) => a.zIndex - b.zIndex);
+  pathsToDraw.forEach(item => {
+    item.elements.forEach(el => svgLayer.appendChild(el));
+  });
+
+  // Draw deferred spouse node circles so they render on top of all spouse/parent-child connector lines
+  spouseCirclesToDraw.forEach(c => svgLayer.appendChild(c));
   
   // Render bend handles if in Admin Mode
   renderBendHandles();
@@ -5676,7 +6169,7 @@ function drawConnections() {
   // Render Custom Polygons
   renderCustomPolygons();
   
-  // Update line editor buttons state
+  // Update line editor buttons state and z-order controls
   const clearSelectedBtn = document.getElementById('style-clear-selected-line-btn');
   if (clearSelectedBtn) {
     clearSelectedBtn.disabled = !selectedLineKey;
@@ -5684,6 +6177,10 @@ function drawConnections() {
   const deleteSelectedBtn = document.getElementById('style-delete-selected-line-btn');
   if (deleteSelectedBtn) {
     deleteSelectedBtn.disabled = !selectedLineKey;
+  }
+  const zorderGroup = document.getElementById('style-line-zorder-group');
+  if (zorderGroup) {
+    zorderGroup.style.display = selectedLineKey ? 'block' : 'none';
   }
 }
 
@@ -5835,6 +6332,7 @@ function simplifyBends(key) {
 // Special lightweight redraw function to prevent handle recreation glitches during drag
 function drawConnectionsWithoutRecreatingHandles() {
   const svgNS = "http://www.w3.org/2000/svg";
+  const pathsToDraw = [];
   const spouseCirclesToDraw = [];
   const drawnSpouses = new Set();
   const parentGroups = {};
@@ -5877,11 +6375,11 @@ function drawConnectionsWithoutRecreatingHandles() {
         let vertices = [{ x: x1, y: y1 }, ...(customBends || []), { x: x2, y: y2 }];
         let pathD = getRoundedCornersPath(vertices, styleSettings.cornerRadius);
         
+        const spouseFilterClass = getSpouseFilterClass(char.id, spouseId);
         path.setAttribute("d", pathD);
-        path.setAttribute("class", `spouse-connector ${selectedLineKey === spouseKey ? 'line-highlight' : ''}`);
+        path.setAttribute("class", `spouse-connector ${selectedLineKey === spouseKey ? 'line-highlight' : ''} ${spouseFilterClass}`);
         path.setAttribute("data-spouse-ids", `${char.id},${spouseId}`);
         path.style.pointerEvents = 'none'; // Visible path doesn't capture clicks
-        svgLayer.appendChild(path);
         
         // Transparent thick helper path for easy selection
         const helperPath = document.createElementNS(svgNS, "path");
@@ -5889,6 +6387,7 @@ function drawConnectionsWithoutRecreatingHandles() {
         helperPath.setAttribute("fill", "none");
         helperPath.setAttribute("stroke", "transparent");
         helperPath.setAttribute("stroke-width", "14");
+        helperPath.setAttribute("class", spouseFilterClass);
         helperPath.style.pointerEvents = 'stroke';
         helperPath.style.cursor = 'pointer';
         
@@ -5915,7 +6414,11 @@ function drawConnectionsWithoutRecreatingHandles() {
           drawConnections();
         });
         
-        svgLayer.appendChild(helperPath);
+        pathsToDraw.push({
+          key: spouseKey,
+          elements: [path, helperPath],
+          zIndex: lineZIndices[spouseKey] || 0
+        });
         
         const ratio = spouseSplits[spousePair] !== undefined ? spouseSplits[spousePair] : 0.5;
         const midPoint = getPointAlongPath(vertices, ratio);
@@ -5929,7 +6432,9 @@ function drawConnectionsWithoutRecreatingHandles() {
         circle.setAttribute("fill", isAdminMode ? "#10b981" : "#fff");
         circle.setAttribute("stroke", "var(--spouse-line-color)");
         circle.setAttribute("stroke-width", "2");
-        circle.setAttribute("class", "spouse-node-circle");
+        circle.setAttribute("class", `spouse-node-circle ${selectedLineKey === spouseKey ? 'line-highlight' : ''} ${spouseFilterClass}`);
+        circle.setAttribute("data-spouse-ids", `${char.id},${spouseId}`);
+        circle.id = `circle-${char.id}-${spouseId}`;
         
         if (isAdminMode) {
           circle.style.cursor = 'ew-resize';
@@ -6036,12 +6541,12 @@ function drawConnectionsWithoutRecreatingHandles() {
         }
       }
       
+      const filterClass = getChildLineFilterClass(childId, parentIds);
       childPath.setAttribute("d", pathD);
-      childPath.setAttribute("class", `connector-line ${isChildMain ? 'main-line' : ''} ${selectedLineKey === key ? 'line-highlight' : ''}`);
+      childPath.setAttribute("class", `connector-line ${isChildMain ? 'main-line' : ''} ${selectedLineKey === key ? 'line-highlight' : ''} ${filterClass}`);
       childPath.setAttribute("data-parent-key", parentKey);
       childPath.setAttribute("data-child-id", childId);
       childPath.style.pointerEvents = 'none'; // Visible path doesn't capture clicks
-      svgLayer.appendChild(childPath);
       
       // Transparent thick helper path for easy selection
       const helperPath = document.createElementNS(svgNS, "path");
@@ -6049,6 +6554,7 @@ function drawConnectionsWithoutRecreatingHandles() {
       helperPath.setAttribute("fill", "none");
       helperPath.setAttribute("stroke", "transparent");
       helperPath.setAttribute("stroke-width", "14");
+      helperPath.setAttribute("class", filterClass);
       helperPath.style.pointerEvents = 'stroke';
       helperPath.style.cursor = 'pointer';
       
@@ -6075,7 +6581,11 @@ function drawConnectionsWithoutRecreatingHandles() {
         drawConnections();
       });
       
-      svgLayer.appendChild(helperPath);
+      pathsToDraw.push({
+        key: key,
+        elements: [childPath, helperPath],
+        zIndex: lineZIndices[key] || 0
+      });
     } else {
       // Multiple children: draw individual rounded orthogonal lines to each child
       validChildrenIds.forEach(childId => {
@@ -6100,13 +6610,13 @@ function drawConnectionsWithoutRecreatingHandles() {
           }
         }
         
+        const filterClass = getChildLineFilterClass(childId, parentIds);
         childPath.setAttribute("d", pathD);
         const isSelected = selectedLineKey === childRelationKey;
-        childPath.setAttribute("class", `connector-line ${isChildMain ? 'main-line' : ''} ${isSelected ? 'line-highlight' : ''}`);
+        childPath.setAttribute("class", `connector-line ${isChildMain ? 'main-line' : ''} ${isSelected ? 'line-highlight' : ''} ${filterClass}`);
         childPath.setAttribute("data-parent-key", parentKey);
         childPath.setAttribute("data-child-id", childId);
         childPath.style.pointerEvents = 'none'; // Visible path doesn't capture clicks
-        svgLayer.appendChild(childPath);
         
         // Transparent thick helper path for easy selection
         const helperPath = document.createElementNS(svgNS, "path");
@@ -6114,6 +6624,7 @@ function drawConnectionsWithoutRecreatingHandles() {
         helperPath.setAttribute("fill", "none");
         helperPath.setAttribute("stroke", "transparent");
         helperPath.setAttribute("stroke-width", "14");
+        helperPath.setAttribute("class", filterClass);
         helperPath.style.pointerEvents = 'stroke';
         helperPath.style.cursor = 'pointer';
         
@@ -6129,22 +6640,32 @@ function drawConnectionsWithoutRecreatingHandles() {
           drawConnections();
         });
         
-        svgLayer.appendChild(helperPath);
+        pathsToDraw.push({
+          key: childRelationKey,
+          elements: [childPath, helperPath],
+          zIndex: lineZIndices[childRelationKey] || 0
+        });
       });
     }
   });
   
-  // Draw deferred spouse node circles so they render on top of all spouse/parent-child connector lines
-  spouseCirclesToDraw.forEach(c => svgLayer.appendChild(c));
-  
   // Draw Preacher/Discipleship lines
-  drawTeacherConnections(svgNS, false);
+  drawTeacherConnections(svgNS, false, pathsToDraw);
 
   // Render Custom Visual Lines (Logos style)
-  renderCustomVisualLines(svgNS, false);
+  renderCustomVisualLines(svgNS, false, pathsToDraw);
+  
+  // Sort and append all connector lines by z-index
+  pathsToDraw.sort((a, b) => a.zIndex - b.zIndex);
+  pathsToDraw.forEach(item => {
+    item.elements.forEach(el => svgLayer.appendChild(el));
+  });
+
+  // Draw deferred spouse node circles so they render on top of all spouse/parent-child connector lines
+  spouseCirclesToDraw.forEach(c => svgLayer.appendChild(c));
 }
 
-function drawTeacherConnections(svgNS, recreateClickListeners) {
+function drawTeacherConnections(svgNS, recreateClickListeners, pathsToDraw) {
   db.forEach(char => {
     if (char.teachers && char.teachers.length > 0) {
       char.teachers.forEach(teacherId => {
@@ -6183,8 +6704,6 @@ function drawTeacherConnections(svgNS, recreateClickListeners) {
         // Use preacher arrow marker (and highlight if selected)
         path.setAttribute("marker-end", selectedLineKey === key ? "url(#preacher-arrow-highlight)" : "url(#preacher-arrow)");
         
-        svgLayer.appendChild(path);
-        
         // Transparent thick helper path for selection
         const helperPath = document.createElementNS(svgNS, "path");
         helperPath.setAttribute("d", pathD);
@@ -6219,7 +6738,16 @@ function drawTeacherConnections(svgNS, recreateClickListeners) {
           });
         }
         
-        svgLayer.appendChild(helperPath);
+        if (pathsToDraw) {
+          pathsToDraw.push({
+            key: key,
+            elements: [path, helperPath],
+            zIndex: lineZIndices[key] || 0
+          });
+        } else {
+          svgLayer.appendChild(path);
+          svgLayer.appendChild(helperPath);
+        }
       });
     }
   });
@@ -6265,9 +6793,13 @@ function renderCustomPolygons() {
   }
   
   customPolygons.forEach(poly => {
-    // Check if the polygon's lineage filter is off
     const baseGroup = poly.id.replace('poly-', '');
-    if (activeFilters[baseGroup] === false) return;
+    let filterClass = "";
+    if (isFilterModeActive()) {
+      if (activeFilters[baseGroup] !== true) {
+        filterClass = "filter-inactive";
+      }
+    }
     
     if (!poly.points || poly.points.length < 3) return;
     
@@ -6296,12 +6828,24 @@ function renderCustomPolygons() {
     polyEl.setAttribute('stroke-dasharray', dashArray);
     
     // Custom class for selection styling
-    polyEl.setAttribute('class', `family-group-panel-poly ${isSelected ? 'poly-selected' : ''}`);
-    polyEl.style.pointerEvents = isAdminMode ? 'all' : 'none'; // Only interactive in Admin Mode
+    polyEl.setAttribute('class', `family-group-panel-poly ${isSelected ? 'poly-selected' : ''} ${filterClass}`);
+    polyEl.style.pointerEvents = isAdminMode ? 'all' : 'none'; // Only intercept pointer events in Admin mode
     polyGroup.appendChild(polyEl);
     
     // Admin Drag entire polygon or Click to select / Edit boundary
     if (isAdminMode) {
+      // Double click to rename SVG polygon shape directly in admin mode
+      polyEl.addEventListener('dblclick', (e) => {
+        e.stopPropagation();
+        const newName = prompt("영역 이름을 변경하시겠습니까?", poly.label);
+        if (newName !== null) {
+          pushHistoryState();
+          poly.label = newName;
+          saveCustomPolygons();
+          renderTree();
+          updateTransform();
+        }
+      });
       let dragStartPos = null;
       let hasDragged = false;
       
@@ -6374,6 +6918,13 @@ function renderCustomPolygons() {
         window.addEventListener('mousemove', onMouseMove);
         window.addEventListener('mouseup', onMouseUp);
       });
+    } else {
+      // User mode click listener on the polygon SVG element itself to open study panel
+      polyEl.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openLayerDetails(poly, 'polygon');
+      });
+      polyEl.style.cursor = 'pointer';
     }
     
     // Find top-left-most point for placing the HTML label
@@ -6386,7 +6937,7 @@ function renderCustomPolygons() {
     
     // Create HTML text label on board
     const label = document.createElement('div');
-    label.className = `family-group-label ${baseGroup}`;
+    label.className = `family-group-label ${baseGroup} ${filterClass}`;
     label.id = `label-poly-${poly.id}`;
     const offX = poly.labelOffsetX || 0;
     const offY = poly.labelOffsetY || 0;
@@ -6481,6 +7032,12 @@ function renderCustomPolygons() {
           renderTree();
           updateTransform();
         }
+      });
+    } else {
+      label.style.cursor = 'pointer';
+      label.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openLayerDetails(poly, 'polygon');
       });
     }
     
@@ -6657,7 +7214,7 @@ function insertVertexOnClosestSegment(poly, clickX, clickY) {
   return false;
 }
 
-function renderCustomVisualLines(svgNS, recreateClickListeners) {
+function renderCustomVisualLines(svgNS, recreateClickListeners, pathsToDraw) {
   customVisualLines.forEach(line => {
     if (!line || !line.from || !line.to || typeof line.from !== 'string' || typeof line.to !== 'string') return;
     let start = null;
@@ -6786,13 +7343,24 @@ function renderCustomVisualLines(svgNS, recreateClickListeners) {
       pathD = getRoundedCornersPath(vertices, styleSettings.cornerRadius);
     }
     
+    let filterClass = "";
+    if (isFilterModeActive()) {
+      const fromFilter = getElementFilterClass(line.from);
+      const toFilter = getElementFilterClass(line.to);
+      if (fromFilter === "filter-inactive" || toFilter === "filter-inactive") {
+        filterClass = "filter-inactive";
+      }
+    }
+    
     const path = document.createElementNS(svgNS, "path");
     path.setAttribute("d", pathD);
     const lineStyleClass = line.style === 'main' ? 'line-main' : line.style === 'spouse' ? 'line-spouse' : 'line-normal';
-    path.setAttribute("class", `connector-line custom-visual-line ${lineStyleClass} ${selectedLineKey === key ? 'line-highlight' : ''}`);
+    path.setAttribute("class", `connector-line custom-visual-line ${lineStyleClass} ${selectedLineKey === key ? 'line-highlight' : ''} ${filterClass}`);
     path.setAttribute("data-link-id", line.id);
     path.style.pointerEvents = 'none'; // Visible path doesn't capture clicks
-    svgLayer.appendChild(path);
+    if (!pathsToDraw) {
+      svgLayer.appendChild(path);
+    }
     
     // Transparent thick helper path for easy selection
     const helperPath = document.createElementNS(svgNS, "path");
@@ -6800,6 +7368,7 @@ function renderCustomVisualLines(svgNS, recreateClickListeners) {
     helperPath.setAttribute("fill", "none");
     helperPath.setAttribute("stroke", "transparent");
     helperPath.setAttribute("stroke-width", "14");
+    helperPath.setAttribute("class", `custom-visual-line-helper ${filterClass}`);
     helperPath.style.pointerEvents = 'stroke';
     helperPath.style.cursor = 'pointer';
     
@@ -6846,7 +7415,15 @@ function renderCustomVisualLines(svgNS, recreateClickListeners) {
       });
     }
     
-    svgLayer.appendChild(helperPath);
+    if (pathsToDraw) {
+      pathsToDraw.push({
+        key: key,
+        elements: [path, helperPath],
+        zIndex: lineZIndices[key] || 0
+      });
+    } else {
+      svgLayer.appendChild(helperPath);
+    }
     
     // Create drag handles for endpoints of all custom lines in admin edit mode
     if (isAdminMode && isLineEditModeActive) {
@@ -7284,9 +7861,15 @@ function setupZoomPan() {
     }
   });
   
-  // Prevent Chrome native drag/select interference
-  viewerContainer.addEventListener('dragstart', (e) => e.preventDefault());
-  viewerContainer.addEventListener('selectstart', (e) => e.preventDefault());
+  // Prevent Chrome native drag/select interference (except inside input/editable controls)
+  viewerContainer.addEventListener('dragstart', (e) => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable || e.target.closest('[contenteditable="true"]')) return;
+    e.preventDefault();
+  });
+  viewerContainer.addEventListener('selectstart', (e) => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable || e.target.closest('[contenteditable="true"]')) return;
+    e.preventDefault();
+  });
   
   viewerContainer.addEventListener('mouseleave', () => {
     isDragging = false;
@@ -7866,6 +8449,22 @@ const highlightObserver = new MutationObserver((mutationsList) => {
       const target = mutation.target;
       const isHighlighted = target.classList.contains('line-highlight');
       
+      if (target.classList.contains('spouse-connector')) {
+        const spouseIdsAttr = target.getAttribute('data-spouse-ids');
+        if (spouseIdsAttr) {
+          const ids = spouseIdsAttr.split(',');
+          const circle = document.getElementById(`circle-${ids[0]}-${ids[1]}`) || 
+                         document.getElementById(`circle-${ids[1]}-${ids[0]}`);
+          if (circle) {
+            if (isHighlighted) {
+              circle.classList.add('line-highlight');
+            } else {
+              circle.classList.remove('line-highlight');
+            }
+          }
+        }
+      }
+      
       const lineKey = target.getAttribute('data-line-key') || target.getAttribute('d') || '';
       const sanitizedKey = lineKey.replace(/[^a-zA-Z0-9-]/g, '');
       const glowId = `glow-${target.id || 'path'}-${sanitizedKey}`;
@@ -7929,7 +8528,7 @@ function clearAllHighlights() {
   document.querySelectorAll('.person-card.highlight, .layer-marker.highlight, .canvas-annotation.highlight, .canvas-junction-node.highlight').forEach(el => {
     el.classList.remove('highlight');
   });
-  document.querySelectorAll('.connector-line.line-highlight, .spouse-connector.line-highlight').forEach(el => {
+  document.querySelectorAll('.connector-line.line-highlight, .spouse-connector.line-highlight, .spouse-node-circle.line-highlight').forEach(el => {
     el.classList.remove('line-highlight');
   });
   if (treeBoard) treeBoard.classList.remove('relationship-highlight-active');
@@ -8062,6 +8661,8 @@ function highlightRelatedElements(itemId, itemType) {
     targetItem = events.find(e => e.id === itemId);
   } else if (itemType === 'location') {
     targetItem = locations.find(l => l.id === itemId);
+  } else if (itemType === 'polygon') {
+    targetItem = customPolygons.find(p => p.id === itemId);
   }
   
   if (!targetItem) return;
@@ -8070,6 +8671,11 @@ function highlightRelatedElements(itemId, itemType) {
   if (itemType === 'person') {
     const el = document.getElementById(`card-${itemId}`);
     if (el) el.classList.add('highlight');
+  } else if (itemType === 'polygon') {
+    const el = document.getElementById(`svg-poly-${itemId}`);
+    if (el) el.classList.add('highlight');
+    const labelEl = document.getElementById(`label-poly-${itemId}`);
+    if (labelEl) labelEl.classList.add('highlight');
   } else {
     const el = document.getElementById(`${itemType}-${itemId}`);
     if (el) el.classList.add('highlight');
@@ -8205,6 +8811,58 @@ function highlightRelatedElements(itemId, itemType) {
         }
       }
     });
+
+    document.querySelectorAll('.spouse-node-circle').forEach(circle => {
+      const spouseIdsAttr = circle.getAttribute('data-spouse-ids');
+      if (spouseIdsAttr) {
+        const ids = spouseIdsAttr.split(',');
+        if (ids.every(id => lineage.has(id))) {
+          circle.classList.add('line-highlight');
+        }
+      }
+    });
+  }
+  else if (itemType === 'polygon') {
+    if (targetItem.points && targetItem.points.length >= 3) {
+      // Highlight characters geometrically inside (applying tribe keywords)
+      db.forEach(char => {
+        const coords = coordinates[char.id];
+        if (coords && isPointInPolygon(coords, targetItem.points)) {
+          let isTribeMatch = true;
+          const charTribe = getTribeId(char.id);
+          if (targetItem.label) {
+            for (const [kw, tId] of Object.entries(TRIBE_KEYWORDS)) {
+              if (targetItem.label.includes(kw)) {
+                if (charTribe && charTribe !== tId) {
+                  isTribeMatch = false;
+                }
+                break;
+              }
+            }
+          }
+          if (isTribeMatch) {
+            const card = document.getElementById(`card-${char.id}`);
+            if (card) card.classList.add('highlight');
+          }
+        }
+      });
+      
+      // Highlight events geometrically inside
+      events.forEach(ev => {
+        if (ev.x !== undefined && ev.y !== undefined && isPointInPolygon(ev, targetItem.points)) {
+          const el = document.getElementById(`event-${ev.id}`);
+          if (el) el.classList.add('highlight');
+        }
+      });
+      
+      // Highlight locations geometrically inside
+      locations.forEach(loc => {
+        if (loc.x !== undefined && loc.y !== undefined && isPointInPolygon(loc, targetItem.points)) {
+          const el = document.getElementById(`location-${loc.id}`);
+          if (el) el.classList.add('highlight');
+        }
+      });
+    }
   }
 }
 
@@ -9595,7 +10253,7 @@ function saveAdminForm() {
   
   for (let tId of teachers) {
     if (!db.some(c => c.id === tId)) {
-      if (confirm(`전도사 ID '${tId}'가 존재하지 않습니다. 이 ID로 새 인물을 생성하시겠습니까?`)) {
+      if (confirm(`전도자 ID '${tId}'가 존재하지 않습니다. 이 ID로 새 인물을 생성하시겠습니까?`)) {
         db.push({
           id: tId,
           name: tId,
@@ -9605,7 +10263,7 @@ function saveAdminForm() {
           column: column - 1.5,
           parents: [],
           spouses: [],
-          desc: "자동 생성된 전도사/스승",
+          desc: "자동 생성된 전도자/스승",
           isMain: false,
           isManual: true
         });
@@ -10032,6 +10690,7 @@ function exportDatabaseJSON() {
     version: "14.0",
     db: db,
     lineBends: lineBends,
+    lineZIndices: lineZIndices,
     customVisualLines: customVisualLines,
     canvasJunctions: canvasJunctions,
     spouseSplits: spouseSplits,
@@ -10066,6 +10725,7 @@ async function syncToServer() {
     version: "15.0",
     db: db,
     lineBends: lineBends,
+    lineZIndices: lineZIndices,
     customVisualLines: customVisualLines,
     canvasJunctions: canvasJunctions,
     spouseSplits: spouseSplits,
@@ -10111,6 +10771,7 @@ async function autoSaveToServer() {
     version: "15.0",
     db: db,
     lineBends: lineBends,
+    lineZIndices: lineZIndices,
     customVisualLines: customVisualLines,
     canvasJunctions: canvasJunctions,
     spouseSplits: spouseSplits,
@@ -10162,6 +10823,7 @@ function importDatabaseJSON(e) {
       let importedCustomVisualLines = null;
       let importedCanvasJunctions = null;
       let importedSpouseSplits = null;
+      let importedLineZIndices = null;
       let importedAnnotations = null;
       let importedStyleSettings = null;
       let importedCustomPolygons = null;
@@ -10173,6 +10835,7 @@ function importDatabaseJSON(e) {
         }
         importedDb = parsed.db;
         importedLineBends = parsed.lineBends || {};
+        importedLineZIndices = parsed.lineZIndices || {};
         importedCustomVisualLines = parsed.customVisualLines || [];
         importedCanvasJunctions = parsed.canvasJunctions || [];
         importedSpouseSplits = parsed.spouseSplits || {};
@@ -10203,6 +10866,7 @@ function importDatabaseJSON(e) {
       localStorage.removeItem('bible_tree_last_center_x');
       db = importedDb;
       if (importedLineBends !== null) lineBends = importedLineBends;
+      if (importedLineZIndices !== null) lineZIndices = importedLineZIndices;
       if (importedCustomVisualLines !== null) customVisualLines = importedCustomVisualLines;
       if (importedCanvasJunctions !== null) canvasJunctions = importedCanvasJunctions;
       if (importedSpouseSplits !== null) spouseSplits = importedSpouseSplits;
@@ -10216,6 +10880,7 @@ function importDatabaseJSON(e) {
       // 2. Save everything to localStorage
       saveDatabase();
       saveLineBends();
+      if (importedLineZIndices !== null) saveLineZIndices();
       saveCustomVisualLines();
       saveCanvasJunctions();
       saveSpouseSplits();
@@ -10284,6 +10949,17 @@ function setupStyleEditor() {
   inputSpouseLineColor.addEventListener('change', () => {
     autoSaveToServer();
   });
+
+  if (inputPreacherLineColor) {
+    inputPreacherLineColor.addEventListener('input', (e) => {
+      styleSettings.preacherLineColor = e.target.value;
+      document.documentElement.style.setProperty('--preacher-line-color', styleSettings.preacherLineColor);
+      saveStyleSettings();
+    });
+    inputPreacherLineColor.addEventListener('change', () => {
+      autoSaveToServer();
+    });
+  }
   
   inputLineWidth.addEventListener('input', (e) => {
     styleSettings.lineWidth = parseInt(e.target.value);
@@ -10349,6 +11025,7 @@ function setupStyleEditor() {
         lineColor: '#94a3b8',
         mainLineColor: '#ff7800',
         spouseLineColor: '#ef4444',
+        preacherLineColor: '#ff7800',
         lineWidth: 3,
         cornerRadius: 12,
         splitOffset: 90,
@@ -10415,6 +11092,40 @@ function setupStyleEditor() {
         drawConnections();
         showToast("모든 연결선 편집이 초기화되었습니다.");
       }
+    });
+  }
+
+  const bringFrontBtn = document.getElementById('style-line-bring-front-btn');
+  if (bringFrontBtn) {
+    bringFrontBtn.addEventListener('click', () => {
+      if (!selectedLineKey) return;
+      pushHistoryState();
+      let maxZ = 0;
+      Object.keys(lineZIndices).forEach(k => {
+        if (lineZIndices[k] > maxZ) maxZ = lineZIndices[k];
+      });
+      lineZIndices[selectedLineKey] = maxZ + 1;
+      saveLineZIndices();
+      drawConnections();
+      autoSaveToServer();
+      showToast("선택한 선이 맨 앞으로 이동되었습니다.");
+    });
+  }
+
+  const sendBackBtn = document.getElementById('style-line-send-back-btn');
+  if (sendBackBtn) {
+    sendBackBtn.addEventListener('click', () => {
+      if (!selectedLineKey) return;
+      pushHistoryState();
+      let minZ = 0;
+      Object.keys(lineZIndices).forEach(k => {
+        if (lineZIndices[k] < minZ) minZ = lineZIndices[k];
+      });
+      lineZIndices[selectedLineKey] = minZ - 1;
+      saveLineZIndices();
+      drawConnections();
+      autoSaveToServer();
+      showToast("선택한 선이 맨 뒤로 이동되었습니다.");
     });
   }
 
@@ -10628,7 +11339,6 @@ const authModal = document.getElementById('auth-modal');
 const authUsername = document.getElementById('auth-username');
 const authPassword = document.getElementById('auth-password');
 const authLoginBtn = document.getElementById('auth-login-btn');
-const authRegisterBtn = document.getElementById('auth-register-btn');
 const authMessage = document.getElementById('auth-message');
 
 const adminDashboardModal = document.getElementById('admin-dashboard-modal');
@@ -10665,6 +11375,8 @@ async function validateSession() {
     await fetchUserNotes();
     hideAuthModal();
     updateAdminLockVisibility();
+    const landing = document.getElementById('landing-page');
+    if (landing) landing.style.display = 'none';
   } catch (e) {
     userToken = null;
     sessionStorage.removeItem('bible_tree_token');
@@ -10681,7 +11393,9 @@ function hideAuthModal() {
                     window.location.protocol.startsWith('asset') || 
                     window.location.protocol.startsWith('file') || 
                     (window.API_BASE_URL && window.API_BASE_URL.length > 0);
-  if (!userToken && !isDesktop) {
+  const landing = document.getElementById('landing-page');
+  const isLandingVisible = landing && landing.style.display !== 'none';
+  if (!userToken && !isDesktop && !isLandingVisible) {
     alert('이 서비스는 회원 로그인 후 이용하실 수 있습니다.');
     return;
   }
@@ -10741,7 +11455,6 @@ async function handleRegister() {
 }
 
 if (authLoginBtn) authLoginBtn.addEventListener('click', handleLogin);
-if (authRegisterBtn) authRegisterBtn.addEventListener('click', handleRegister);
 
 const handleAuthEnter = (e) => {
   if (e.key === 'Enter') {
@@ -10776,17 +11489,31 @@ if (adminLogoutBtn) adminLogoutBtn.addEventListener('click', handleLogout);
 
 // Load user notes
 async function fetchUserNotes() {
+  try {
+    const localNotes = localStorage.getItem('bible_tree_user_notes');
+    if (localNotes) {
+      userNotes = JSON.parse(localNotes) || {};
+    }
+  } catch (e) {
+    console.error("Failed to parse local notes:", e);
+  }
+
   if (!userToken) return;
   try {
     const res = await fetch('/api/notes', { headers: { 'Authorization': 'Bearer ' + userToken } });
     if (res.ok) {
       const data = await res.json();
       userNotes = data.notes || {};
+      localStorage.setItem('bible_tree_user_notes', JSON.stringify(userNotes));
     }
   } catch(e) {}
 }
 
 async function saveUserNotes() {
+  try {
+    localStorage.setItem('bible_tree_user_notes', JSON.stringify(userNotes));
+  } catch(e) {}
+
   if (!userToken) return;
   try {
     await fetch('/api/notes', {
@@ -10828,9 +11555,21 @@ if (adminUsersBtn) {
 }
 
 // Security Enhancements
-document.addEventListener('contextmenu', e => e.preventDefault());
-document.addEventListener('selectstart', e => e.preventDefault());
-document.addEventListener('dragstart', e => e.preventDefault());
+document.addEventListener('contextmenu', e => {
+  const targetEl = e.target && e.target.nodeType === 3 ? e.target.parentElement : e.target;
+  if (targetEl && (targetEl.tagName === 'INPUT' || targetEl.tagName === 'TEXTAREA' || targetEl.isContentEditable || (typeof targetEl.closest === 'function' && targetEl.closest('[contenteditable="true"]')))) return;
+  e.preventDefault();
+});
+document.addEventListener('selectstart', e => {
+  const targetEl = e.target && e.target.nodeType === 3 ? e.target.parentElement : e.target;
+  if (targetEl && (targetEl.tagName === 'INPUT' || targetEl.tagName === 'TEXTAREA' || targetEl.isContentEditable || (typeof targetEl.closest === 'function' && targetEl.closest('[contenteditable="true"]')))) return;
+  e.preventDefault();
+});
+document.addEventListener('dragstart', e => {
+  const targetEl = e.target && e.target.nodeType === 3 ? e.target.parentElement : e.target;
+  if (targetEl && (targetEl.tagName === 'INPUT' || targetEl.tagName === 'TEXTAREA' || targetEl.isContentEditable || (typeof targetEl.closest === 'function' && targetEl.closest('[contenteditable="true"]')))) return;
+  e.preventDefault();
+});
 document.addEventListener('keydown', e => {
   if (e.keyCode === 123 || // F12
       (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) || // Ctrl+Shift+I or J
@@ -10976,7 +11715,8 @@ function renderEvents() {
   
   events.forEach(ev => {
     const el = document.createElement('div');
-    el.className = 'layer-marker marker-event';
+    const filterClass = getEventFilterClass(ev);
+    el.className = `layer-marker marker-event ${filterClass}`;
     el.style.left = `${ev.x * currentScale}px`;
     el.style.top = `${ev.y * currentScale}px`;
     el.style.transform = `translate(-50%, -50%) scale(${currentScale})`;
@@ -11018,7 +11758,8 @@ function renderLocations() {
   
   locations.forEach(loc => {
     const el = document.createElement('div');
-    el.className = 'layer-marker marker-location';
+    const filterClass = getLocationFilterClass(loc);
+    el.className = `layer-marker marker-location ${filterClass}`;
     el.style.left = `${loc.x * currentScale}px`;
     el.style.top = `${loc.y * currentScale}px`;
     el.style.transform = `translate(-50%, -50%) scale(${currentScale})`;
@@ -11125,6 +11866,11 @@ function openLayerDetails(data, type) {
     if (titleEl) titleEl.innerHTML = `<span style="font-size: 0.8em; color: #888;">📝 텍스트 상자</span><br>${data.text || '내용 없음'}`;
     if (engEl) engEl.textContent = 'Text Box';
     if (descEl) descEl.innerHTML = '텍스트 상자 메모입니다. 아래에서 개인 연구 메모를 작성하고 참고 링크를 등록할 수 있습니다.';
+  } else if (type === 'polygon') {
+    if (infoTitleEl) infoTitleEl.textContent = '사용자 정의 영역 정보';
+    if (titleEl) titleEl.innerHTML = `<span style="font-size: 0.8em; color: #888;">📐 영역</span><br>${data.label || '이름 없는 영역'}`;
+    if (engEl) engEl.textContent = 'Custom Area';
+    if (descEl) descEl.innerHTML = '사용자 정의 다각형 영역입니다. 아래에서 영역에 대한 연구 메모를 작성하고 참고 링크를 등록할 수 있습니다.';
   } else {
     if (infoTitleEl) {
       infoTitleEl.textContent = type === 'event' ? '성경 속 사건 정보' : '성경 속 장소 정보';
@@ -11949,6 +12695,13 @@ async function checkLicenseAndInit() {
     return false;
   }
 
+  if (licenseKey === 'KEY-OPEN-BIBLE-TREE') {
+    document.getElementById('desktop-license-modal').style.display = 'none';
+    const appContainer = document.getElementById('app-container');
+    if (appContainer) appContainer.style.display = 'block';
+    return true;
+  }
+
   try {
     const apiBase = window.API_BASE_URL || "";
     const res = await fetch(apiBase + '/api/license/verify', {
@@ -11994,6 +12747,15 @@ document.getElementById('license-submit-btn')?.addEventListener('click', async (
   
   if (!licenseKey) {
     messageEl.innerText = "라이선스 키를 입력해 주세요.";
+    return;
+  }
+
+  if (licenseKey === 'KEY-OPEN-BIBLE-TREE') {
+    localStorage.setItem('bible_genealogy_license_key', licenseKey);
+    messageEl.innerText = "인증에 성공했습니다! 프로그램을 로딩합니다.";
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
     return;
   }
 
@@ -12193,10 +12955,18 @@ window.addEventListener('DOMContentLoaded', async () => {
                     window.location.protocol.startsWith('asset') || 
                     window.location.protocol.startsWith('file') || 
                     (window.API_BASE_URL && window.API_BASE_URL.length > 0);
+  const landing = document.getElementById('landing-page');
   if (isDesktop) {
     hideAuthModal();
+    if (landing) landing.style.display = 'none';
   } else {
-    validateSession();
+    if (userToken) {
+      if (landing) landing.style.display = 'none';
+      validateSession();
+    } else {
+      if (landing) landing.style.display = 'flex';
+      if (authModal) authModal.style.display = 'none';
+    }
   }
   
   // Make left panels draggable
@@ -12460,7 +13230,7 @@ function renderSpawnerPanel(filterQuery = '') {
 
   // 1. Disable Right Click (except inside inputs)
   document.addEventListener('contextmenu', (e) => {
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable || e.target.closest('[contenteditable="true"]')) {
       return;
     }
     e.preventDefault();
@@ -12472,7 +13242,7 @@ function renderSpawnerPanel(filterQuery = '') {
     const isShift = e.shiftKey;
     const isAlt = e.altKey;
     
-    const isInput = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable;
+    const isInput = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable || e.target.closest('[contenteditable="true"]');
     
     // F12 key
     if (e.key === 'F12') {
@@ -12517,17 +13287,20 @@ function renderSpawnerPanel(filterQuery = '') {
 
   // 3. Disable Drag, Select, and Copy on non-inputs
   document.addEventListener('selectstart', (e) => {
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) return;
+    const targetEl = e.target && e.target.nodeType === 3 ? e.target.parentElement : e.target;
+    if (targetEl && (targetEl.tagName === 'INPUT' || targetEl.tagName === 'TEXTAREA' || targetEl.isContentEditable || (typeof targetEl.closest === 'function' && targetEl.closest('[contenteditable="true"]')))) return;
     e.preventDefault();
   });
   
   document.addEventListener('copy', (e) => {
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) return;
+    const targetEl = e.target && e.target.nodeType === 3 ? e.target.parentElement : e.target;
+    if (targetEl && (targetEl.tagName === 'INPUT' || targetEl.tagName === 'TEXTAREA' || targetEl.isContentEditable || (typeof targetEl.closest === 'function' && targetEl.closest('[contenteditable="true"]')))) return;
     e.preventDefault();
   });
 
   document.addEventListener('dragstart', (e) => {
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) return;
+    const targetEl = e.target && e.target.nodeType === 3 ? e.target.parentElement : e.target;
+    if (targetEl && (targetEl.tagName === 'INPUT' || targetEl.tagName === 'TEXTAREA' || targetEl.isContentEditable || (typeof targetEl.closest === 'function' && targetEl.closest('[contenteditable="true"]')))) return;
     e.preventDefault();
   });
 
@@ -12600,13 +13373,13 @@ function makeElementDraggable(el, handleSelector) {
     if (e.button !== 0) return;
     if (e.target.closest('button') || e.target.closest('input') || e.target.closest('select')) return;
     
+    e.stopPropagation(); // Stop event bubbling to prevent background board panning
     isDragging = true;
     startX = e.clientX;
     startY = e.clientY;
     
-    const rect = el.getBoundingClientRect();
-    startLeft = rect.left;
-    startTop = rect.top;
+    startLeft = el.offsetLeft;
+    startTop = el.offsetTop;
     
     el.style.position = 'absolute';
     el.style.left = `${startLeft}px`;
@@ -12655,6 +13428,77 @@ window.copyToClipboard = function(text) {
     }
     document.body.removeChild(textArea);
   });
+};
+
+window.demoFeature = function(type) {
+  // Hide landing page overlay
+  const landing = document.getElementById('landing-page');
+  if (landing) landing.style.display = 'none';
+  
+  // Set zoom scale
+  currentScale = 0.8;
+  
+  // Setup 5-minute timer (300 seconds)
+  if (window.demoTimeLeft === undefined) {
+    window.demoTimeLeft = 300;
+  }
+  
+  const updateTimerDisplay = () => {
+    const min = Math.floor(window.demoTimeLeft / 60);
+    const sec = String(window.demoTimeLeft % 60).padStart(2, '0');
+    const timerSpan = document.getElementById('demo-timer-span');
+    if (timerSpan) {
+      timerSpan.innerText = ` (남은 시간: ${min}:${sec})`;
+    }
+  };
+
+  // Inject demo banner if it doesn't exist
+  let banner = document.getElementById('demo-mode-banner');
+  if (!banner) {
+    banner = document.createElement('div');
+    banner.id = 'demo-mode-banner';
+    banner.style.cssText = 'position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(255,255,255,0.15); padding: 12px 24px; border-radius: 30px; z-index: 10000; box-shadow: 0 10px 25px rgba(0,0,0,0.3); font-family: sans-serif; font-size: 14px; color: #e2e8f0; display: flex; align-items: center; gap: 12px;';
+    banner.innerHTML = `
+      <span>💡 데모 체험 모드 실행 중<span id="demo-timer-span"></span></span>
+      <button onclick="window.location.reload()" style="background: #0284c7; color: white; border: none; padding: 6px 14px; border-radius: 20px; font-weight: bold; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#0369a1'" onmouseout="this.style.background='#0284c7'">
+        🏠 메인 화면으로
+      </button>
+    `;
+    document.body.appendChild(banner);
+  }
+
+  updateTimerDisplay();
+
+  if (!window.demoInterval) {
+    window.demoInterval = setInterval(() => {
+      window.demoTimeLeft--;
+      updateTimerDisplay();
+      if (window.demoTimeLeft <= 0) {
+        clearInterval(window.demoInterval);
+        window.demoInterval = null;
+        alert("5분 데모 체험이 종료되었습니다. 계속 사용하시려면 데스크톱 앱을 다운로드하여 설치해 주세요.");
+        window.location.reload();
+      }
+    }, 1000);
+  }
+  
+  if (type === 'messiah') {
+    // 1. Highlight Messiah line (Aura on Jesus)
+    selectedPersonId = 'jesus';
+    openStudyPanel('jesus');
+    centerOnNode('jesus');
+  } else if (type === 'memo') {
+    // 2. Study Panel Memo demo (Open Abraham study panel and center)
+    selectedPersonId = 'abraham';
+    openStudyPanel('abraham');
+    centerOnNode('abraham');
+  } else if (type === 'filter') {
+    // 3. Custom Tribe Filter demo (Enable Cain lineage filter, others are dimmed)
+    activeFilters = { cain: true };
+    localStorage.setItem('bible_tree_filters', JSON.stringify(activeFilters));
+    applyFilters();
+    centerOnNode('cain');
+  }
 };
 
 

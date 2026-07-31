@@ -121,10 +121,10 @@ header .subtitle {
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   background: var(--bg-panel);
   border: 1px solid var(--border-panel);
-  padding: 8px 16px;
+  padding: 6px 12px;
   border-radius: 50px;
   box-shadow: var(--shadow-panel);
   backdrop-filter: var(--glass-blur);
@@ -139,8 +139,8 @@ header .subtitle {
 .control-btn {
   background: transparent;
   border: none;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   cursor: pointer;
   display: flex;
@@ -160,7 +160,7 @@ header .subtitle {
   width: 1px;
   height: 24px;
   background-color: var(--border-panel);
-  margin: 0 4px;
+  margin: 0 3px;
 }
 
 .zoom-indicator {
@@ -287,7 +287,7 @@ header .subtitle {
 }
 
 .connector-line.preacher-line {
-  stroke: var(--line-main-color);
+  stroke: var(--preacher-line-color);
   stroke-width: calc(var(--line-width) + 1.2px);
   transition: stroke 0.3s ease, stroke-width 0.3s ease;
 }
@@ -2447,6 +2447,71 @@ header .subtitle {
 .relationship-highlight-active #viewer-container:active,
 .relationship-highlight-active #tree-board:active {
   cursor: default !important;
+}
+
+/* Fade out spouse circles, family group polygons, and polygon labels in focus/aura modes */
+.relationship-highlight-active .spouse-node-circle:not(.line-highlight) {
+  opacity: 0.05 !important;
+  transition: opacity 0.3s ease;
+}
+.relationship-highlight-active .spouse-node-circle.line-highlight {
+  opacity: 1 !important;
+  transition: opacity 0.3s ease;
+}
+.relationship-highlight-active .family-group-panel-poly {
+  opacity: 0.03 !important;
+  transition: opacity 0.3s ease;
+}
+.relationship-highlight-active .family-group-panel-poly.highlight {
+  opacity: 0.28 !important;
+  stroke-width: 4px !important;
+}
+.relationship-highlight-active .family-group-label {
+  opacity: 0.05 !important;
+  transition: opacity 0.3s ease;
+}
+.relationship-highlight-active .family-group-label.highlight {
+  opacity: 1 !important;
+  z-index: 100 !important;
+}
+
+.tree-highlight-active .spouse-node-circle:not(.line-highlight) {
+  opacity: 0.45 !important;
+  transition: opacity 0.3s ease;
+}
+.tree-highlight-active .spouse-node-circle.line-highlight {
+  opacity: 1 !important;
+  transition: opacity 0.3s ease;
+}
+.tree-highlight-active .family-group-panel-poly {
+  opacity: 0.2 !important;
+  transition: opacity 0.3s ease;
+}
+.tree-highlight-active .family-group-label {
+  opacity: 0.2 !important;
+  transition: opacity 0.3s ease;
+}
+
+/* Filter inactive styles */
+.filter-inactive {
+  pointer-events: none !important;
+  transition: opacity 0.3s ease, filter 0.3s ease;
+}
+.person-card.filter-inactive,
+.canvas-annotation.filter-inactive,
+.family-group-label.filter-inactive,
+.layer-marker.filter-inactive {
+  opacity: 0.09 !important;
+  filter: grayscale(85%) !important;
+}
+.connector-line.filter-inactive,
+.spouse-connector.filter-inactive,
+.spouse-node-circle.filter-inactive,
+.family-group-panel-poly.filter-inactive {
+  opacity: 0.05 !important;
+}
+.canvas-junction-node.filter-inactive {
+  opacity: 0.06 !important;
 }
 
 /* Block Print / PDF Saving */

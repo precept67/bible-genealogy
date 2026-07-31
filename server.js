@@ -63,7 +63,7 @@ const server = http.createServer((req, res) => {
       let data = {};
       try { if (body) data = JSON.parse(body); } catch(e) {}
       if (req.method === 'POST' || req.method === 'DELETE') {
-        handlePost(req, res, data, req.method);
+        handlePost(req, res, data, req.method, body);
       }
     });
     return;
@@ -73,7 +73,22 @@ const server = http.createServer((req, res) => {
   handleGet(req, res);
 });
 
-function handlePost(req, res, data, method) {
+function verifyLemonSqueezySignature(req, rawBody) {
+  const signature = req.headers['x-signature'];
+  if (!signature) return false;
+  
+  const secret = process.env.LEMON_SQUEEZY_WEBHOOK_SECRET || 'jubilee_bible_genealogy_secret';
+  const hmac = crypto.createHmac('sha256', secret);
+  const digest = hmac.update(rawBody).digest('hex');
+  
+  try {
+    return crypto.timingSafeEqual(Buffer.from(signature, 'hex'), Buffer.from(digest, 'hex'));
+  } catch (e) {
+    return false;
+  }
+}
+
+function handlePost(req, res, data, method, rawBody) {
   const url = req.url.split('?')[0];
 
   // 1. Register
@@ -345,6 +360,43 @@ function handlePost(req, res, data, method) {
       return sendJson(res, 200, { success: true });
     }
     return sendJson(res, 404, { error: 'License key not found' });
+  // 15. Lemon Squeezy Webhook
+  if (url === '/api/webhooks/lemonsqueezy' && method === 'POST') {
+    if (!verifyLemonSqueezySignature(req, rawBody)) {
+      return sendJson(res, 401, { error: 'Invalid signature' });
+    }
+    
+    const eventName = data.meta && data.meta.event_name;
+    const attributes = data.data && data.data.attributes;
+    
+    if (eventName === 'order_created' || eventName === 'license_key_created') {
+      let licenseKey = null;
+      let ownerName = 'Lemon Squeezy Buyer';
+      
+      if (attributes) {
+        licenseKey = attributes.key || attributes.license_key;
+        ownerName = attributes.user_name || attributes.customer_name || attributes.user_email || 'Lemon Squeezy Buyer';
+      }
+      
+      if (licenseKey) {
+        const licenses = readJson(LICENSES_FILE);
+        if (!licenses[licenseKey]) {
+          licenses[licenseKey] = {
+            owner: ownerName,
+            maxDevices: 2,
+            expiryDate: "",
+            registeredDevices: [],
+            createdAt: new Date().toISOString(),
+            source: 'lemonsqueezy'
+          };
+          writeJson(LICENSES_FILE, licenses);
+          console.log(`[Webhook] Lemon Squeezy license registered: ${licenseKey} for ${ownerName}`);
+        }
+        return sendJson(res, 200, { success: true });
+      }
+    }
+    
+    return sendJson(res, 200, { success: true, message: 'Event ignored or no key' });
   }
 
   sendJson(res, 404, { error: 'Not Found' });
@@ -415,8 +467,12 @@ function handleGet(req, res) {
   }
 
   // 5. Serve Static Files
-  let filePath = '.' + url;
-  if (filePath === './') filePath = './index.html';
+  let fileUrl = url === '/' ? '/index.html' : url;
+  let filePath = path.resolve(__dirname, '.' + fileUrl);
+  if (!filePath.startsWith(__dirname)) {
+    res.writeHead(403);
+    return res.end('Forbidden');
+  }
   
   const extname = String(path.extname(filePath)).toLowerCase();
   const contentType = mimeTypes[extname] || 'application/octet-stream';
