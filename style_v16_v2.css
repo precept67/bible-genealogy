@@ -115,16 +115,16 @@ header .subtitle {
 /* Control Panel (Zoom and Utilities) */
 #control-panel {
   position: absolute;
-  bottom: 24px;
+  bottom: 16px;
   left: 50%;
   right: auto;
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   background: var(--bg-panel);
   border: 1px solid var(--border-panel);
-  padding: 6px 12px;
+  padding: 4px 8px;
   border-radius: 50px;
   box-shadow: var(--shadow-panel);
   backdrop-filter: var(--glass-blur);
@@ -139,15 +139,15 @@ header .subtitle {
 .control-btn {
   background: transparent;
   border: none;
-  width: 36px;
-  height: 36px;
+  width: 25px;
+  height: 25px;
   border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--text-main);
-  font-size: 16px;
+  font-size: 11px;
   transition: all 0.2s ease;
 }
 
@@ -158,15 +158,15 @@ header .subtitle {
 
 .control-divider {
   width: 1px;
-  height: 24px;
+  height: 16px;
   background-color: var(--border-panel);
-  margin: 0 3px;
+  margin: 0 2px;
 }
 
 .zoom-indicator {
-  font-size: 13px;
+  font-size: 10px;
   font-weight: 600;
-  min-width: 50px;
+  min-width: 35px;
   text-align: center;
   color: var(--text-muted);
 }
