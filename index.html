@@ -174,6 +174,68 @@
     </div>
   </div>
 
+  <!-- Help and Usage Guide Modal -->
+  <div id="help-guide-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); z-index: 25000; justify-content: center; align-items: center; font-family: 'Inter', sans-serif; backdrop-filter: blur(4px);">
+    <div style="background: var(--bg-panel, white); color: var(--text-main, #1e293b); padding: 30px; border-radius: 16px; width: 550px; max-height: 85vh; overflow-y: auto; text-align: left; box-sizing: border-box; position: relative; border: 1px solid var(--border-panel, #e2e8f0); box-shadow: 0 20px 40px rgba(0,0,0,0.25);">
+      <span id="help-guide-close-btn" style="position: absolute; top: 15px; right: 20px; font-size: 28px; color: var(--text-muted, #94a3b8); cursor: pointer; font-weight: 300; line-height: 1;" onmouseover="this.style.color='var(--text-accent)'" onmouseout="this.style.color='var(--text-muted)'">&times;</span>
+      
+      <h3 style="margin-top: 0; margin-bottom: 20px; font-size: 18px; color: var(--text-accent, #3498db); border-bottom: 2px solid var(--border-panel, #e2e8f0); padding-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+        <span>📖</span> 성경 족보 사용법 및 안내 가이드
+      </h3>
+      
+      <div style="display: flex; flex-direction: column; gap: 20px; font-size: 14px; line-height: 1.6;">
+        <!-- 1. Basic Operation -->
+        <div>
+          <h4 style="margin: 0 0 6px 0; font-size: 15px; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
+            <span>🔍</span> 기본 조작 및 인물/사건 검색
+          </h4>
+          <ul style="margin: 0; padding-left: 20px; color: var(--text-muted);">
+            <li><b>화면 조작</b>: 마우스 드래그로 화면 이동, 휠 또는 하단 컨트롤러(<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align: middle;"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg> / <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align: middle;"><line x1="5" y1="12" x2="19" y2="12" /></svg>) 버튼으로 확대/축소할 수 있습니다.</li>
+            <li><b>기본 홈(원점)</b>: 하단 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align: middle;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg> 버튼을 누르면 첫 화면(100% 비율)으로 돌아옵니다.</li>
+            <li><b>검색창</b>: 화면 상단 검색창에 이름, 장소, 사건을 입력하면 해당 인물이나 마커로 즉시 이동하며 하이라이트됩니다.</li>
+          </ul>
+        </div>
+
+        <!-- 2. Presentation -->
+        <div>
+          <h4 style="margin: 0 0 6px 0; font-size: 15px; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
+            <span>📺</span> 강의 및 설교 프레젠테이션 활용
+          </h4>
+          <p style="margin: 0; color: var(--text-muted); padding-left: 20px;">
+            성경을 가르치거나 설교할 때 <b>시각 자료로 아주 유용하게 사용</b>할 수 있습니다. 빔 프로젝터나 화면 공유를 통해 인물 간의 관계선(대조) 및 계보 흐름을 한눈에 명확하게 보여줄 수 있습니다.
+          </p>
+        </div>
+
+        <!-- 3. Notes & Filter -->
+        <div>
+          <h4 style="margin: 0 0 6px 0; font-size: 15px; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
+            <span>🎛️</span> 계보 필터 및 묵상 메모 작성
+          </h4>
+          <ul style="margin: 0; padding-left: 20px; color: var(--text-muted);">
+            <li><b>계보 필터링</b>: 하단 조절기(<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align: middle;"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>) 버튼을 누르면 특정 계보(가인, 함, 마리아 계보 등)만 활성화하여 볼 수 있습니다.</li>
+            <li><b>메모 연동</b>: 필터를 체크하여 활성화하는 순간, 우측에 해당 계보에 관한 개인 묵상 메모와 링크를 기록할 수 있는 사이드바 패널이 자동으로 활성화됩니다.</li>
+          </ul>
+        </div>
+
+        <!-- 4. Updates -->
+        <div style="background: rgba(148, 163, 184, 0.08); padding: 15px; border-radius: 8px; border: 1px dashed var(--border-panel);">
+          <h4 style="margin: 0 0 6px 0; font-size: 14px; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
+            <span>🔄</span> 프로그램 업데이트 및 소식
+          </h4>
+          <p style="margin: 0 0 10px 0; font-size: 13px; color: var(--text-muted);">
+            현재 사용 중인 버전: <b>v1.0.34 (Universal)</b><br>
+            성경 족보의 최신 버전 설치 파일 및 공지사항을 확인하시려면 아래 버튼을 통해 공식 홈페이지를 방문해 주세요.
+          </p>
+          <button onclick="window.open('https://f.jubilee.or.kr', '_blank')" style="display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 10px; background: var(--text-accent, #3498db); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; transition: background 0.2s;">
+            🌐 최신 공지 및 업데이트 확인하기
+          </button>
+        </div>
+      </div>
+
+      <button id="help-guide-confirm-btn" style="width: 100%; padding: 12px; background: var(--border-panel, #2c3e50); color: var(--text-main, white); border: 1px solid var(--border-panel); border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; margin-top: 20px;">닫기</button>
+    </div>
+  </div>
+
   <!-- Desktop App License Key Modal -->
   <div id="desktop-license-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #0f172a; z-index: 20000; justify-content: center; align-items: center; font-family: 'Inter', sans-serif;">
     <div style="background: white; padding: 40px; border-radius: 12px; width: 420px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); text-align: center; box-sizing: border-box;">
@@ -331,6 +393,9 @@
       </button>
       <button id="filter-panel-toggle" class="control-btn" title="계보 필터 설정">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+      </button>
+      <button id="help-guide-btn" class="control-btn" title="도움말 및 사용 가이드">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
       </button>
       <div id="admin-divider" class="control-divider" style="display: none;"></div>
       <button id="admin-lock-btn" class="control-btn" title="관리자 편집 모드 토글" style="display: none;">
@@ -930,6 +995,36 @@
       guideModal.addEventListener('click', function(e) {
         if (e.target === guideModal) {
           guideModal.style.display = 'none';
+        }
+      });
+    }
+
+    // Help and Usage Guide Modal Handlers
+    var helpModal = document.getElementById('help-guide-modal');
+    var helpBtn = document.getElementById('help-guide-btn');
+    var helpClose = document.getElementById('help-guide-close-btn');
+    var helpConfirm = document.getElementById('help-guide-confirm-btn');
+
+    if (helpBtn) {
+      helpBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (helpModal) helpModal.style.display = 'flex';
+      });
+    }
+    if (helpClose) {
+      helpClose.addEventListener('click', function() {
+        if (helpModal) helpModal.style.display = 'none';
+      });
+    }
+    if (helpConfirm) {
+      helpConfirm.addEventListener('click', function() {
+        if (helpModal) helpModal.style.display = 'none';
+      });
+    }
+    if (helpModal) {
+      helpModal.addEventListener('click', function(e) {
+        if (e.target === helpModal) {
+          helpModal.style.display = 'none';
         }
       });
     }
