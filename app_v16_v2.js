@@ -1,3 +1,10 @@
+// Polyfill closest on Node prototype to prevent errors when target is a Text node (common in WebKit/Safari)
+if (typeof Node !== 'undefined' && !Node.prototype.closest) {
+  Node.prototype.closest = function(selector) {
+    return this.parentElement ? this.parentElement.closest(selector) : null;
+  };
+}
+
 // Global API Base URL Fetch Wrapper for Desktop App
 if (typeof window !== 'undefined' && window.fetch) {
   const originalFetch = window.fetch;
@@ -7,6 +14,26 @@ if (typeof window !== 'undefined' && window.fetch) {
     }
     return originalFetch(input, init);
   };
+}
+
+// Intercept all external link clicks to open in default system browser when running inside Tauri
+if (typeof document !== 'undefined') {
+  document.addEventListener('click', (e) => {
+    const anchor = e.target.closest('a');
+    if (anchor && anchor.href && (anchor.href.startsWith('http://') || anchor.href.startsWith('https://'))) {
+      const isTauri = window.location.protocol.startsWith('tauri') || 
+                      window.location.hostname === 'tauri.localhost' || 
+                      window.location.protocol.startsWith('file') ||
+                      window.location.protocol.startsWith('asset') ||
+                      (window.__TAURI__ && window.__TAURI__.shell);
+      if (isTauri && window.__TAURI__ && window.__TAURI__.shell) {
+        e.preventDefault();
+        window.__TAURI__.shell.open(anchor.href).catch(err => {
+          console.error("Failed to open external link:", err);
+        });
+      }
+    }
+  });
 }
 
 // Configuration Constants
@@ -7863,11 +7890,15 @@ function setupZoomPan() {
   
   // Prevent Chrome native drag/select interference (except inside input/editable controls)
   viewerContainer.addEventListener('dragstart', (e) => {
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable || e.target.closest('[contenteditable="true"]')) return;
+    const targetEl = e.target.nodeType === 3 ? e.target.parentElement : e.target;
+    if (!targetEl) return;
+    if (targetEl.tagName === 'INPUT' || targetEl.tagName === 'TEXTAREA' || targetEl.isContentEditable || (targetEl.closest && targetEl.closest('[contenteditable="true"]'))) return;
     e.preventDefault();
   });
   viewerContainer.addEventListener('selectstart', (e) => {
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable || e.target.closest('[contenteditable="true"]')) return;
+    const targetEl = e.target.nodeType === 3 ? e.target.parentElement : e.target;
+    if (!targetEl) return;
+    if (targetEl.tagName === 'INPUT' || targetEl.tagName === 'TEXTAREA' || targetEl.isContentEditable || (targetEl.closest && targetEl.closest('[contenteditable="true"]'))) return;
     e.preventDefault();
   });
   
@@ -9233,7 +9264,12 @@ function setupThemeToggle() {
 
 function updateThemeIcon(theme) {
   const toggleBtn = document.getElementById('theme-toggle');
-  toggleBtn.textContent = theme === 'dark' ? '☀️' : '🌙';
+  if (!toggleBtn) return;
+  if (theme === 'dark') {
+    toggleBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+  } else {
+    toggleBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>`;
+  }
 }
 
 function updateStats() {
@@ -11487,26 +11523,99 @@ const adminLogoutBtn = document.getElementById('admin-logout-btn');
 if (userLogoutBtn) userLogoutBtn.addEventListener('click', handleLogout);
 if (adminLogoutBtn) adminLogoutBtn.addEventListener('click', handleLogout);
 
+// Update all cards and annotations with note badge indicators based on current userNotes
+function updateAllNoteBadges() {
+  // 1. Remove all existing card note badges
+  document.querySelectorAll('.card-note-badge').forEach(el => el.remove());
+  document.querySelectorAll('.annot-note-badge').forEach(el => el.remove());
+  
+  // 2. Add badges for active notes
+  Object.keys(userNotes).forEach(personId => {
+    const noteContent = userNotes[personId];
+    if (!noteContent) return;
+    
+    const card = document.getElementById(`card-${personId}`);
+    if (card) {
+      let badge = card.querySelector('.card-note-badge');
+      if (!badge) {
+        const badgeEl = document.createElement('div');
+        badgeEl.className = 'card-note-badge';
+        badgeEl.title = '메모 있음';
+        badgeEl.textContent = '📝';
+        card.appendChild(badgeEl);
+      }
+    } else {
+      const annotEl = document.getElementById(`annot-${personId}`);
+      if (annotEl) {
+        let badge = annotEl.querySelector('.annot-note-badge');
+        if (!badge) {
+          const badgeEl = document.createElement('div');
+          badgeEl.className = 'annot-note-badge';
+          badgeEl.title = '메모 있음';
+          badgeEl.textContent = '📝';
+          badgeEl.style.position = 'absolute';
+          badgeEl.style.top = '-8px';
+          badgeEl.style.right = '-8px';
+          badgeEl.style.fontSize = '12px';
+          badgeEl.style.zIndex = '100';
+          annotEl.appendChild(badgeEl);
+        }
+      }
+    }
+  });
+}
+
 // Load user notes
 async function fetchUserNotes() {
   try {
     const localNotes = localStorage.getItem('bible_tree_user_notes');
     if (localNotes) {
       userNotes = JSON.parse(localNotes) || {};
+      updateAllNoteBadges();
     }
   } catch (e) {
     console.error("Failed to parse local notes:", e);
   }
 
-  if (!userToken) return;
+  const licenseKey = localStorage.getItem('bible_genealogy_license_key');
+  if (!userToken && !licenseKey) {
+    updateAllNoteBadges();
+    return;
+  }
   try {
-    const res = await fetch('/api/notes', { headers: { 'Authorization': 'Bearer ' + userToken } });
+    const authHeader = userToken ? ('Bearer ' + userToken) : ('License ' + licenseKey);
+    const res = await fetch('/api/notes', { headers: { 'Authorization': authHeader } });
     if (res.ok) {
       const data = await res.json();
       userNotes = data.notes || {};
       localStorage.setItem('bible_tree_user_notes', JSON.stringify(userNotes));
+      updateAllNoteBadges();
+    } else {
+      updateAllNoteBadges();
     }
-  } catch(e) {}
+  } catch(e) {
+    updateAllNoteBadges();
+  }
+}
+
+// Trigger automatic background backup in the Documents folder when running inside Tauri
+async function triggerAutoBackup() {
+  const isTauri = window.location.protocol.startsWith('tauri') || 
+                  window.location.hostname === 'tauri.localhost' || 
+                  window.location.protocol.startsWith('file') ||
+                  window.location.protocol.startsWith('asset') ||
+                  (window.__TAURI__ && window.__TAURI__.fs);
+  
+  if (isTauri && window.__TAURI__ && window.__TAURI__.fs && window.__TAURI__.path) {
+    try {
+      const docDir = await window.__TAURI__.path.documentDir();
+      const backupPath = await window.__TAURI__.path.join(docDir, 'bible_genealogy_notes_autobackup.json');
+      await window.__TAURI__.fs.writeTextFile(backupPath, JSON.stringify(userNotes, null, 2));
+      console.log("Auto-backup successfully saved to:", backupPath);
+    } catch (err) {
+      console.error("Auto-backup failed:", err);
+    }
+  }
 }
 
 async function saveUserNotes() {
@@ -11514,14 +11623,147 @@ async function saveUserNotes() {
     localStorage.setItem('bible_tree_user_notes', JSON.stringify(userNotes));
   } catch(e) {}
 
-  if (!userToken) return;
+  // Run automatic background backup locally (Tauri only)
+  triggerAutoBackup();
+
+  const licenseKey = localStorage.getItem('bible_genealogy_license_key');
+  if (!userToken && !licenseKey) return;
   try {
+    const authHeader = userToken ? ('Bearer ' + userToken) : ('License ' + licenseKey);
     await fetch('/api/notes', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + userToken },
+      headers: { 'Content-Type': 'application/json', 'Authorization': authHeader },
       body: JSON.stringify({ notes: userNotes })
     });
   } catch(e) {}
+}
+
+// Bottom Control Panel Notes Export & Import handlers
+const bottomBackupBtn = document.getElementById('bottom-backup-btn');
+const bottomRestoreBtn = document.getElementById('bottom-restore-btn');
+const userNotesFileInput = document.getElementById('user-notes-file-input');
+
+if (bottomBackupBtn) {
+  bottomBackupBtn.addEventListener('click', async () => {
+    const isTauri = window.location.protocol.startsWith('tauri') || 
+                    window.location.hostname === 'tauri.localhost' || 
+                    window.location.protocol.startsWith('file') ||
+                    window.location.protocol.startsWith('asset') ||
+                    (window.__TAURI__ && window.__TAURI__.fs);
+    if (isTauri && window.__TAURI__ && window.__TAURI__.fs && window.__TAURI__.path) {
+      try {
+        const docDir = await window.__TAURI__.path.documentDir();
+        const backupPath = await window.__TAURI__.path.join(docDir, 'bible_genealogy_notes_autobackup.json');
+        await window.__TAURI__.fs.writeTextFile(backupPath, JSON.stringify(userNotes, null, 2));
+        alert('내 문서(Documents) 폴더에 전체 메모 백업 파일이 저장되었습니다.\n파일명: bible_genealogy_notes_autobackup.json');
+      } catch (err) {
+        alert('자동 저장 중 오류가 발생했습니다: ' + err.message);
+      }
+    } else {
+      // Browser fallback: download file
+      try {
+        const dataStr = JSON.stringify(userNotes, null, 2);
+        const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+        const linkElement = document.createElement('a');
+        linkElement.setAttribute('href', dataUri);
+        linkElement.setAttribute('download', 'bible_genealogy_notes_backup.json');
+        linkElement.click();
+      } catch (e) {
+        alert('메모 백업 중 오류가 발생했습니다: ' + e.message);
+      }
+    }
+  });
+}
+
+if (bottomRestoreBtn && userNotesFileInput) {
+  bottomRestoreBtn.addEventListener('click', async () => {
+    const isTauri = window.location.protocol.startsWith('tauri') || 
+                    window.location.hostname === 'tauri.localhost' || 
+                    window.location.protocol.startsWith('file') ||
+                    window.location.protocol.startsWith('asset') ||
+                    (window.__TAURI__ && window.__TAURI__.fs);
+    
+    if (isTauri && window.__TAURI__ && window.__TAURI__.fs && window.__TAURI__.path) {
+      try {
+        const docDir = await window.__TAURI__.path.documentDir();
+        const backupPath = await window.__TAURI__.path.join(docDir, 'bible_genealogy_notes_autobackup.json');
+        
+        let contents;
+        try {
+          contents = await window.__TAURI__.fs.readTextFile(backupPath);
+        } catch (readErr) {
+          // File not found / read error fallback
+          if (confirm('자동저장된 백업 파일을 찾을 수 없습니다.\n수동 백업 파일(.json)을 직접 선택하여 복원하시겠습니까?')) {
+            userNotesFileInput.click();
+          }
+          return;
+        }
+
+        const imported = JSON.parse(contents);
+        if (typeof imported !== 'object' || imported === null) {
+          throw new Error('파일 형식이 올바르지 않습니다.');
+        }
+        
+        if (confirm('내 문서 폴더에 자동저장된 백업 파일(bible_genealogy_notes_autobackup.json)을 발견했습니다.\n이 파일에서 모든 메모를 복원하시겠습니까?\n(현재 기기의 메모와 서버 데이터가 복원된 내용으로 즉시 갱신됩니다.)')) {
+          userNotes = imported;
+          localStorage.setItem('bible_tree_user_notes', JSON.stringify(userNotes));
+          
+          const noteTextarea = document.getElementById('note-text');
+          if (noteTextarea && activePersonId) {
+            noteTextarea.value = userNotes[activePersonId] || '';
+          }
+          
+          await saveUserNotes();
+          updateAllNoteBadges();
+          alert('자동저장된 백업 파일에서 모든 메모를 성공적으로 복원했습니다.');
+        } else {
+          // Cancelled automatic, ask if they want manual instead
+          if (confirm('다른 수동 백업 파일(.json)을 직접 선택하여 복원하시겠습니까?')) {
+            userNotesFileInput.click();
+          }
+        }
+      } catch (err) {
+        alert('자동 백업 파일 복원 실패: ' + err.message + '\n수동 백업 파일 선택으로 전환합니다.');
+        userNotesFileInput.click();
+      }
+    } else {
+      // Web browser: trigger file picker directly
+      userNotesFileInput.click();
+    }
+  });
+
+  userNotesFileInput.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      try {
+        const imported = JSON.parse(e.target.result);
+        if (typeof imported !== 'object' || imported === null) {
+          throw new Error('올바른 백업 파일 형식이 아닙니다.');
+        }
+        
+        if (confirm('가져온 백업 파일로 현재 메모를 덮어쓰시겠습니까? (기존 메모는 유실될 수 있습니다.)')) {
+          userNotes = imported;
+          localStorage.setItem('bible_tree_user_notes', JSON.stringify(userNotes));
+          
+          const noteTextarea = document.getElementById('note-text');
+          if (noteTextarea && activePersonId) {
+            noteTextarea.value = userNotes[activePersonId] || '';
+          }
+          
+          await saveUserNotes();
+          updateAllNoteBadges();
+          alert('수동 백업 파일에서 모든 메모를 성공적으로 복원했습니다.');
+        }
+      } catch (err) {
+        alert('백업 파일을 가져오지 못했습니다: ' + err.message);
+      }
+      userNotesFileInput.value = '';
+    };
+    reader.readAsText(file);
+  });
 }
 
 // User Dashboard
@@ -12698,7 +12940,7 @@ async function checkLicenseAndInit() {
   if (licenseKey === 'KEY-OPEN-BIBLE-TREE') {
     document.getElementById('desktop-license-modal').style.display = 'none';
     const appContainer = document.getElementById('app-container');
-    if (appContainer) appContainer.style.display = 'block';
+    if (appContainer) appContainer.style.display = 'flex';
     return true;
   }
 
@@ -12712,7 +12954,7 @@ async function checkLicenseAndInit() {
     if (res.ok) {
       document.getElementById('desktop-license-modal').style.display = 'none';
       const appContainer = document.getElementById('app-container');
-      if (appContainer) appContainer.style.display = 'block';
+      if (appContainer) appContainer.style.display = 'flex';
       return true;
     } else {
       const data = await res.json();
@@ -12725,7 +12967,7 @@ async function checkLicenseAndInit() {
     console.warn("Network error during license check, running offline.", e);
     document.getElementById('desktop-license-modal').style.display = 'none';
     const appContainer = document.getElementById('app-container');
-    if (appContainer) appContainer.style.display = 'block';
+    if (appContainer) appContainer.style.display = 'flex';
     return true;
   }
 }

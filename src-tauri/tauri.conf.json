@@ -7,9 +7,22 @@
     "distDir": "../dist",
     "devPath": "../dist",
     "beforeDevCommand": "",
-    "beforeBuildCommand": ""
+    "beforeBuildCommand": "",
+    "withGlobalTauri": true
   },
   "tauri": {
+    "allowlist": {
+      "shell": {
+        "open": true
+      },
+      "fs": {
+        "all": true,
+        "scope": ["$DOCUMENT/*"]
+      },
+      "path": {
+        "all": true
+      }
+    },
     "updater": {
       "active": true,
       "endpoints": [

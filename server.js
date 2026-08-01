@@ -32,6 +32,17 @@ function hashPassword(pw) {
   return crypto.createHash('sha256').update(pw).digest('hex');
 }
 
+function verifyPassword(inputPassword, storedHashOrPassword) {
+  if (!storedHashOrPassword) return false;
+  // If stored value matches SHA-256 hash pattern (64 hex characters), compare hash
+  const sha256Regex = /^[a-f0-9]{64}$/i;
+  if (sha256Regex.test(storedHashOrPassword)) {
+    return hashPassword(inputPassword) === storedHashOrPassword;
+  }
+  // Otherwise, fallback to plain text comparison (useful for manual edits in users.json)
+  return inputPassword === storedHashOrPassword;
+}
+
 const sessions = {}; // token -> { username, status }
 
 function sendJson(res, status, data) {
@@ -42,8 +53,21 @@ function sendJson(res, status, data) {
 function getUserFromReq(req) {
   const auth = req.headers['authorization'];
   if (!auth) return null;
-  const token = auth.replace('Bearer ', '');
-  return sessions[token] || null;
+  
+  if (auth.startsWith('Bearer ')) {
+    const token = auth.substring(7);
+    return sessions[token] || null;
+  }
+  
+  if (auth.startsWith('License ')) {
+    const licenseKey = auth.substring(8);
+    const licenses = readJson(LICENSES_FILE);
+    if (licenses[licenseKey]) {
+      return { username: licenseKey, status: 'license' };
+    }
+  }
+  
+  return null;
 }
 
 const server = http.createServer((req, res) => {
@@ -116,7 +140,7 @@ function handlePost(req, res, data, method, rawBody) {
     const users = readJson(USERS_FILE);
     const user = users[username];
     
-    if (!user || user.passwordHash !== hashPassword(password)) {
+    if (!user || !verifyPassword(password, user.passwordHash)) {
       return sendJson(res, 401, { error: '아이디 또는 비밀번호가 올바르지 않습니다.' });
     }
     
@@ -175,7 +199,7 @@ function handlePost(req, res, data, method, rawBody) {
     } else if (data.password) {
       const users = readJson(USERS_FILE);
       const admin = users['admin'];
-      if (admin && hashPassword(data.password) === admin.passwordHash) {
+      if (admin && verifyPassword(data.password, admin.passwordHash)) {
         isAuthorized = true;
       }
     }
@@ -194,7 +218,7 @@ function handlePost(req, res, data, method, rawBody) {
     const { password } = data;
     const users = readJson(USERS_FILE);
     const admin = users['admin'];
-    if (admin && hashPassword(password) === admin.passwordHash) {
+    if (admin && verifyPassword(password, admin.passwordHash)) {
       return sendJson(res, 200, { success: true });
     }
     return sendJson(res, 401, { error: '올바르지 않은 관리자 비밀번호입니다.' });
@@ -360,6 +384,8 @@ function handlePost(req, res, data, method, rawBody) {
       return sendJson(res, 200, { success: true });
     }
     return sendJson(res, 404, { error: 'License key not found' });
+  }
+  
   // 15. Lemon Squeezy Webhook
   if (url === '/api/webhooks/lemonsqueezy' && method === 'POST') {
     if (!verifyLemonSqueezySignature(req, rawBody)) {

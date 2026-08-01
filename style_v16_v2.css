@@ -17,7 +17,7 @@
   --text-muted: #64748b;
   --text-accent: #2563eb;
   
-  --bg-panel: rgba(255, 255, 255, 0.85);
+  --bg-panel: rgba(255, 255, 255, 0.60);
   --border-panel: rgba(226, 232, 240, 0.8);
   --shadow-panel: 0 10px 30px rgba(0, 0, 0, 0.08);
   --glass-blur: blur(12px);
@@ -44,7 +44,7 @@
   --text-muted: #94a3b8;
   --text-accent: #60a5fa;
   
-  --bg-panel: rgba(15, 23, 42, 0.85);
+  --bg-panel: rgba(15, 23, 42, 0.60);
   --border-panel: rgba(51, 65, 85, 0.8);
   --shadow-panel: 0 10px 35px rgba(0, 0, 0, 0.3);
 
@@ -94,7 +94,7 @@ header {
   border-radius: 12px;
   box-shadow: var(--shadow-panel);
   backdrop-filter: var(--glass-blur);
-  z-index: 100;
+  z-index: 3000;
   transition: all 0.3s ease;
 }
 
@@ -128,7 +128,7 @@ header .subtitle {
   border-radius: 50px;
   box-shadow: var(--shadow-panel);
   backdrop-filter: var(--glass-blur);
-  z-index: 100;
+  z-index: 3000;
   transition: all 0.3s ease;
 }
 
@@ -179,7 +179,7 @@ header .subtitle {
   display: flex;
   align-items: center;
   gap: 8px;
-  z-index: 100;
+  z-index: 3000;
 }
 
 .search-box {
@@ -209,6 +209,7 @@ header .subtitle {
   height: 100%;
   position: relative;
   overflow: hidden;
+  z-index: 1;
   cursor: grab;
   outline: none;
   touch-action: none;
@@ -447,12 +448,13 @@ header .subtitle {
 /* Study/Note Sidebar Panel */
 #study-panel {
   position: absolute;
-  top: 0;
+  top: 80px;
   right: -380px;
   width: 360px;
-  height: 100%;
+  height: calc(100% - 96px);
   background: var(--bg-panel);
-  border-left: 1px solid var(--border-panel);
+  border: 1px solid var(--border-panel);
+  border-radius: 16px;
   box-shadow: var(--shadow-panel);
   backdrop-filter: var(--glass-blur);
   z-index: 200;
@@ -462,7 +464,7 @@ header .subtitle {
 }
 
 #study-panel.active {
-  right: 0;
+  right: 16px;
 }
 
 .panel-header {
@@ -545,10 +547,11 @@ header .subtitle {
 .resource-input-wrapper {
   display: flex;
   gap: 8px;
+  width: 100%;
 }
 
 .resource-input {
-  flex: 1;
+  min-width: 0;
   background: rgba(148, 163, 184, 0.08);
   border: 1px solid var(--border-panel);
   border-radius: 8px;
@@ -557,6 +560,14 @@ header .subtitle {
   font-size: 13px;
   color: var(--text-main);
   outline: none;
+}
+
+#resource-title {
+  flex: 1;
+}
+
+#resource-url {
+  flex: 2;
 }
 
 .add-resource-btn {
@@ -569,6 +580,8 @@ header .subtitle {
   font-weight: 600;
   font-size: 13px;
   transition: opacity 0.2s ease;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .add-resource-btn:hover {
@@ -691,6 +704,13 @@ header .subtitle {
   #study-panel {
     width: 100%;
     right: -100%;
+    top: 0;
+    height: 100%;
+    border-radius: 0;
+    border: none;
+  }
+  #study-panel.active {
+    right: 0;
   }
 }
 
@@ -998,12 +1018,13 @@ header .subtitle {
 /* Left Sliding Design Style Editor Panel */
 #style-editor-panel {
   position: absolute;
-  top: 0;
+  top: 80px;
   left: -380px; /* Initially hidden on the left */
   width: 360px;
-  height: 100%;
+  height: calc(100% - 96px);
   background: var(--bg-panel);
-  border-right: 1px solid var(--border-panel);
+  border: 1px solid var(--border-panel);
+  border-radius: 16px;
   box-shadow: var(--shadow-panel);
   backdrop-filter: var(--glass-blur);
   z-index: 200;
@@ -1013,7 +1034,7 @@ header .subtitle {
 }
 
 #style-editor-panel.active {
-  left: 0;
+  left: 16px;
 }
 
 .style-section {
@@ -1088,12 +1109,13 @@ header .subtitle {
 /* Left Sliding Branch Filter Panel */
 #filter-panel {
   position: absolute;
-  top: 0;
+  top: 80px;
   left: -380px; /* Initially hidden on the left */
   width: 360px;
-  height: 100%;
+  height: calc(100% - 96px);
   background: var(--bg-panel);
-  border-right: 1px solid var(--border-panel);
+  border: 1px solid var(--border-panel);
+  border-radius: 16px;
   box-shadow: var(--shadow-panel);
   backdrop-filter: var(--glass-blur);
   z-index: 200;
@@ -1103,15 +1125,15 @@ header .subtitle {
 }
 
 #filter-panel.active {
-  left: 0;
+  left: 16px;
 }
 
 .filter-section {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 6px;
   background: rgba(148, 163, 184, 0.04);
-  padding: 16px;
+  padding: 10px;
   border-radius: 8px;
   border: 1px solid var(--border-panel);
 }
@@ -1119,15 +1141,15 @@ header .subtitle {
 .filter-group {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 4px;
 }
 
 .filter-item {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   cursor: pointer;
-  padding: 8px;
+  padding: 3px 8px;
   border-radius: 6px;
   transition: background-color 0.2s ease;
 }
@@ -1137,9 +1159,10 @@ header .subtitle {
 }
 
 .filter-item input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   cursor: pointer;
+  margin: 0;
 }
 
 .filter-label {
@@ -1152,10 +1175,24 @@ header .subtitle {
   #style-editor-panel {
     width: 100%;
     left: -100%;
+    top: 0;
+    height: 100%;
+    border-radius: 0;
+    border: none;
+  }
+  #style-editor-panel.active {
+    left: 0;
   }
   #filter-panel {
     width: 100%;
     left: -100%;
+    top: 0;
+    height: 100%;
+    border-radius: 0;
+    border: none;
+  }
+  #filter-panel.active {
+    left: 0;
   }
 }/* Floating Annotation/Text Box Styling */
 .canvas-annotation {
@@ -1907,13 +1944,13 @@ header .subtitle {
   position: absolute;
   top: 70px;
   left: 20px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: var(--bg-panel);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--border-panel);
   border-radius: 12px;
   padding: 10px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-  z-index: 1000;
+  box-shadow: var(--shadow-panel);
+  z-index: 3000;
   display: flex;
   flex-direction: column;
   gap: 5px;
@@ -1923,7 +1960,7 @@ header .subtitle {
 .layer-control-panel label {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   font-size: 11px;
   font-weight: 500;
   color: #334155;
@@ -1935,6 +1972,7 @@ header .subtitle {
   width: 16px;
   height: 16px;
   cursor: pointer;
+  margin: 0;
 }
 
 /* Transparent Layers */
@@ -2519,6 +2557,22 @@ header .subtitle {
   html, body {
     display: none !important;
   }
+}
+
+.copyright-notice {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-panel);
+  padding: 3px 7px;
+  border-radius: 4px;
+  font-size: 10px;
+  color: var(--text-muted);
+  z-index: 9999;
+  pointer-events: none;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
 }
 
 
