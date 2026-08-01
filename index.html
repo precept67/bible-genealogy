@@ -191,6 +191,12 @@
       </h3>
       
       <div style="display: flex; flex-direction: column; gap: 20px; font-size: 14px; line-height: 1.6;">
+        <!-- Local Storage Notice -->
+        <div style="background: rgba(37, 99, 235, 0.08); border: 1px solid rgba(37, 99, 235, 0.2); padding: 12px 16px; border-radius: 8px; color: var(--text-main); font-weight: 500; display: flex; align-items: center; gap: 8px;">
+          <span>💡</span>
+          <span>이 프로그램은 개별 로컬 저장 방식으로 운영됩니다. 데이터는 개별 컴퓨터에 저장됩니다.</span>
+        </div>
+
         <!-- 1. Basic Operation -->
         <div>
           <h4 style="margin: 0 0 6px 0; font-size: 15px; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
@@ -230,10 +236,10 @@
             <span>🔄</span> 프로그램 업데이트 및 소식
           </h4>
           <p style="margin: 0 0 10px 0; font-size: 13px; color: var(--text-muted);">
-            현재 사용 중인 버전: <b>v1.0.34 (Universal)</b><br>
+            현재 사용 중인 버전: <b>v1.0.35 (Universal)</b><br>
             성경 족보의 최신 버전 설치 파일 및 공지사항을 확인하시려면 아래 버튼을 통해 공식 홈페이지를 방문해 주세요.
           </p>
-          <button onclick="window.open('https://f.jubilee.or.kr', '_blank')" style="display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 10px; background: var(--text-accent, #3498db); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; transition: background 0.2s;">
+          <button onclick="window.openExternalLink('https://f.jubilee.or.kr')" style="display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 10px; background: var(--text-accent, #3498db); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; transition: background 0.2s;">
             🌐 최신 공지 및 업데이트 확인하기
           </button>
         </div>
@@ -899,6 +905,14 @@
                   window.location.protocol.startsWith('file') ||
                   window.location.protocol.startsWith('asset');
     window.API_BASE_URL = isTauri ? "https://f.jubilee.or.kr" : "";
+
+    window.openExternalLink = function(url) {
+      if (isTauri && window.__TAURI__ && window.__TAURI__.shell) {
+        window.__TAURI__.shell.open(url);
+      } else {
+        window.open(url, '_blank');
+      }
+    };
 
     // Synchronously fetch latest data from server and populate localStorage
     // This blocks the page load just enough to ensure the latest data is available before app.js runs.
