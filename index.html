@@ -1057,6 +1057,12 @@
           helpModal.style.display = 'none';
         }
       });
+
+      // Show guide modal automatically on first run/install of this version
+      if (!localStorage.getItem('help_guide_shown_v1_0_35')) {
+        helpModal.style.display = 'flex';
+        localStorage.setItem('help_guide_shown_v1_0_35', 'true');
+      }
     }
 
     // Landing Page Event Listeners
