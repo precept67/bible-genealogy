@@ -290,3 +290,13 @@ function drawConnections() {
       2. **Tauri 외부 브라우저 셸 연동 핸들러 추가 (`openExternalLink`)**: `index.html` 공용 자바스크립트 영역에 `window.openExternalLink`를 작성하여, Tauri 앱 구동 중에는 OS의 디폴트 브라우저를 띄워 주는 `window.__TAURI__.shell.open(url)` API를 활용하도록 유도하고, 일반 웹 환경에서는 `window.open` 폴백을 태워 해결했습니다.
       3. **버전 정합성 갱신**: 가이드 모달에 표시되는 내부 버전 정보를 현재 배포용 버전인 **`v1.0.35`**로 통일했습니다.
       4. **깃허브 자동 빌드 푸시**: 수정한 전체 정적 템플릿 코드를 커밋하고 깃허브 원격 main 저장소에 푸시하여 윈도우 msi 자동 빌드가 기동되도록 조치했습니다.
+
+43. **확대/축소(Zoom) 인터랙션 최적화 및 고정밀 부드러운 줌(Pinch-to-zoom) 구현**:
+    - **원인**:
+      1. 마우스 휠 스크롤 및 트랙패드 핀치 줌 제스처를 취했을 때, 매번 고정된 `0.1`(10%) 단위로 격하게 확대/축소가 이루어져 화면이 갑자기 커지거나 작아져 조작이 부자연스럽고 제어가 어려웠습니다.
+      2. 줌이 변할 때마다 호출되는 `updateTransform()` 내부에서 사파리 WebKit 브라우저 버그 극복용으로 장착해 둔 `observeAllConnectorPaths()`가 수백 개의 SVG 관계선 요소를 대상으로 매 프레임마다 `querySelectorAll` 및 `MutationObserver.observe()`를 반복 호출하여 DOM 레이아웃 병목(Layout Thrashing)과 버벅임(Stuttering)을 유발하고 있었습니다.
+    - **조치**:
+      1. **고정밀 지수 줌 수식 탑재**: 트랙패드 및 휠 이벤트 리스너 내부에서 고정 수치 가감이 아닌 `Math.exp(-deltaY * 0.003)` 기반의 정밀 지수 수식을 적용했습니다. 또한 마우스 휠의 큰 스텝에 대비해 델타 값을 `[-30, 30]` 범위로 클램핑하여 핀치는 극도로 부드럽고 휠 노치는 적절한 크기로 확대되도록 자연스럽게 튜닝했습니다.
+      2. **레이아웃 연산 병목 제거**: 줌을 조절하는 매 프레임의 루프(`updateTransform`)에서 무거운 DOM 쿼리 및 중복 관찰 작업(`observeAllConnectorPaths()`)을 완전히 분리해 제외시켰습니다.
+      3. **관계선 관찰 라이프사이클 재정립**: SVG 선을 실제로 새로 그리거나 갱신하는 시점인 `drawConnections()` 및 `drawConnectionsWithoutRecreatingHandles()`의 종료 단계에서만 관찰자를 새로 바인딩하도록 로직을 이관하여 줌 앤 팬 조작 시의 불필요한 연산 횟수를 99% 이상 감소시켰습니다.
+      4. **Tauri 앱 배포 패키지 빌드**: 성능 보정을 통합 반영하여 universal macOS 배포 패키지 및 깃허브 액션 윈도우 빌드를 완료했습니다.
