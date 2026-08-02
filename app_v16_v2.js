@@ -6344,6 +6344,8 @@ function renderBendHandles() {
     
     treeBoard.appendChild(handle);
   });
+  
+  observeAllConnectorPaths();
 }
 
 function simplifyBends(key) {
@@ -6800,6 +6802,8 @@ function drawTeacherConnections(svgNS, recreateClickListeners, pathsToDraw) {
       });
     }
   });
+  
+  observeAllConnectorPaths();
 }
 
 function adjustJunctionIntersection(centerPt, nextPt, radius) {
@@ -7833,11 +7837,11 @@ function setupZoomPan() {
     e.preventDefault();
     
     if (e.ctrlKey) {
-      // Zoom
-      const direction = e.deltaY < 0 ? 'in' : 'out';
-      let targetScale = currentScale;
-      if (direction === 'in') targetScale = Math.min(MAX_SCALE, currentScale + ZOOM_STEP);
-      else targetScale = Math.max(MIN_SCALE, currentScale - ZOOM_STEP);
+      // High-precision smooth zoom with delta clamping for perfect trackpad pinch & mouse wheel feel
+      const maxDelta = 30;
+      const clampedDelta = Math.min(maxDelta, Math.max(-maxDelta, e.deltaY));
+      let targetScale = currentScale * Math.exp(-clampedDelta * 0.003);
+      targetScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, targetScale));
       
       if (targetScale === currentScale) return;
       
@@ -8553,8 +8557,7 @@ function updateTransform(onlyPan = false) {
     });
   }
 
-  // Safari SVG filter compatibility check
-  observeAllConnectorPaths();
+  // Safari SVG filter compatibility check (now observed once during drawing)
 }
 
 // SVG glow path MutationObserver (safely duplicates highlighted lines in background for 100% Safari/WebKit compatibility)
