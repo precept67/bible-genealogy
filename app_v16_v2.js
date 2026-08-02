@@ -1156,6 +1156,10 @@ let panY = 0;
 let startPanX = 0;
 let startPanY = 0;
 let initialCentered = false;
+let targetScale = 1.0;
+let targetPanX = 0;
+let targetPanY = 0;
+let isZoomAnimating = false;
 
 // Touch Zoom/Pan State
 let touchStartDistance = 0;
@@ -7840,29 +7844,29 @@ function setupZoomPan() {
       // High-precision smooth zoom with delta clamping for perfect trackpad pinch & mouse wheel feel
       const maxDelta = 30;
       const clampedDelta = Math.min(maxDelta, Math.max(-maxDelta, e.deltaY));
-      let targetScale = currentScale * Math.exp(-clampedDelta * 0.003);
-      targetScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, targetScale));
+      let nextScale = targetScale * Math.exp(-clampedDelta * 0.0035);
+      nextScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, nextScale));
       
-      if (targetScale === currentScale) return;
+      if (nextScale === targetScale) return;
       
       const rect = viewerContainer.getBoundingClientRect();
       const mouseX = e.clientX - rect.left;
       const mouseY = e.clientY - rect.top;
       
-      const worldX = (mouseX - panX) / currentScale;
-      const worldY = (mouseY - panY) / currentScale;
+      const worldX = (mouseX - targetPanX) / targetScale;
+      const worldY = (mouseY - targetPanY) / targetScale;
       
-      currentScale = targetScale;
-      zoomLevelText.textContent = `${Math.round(currentScale * 100)}%`;
+      targetScale = nextScale;
+      targetPanX = mouseX - worldX * targetScale;
+      targetPanY = mouseY - worldY * targetScale;
       
-      panX = mouseX - worldX * currentScale;
-      panY = mouseY - worldY * currentScale;
-      
-      updateTransform();
+      startZoomAnimation();
     } else {
       // Trackpad Swipe/Mouse Scroll panning
       panX -= e.deltaX;
       panY -= e.deltaY;
+      targetPanX = panX;
+      targetPanY = panY;
       updateTransform();
     }
   }, { passive: false });
@@ -7874,6 +7878,7 @@ function setupZoomPan() {
     
     // Prevent native selection/drag on background
     e.preventDefault();
+    isZoomAnimating = false; // Stop any ongoing zoom animation when dragging starts
     
     startClickX = e.clientX;
     startClickY = e.clientY;
@@ -8011,6 +8016,8 @@ function setupZoomPan() {
     const dy = e.clientY - startY;
     panX = startPanX + dx;
     panY = startPanY + dy;
+    targetPanX = panX;
+    targetPanY = panY;
     zoomWrapper.style.transform = `translate3d(${panX}px, ${panY}px, 0)`;
   });
   
@@ -8029,11 +8036,16 @@ function setupZoomPan() {
       const worldX = (touchCenterX - touchStartPanX) / touchStartScale;
       const worldY = (touchCenterY - touchStartPanY) / touchStartScale;
       
-      currentScale = targetScale;
+      currentScale = nextScale;
       zoomLevelText.textContent = `${Math.round(currentScale * 100)}%`;
       
       panX = touchCenterX - worldX * currentScale;
       panY = touchCenterY - worldY * currentScale;
+      
+      // Keep target coordinates synced for touch zooming (no LERP needed here as fingers do physical easing)
+      targetScale = currentScale;
+      targetPanX = panX;
+      targetPanY = panY;
       
       updateTransform();
     } else if (isDragging && e.touches.length === 1) {
@@ -8045,6 +8057,8 @@ function setupZoomPan() {
       
       panX = startPanX + dx;
       panY = startPanY + dy;
+      targetPanX = panX;
+      targetPanY = panY;
       zoomWrapper.style.transform = `translate3d(${panX}px, ${panY}px, 0)`;
       
       const now = Date.now();
@@ -8084,6 +8098,8 @@ function setupZoomPan() {
             
             panX += velocityX * elapsed;
             panY += velocityY * elapsed;
+            targetPanX = panX;
+            targetPanY = panY;
             zoomWrapper.style.transform = `translate3d(${panX}px, ${panY}px, 0)`;
           }
           inertiaFrameId = requestAnimationFrame(runInertia);
@@ -8101,6 +8117,7 @@ function setupZoomPan() {
   
   viewerContainer.addEventListener('touchstart', (e) => {
     stopInertia();
+    isZoomAnimating = false; // Stop any ongoing zoom animation when touch starts
     const rect = viewerContainer.getBoundingClientRect();
     if (e.touches.length === 2) {
       isTouchZooming = true;
@@ -8331,18 +8348,52 @@ function getTouchDistance(t1, t2) {
   return Math.sqrt(dx * dx + dy * dy);
 }
 
-function applyZoom(direction) {
-  let targetScale = currentScale;
-  if (direction === 'in') targetScale = Math.min(MAX_SCALE, currentScale + ZOOM_STEP);
-  if (direction === 'out') targetScale = Math.max(MIN_SCALE, currentScale - ZOOM_STEP);
-  if (direction === 'reset') targetScale = 1.0;
+function startZoomAnimation() {
+  if (isZoomAnimating) return;
+  isZoomAnimating = true;
   
-  if (targetScale === currentScale && direction !== 'reset') return;
+  function step() {
+    if (!isZoomAnimating) return;
+    
+    const dScale = targetScale - currentScale;
+    const dPanX = targetPanX - panX;
+    const dPanY = targetPanY - panY;
+    
+    // If extremely close, snap to targets and stop
+    if (Math.abs(dScale) < 0.001 && Math.abs(dPanX) < 0.1 && Math.abs(dPanY) < 0.1) {
+      currentScale = targetScale;
+      panX = targetPanX;
+      panY = targetPanY;
+      zoomLevelText.textContent = `${Math.round(currentScale * 100)}%`;
+      updateTransform();
+      isZoomAnimating = false;
+      return;
+    }
+    
+    currentScale += dScale * 0.2;
+    panX += dPanX * 0.2;
+    panY += dPanY * 0.2;
+    
+    zoomLevelText.textContent = `${Math.round(currentScale * 100)}%`;
+    updateTransform();
+    
+    requestAnimationFrame(step);
+  }
+  
+  requestAnimationFrame(step);
+}
+
+function applyZoom(direction) {
+  let nextScale = currentScale;
+  if (direction === 'in') nextScale = Math.min(MAX_SCALE, currentScale + ZOOM_STEP);
+  if (direction === 'out') nextScale = Math.max(MIN_SCALE, currentScale - ZOOM_STEP);
+  if (direction === 'reset') nextScale = 1.0;
+  
+  if (nextScale === currentScale && direction !== 'reset') return;
   
   let containerCenterX = viewerContainer.clientWidth / 2;
   let containerCenterY = viewerContainer.clientHeight / 2;
   
-  // Fallback if container is not fully rendered yet
   if (containerCenterX === 0) {
     containerCenterX = window.innerWidth / 2;
     containerCenterY = (window.innerHeight - 80) / 2;
@@ -8351,16 +8402,24 @@ function applyZoom(direction) {
   const worldX = (containerCenterX - panX) / currentScale;
   const worldY = (containerCenterY - panY) / currentScale;
   
-  currentScale = targetScale;
-  zoomLevelText.textContent = `${Math.round(currentScale * 100)}%`;
+  targetScale = nextScale;
   
   if (direction === 'reset') {
-    centerOnNode('adam');
+    const coords = coordinates['adam'];
+    if (coords) {
+      targetPanX = containerCenterX - coords.x * targetScale;
+      targetPanY = containerCenterY - coords.y * targetScale;
+    } else {
+      targetPanX = containerCenterX - worldX * targetScale;
+      targetPanY = containerCenterY - worldY * targetScale;
+    }
+    initialCentered = true;
   } else {
-    panX = containerCenterX - worldX * currentScale;
-    panY = containerCenterY - worldY * currentScale;
-    updateTransform();
+    targetPanX = containerCenterX - worldX * targetScale;
+    targetPanY = containerCenterY - worldY * targetScale;
   }
+  
+  startZoomAnimation();
 }
 
 function centerOnCoords(x, y) {
@@ -8372,10 +8431,20 @@ function centerOnCoords(x, y) {
     containerCenterY = (window.innerHeight - 80) / 2;
   }
   
-  panX = containerCenterX - x * currentScale;
-  panY = containerCenterY - y * currentScale;
+  const targetX = containerCenterX - x * currentScale;
+  const targetY = containerCenterY - y * currentScale;
   
-  updateTransform();
+  if (!initialCentered) {
+    panX = targetX;
+    panY = targetY;
+    targetPanX = targetX;
+    targetPanY = targetY;
+    updateTransform();
+  } else {
+    targetPanX = targetX;
+    targetPanY = targetY;
+    startZoomAnimation();
+  }
 }
 
 function centerOnNode(nodeId) {
