@@ -8034,7 +8034,7 @@ function setupZoomPan() {
       e.preventDefault();
       const currentDist = getTouchDistance(e.touches[0], e.touches[1]);
       const factor = currentDist / touchStartDistance;
-      const targetScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, touchStartScale * factor));
+      const nextScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, touchStartScale * factor));
       
       const touchCenterX = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left;
       const touchCenterY = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top;
