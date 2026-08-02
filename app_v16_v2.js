@@ -1147,7 +1147,7 @@ let styleSettings = {
 let currentScale = 1.0;
 const MIN_SCALE = 0.15;
 const MAX_SCALE = 2.5;
-const ZOOM_STEP = 0.12;
+const ZOOM_STEP = 0.15;
 
 let isDragging = false;
 let startX, startY;
@@ -1160,6 +1160,7 @@ let targetScale = 1.0;
 let targetPanX = 0;
 let targetPanY = 0;
 let isZoomAnimating = false;
+let scaleAtAnimationStart = 1.0;
 
 // Touch Zoom/Pan State
 let touchStartDistance = 0;
@@ -7844,7 +7845,7 @@ function setupZoomPan() {
       // High-precision smooth zoom with delta clamping for perfect trackpad pinch & mouse wheel feel
       const maxDelta = 30;
       const clampedDelta = Math.min(maxDelta, Math.max(-maxDelta, e.deltaY));
-      let nextScale = targetScale * Math.exp(-clampedDelta * 0.0042);
+      let nextScale = targetScale * Math.exp(-clampedDelta * 0.005);
       nextScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, nextScale));
       
       if (nextScale === targetScale) return;
@@ -7855,6 +7856,11 @@ function setupZoomPan() {
       
       const worldX = (mouseX - targetPanX) / targetScale;
       const worldY = (mouseY - targetPanY) / targetScale;
+      
+      // If we are starting a new zoom gesture, record the start scale
+      if (!isZoomAnimating) {
+        scaleAtAnimationStart = currentScale;
+      }
       
       targetScale = nextScale;
       targetPanX = mouseX - worldX * targetScale;
@@ -7867,7 +7873,7 @@ function setupZoomPan() {
       panY -= e.deltaY;
       targetPanX = panX;
       targetPanY = panY;
-      updateTransform();
+      updateTransform(true);
     }
   }, { passive: false });
   
@@ -8348,6 +8354,12 @@ function getTouchDistance(t1, t2) {
   return Math.sqrt(dx * dx + dy * dy);
 }
 
+function updateTransformLightweight() {
+  const scaleFactor = currentScale / scaleAtAnimationStart;
+  zoomWrapper.style.transform = `translate3d(${panX}px, ${panY}px, 0) scale(${scaleFactor})`;
+  zoomWrapper.style.transformOrigin = '0 0';
+}
+
 function startZoomAnimation() {
   if (isZoomAnimating) return;
   isZoomAnimating = true;
@@ -8365,17 +8377,20 @@ function startZoomAnimation() {
       panX = targetPanX;
       panY = targetPanY;
       zoomLevelText.textContent = `${Math.round(currentScale * 100)}%`;
+      
+      // Reset zoomWrapper's temporary scale factor (as updateTransform will draw elements at targetScale)
+      zoomWrapper.style.transform = `translate3d(${panX}px, ${panY}px, 0)`;
       updateTransform();
       isZoomAnimating = false;
       return;
     }
     
-    currentScale += dScale * 0.24;
-    panX += dPanX * 0.24;
-    panY += dPanY * 0.24;
+    currentScale += dScale * 0.3;
+    panX += dPanX * 0.3;
+    panY += dPanY * 0.3;
     
     zoomLevelText.textContent = `${Math.round(currentScale * 100)}%`;
-    updateTransform();
+    updateTransformLightweight();
     
     requestAnimationFrame(step);
   }
@@ -8402,6 +8417,9 @@ function applyZoom(direction) {
   const worldX = (containerCenterX - panX) / currentScale;
   const worldY = (containerCenterY - panY) / currentScale;
   
+  if (!isZoomAnimating) {
+    scaleAtAnimationStart = currentScale;
+  }
   targetScale = nextScale;
   
   if (direction === 'reset') {
@@ -8441,6 +8459,9 @@ function centerOnCoords(x, y) {
     targetPanY = targetY;
     updateTransform();
   } else {
+    if (!isZoomAnimating) {
+      scaleAtAnimationStart = currentScale;
+    }
     targetPanX = targetX;
     targetPanY = targetY;
     startZoomAnimation();
