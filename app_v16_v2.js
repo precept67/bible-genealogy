@@ -7841,7 +7841,7 @@ function setupZoomPan() {
   viewerContainer.addEventListener('wheel', (e) => {
     e.preventDefault();
     
-    if (e.ctrlKey) {
+    if (e.ctrlKey || e.metaKey || e.altKey) {
       // High-precision smooth zoom with delta clamping for perfect trackpad pinch & mouse wheel feel
       const maxDelta = 30;
       const clampedDelta = Math.min(maxDelta, Math.max(-maxDelta, e.deltaY));
