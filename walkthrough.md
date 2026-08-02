@@ -391,3 +391,11 @@ function drawConnections() {
       - macOS WebKit 전용 터치 제스처 감지기(`gesturestart`, `gesturechange`, `gestureend`)를 전역 `window`에 탑재하여, 트랙패드로 줌인/아웃을 할 때 네이티브 웹뷰 본연의 속도로 지연 없이 부드럽게 보드판이 비례 축소/확대되도록 완벽히 개조했습니다.
       - 기존 `viewerContainer`에 한정되었던 휠 이벤트 리스너를 전역 `window` 영역으로 확장하여 마우스 포인터가 화면 어디에 있든 100% 즉시 감지하도록 영역을 전방위 개조했습니다 (단, 메모창, 검색창, 필터창 내부 스크롤은 오동작하지 않도록 `closest` 예외 스코프 필터링 처리).
       - 변경 사항을 universal macOS 배포 패키지 빌드에 통합 반영했습니다.
+
+55. **트랙패드 핀치 줌 제스처 도중 화면 내용이 일시 소실(Disappear)되는 그래픽 버그 해결**:
+    - **원인**:
+      - 줌 애니메이션 및 제스처 변화 도중 고성능 60fps 프레임을 뽑기 위해 브라우저 다시 그리기(Repaint)를 생략하고 CSS 하드웨어 가속 `scale(scaleFactor)`을 적용하는 경량 트랜스폼(`updateTransformLightweight`)을 사용합니다.
+      - 이때 배율 분모 기준점이 되는 `scaleAtAnimationStart` 값이 macOS 멀티터치 제스처의 최초 시작 시점(`gesturestart`)에 올바르게 동기화되지 못해 `scaleFactor`가 `NaN` 또는 `Infinity`로 깨지는 현상이 발생했습니다. 이로 인해 트랙패드로 핀치 조작을 시작하는 즉시 족보 보드 전체의 스타일 스케일이 무효화되어 화면에서 족보 내용이 완전히 사라지던(투명화) 오류였습니다.
+    - **조치**:
+      - `gesturestart` 이벤트 감지 핸들러 내에 `scaleAtAnimationStart = currentScale;` 동기화 코드를 주입하여, 제스처를 시작하는 즉시 정확한 기준 비율을 붙잡아 핀치 조작 중에 단 1프레임의 어긋남이나 투명화 현상 없이 족보 구성요소들이 실시간으로 매끄럽게 확대/축소되도록 구조를 안정화했습니다.
+      - 변경 사항을 universal macOS 배포 패키지 빌드에 즉각 반영했습니다.

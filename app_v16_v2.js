@@ -7901,6 +7901,7 @@ function setupZoomPan() {
     gestureStartScale = currentScale;
     gestureStartPanX = panX;
     gestureStartPanY = panY;
+    scaleAtAnimationStart = currentScale; // Set baseline for updateTransformLightweight calculations
     isZoomAnimating = false; // stop animation during active gesture tracking
   });
 
