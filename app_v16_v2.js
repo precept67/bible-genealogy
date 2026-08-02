@@ -1147,7 +1147,7 @@ let styleSettings = {
 let currentScale = 1.0;
 const MIN_SCALE = 0.15;
 const MAX_SCALE = 2.5;
-const ZOOM_STEP = 0.15;
+const ZOOM_STEP = 0.225;
 
 let isDragging = false;
 let startX, startY;
@@ -7845,7 +7845,7 @@ function setupZoomPan() {
       // High-precision smooth zoom with delta clamping for perfect trackpad pinch & mouse wheel feel
       const maxDelta = 30;
       const clampedDelta = Math.min(maxDelta, Math.max(-maxDelta, e.deltaY));
-      let nextScale = targetScale * Math.exp(-clampedDelta * 0.005);
+      let nextScale = targetScale * Math.exp(-clampedDelta * 0.0075);
       nextScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, nextScale));
       
       if (nextScale === targetScale) return;
@@ -8385,9 +8385,9 @@ function startZoomAnimation() {
       return;
     }
     
-    currentScale += dScale * 0.3;
-    panX += dPanX * 0.3;
-    panY += dPanY * 0.3;
+    currentScale += dScale * 0.45;
+    panX += dPanX * 0.45;
+    panY += dPanY * 0.45;
     
     zoomLevelText.textContent = `${Math.round(currentScale * 100)}%`;
     updateTransformLightweight();
