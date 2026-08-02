@@ -1163,9 +1163,26 @@ let touchStartScale = 1.0;
 let isTouchZooming = false;
 let touchStartPanX = 0;
 let touchStartPanY = 0;
+let lastTouchX = 0;
+let lastTouchY = 0;
+let lastTouchTime = 0;
+let velocityX = 0;
+let velocityY = 0;
+let inertiaFrameId = null;
+const friction = 0.95;
+
+function stopInertia() {
+  if (inertiaFrameId) {
+    cancelAnimationFrame(inertiaFrameId);
+    inertiaFrameId = null;
+  }
+  velocityX = 0;
+  velocityY = 0;
+}
 
 // Selected person for study panel
 let activePersonId = null;
+let wasOpenedFromFilter = false;
 let activeStudyPanelType = null;
 let selectedPersonId = null;
 let activeLayerItem = null;
@@ -4506,6 +4523,8 @@ function initBoard() {
   treeBoard.style.height = `${boardHeight}px`;
   zoomWrapper.style.width = `${boardWidth}px`;
   zoomWrapper.style.height = `${boardHeight}px`;
+  zoomWrapper.style.left = '0px';
+  zoomWrapper.style.top = '0px';
   
   // Set SVG viewbox and explicit width/height attributes to prevent browser clipping on the right edge
   svgLayer.setAttribute('viewBox', `0 0 ${boardWidth} ${boardHeight}`);
@@ -5112,6 +5131,7 @@ function setupFilters() {
   toggleBtn.addEventListener('click', () => {
     filterPanel.classList.toggle('active');
     if (filterPanel.classList.contains('active')) {
+      wasOpenedFromFilter = false; // Reset flag when manually opened
       renderFilterItems();
     }
   });
@@ -5212,6 +5232,8 @@ function setupFilters() {
               label: group.label
             };
           }
+          wasOpenedFromFilter = true;
+          document.getElementById('filter-panel')?.classList.remove('active');
           openLayerDetails(poly, 'polygon');
         } else {
           // Close study panel if it was open for this group
@@ -7985,28 +8007,11 @@ function setupZoomPan() {
     const dy = e.clientY - startY;
     panX = startPanX + dx;
     panY = startPanY + dy;
-    updateTransform();
+    zoomWrapper.style.transform = `translate3d(${panX}px, ${panY}px, 0)`;
   });
   
   // Mobile Touch Support
-  viewerContainer.addEventListener('touchstart', (e) => {
-    const rect = viewerContainer.getBoundingClientRect();
-    if (e.touches.length === 2) {
-      isTouchZooming = true;
-      touchStartDistance = getTouchDistance(e.touches[0], e.touches[1]);
-      touchStartScale = currentScale;
-      touchStartPanX = panX;
-      touchStartPanY = panY;
-    } else if (e.touches.length === 1) {
-      isDragging = true;
-      startX = e.touches[0].clientX;
-      startY = e.touches[0].clientY;
-      startPanX = panX;
-      startPanY = panY;
-    }
-  });
-  
-  viewerContainer.addEventListener('touchmove', (e) => {
+  const onTouchMove = (e) => {
     const rect = viewerContainer.getBoundingClientRect();
     if (isTouchZooming && e.touches.length === 2) {
       e.preventDefault();
@@ -8029,18 +8034,94 @@ function setupZoomPan() {
       updateTransform();
     } else if (isDragging && e.touches.length === 1) {
       e.preventDefault(); // Stop mobile native elastic scrolling and bounce
-      const dx = e.touches[0].clientX - startX;
-      const dy = e.touches[0].clientY - startY;
+      const currentX = e.touches[0].clientX;
+      const currentY = e.touches[0].clientY;
+      const dx = currentX - startX;
+      const dy = currentY - startY;
+      
       panX = startPanX + dx;
       panY = startPanY + dy;
-      updateTransform();
+      zoomWrapper.style.transform = `translate3d(${panX}px, ${panY}px, 0)`;
+      
+      const now = Date.now();
+      const dt = now - lastTouchTime;
+      if (dt > 0) {
+        const instantaneousVx = (currentX - lastTouchX) / dt;
+        const instantaneousVy = (currentY - lastTouchY) / dt;
+        velocityX = velocityX * 0.6 + instantaneousVx * 0.4;
+        velocityY = velocityY * 0.6 + instantaneousVy * 0.4;
+      }
+      
+      lastTouchX = currentX;
+      lastTouchY = currentY;
+      lastTouchTime = now;
     }
-  });
+  };
   
-  viewerContainer.addEventListener('touchend', () => {
+  const onTouchEnd = (e) => {
+    if (isDragging) {
+      const speed = Math.sqrt(velocityX * velocityX + velocityY * velocityY);
+      if (speed > 0.15) {
+        let lastFrameTime = Date.now();
+        const runInertia = () => {
+          const nowTime = Date.now();
+          const elapsed = nowTime - lastFrameTime;
+          lastFrameTime = nowTime;
+          
+          if (elapsed > 0) {
+            velocityX *= Math.pow(friction, elapsed / 16.67);
+            velocityY *= Math.pow(friction, elapsed / 16.67);
+            
+            const currentSpeed = Math.sqrt(velocityX * velocityX + velocityY * velocityY);
+            if (currentSpeed < 0.05) {
+              stopInertia();
+              return;
+            }
+            
+            panX += velocityX * elapsed;
+            panY += velocityY * elapsed;
+            zoomWrapper.style.transform = `translate3d(${panX}px, ${panY}px, 0)`;
+          }
+          inertiaFrameId = requestAnimationFrame(runInertia);
+        };
+        inertiaFrameId = requestAnimationFrame(runInertia);
+      }
+    }
     isTouchZooming = false;
     isDragging = false;
-  });
+    
+    window.removeEventListener('touchmove', onTouchMove, { passive: false });
+    window.removeEventListener('touchend', onTouchEnd, { passive: false });
+    window.removeEventListener('touchcancel', onTouchEnd, { passive: false });
+  };
+  
+  viewerContainer.addEventListener('touchstart', (e) => {
+    stopInertia();
+    const rect = viewerContainer.getBoundingClientRect();
+    if (e.touches.length === 2) {
+      isTouchZooming = true;
+      touchStartDistance = getTouchDistance(e.touches[0], e.touches[1]);
+      touchStartScale = currentScale;
+      touchStartPanX = panX;
+      touchStartPanY = panY;
+    } else if (e.touches.length === 1) {
+      isDragging = true;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      startPanX = panX;
+      startPanY = panY;
+      
+      lastTouchX = e.touches[0].clientX;
+      lastTouchY = e.touches[0].clientY;
+      lastTouchTime = Date.now();
+      velocityX = 0;
+      velocityY = 0;
+    }
+    
+    window.addEventListener('touchmove', onTouchMove, { passive: false });
+    window.addEventListener('touchend', onTouchEnd, { passive: false });
+    window.addEventListener('touchcancel', onTouchEnd, { passive: false });
+  }, { passive: false });
 
   viewerContainer.addEventListener('click', (e) => {
     // Ignore click if the user was dragging/panning the board
@@ -8123,6 +8204,7 @@ function setupZoomPan() {
       }
       closeStudyPanel();
       closeStyleEditorPanel();
+      document.getElementById('filter-panel')?.classList.remove('active');
       clearAllHighlights();
     }
 
@@ -8298,12 +8380,14 @@ function centerOnNode(nodeId) {
   centerOnCoords(coords.x, coords.y);
 }
 
-function updateTransform() {
-  // Pan zoomWrapper (No composite scale or zoom, 100% texture safe!)
-  zoomWrapper.style.left = `${panX}px`;
-  zoomWrapper.style.top = `${panY}px`;
-  zoomWrapper.style.transform = 'none';
+function updateTransform(onlyPan = false) {
+  // Pan zoomWrapper (Using translate3d for GPU-composited, zero-lag rendering!)
+  zoomWrapper.style.transform = `translate3d(${panX}px, ${panY}px, 0)`;
   zoomWrapper.style.zoom = 'normal';
+  
+  if (onlyPan) {
+    return;
+  }
   
   // Set dimensions on board and wrapper based on scale
   const scaledWidth = boardWidth * currentScale;
@@ -9038,6 +9122,33 @@ function setupSearch() {
     if (searchResults && !searchInput.contains(e.target) && !searchResults.contains(e.target)) {
       searchResults.style.display = 'none';
     }
+
+    // 1. Lineage Filter Panel (#filter-panel) auto close when clicking outside
+    const filterPanel = document.getElementById('filter-panel');
+    if (filterPanel && filterPanel.classList.contains('active')) {
+      if (!e.target.closest('#filter-panel') && !e.target.closest('#filter-panel-toggle')) {
+        filterPanel.classList.remove('active');
+      }
+    }
+
+    // 2. Personal Study/Memo Panel (#study-panel) auto close when clicking outside
+    const studyPanel = document.getElementById('study-panel');
+    if (studyPanel && studyPanel.classList.contains('active')) {
+      const isClickInsideStudyPanel = e.target.closest('#study-panel');
+      const isClickOnTrigger = 
+        e.target.closest('.person-card') || 
+        e.target.closest('.layer-marker') || 
+        e.target.closest('.canvas-annotation') ||
+        e.target.closest('#control-panel') ||
+        e.target.closest('#main-header') ||
+        e.target.closest('#search-panel') ||
+        e.target.closest('.modal-content') ||
+        e.target.closest('.toast');
+        
+      if (!isClickInsideStudyPanel && !isClickOnTrigger) {
+        closeStudyPanel();
+      }
+    }
   });
 }
 
@@ -9213,6 +9324,11 @@ function closeStudyPanel() {
   activePersonId = null;
   activeStudyPanelType = null;
   clearAllHighlights();
+  
+  if (wasOpenedFromFilter) {
+    wasOpenedFromFilter = false;
+    document.getElementById('filter-panel')?.classList.add('active');
+  }
 }
 
 function renderResourcesList(resources) {
@@ -11425,9 +11541,11 @@ function showAuthModal() {
   if (authModal) authModal.style.display = 'flex';
 }
 function hideAuthModal() {
+  const isCapacitor = !!window.Capacitor || window.location.protocol.startsWith('capacitor');
   const isDesktop = window.location.protocol.startsWith('tauri') || 
                     window.location.protocol.startsWith('asset') || 
                     window.location.protocol.startsWith('file') || 
+                    isCapacitor ||
                     (window.API_BASE_URL && window.API_BASE_URL.length > 0);
   const landing = document.getElementById('landing-page');
   const isLandingVisible = landing && landing.style.display !== 'none';
@@ -11650,7 +11768,35 @@ if (bottomBackupBtn) {
                     window.location.protocol.startsWith('file') ||
                     window.location.protocol.startsWith('asset') ||
                     (window.__TAURI__ && window.__TAURI__.fs);
-    if (isTauri && window.__TAURI__ && window.__TAURI__.fs && window.__TAURI__.path) {
+    const isCapacitor = window.Capacitor && window.Capacitor.isNativePlatform();
+
+    if (isCapacitor) {
+      try {
+        const { Filesystem } = window.Capacitor.Plugins;
+        const { Share } = window.Capacitor.Plugins;
+        
+        if (!Filesystem || !Share) {
+          throw new Error("Capacitor plugins not loaded");
+        }
+        
+        const fileName = 'bible_genealogy_notes_backup.json';
+        const fileContent = JSON.stringify(userNotes, null, 2);
+        
+        const writeResult = await Filesystem.writeFile({
+          path: fileName,
+          data: fileContent,
+          directory: 'CACHE',
+          encoding: 'utf8'
+        });
+        
+        await Share.share({
+          title: '열린족보이야기 메모 백업',
+          url: writeResult.uri
+        });
+      } catch (err) {
+        alert('모바일 메모 백업 중 오류가 발생했습니다: ' + err.message);
+      }
+    } else if (isTauri && window.__TAURI__ && window.__TAURI__.fs && window.__TAURI__.path) {
       try {
         const docDir = await window.__TAURI__.path.documentDir();
         const backupPath = await window.__TAURI__.path.join(docDir, 'bible_genealogy_notes_autobackup.json');
@@ -12920,11 +13066,15 @@ function getOrCreateMachineId() {
 }
 
 async function checkLicenseAndInit() {
+  const isCapacitor = !!window.Capacitor || window.location.protocol.startsWith('capacitor');
   const isDesktopApp = window.location.protocol.startsWith('tauri') || 
                        window.location.protocol.startsWith('asset') || 
                        window.location.protocol.startsWith('file') || 
                        (window.API_BASE_URL && window.API_BASE_URL.length > 0);
                        
+  if (isCapacitor) {
+    return true; // Skip license check on mobile apps
+  }
   if (!isDesktopApp) {
     return true; // Not running in desktop mode, bypass
   }
@@ -13193,9 +13343,11 @@ window.addEventListener('DOMContentLoaded', async () => {
   const isLicensed = await checkLicenseAndInit();
   if (!isLicensed) return;
 
+  const isCapacitor = !!window.Capacitor || window.location.protocol.startsWith('capacitor');
   const isDesktop = window.location.protocol.startsWith('tauri') || 
                     window.location.protocol.startsWith('asset') || 
                     window.location.protocol.startsWith('file') || 
+                    isCapacitor ||
                     (window.API_BASE_URL && window.API_BASE_URL.length > 0);
   const landing = document.getElementById('landing-page');
   if (isDesktop) {
@@ -13742,5 +13894,33 @@ window.demoFeature = function(type) {
     centerOnNode('cain');
   }
 };
+
+// Android Back Button Navigation for Capacitor
+if (typeof window !== 'undefined') {
+  window.addEventListener('DOMContentLoaded', () => {
+    const App = window.Capacitor?.Plugins?.App;
+    if (App) {
+      App.addListener('backButton', () => {
+        const studyPanel = document.getElementById('study-panel');
+        const filterPanel = document.getElementById('filter-panel');
+        
+        if (studyPanel && studyPanel.classList.contains('active')) {
+          closeStudyPanel();
+        } else if (filterPanel && filterPanel.classList.contains('active')) {
+          filterPanel.classList.remove('active');
+        } else {
+          App.exitApp();
+        }
+      });
+    }
+    
+    // Prevent native iOS Safari/WKWebView viewport pinch-zoom gestures
+    document.addEventListener('gesturestart', (e) => e.preventDefault(), { passive: false });
+    document.addEventListener('gesturechange', (e) => e.preventDefault(), { passive: false });
+    
+    // Enable immediate :active pseudo-classes on iOS Safari/WKWebView
+    document.addEventListener('touchstart', () => {}, { passive: true });
+  });
+}
 
 
