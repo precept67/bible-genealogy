@@ -7845,9 +7845,23 @@ function setupZoomPan() {
     globalMouseY = e.clientY;
   });
 
+  // Helper to determine if wheel/gesture target is inside a scrollable modal/panel
+  function isScrollableOverlay(target) {
+    if (!target) return false;
+    return target.closest('#study-panel') || 
+           target.closest('.layer-control-panel') || 
+           target.closest('#search-panel') || 
+           target.closest('.modal-content') || 
+           target.closest('#style-editor-panel') ||
+           target.closest('#help-guide-modal') ||
+           target.closest('#install-guide-modal') ||
+           target.closest('#desktop-license-modal') ||
+           target.closest('#admin-dashboard-modal');
+  }
+
   // Intercept wheel events globally on window (ignoring scrollable panels) to prevent dead-zones
   window.addEventListener('wheel', (e) => {
-    if (e.target.closest('#study-panel') || e.target.closest('.layer-control-panel') || e.target.closest('#search-panel') || e.target.closest('.modal-content') || e.target.closest('#style-editor-panel')) {
+    if (isScrollableOverlay(e.target)) {
       return;
     }
     e.preventDefault();
@@ -7894,7 +7908,7 @@ function setupZoomPan() {
   let gestureStartPanY = 0;
 
   window.addEventListener('gesturestart', (e) => {
-    if (e.target.closest('#study-panel') || e.target.closest('.layer-control-panel') || e.target.closest('#search-panel') || e.target.closest('.modal-content') || e.target.closest('#style-editor-panel')) {
+    if (isScrollableOverlay(e.target)) {
       return;
     }
     e.preventDefault();
@@ -7906,7 +7920,7 @@ function setupZoomPan() {
   });
 
   window.addEventListener('gesturechange', (e) => {
-    if (e.target.closest('#study-panel') || e.target.closest('.layer-control-panel') || e.target.closest('#search-panel') || e.target.closest('.modal-content') || e.target.closest('#style-editor-panel')) {
+    if (isScrollableOverlay(e.target)) {
       return;
     }
     e.preventDefault();
@@ -7934,7 +7948,7 @@ function setupZoomPan() {
   });
 
   window.addEventListener('gestureend', (e) => {
-    if (e.target.closest('#study-panel') || e.target.closest('.layer-control-panel') || e.target.closest('#search-panel') || e.target.closest('.modal-content') || e.target.closest('#style-editor-panel')) {
+    if (isScrollableOverlay(e.target)) {
       return;
     }
     e.preventDefault();
