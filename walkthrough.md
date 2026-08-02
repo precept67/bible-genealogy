@@ -382,3 +382,12 @@ function drawConnections() {
     - **조치**:
       - `wheel` 이벤트 감지기 조건식을 `if (e.ctrlKey || e.metaKey || e.altKey)`로 보강하여 Mac 사용자가 익숙한 Command + 휠, Option + 휠 조합으로도 확대/축소가 완벽히 작동하도록 전면 개조했습니다.
       - 변경 사항을 universal macOS 배포 패키지 빌드에 즉각 반영했습니다.
+
+54. **macOS WebKit 네이티브 제스처(gesturestart/change/end) 이벤트 기반 트랙패드 핀치 줌 밀착 지원 및 전역 휠 영역 확장**:
+    - **원인**:
+      - macOS WebKit(Tauri의 Mac 웹뷰 엔진) 환경에서는 트랙패드 핀치 제스처 시 WebKit 고유의 `gesturestart`, `gesturechange`, `gestureend` 멀티터치 제스처 이벤트가 자체적으로 작동합니다. 기존의 일반 `wheel` 이벤트 판독만으로는 웹뷰의 기본 줌 억제 동작과 맞물려 트랙패드 핀치 확대/축소가 완전히 무시되거나 비정상 작동하는 한계가 있었습니다.
+      - 또한, 마우스 포인터가 족보 보드 영역 외부(빈 공간, 카드 내부, 상단 영역 등)에 있을 때 이벤트를 수신하지 못하는 미세한 스크롤 불감지 영역(데드존)이 존재했습니다.
+    - **조치**:
+      - macOS WebKit 전용 터치 제스처 감지기(`gesturestart`, `gesturechange`, `gestureend`)를 전역 `window`에 탑재하여, 트랙패드로 줌인/아웃을 할 때 네이티브 웹뷰 본연의 속도로 지연 없이 부드럽게 보드판이 비례 축소/확대되도록 완벽히 개조했습니다.
+      - 기존 `viewerContainer`에 한정되었던 휠 이벤트 리스너를 전역 `window` 영역으로 확장하여 마우스 포인터가 화면 어디에 있든 100% 즉시 감지하도록 영역을 전방위 개조했습니다 (단, 메모창, 검색창, 필터창 내부 스크롤은 오동작하지 않도록 `closest` 예외 스코프 필터링 처리).
+      - 변경 사항을 universal macOS 배포 패키지 빌드에 통합 반영했습니다.

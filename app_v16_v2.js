@@ -7837,8 +7837,19 @@ function setupZoomPan() {
   });
   resizeObserver.observe(viewerContainer);
   
-  // Intercept wheel events: Figma style zoom (with Ctrl Key / trackpad pinch) and panning (without Ctrl)
-  viewerContainer.addEventListener('wheel', (e) => {
+  // Track global mouse position for centering zoom anchoring
+  let globalMouseX = window.innerWidth / 2;
+  let globalMouseY = window.innerHeight / 2;
+  window.addEventListener('mousemove', (e) => {
+    globalMouseX = e.clientX;
+    globalMouseY = e.clientY;
+  });
+
+  // Intercept wheel events globally on window (ignoring scrollable panels) to prevent dead-zones
+  window.addEventListener('wheel', (e) => {
+    if (e.target.closest('#study-panel') || e.target.closest('.layer-control-panel') || e.target.closest('#search-panel') || e.target.closest('.modal-content') || e.target.closest('#style-editor-panel')) {
+      return;
+    }
     e.preventDefault();
     
     if (e.ctrlKey || e.metaKey || e.altKey) {
@@ -7851,8 +7862,8 @@ function setupZoomPan() {
       if (nextScale === targetScale) return;
       
       const rect = viewerContainer.getBoundingClientRect();
-      const mouseX = e.clientX - rect.left;
-      const mouseY = e.clientY - rect.top;
+      const mouseX = globalMouseX - rect.left;
+      const mouseY = globalMouseY - rect.top;
       
       const worldX = (mouseX - targetPanX) / targetScale;
       const worldY = (mouseY - targetPanY) / targetScale;
@@ -7876,6 +7887,58 @@ function setupZoomPan() {
       updateTransform(true);
     }
   }, { passive: false });
+
+  // Native macOS WebKit gesture events for extremely smooth 100% reliable trackpad pinch-to-zoom
+  let gestureStartScale = 1.0;
+  let gestureStartPanX = 0;
+  let gestureStartPanY = 0;
+
+  window.addEventListener('gesturestart', (e) => {
+    if (e.target.closest('#study-panel') || e.target.closest('.layer-control-panel') || e.target.closest('#search-panel') || e.target.closest('.modal-content') || e.target.closest('#style-editor-panel')) {
+      return;
+    }
+    e.preventDefault();
+    gestureStartScale = currentScale;
+    gestureStartPanX = panX;
+    gestureStartPanY = panY;
+    isZoomAnimating = false; // stop animation during active gesture tracking
+  });
+
+  window.addEventListener('gesturechange', (e) => {
+    if (e.target.closest('#study-panel') || e.target.closest('.layer-control-panel') || e.target.closest('#search-panel') || e.target.closest('.modal-content') || e.target.closest('#style-editor-panel')) {
+      return;
+    }
+    e.preventDefault();
+    const factor = e.scale;
+    const nextScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, gestureStartScale * factor));
+    
+    const rect = viewerContainer.getBoundingClientRect();
+    const mouseX = globalMouseX - rect.left;
+    const mouseY = globalMouseY - rect.top;
+    
+    const worldX = (mouseX - gestureStartPanX) / gestureStartScale;
+    const worldY = (mouseY - gestureStartPanY) / gestureStartScale;
+    
+    currentScale = nextScale;
+    zoomLevelText.textContent = `${Math.round(currentScale * 100)}%`;
+    
+    panX = mouseX - worldX * currentScale;
+    panY = mouseY - worldY * currentScale;
+    
+    targetScale = currentScale;
+    targetPanX = panX;
+    targetPanY = panY;
+    
+    updateTransformLightweight();
+  });
+
+  window.addEventListener('gestureend', (e) => {
+    if (e.target.closest('#study-panel') || e.target.closest('.layer-control-panel') || e.target.closest('#search-panel') || e.target.closest('.modal-content') || e.target.closest('#style-editor-panel')) {
+      return;
+    }
+    e.preventDefault();
+    updateTransform();
+  });
   
   let startClickX = 0;
   let startClickY = 0;
