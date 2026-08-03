@@ -2644,20 +2644,25 @@ header .subtitle {
   display: none !important;
 }
 
-/* Beautiful glow aura on cards when prophets layer filter is active */
+/* Beautiful glow aura on cards when prophets layer filter is active (using original gender-based highlight colors) */
 .prophets-filter-active .person-card:not(.filter-inactive) {
-  animation: pulse-prophet-aura 1.5s infinite alternate !important;
-  border-color: rgba(139, 92, 246, 0.8) !important;
+  animation: pulse-aura-only 1.5s infinite alternate !important;
   z-index: 100 !important;
 }
 
-@keyframes pulse-prophet-aura {
-  0% {
-    box-shadow: 0 0 8px rgba(139, 92, 246, 0.4), 0 0 15px rgba(139, 92, 246, 0.2) !important;
-  }
-  100% {
-    box-shadow: 0 0 18px rgba(139, 92, 246, 0.8), 0 0 35px rgba(139, 92, 246, 0.4) !important;
-  }
+.prophets-filter-active .person-card:not(.filter-inactive).male:not(.main-line) {
+  --glow-color: rgba(59, 130, 246, 0.7);
+  border-color: rgba(59, 130, 246, 0.95) !important;
+}
+
+.prophets-filter-active .person-card:not(.filter-inactive).female:not(.main-line) {
+  --glow-color: rgba(236, 72, 153, 0.7);
+  border-color: rgba(236, 72, 153, 0.95) !important;
+}
+
+.prophets-filter-active .person-card:not(.filter-inactive).main-line {
+  --glow-color: rgba(245, 158, 11, 0.8);
+  border-color: rgba(245, 158, 11, 1) !important;
 }
 
 
