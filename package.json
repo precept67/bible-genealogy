@@ -5,9 +5,22 @@
   "main": "index.html",
   "scripts": {
     "tauri": "tauri",
-    "build": "mkdir -p dist && cp index.html style_v16_v2.css app_v16_v2.js data_v16_v2.js database.json app_logo.png dist/ && npx tauri build --target universal-apple-darwin"
+    "build": "mkdir -p dist && cp index.html style_v16_v2.css app_v16_v2.js data_v16_v2.js database.json app_logo.png dist/ && npx tauri build --target universal-apple-darwin",
+    "build:mobile": "mkdir -p dist && cp index.html style_v16_v2.css app_v16_v2.js data_v16_v2.js database.json app_logo.png dist/ && npx cap sync",
+    "cap:open-ios": "npx cap open ios",
+    "cap:open-android": "npx cap open android"
   },
   "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^8.5.0",
+    "@capacitor/core": "^8.5.0",
     "@tauri-apps/cli": "^1.5.0"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.5.0",
+    "@capacitor/app": "^8.1.1",
+    "@capacitor/filesystem": "^8.1.2",
+    "@capacitor/ios": "^8.5.0",
+    "@capacitor/share": "^8.0.1"
   }
 }

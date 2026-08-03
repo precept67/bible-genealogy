@@ -535,7 +535,166 @@ function drawConnections() {
         - `style_v16_v2.css` 및 `bible-genealogy-deploy/style_v16_v2.css` 파일에서 기존에 무조건 적용되던 `.person-card.prophet` 및 `.person-card.prophet:hover` 선택자를 `.prophets-filter-active .person-card.prophet` 및 `.prophets-filter-active .person-card.prophet:hover`로 변경하여 선지자 필터가 켜진 상태에서만 보라색 네임박스 스타일이 드러나도록 스코프를 좁혔습니다.
         - 인물 카드 선택 시 적용되던 보라색 하이라이트 아우라 역시 `.prophets-filter-active.relationship-highlight-active .person-card.highlight.prophet`로 한정하여, 선지자 레이어가 꺼진 상태에서는 일반 인물과 동일하게 본래 성별/라인에 맞는 빛깔로 나타나도록 보완 완료했습니다.
 
+68. **선지자 카드 네임박스 및 아우라 색상 원복 및 버그 해결**:
+    - **원인**:
+      - 이전 패치에서 선지자 레이어가 켜져 있을 때 선지자 카드(다윗 왕, 솔로몬 왕 등)에 적용되던 연보라색 배경, 보라색 테두리, 그리고 보라색 아우라(Glow)가 여전히 드러나고 있어, 이를 완전히 원복하고 원래의 성별/메인라인 카드 색상과 아우라 광채 색상으로 나타나도록 해달라는 요구사항을 적용하기 위함입니다.
+    - **조치**:
+      - **CSS 스타일 오버라이드 규칙 삭제**:
+        - `style_v16_v2.css` 및 각 배포본의 CSS 파일에서 선지자 필터가 켜졌을 때 강제로 연보라색 배경/테두리로 덮어씌우던 `.prophets-filter-active .person-card.prophet` 및 `.prophets-filter-active .person-card.prophet:hover` 선택자 룰을 완전히 삭제했습니다.
+        - 선지자 필터가 켜진 상태에서 관계선 하이라이트 활성화 시 보라색 아우라로 빛나게 하던 `.prophets-filter-active.relationship-highlight-active .person-card.highlight.prophet` 룰도 완전히 삭제했습니다.
+        - 이를 통해 모든 선지자 카드(다윗 왕, 솔로몬 왕 포함)는 선지자 레이어 활성 여부와 무관하게 항상 본래의 성별(남성: 파란색, 여성: 분홍색) 및 직계선(주황색/황금색 테두리 및 배경) 기준의 고유 네임박스 스타일과 아우라 광채를 완벽하게 유지하게 되었습니다.
+      - **선지자 연결선 숨김 예외 적용을 위한 SVG 클래스 보정**:
+        - `app_v16_v2.js`에서 부모-자식 연결선을 그리는 로직 중 단일 부모 및 다중 자녀를 렌더링하는 두 부분 모두에, 연결 대상(부모 혹은 자식) 중 선지자가 한 명이라도 포함된 경우 `prophet-connection` 클래스를 추가하도록 보완했습니다.
+        - 이로써 선지자 레이어 활성화 시 해당 연결선들과 분기점 노드들이 CSS 규칙에 의해 정확히 가려지며 의도된 레이아웃 연출을 구현했습니다.
+      - **배포 및 빌드 동기화**:
+        - 변경 사항이 반영된 `app_v16_v2.js`와 `style_v16_v2.css`를 `dist/` 및 `bible-genealogy-deploy/` 경로로 동기화 복사했습니다.
+        - `npm run build:mobile`을 실행하여 iOS (`ios/`) 및 Android (`android/`) 플랫폼 에셋까지 완벽히 배포 빌드 동기화 완료했습니다.
 
+69. **사무엘 카드 노출 조건 수정 및 커스텀 보라색 강화/아우라 제거**:
+    - **원인**:
+      - "선지자 (Prophets)" 필터가 꺼져 있을 때도 사무엘 카드가 화면에 항상 노출되는 문제를 해결하고, 반대로 필터가 켜졌을 때만 노출되도록 visibility를 제한하기 위함입니다. 또한 필터 활성화 시 사무엘 카드에 30% 강화된 진한 보라색 테마를 적용하되 아우라 광채가 나타나지 않도록 요청을 적용했습니다.
+    - **조치**:
+      - **선지자 필터 상태에 따른 사무엘 카드 가시성(Visibility) 제한**:
+        - `app_v16_v2.js` 내 `getCharacterFilterClass`에서 캐릭터가 사무엘이고 선지자 필터가 켜져 있지 않을 경우 무조건 `filter-inactive` 클래스를 반환하도록 수정했습니다.
+        - `style_v16_v2.css`에서 `.person-card.samuel` 카드에 기본적으로 `display: none !important;`를 적용하여 비활성 시 완전히 숨기고, 선지자 필터 활성화 시에만 `.prophets-filter-active .person-card.samuel`을 통해 `display: flex !important;`로 노출되도록 제어했습니다.
+      - **30% 강화된 보라색 테마 적용**:
+        - 선지자 필터 활성화 시 사무엘 카드에 이전보다 30% 강화된 명확하고 짙은 보라색 배경과 보라색 테두리 스타일(Light Mode: Purple 200~400 그라데이션 및 Purple 600 테두리, Dark Mode: Purple 800~Indigo 950 그라데이션 및 Purple 400 테두리)을 적용하고 텍스트의 대비 및 가독성을 높였습니다.
+      - **아우라 광채 제거**:
+        - 관계선 하이라이트 활성화(`relationship-highlight-active`) 상태에서 사무엘 카드가 강조(`highlight`)되더라도 pulse-aura-only 애니메이션과 glow shadow를 제거(`animation: none !important; box-shadow: none !important;`)하여 아우라 없이 명확하게 단색 카드로만 보이도록 구현했습니다.
+      - **배포 및 빌드 동기화**:
+        - 변경 사항이 반영된 `app_v16_v2.js`와 `style_v16_v2.css`를 `dist/` 및 `bible-genealogy-deploy/` 경로로 동기화 복사했습니다.
+        - `npm run build:mobile`을 실행하여 iOS (`ios/`) 및 Android (`android/`) 플랫폼 에셋까지 완벽히 배포 빌드 동기화 완료했습니다.
+      - **중복 변수 선언(SyntaxError) 해결**:
+        - `getCharacterFilterClass` 상단에서 `char` 변수를 선언한 상태에서 함수 하단에 잔존하던 `const char = db.find(...)` 중복 선언부를 제거하여 브라우저에서 발생하던 `Uncaught SyntaxError: Identifier 'char' has already been declared` 에러를 말끔하게 수정했습니다.
 
+70. **선지자 및 타 레이어 다중 선택 시 페이드아웃 및 연결선 숨김 오류 수정**:
+    - **원인**:
+      - "선지자 (Prophets)" 레이어가 선택되었을 때, `getCharacterFilterClass`, `getSpouseFilterClass`, `getChildLineFilterClass` 내부에서 다른 레이어(예: 인물 족보)의 선택 여부와 관계없이 일괄적으로 타 레이어 노드 및 모든 연결선을 페이드아웃(`filter-inactive`) 하거나 숨김(`display: none`) 처리하는 동시 선택 오류를 해결하기 위함입니다.
+    - **조치**:
+      - **다중 레이어 병렬 활성(Logical OR) 적용**:
+        - `getCharacterFilterClass` 함수를 수정하여 "선지자" 필터가 체크되어 있더라도 해당 인물이 선지자 계열이 아니면서 다른 활성화된 필터(인물 족보 등)에 속하는 경우 페이드아웃되지 않고 활성 상태(`""`)를 그대로 반환하도록 논리를 OR 조건으로 결합했습니다.
+      - **연결선(부부 및 부모-자식) 활성화 분리**:
+        - `getSpouseFilterClass` 및 `getChildLineFilterClass` 함수에서 선지자 레이어가 켜져 있더라도 다른 필터 조건에 의해 활성화되어야 하는 연결선들은 `filter-inactive` 및 `prophets-hide` 클래스를 반환하지 않고 정상 노출(`""`)되도록 보정했습니다.
+      - **CSS `.prophets-hide` 스타일 치환**:
+        - `style_v16_v2.css` 내에서 `.prophets-filter-active`가 전체 보드에 지정되었다고 모든 연결선을 무조건 감추던 기존 방식을 변경하여, JS에서 논리적으로 필터링된 연결선들에만 명시적으로 `.prophets-hide` 클래스가 추가되었을 때 숨겨지도록 (`display: none !important`) 수정했습니다.
+      - **배포 및 모바일 빌드 동기화**:
+        - 변경 사항을 `dist/` 및 `bible-genealogy-deploy/` 경로로 복사하고, `npm run build:mobile` 빌드를 완료했습니다.
 
+71. **인물/영역/사건/장소 레이어 토글 시의 상호 동기화(업데이트) 강화**:
+    - **원인**:
+      - 인물 레이어를 껐다 켰을 때 패밀리 그룹 패널(구역 색상표) 뿐만 아니라 다른 레이어(사건, 장소, 커스텀 폴리곤 등)들도 전부 동기화(업데이트)되도록 layer toggle listener를 통합 개선하기 위함입니다.
+    - **조치**:
+      - **중앙식 레이어 가시성 함수 `updateLayersVisibility()` 구현**:
+        - `app_v16_v2.js` 내에 모든 레이어(인물 카드, 구역 패널, 구역 라벨, 세대 표시, 연결선 레이어, 사건, 장소, 커스텀 폴리곤 등)의 display 속성을 실시간 체크박스 상태에 기반하여 결정하는 `updateLayersVisibility()` 함수를 구현했습니다.
+      - **이벤트 리스너 단순화 및 통합**:
+        - `toggle-layer-people`, `toggle-layer-events`, `toggle-layer-locations`, `toggle-layer-polygons`의 change 이벤트 발생 시 ad-hoc하게 요소를 선택해 display를 끄던 로직을 모두 걷어내고, 중앙 필터 적용 함수인 `applyFilters()`를 호출하게 하여 하이라이트 갱신과 모든 레이어의 상호 업데이트가 일관되게 처리되도록 개선했습니다.
+      - **배포 및 모바일 빌드 동기화**:
+        - 변경 사항이 반영된 `app_v16_v2.js`와 `style_v16_v2.css`를 `dist/` 및 `bible-genealogy-deploy/` 경로로 복사하고 `npm run build:mobile` 빌드를 완료하여 웹과 모바일 버전 모두 동일하게 업데이트를 반영했습니다.
 
+72. **선지자 레이어와 타 필터(레이어) 동시 활성화 시 데이터 유지 오류 수정**:
+    - **원인**:
+      - "선지자 (Prophets)" 레이어가 선택되었을 때, `getCharacterFilterClass`, `getSpouseFilterClass`, `getChildLineFilterClass` 내부에서 선지자 필터가 켜져 있으면 다른 활성화된 필터(인물 족보 등)의 매칭 여부와 무관하게 일괄적으로 타 레이어 노드 및 모든 연결선을 페이드아웃(`filter-inactive`) 또는 숨김(`display: none`) 처리하여 타 레이어 데이터가 유실(비표시)되는 문제를 해결하기 위함입니다.
+    - **조치**:
+      - **필터 판정 논리를 병렬(OR) 검사 방식으로 고도화**:
+        - `getCharacterFilterClass` 함수에서 선지자 레이어가 켜져 있더라도 해당 인물이 선지자(사무엘) 계열에 부합하거나, 혹은 활성화되어 있는 다른 그룹 필터(인물 족보 등) 및 커스텀 폴리곤 필터(지파 영역 등)에 기하학적으로 포함되어 있다면 활성 상태(`""`)를 반환하도록 논리 OR 결합 처리를 완벽하게 구성했습니다.
+      - **연결선(부부 및 부모-자식) 활성화 상태 상호 동기화**:
+        - `getSpouseFilterClass` 및 `getChildLineFilterClass` 함수에서 선지자 레이어가 켜져 있어 숨김 대상(`prophets-hide`)으로 분류되어야 하는 연결선이더라도, 다른 활성 필터 영역에 속해 화면에 노출되어야 하는 경우에는 `prophets-hide` 클래스를 반환하지 않고 정상 노출(`""`)되도록 제어 로직을 보완했습니다.
+      - **배포 및 모바일 빌드 동기화**:
+        - 변경 사항이 반영된 `app_v16_v2.js`를 `dist/` 및 `bible-genealogy-deploy/` 경로로 복사하고 `npm run build:mobile` 빌드를 수행하여 전 플랫폼 동기화를 완료했습니다.
+
+73. **선지자 레이어 활성화 및 영역 레이어 체크 시 커스텀 폴리곤 페이드아웃 방지 조치**:
+    - **원인**:
+      - 선지자 레이어가 활성화되었을 때, 영역 레이어(지파 영역 등) 체크박스가 켜져 있음에도 불구하고 커스텀 폴리곤(영역)들이 `filter-inactive` 클래스로 인해 흐리게 페이드아웃되는 현상을 수정하여 데이터 가시성을 강화하기 위함입니다.
+    - **조치**:
+      - **선지자 레이어 및 영역 표시 상태 체크 우회 적용**:
+        - `app_v16_v2.js` 내의 커스텀 폴리곤 렌더링 로직에서 선지자 필터가 켜져 있고(`activeFilters['prophets'] === true`), 동시에 폴리곤/영역 레이어 가시성이 켜져 있는 경우(`isLayerVisible === true`)에는 개별 폴리곤에 `filter-inactive` 클래스를 부여하지 않고 투명도를 그대로 유지하도록 로직을 수정했습니다.
+      - **배포 및 모바일 빌드 동기화**:
+        - 변경 사항이 반영된 `app_v16_v2.js` 및 `style_v16_v2.css`를 `dist/` 및 `bible-genealogy-deploy/` 경로로 복사하고 `npm run build:mobile` 빌드를 실행해 최종 반영을 완료했습니다.
+
+74. **선지자 레이어 비활성화 시 선지자 부부선 및 자녀 연결선 숨김 처리**:
+    - **원인**:
+      - 레이어 패널에서 선지자 레이어만 비활성화(체크 해제)했을 때, 선지자들의 인물 카드는 올바르게 숨겨지지만 그들과 연결된 부부선(결혼 분기점 circle 포함) 및 부모-자식 연결선들이 숨겨지지 않고 허공에 붕 떠서 출력되는 시각적 결함이 존재했습니다.
+    - **조치**:
+      - **연결선 렌더링에 카드 레이어 가시성 체크 통합**:
+        - `app_v16_v2.js`의 `getSpouseFilterClass` 함수에 카드 가시성 검사(`isCharacterCardVisible`)를 삽입하여, 부부 중 한 명이라도 레이어 설정에 의해 숨겨진 경우 해당 부부선에 `.prophets-hide` 클래스를 부여해 보이지 않게 처리했습니다.
+        - `getChildLineFilterClass` 함수에도 동일한 검사를 도입하여, 자녀 카드가 숨겨졌거나 부모 카드가 숨겨진 경우(1인 부모인 경우 부모 숨김 시, 2인 부모인 경우 둘 중 하나라도 숨김 시) 해당 부모-자식 연결선에 `.prophets-hide` 클래스를 적용했습니다.
+      - **빌드 및 동기화**:
+        - 수정된 `app_v16_v2.js` 파일을 `dist/` 및 `bible-genealogy-deploy/` 경로로 동기화 복사하고 `npm run build:mobile` 명령을 통해 모바일(iOS, Android) 에셋에 최종 반영을 마쳤습니다.
+
+75. **선지자 레이어 활성화 시 타 활성화된 필터(인물 족보) 카드 페이드아웃 버그 수정**:
+    - **원인**:
+      - "선지자 (Prophets)" 레이어가 켜져 있을 때, `isFilterModeActive()` 함수가 `activeFilters` 내에 `'prophets'` 필터가 `true`인 경우에도 필터 모드가 활성 상태인 것으로 판단했습니다. 이로 인해 인물 족보(Family Tree) 체크박스나 영역 등이 켜져 있지 않음에도 불구하고, 선지자 레이어가 켜지는 순간 선지자가 아닌 다른 인물 카드들이 모두 페이드아웃(불투명도 20%)되는 시각적 오류가 발생했습니다.
+    - **조치**:
+      - **`isFilterModeActive()` 판정 로직 수정**:
+        - `app_v16_v2.js`에서 `isFilterModeActive()`가 `'prophets'` 키를 제외한 다른 필터들만 기준으로 활성화 여부를 판정하도록 수정(`Object.keys(activeFilters).some(key => key !== 'prophets' && activeFilters[key] === true)`)했습니다.
+        - 이로써 "선지자" 레이어는 단순한 레이어 가시성 온/오프 토글로만 작동하며, 다른 필터(인물 족보 등)가 활성화되어 있지 않다면 화면 상의 일반 인물 카드들이 불필요하게 페이드아웃되지 않도록 오류를 완벽히 해결했습니다.
+      - **배포 및 모바일 빌드 동기화**:
+        - 수정된 `app_v16_v2.js` 파일을 `dist/` 및 `bible-genealogy-deploy/` 경로로 복사하고, `npm run build:mobile` 빌드를 실행해 최종 반영 완료했습니다.
+
+76. **선지자 카드 네임박스 배경/테두리 색상 연한 보라색으로 변경**:
+    - **원인**:
+      - "선지자 (Prophets)" 레이어가 활성화되었을 때 노출되는 선지자 인물 카드(사무엘 및 선지자 카드들)의 색상이 이전 패치에서 30% 강화된 다소 진하고 무거운 보라색으로 적용되어 있어, 이를 다시 부드러운 연한 보라색 테마로 지정해달라는 사용자 요청이 있었습니다.
+    - **조치**:
+      - **CSS 선지자 카드 스타일 연보라색 변수 적용**:
+        - `style_v16_v2.css` 내 `.prophets-filter-active .person-card.samuel` 및 `.prophets-filter-active .person-card.prophet`의 background와 border 값을 하드코딩된 진한 보라색에서 기존에 설정해둔 연한 보라색 그라데이션 및 연보라색 테두리 변수(`var(--bg-card-prophet)`, `var(--border-card-prophet)`)로 교체 적용했습니다.
+        - 다크 모드 역시 마찬가지로 다크 테마용 연보라색 변수(`var(--bg-card-prophet)`, `var(--border-card-prophet)`)로 변경하여 눈의 피로를 덜고 디자인적 일관성을 유지했습니다.
+      - **배포 및 모바일 빌드 동기화**:
+        - 변경 사항이 반영된 `style_v16_v2.css` 파일을 `dist/` 및 `bible-genealogy-deploy/` 경로로 복사하고, `npm run build:mobile` 빌드를 실행해 최종 반영 완료했습니다.
+
+77. **선지자 카드 선택(하이라이트) 시 보라색 아우라 광채 적용**:
+    - **원인**:
+      - "선지자 (Prophets)" 레이어가 켜져 있을 때 선지자 카드(사무엘 및 선지자 카드들)를 클릭하거나 선택해 하이라이트가 활성화되었을 때, 이전 패치에서 제거되었던 아우라 광채 효과를 다시 보라색 테마에 맞추어 생기도록 해달라는 사용자 요청이 있었습니다.
+    - **조치**:
+      - **CSS 선지자 하이라이트 아우라 스타일 구현**:
+        - `style_v16_v2.css` 내에서 기존에 사무엘 및 선지자 카드의 하이라이트 애니메이션을 `animation: none !important;`로 끄던 스타일 룰을 제거했습니다.
+        - 대신, `.relationship-highlight-active .person-card.highlight.samuel` 및 `.relationship-highlight-active .person-card.highlight.prophet:not(.main-line)` 선택자를 사용하여, 선택 강조 시 보라색 테마에 맞는 아우라 광채 애니메이션(`pulse-aura-only`)이 자연스럽게 작동하도록 `--glow-color` 변수를 보라색 계열(라이트 모드: `rgba(168, 85, 247, 0.75)`, 다크 모드: `rgba(192, 132, 252, 0.8)`)로 선언하고 테두리 색상도 아름답게 일치시켰습니다.
+        - `:not(.main-line)` 속성을 결합함으로써, 다윗 왕이나 솔로몬 왕처럼 왕족/메인라인(직계)에 속해 황금색 카드로 노출되어야 하는 인물들은 purple aura 대신 황금빛/주황색 아우라가 원래 의도대로 완벽하게 유지되도록 예외 처리했습니다.
+      - **배포 및 모바일 빌드 동기화**:
+        - 변경 사항이 반영된 `style_v16_v2.css` 파일을 `dist/` 및 `bible-genealogy-deploy/` 경로로 복사하고, `npm run build:mobile` 빌드를 실행해 최종 반영 완료했습니다.
+
+78. **인물 카드 선택(클릭) 시, 직계가족 외에 직계 인물 전체의 배우자/형제자매/스승/제자/선지자 및 연결선 일체 아우라 하이라이트 동시 적용**:
+    - **원인**:
+      - 네임박스를 클릭했을 때 단순 본인의 직계가족(조상/후손)뿐만 아니라, **직계 라인에 포함된 모든 인물들의 배우자, 형제자매, 스승(Preachers/Teachers), 제자(Disciples), 관련 선지자(Prophets)** 등 연관된 모든 관계 인물과 그들의 연결선도 아우라 광채와 함께 하이라이트 되도록 기능을 완성하기 위함입니다.
+    - **조치**:
+      - **관계선 하이라이트 로직 전체 보강 (`app_v16_v2.js`)**:
+        - `highlightRelatedElements` 함수 내에서 직계가족 ID 세트(`lineage`)의 각 멤버를 순회환 후, 각 멤버들의 **1) 배우자(`spouses`), 2) 형제자매(부모를 공유하는 인물), 3) 스승(`teachers`), 4) 제자(자신을 스승으로 둔 인물), 5) 관련 선지자 및 추종자**들을 모두 찾아 `highlightedIds` 세트로 취합하도록 수정했습니다.
+        - 취합된 모든 하이라이트 인물 카드(`.person-card`)에 `highlight` 클래스를 부여하여 동시 아우라 광채가 피어오르도록 구현했습니다.
+      - **다양한 연결선(SVG Path) 하이라이트 확장**:
+        - **자녀선 (`.connector-line`)**: 자녀 ID가 `highlightedIds`에 포함되어 있을 때 `line-highlight` 클래스 부여.
+        - **배우자선 (`.spouse-connector`) & 배우자 노드 서클 (`.spouse-node-circle`)**: 연결된 부부 한 쌍이 모두 `highlightedIds`에 포함되어 있을 때 `line-highlight` 클래스 부여.
+        - **전도자선 (`.preacher-line`)**: 스승과 제자가 모두 `highlightedIds`에 포함되어 있을 때 `line-highlight` 클래스 부여.
+        - **custom-visual-line (`.custom-visual-line`)**: 시작 노드와 끝 노드가 모두 `highlightedIds`에 포함되어 있을 때 `line-highlight` 클래스 부여.
+      - **배포 및 모바일 빌드 동기화**:
+        - 변경 사항이 반영된 `app_v16_v2.js` 파일을 `dist/` 및 `bible-genealogy-deploy/` 경로로 복사하고, `npm run build:mobile` 빌드를 실행해 최종 반영 완료했습니다.
+
+79. **인물 카드 선택(클릭) 시, 기타 명시적 관련 인물(relatedPeople) 및 연결선 하이라이트/아우라 추가 지원**:
+    - **원인**:
+      - 데이터베이스에 명시되어 있는 `relatedPeople` (기타 관련된 사람) 관계를 가진 인물 및 그들과의 연결선도 인물 카드 선택 시 함께 아우라 광채를 뿜으며 하이라이트되도록 관계망을 완전하게 적용하기 위함입니다.
+    - **조치**:
+      - **`relatedPeople` 관계 하이라이트 확장 (`app_v16_v2.js`)**:
+        - `highlightRelatedElements` 함수에서 직계 가족(`lineage`)의 멤버들 각각에 정의된 `relatedPeople` 배열에 존재하는 모든 인물 ID를 수집하여 `highlightedIds` 세트에 병합하도록 로직을 구현했습니다.
+        - 수집된 `relatedPeople` 인물들도 다른 관계 인물과 마찬가지로 동일하게 아우라 광채(`.highlight`)가 동시 표시됩니다.
+      - **데이터 검증 및 자가 치유(Self-Healing) 로직 보강**:
+        - `app_v16_v2.js` 내부의 데이터 로딩 및 초기화 과정(`Self-Healing Safeguard`)에서 canonical 및 커스텀 인물의 `relatedPeople` 프로퍼티가 배열 형태(`[]`)로 반드시 보장되도록 안전 코드를 보강했습니다.
+      - **배포 및 모바일 빌드 최종 동기화**:
+        - 수정된 `app_v16_v2.js` 및 관련 정적 에셋(`index.html`, `database.json`, `data_v16_v2.js` 등)을 `dist/` 및 `bible-genealogy-deploy/` 하위 경로에 복사하여 완벽하게 동기화하고, `npm run build:mobile` 명령을 통해 iOS 및 Android 모바일 플랫폼 에셋 배포를 완료했습니다.
+
+80. **관리자 정렬 도구 UI 개선 - '간격맞춤' 드롭다운 메뉴 및 '세로 줄 맞춤' 기능 연동**:
+    - **원인**:
+      - 기존 관리자 패널의 정렬 버튼(높이 맞춤, 가로간격 맞춤, 세로간격 맞춤)이 늘어서 있어 UI 공간을 과도하게 차지하고 복잡함을 주었던 문제를 개선하고, 세로 열을 일렬로 일치시켜 주는 '세로 줄 맞춤(Align Columns)' 기능을 새롭게 도입하기 위함입니다.
+    - **조치**:
+      - **정렬 도구 드롭다운 그룹화 (`index.html`)**:
+        - 높이 맞춤, 가로간격 맞춤, 세로간격 맞춤 버튼을 하나의 드롭다운(`admin-align-dropdown-toggle`)으로 묶어 "📏 간격맞춤"이라는 레이블 하위에 표시되도록 디자인을 일체형으로 통합했습니다.
+      - **세로 줄 맞춤 버튼 추가 및 JS 기능 구현 (`app_v16_v2.js`)**:
+        - 다중 선택된 카드들의 X축 좌표(`column`)를 동일하게 맞춰 수직 정렬해 주는 `alignSelectedColumns()` 함수를 새로 추가했습니다.
+        - 드롭다운 외부 영역 클릭 또는 하위 정렬 도구 클릭 시 드롭다운이 자연스럽게 닫히도록 마우스 클릭 이벤트를 연동했습니다.
+
+81. **인물 정보 수정 폼 - '관련된 인물들' 멀티 셀렉트 및 검색 컴포넌트 추가**:
+    - **원인**:
+      - 관리자 모드에서 인물 카드 정보를 편집하거나 새로 생성할 때, 텍스트 입력창 대신 UI에서 직관적으로 인물 목록을 검색하고 체크박스를 통해 다수의 연관 인물을 편리하게 지정 및 해제할 수 있도록 지원하기 위함입니다.
+    - **조치**:
+      - **관련 인물 검색 및 체크 목록 마크업 (`index.html`)**:
+        - 인물 설명 텍스트 영역 바로 위에 "관련된 인물들" 섹션을 구성하고, 검색 입력창(`form-related-search`) 및 검색 매칭 후보 체크박스 컨테이너(`form-related-list`)를 신규 배치했습니다.
+      - **자바스크립트 관련 인물 조회 및 저장 로직 구현 (`app_v16_v2.js`)**:
+        - 임시 관련인물 배열 `tempRelatedPeople`을 도입하고, 실시간 키 입력에 맞춰 어휘가 매칭되는 인물을 최대 15명까지 필터링해 노출해 주는 `renderRelatedPeopleList()` 기능을 구현했습니다.
+        - 폼 제출 시 선택된 인물 간의 관계를 캐노니컬 데이터베이스 상에 양방향으로 연계하여 즉시 기록되도록 저장 핸들러를 보강했습니다.

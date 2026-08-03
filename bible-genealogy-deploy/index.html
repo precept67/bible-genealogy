@@ -667,9 +667,18 @@
        <button id="admin-add-junction-btn" class="admin-action-btn primary" style="background: #059669; border-color: #059669;">🟢 연결점(분기점) 추가</button>
        <button id="admin-add-polygon-btn" class="admin-action-btn primary" style="background: #ea580c; border-color: #ea580c;">⬡ 영역(다각형) 추가</button>
        <button id="style-editor-toggle" class="admin-action-btn primary" style="background: #7c3aed; border-color: #7c3aed; font-weight: bold; color: #ffffff; cursor: pointer;">🎨 선 디자인 편집기</button>
-       <button id="admin-align-height-btn" class="admin-action-btn primary" style="background: #0284c7; border-color: #0284c7; font-weight: bold; color: #ffffff; cursor: pointer;" title="선택한 카드들의 높이를 동일하게 맞춥니다.">📐 높이 맞춤</button>
-       <button id="admin-distribute-width-btn" class="admin-action-btn primary" style="background: #0284c7; border-color: #0284c7; font-weight: bold; color: #ffffff; cursor: pointer;" title="선택한 카드들 간의 가로 간격을 동일하게 정렬합니다.">↔️ 가로간격 맞춤</button>
-       <button id="admin-distribute-height-btn" class="admin-action-btn primary" style="background: #0284c7; border-color: #0284c7; font-weight: bold; color: #ffffff; cursor: pointer;" title="선택한 카드들 간의 세로 간격을 동일하게 정렬합니다.">↕️ 세로간격 맞춤</button>
+       <div class="admin-dropdown-group" style="position: relative; width: 100%;">
+         <button id="admin-align-dropdown-toggle" class="admin-action-btn primary" style="background: #0284c7; border-color: #0284c7; font-weight: bold; color: #ffffff; cursor: pointer; width: 100%; justify-content: space-between;" title="선택한 카드들의 정렬 및 간격을 맞춥니다.">
+           <span>📏 간격맞춤</span>
+           <span style="font-size: 8px; margin-left: 4px;">▼</span>
+         </button>
+         <div id="admin-align-dropdown-menu" style="display: none; position: absolute; left: 105%; top: 0; background: var(--bg-panel); border: 1px solid var(--border-panel); border-radius: 8px; padding: 6px; box-shadow: var(--shadow-panel); backdrop-filter: var(--glass-blur); flex-direction: column; gap: 4px; min-width: 140px; z-index: 1000;">
+           <button id="admin-align-height-btn" class="admin-action-btn" style="border: none; background: transparent; width: 100%; cursor: pointer;" title="선택한 카드들의 높이를 동일하게 맞춥니다.">📐 높이 맞춤</button>
+           <button id="admin-align-column-btn" class="admin-action-btn" style="border: none; background: transparent; width: 100%; cursor: pointer;" title="선택한 카드들의 세로 줄을 정렬합니다.">📏 세로 줄 맞춤</button>
+           <button id="admin-distribute-width-btn" class="admin-action-btn" style="border: none; background: transparent; width: 100%; cursor: pointer;" title="선택한 카드들 간의 가로 간격을 동일하게 정렬합니다.">↔️ 가로간격 맞춤</button>
+           <button id="admin-distribute-height-btn" class="admin-action-btn" style="border: none; background: transparent; width: 100%; cursor: pointer;" title="선택한 카드들 간의 세로 간격을 동일하게 정렬합니다.">↕️ 세로간격 맞춤</button>
+         </div>
+       </div>
        <button id="admin-sync-btn" class="admin-action-btn" style="background-color: #27ae60; color: white;">💾 서버에 배포하기 (Sync)</button>
        <button id="admin-users-btn" class="admin-action-btn" style="background-color: #8e44ad; color: white;">👥 사용자 가입 승인</button>
        <button id="admin-export-btn" class="admin-action-btn">📥 데이터 내보내기 (JSON)</button>
@@ -797,6 +806,11 @@
               <label for="form-prophets">선지자 ID 목록 (콤마로 구분)</label>
               <input type="text" id="form-prophets" placeholder="예: samuel, elijah" autocomplete="off">
               <div id="prophets-suggestions" class="autocomplete-suggestions"></div>
+            </div>
+            <div class="form-group full-width" style="position: relative;">
+              <label>관련된 인물들 (임의 검색 및 체크)</label>
+              <input type="text" id="form-related-search" placeholder="이름 또는 ID를 검색하여 관련 인물을 추가/해제하세요..." autocomplete="off" style="margin-bottom: 6px;">
+              <div id="form-related-list" class="related-people-checkbox-list"></div>
             </div>
             <div class="form-group full-width">
               <label for="form-desc">인물 설명</label>
