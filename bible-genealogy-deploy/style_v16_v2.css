@@ -9,6 +9,8 @@
   --border-card-male: rgba(59, 130, 246, 0.4);
   --bg-card-female: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
   --border-card-female: rgba(236, 72, 153, 0.4);
+  --bg-card-prophet: linear-gradient(135deg, #f5f3ff 0%, #e0e7ff 100%);
+  --border-card-prophet: rgba(139, 92, 246, 0.6);
   --bg-card-main: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
   --border-card-main: #f59e0b;
   --shadow-card-main: 0 0 15px rgba(245, 158, 11, 0.25);
@@ -17,12 +19,12 @@
   --text-muted: #64748b;
   --text-accent: #2563eb;
   
-  --bg-panel: rgba(255, 255, 255, 0.85);
+  --bg-panel: rgba(255, 255, 255, 0.60);
   --border-panel: rgba(226, 232, 240, 0.8);
   --shadow-panel: 0 10px 30px rgba(0, 0, 0, 0.08);
   --glass-blur: blur(12px);
 
-  --line-color: #94a3b8;
+  --line-color: #ff7800;
   --line-main-color: #ff7800;
   --spouse-line-color: #ef4444;
   --line-width: 3px;
@@ -36,6 +38,8 @@
   --border-card-male: rgba(59, 130, 246, 0.5);
   --bg-card-female: linear-gradient(135deg, #831843 0%, #0f172a 100%);
   --border-card-female: rgba(236, 72, 153, 0.5);
+  --bg-card-prophet: linear-gradient(135deg, #4c1d95 0%, #0f172a 100%);
+  --border-card-prophet: rgba(167, 139, 250, 0.7);
   --bg-card-main: linear-gradient(135deg, #78350f 0%, #1e293b 100%);
   --border-card-main: #fbbf24;
   --shadow-card-main: 0 0 20px rgba(251, 191, 36, 0.35);
@@ -44,11 +48,11 @@
   --text-muted: #94a3b8;
   --text-accent: #60a5fa;
   
-  --bg-panel: rgba(15, 23, 42, 0.85);
+  --bg-panel: rgba(15, 23, 42, 0.60);
   --border-panel: rgba(51, 65, 85, 0.8);
   --shadow-panel: 0 10px 35px rgba(0, 0, 0, 0.3);
 
-  --line-color: #64748b;
+  --line-color: #f97316;
   --line-main-color: #f97316;
   --spouse-line-color: #f87171;
 }
@@ -64,11 +68,43 @@ body, html {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  position: fixed;
   overscroll-behavior: none;
   font-family: var(--font-family);
   background-color: var(--bg-board);
   color: var(--text-main);
   transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Enable instant touch response and remove iOS gray tap highlight overlay */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Snappy click-delay bypass */
+button,
+a,
+.person-card,
+.control-btn,
+.layer-marker {
+  touch-action: manipulation;
+}
+
+/* Instantly animate button depression on touch */
+button:active,
+a:active,
+.control-btn:active,
+.clickable-item:active,
+#bottom-control-panel button:active,
+#filter-panel button:active,
+#study-panel button:active {
+  transform: scale(0.95) !important;
+  opacity: 0.85;
+  transition: transform 0.04s ease-out !important;
+}
+
+.person-card:active {
+  opacity: 0.75 !important;
 }
 
 /* App Structure */
@@ -78,6 +114,7 @@ body, html {
   width: 100%;
   height: 100%;
   position: relative;
+  overflow: hidden;
 }
 
 /* Header Panel styling */
@@ -94,7 +131,7 @@ header {
   border-radius: 12px;
   box-shadow: var(--shadow-panel);
   backdrop-filter: var(--glass-blur);
-  z-index: 100;
+  z-index: 3000;
   transition: all 0.3s ease;
 }
 
@@ -115,20 +152,20 @@ header .subtitle {
 /* Control Panel (Zoom and Utilities) */
 #control-panel {
   position: absolute;
-  bottom: 24px;
+  bottom: 16px;
   left: 50%;
   right: auto;
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
   background: var(--bg-panel);
   border: 1px solid var(--border-panel);
-  padding: 8px 16px;
+  padding: 4px 8px;
   border-radius: 50px;
   box-shadow: var(--shadow-panel);
   backdrop-filter: var(--glass-blur);
-  z-index: 100;
+  z-index: 3000;
   transition: all 0.3s ease;
 }
 
@@ -139,15 +176,15 @@ header .subtitle {
 .control-btn {
   background: transparent;
   border: none;
-  width: 40px;
-  height: 40px;
+  width: 25px;
+  height: 25px;
   border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--text-main);
-  font-size: 16px;
+  font-size: 11px;
   transition: all 0.2s ease;
 }
 
@@ -158,15 +195,15 @@ header .subtitle {
 
 .control-divider {
   width: 1px;
-  height: 24px;
+  height: 16px;
   background-color: var(--border-panel);
-  margin: 0 4px;
+  margin: 0 2px;
 }
 
 .zoom-indicator {
-  font-size: 13px;
+  font-size: 10px;
   font-weight: 600;
-  min-width: 50px;
+  min-width: 35px;
   text-align: center;
   color: var(--text-muted);
 }
@@ -179,7 +216,7 @@ header .subtitle {
   display: flex;
   align-items: center;
   gap: 8px;
-  z-index: 100;
+  z-index: 3000;
 }
 
 .search-box {
@@ -209,6 +246,7 @@ header .subtitle {
   height: 100%;
   position: relative;
   overflow: hidden;
+  z-index: 1;
   cursor: grab;
   outline: none;
   touch-action: none;
@@ -229,6 +267,7 @@ header .subtitle {
   left: 0;
   user-select: none;
   -webkit-user-select: none;
+  will-change: transform;
 }
 
 #tree-board {
@@ -238,6 +277,18 @@ header .subtitle {
 }
 
 /* SVG Line Layer */
+#svg-polygons-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  max-width: none !important;
+  max-height: none !important;
+  overflow: visible !important;
+  pointer-events: none;
+  z-index: 0; /* Render behind everything else, below locations */
+  will-change: transform;
+  transform: translateZ(0);
+}
 #svg-layer {
   position: absolute;
   top: 0;
@@ -247,6 +298,8 @@ header .subtitle {
   overflow: visible !important;
   pointer-events: none;
   z-index: 5;
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 .connector-line {
@@ -274,6 +327,12 @@ header .subtitle {
   stroke-width: calc(var(--line-width) + 1px);
   stroke-dasharray: 4 2;
   animation: march 25s linear infinite;
+}
+
+.connector-line.preacher-line {
+  stroke: var(--preacher-line-color);
+  stroke-width: calc(var(--line-width) + 1.2px);
+  transition: stroke 0.3s ease, stroke-width 0.3s ease;
 }
 
 @keyframes march {
@@ -308,7 +367,6 @@ header .subtitle {
   cursor: pointer;
   user-select: none;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.3s ease;
-  will-change: transform, left, top;
 }
 
 .person-card:hover {
@@ -431,12 +489,13 @@ header .subtitle {
 /* Study/Note Sidebar Panel */
 #study-panel {
   position: absolute;
-  top: 0;
+  top: 80px;
   right: -380px;
   width: 360px;
-  height: 100%;
+  height: calc(100% - 96px);
   background: var(--bg-panel);
-  border-left: 1px solid var(--border-panel);
+  border: 1px solid var(--border-panel);
+  border-radius: 16px;
   box-shadow: var(--shadow-panel);
   backdrop-filter: var(--glass-blur);
   z-index: 200;
@@ -446,7 +505,7 @@ header .subtitle {
 }
 
 #study-panel.active {
-  right: 0;
+  right: 16px;
 }
 
 .panel-header {
@@ -529,10 +588,11 @@ header .subtitle {
 .resource-input-wrapper {
   display: flex;
   gap: 8px;
+  width: 100%;
 }
 
 .resource-input {
-  flex: 1;
+  min-width: 0;
   background: rgba(148, 163, 184, 0.08);
   border: 1px solid var(--border-panel);
   border-radius: 8px;
@@ -541,6 +601,14 @@ header .subtitle {
   font-size: 13px;
   color: var(--text-main);
   outline: none;
+}
+
+#resource-title {
+  flex: 1;
+}
+
+#resource-url {
+  flex: 2;
 }
 
 .add-resource-btn {
@@ -553,6 +621,8 @@ header .subtitle {
   font-weight: 600;
   font-size: 13px;
   transition: opacity 0.2s ease;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .add-resource-btn:hover {
@@ -652,8 +722,8 @@ header .subtitle {
 @media (max-width: 768px) {
   header {
     padding: 8px 12px;
-    top: 8px;
-    left: 8px;
+    top: calc(8px + env(safe-area-inset-top));
+    left: calc(8px + env(safe-area-inset-left));
   }
   header h1 {
     font-size: 15px;
@@ -662,8 +732,8 @@ header .subtitle {
     display: none;
   }
   #search-panel {
-    top: 8px;
-    right: 8px;
+    top: calc(8px + env(safe-area-inset-top));
+    right: calc(8px + env(safe-area-inset-right));
   }
   .search-box {
     width: 140px;
@@ -672,9 +742,28 @@ header .subtitle {
   .search-box:focus {
     width: 180px;
   }
+  .panel-header {
+    padding-top: calc(16px + env(safe-area-inset-top));
+  }
+  #control-panel {
+    bottom: calc(16px + env(safe-area-inset-bottom));
+  }
   #study-panel {
-    width: 100%;
-    right: -100%;
+    width: 75%;
+    right: -75%;
+    top: 0;
+    height: 100%;
+    border-radius: 16px 0 0 16px;
+    border: none;
+    border-left: 1px solid var(--border-panel);
+    box-shadow: -5px 0 25px rgba(0, 0, 0, 0.15);
+    z-index: 4000;
+  }
+  #study-panel.active {
+    right: 0;
+  }
+  .copyright-notice {
+    display: none !important;
   }
 }
 
@@ -685,14 +774,14 @@ header .subtitle {
 /* Floating Admin Database Action Panel (Top Left) */
 #admin-actions-bar {
   position: absolute;
-  top: 80px; /* Positioned below the main header */
-  left: 16px;
+  top: 210px; /* Positioned below the layer control panel */
+  left: 20px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 5px;
   background: var(--bg-panel);
   border: 1px solid var(--border-panel);
-  padding: 10px;
+  padding: 7px;
   border-radius: 12px;
   box-shadow: var(--shadow-panel);
   backdrop-filter: var(--glass-blur);
@@ -702,9 +791,9 @@ header .subtitle {
 
 .admin-action-btn {
   font-family: var(--font-family);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
-  padding: 8px 14px;
+  padding: 5px 11px;
   border: 1px solid var(--border-panel);
   border-radius: 8px;
   background: var(--bg-board);
@@ -773,7 +862,6 @@ header .subtitle {
   transition: opacity 0.2s ease;
   box-sizing: border-box;
   transform: translateZ(0);
-  will-change: transform;
 }
 
 .person-card.admin-editable:hover .card-edit-overlay,
@@ -982,12 +1070,13 @@ header .subtitle {
 /* Left Sliding Design Style Editor Panel */
 #style-editor-panel {
   position: absolute;
-  top: 0;
+  top: 80px;
   left: -380px; /* Initially hidden on the left */
   width: 360px;
-  height: 100%;
+  height: calc(100% - 96px);
   background: var(--bg-panel);
-  border-right: 1px solid var(--border-panel);
+  border: 1px solid var(--border-panel);
+  border-radius: 16px;
   box-shadow: var(--shadow-panel);
   backdrop-filter: var(--glass-blur);
   z-index: 200;
@@ -997,7 +1086,7 @@ header .subtitle {
 }
 
 #style-editor-panel.active {
-  left: 0;
+  left: 16px;
 }
 
 .style-section {
@@ -1072,12 +1161,13 @@ header .subtitle {
 /* Left Sliding Branch Filter Panel */
 #filter-panel {
   position: absolute;
-  top: 0;
+  top: 80px;
   left: -380px; /* Initially hidden on the left */
   width: 360px;
-  height: 100%;
+  height: calc(100% - 96px);
   background: var(--bg-panel);
-  border-right: 1px solid var(--border-panel);
+  border: 1px solid var(--border-panel);
+  border-radius: 16px;
   box-shadow: var(--shadow-panel);
   backdrop-filter: var(--glass-blur);
   z-index: 200;
@@ -1087,15 +1177,15 @@ header .subtitle {
 }
 
 #filter-panel.active {
-  left: 0;
+  left: 16px;
 }
 
 .filter-section {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 6px;
   background: rgba(148, 163, 184, 0.04);
-  padding: 16px;
+  padding: 10px;
   border-radius: 8px;
   border: 1px solid var(--border-panel);
 }
@@ -1103,15 +1193,15 @@ header .subtitle {
 .filter-group {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 4px;
 }
 
 .filter-item {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   cursor: pointer;
-  padding: 8px;
+  padding: 3px 8px;
   border-radius: 6px;
   transition: background-color 0.2s ease;
 }
@@ -1121,9 +1211,10 @@ header .subtitle {
 }
 
 .filter-item input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   cursor: pointer;
+  margin: 0;
 }
 
 .filter-label {
@@ -1136,10 +1227,27 @@ header .subtitle {
   #style-editor-panel {
     width: 100%;
     left: -100%;
+    top: 0;
+    height: 100%;
+    border-radius: 0;
+    border: none;
+  }
+  #style-editor-panel.active {
+    left: 0;
   }
   #filter-panel {
-    width: 100%;
-    left: -100%;
+    width: 75%;
+    left: -75%;
+    top: 0;
+    height: 100%;
+    border-radius: 0 16px 16px 0;
+    border: none;
+    border-right: 1px solid var(--border-panel);
+    box-shadow: 5px 0 25px rgba(0, 0, 0, 0.15);
+    z-index: 4000;
+  }
+  #filter-panel.active {
+    left: 0;
   }
 }/* Floating Annotation/Text Box Styling */
 .canvas-annotation {
@@ -1189,8 +1297,14 @@ header .subtitle {
   justify-content: center;
 }
 
-.admin-mode-active .annotation-text {
-  pointer-events: auto; /* Allow typing in admin mode */
+.admin-mode-active .canvas-annotation.editing .annotation-text {
+  pointer-events: auto !important;
+  cursor: text !important;
+}
+
+.admin-mode-active .canvas-annotation:not(.editing) .annotation-text {
+  pointer-events: none !important;
+  cursor: move !important;
 }
 
 /* Floating Toolbar for Editing Annotation properties */
@@ -1294,14 +1408,32 @@ header .subtitle {
 
 /* Dim everything else when highlighting is active */
 .tree-highlight-active .person-card:not(.ancestor-highlight) {
-  opacity: 0.3;
-  filter: grayscale(60%) blur(0.5px);
+  opacity: 0.65;
+  filter: grayscale(20%);
 }
 
 .tree-highlight-active .connector-line:not(.line-highlight),
 .tree-highlight-active .spouse-connector:not(.line-highlight) {
-  opacity: 0.15;
+  opacity: 0.4;
   stroke: #cbd5e1 !important;
+}
+
+.tree-highlight-active .canvas-junction-node {
+  opacity: 0.45 !important;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.tree-highlight-active .canvas-annotation {
+  opacity: 0.45 !important;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.tree-highlight-active .layer-marker {
+  opacity: 0.45 !important;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
 }
 
 /* Highlight connection paths with animated glowing pulse */
@@ -1309,7 +1441,6 @@ header .subtitle {
 .spouse-connector.line-highlight {
   stroke: var(--text-accent) !important;
   stroke-width: 4.5px !important;
-  filter: drop-shadow(0 0 6px var(--text-accent)) drop-shadow(0 0 2px var(--text-accent));
   stroke-dasharray: 8 4;
   animation: line-pulse-dash 1.2s linear infinite;
   z-index: 100;
@@ -1349,6 +1480,8 @@ header .subtitle {
   border: 1px solid var(--border-panel, #e2e8f0);
   box-shadow: 0 2px 4px rgba(0,0,0,0.03);
   letter-spacing: 0.5px;
+  white-space: nowrap;
+  z-index: 20;
 }
 
 .family-group-panel.cain { background-color: rgba(239, 68, 68, 0.03); border-color: rgba(239, 68, 68, 0.15); }
@@ -1747,7 +1880,7 @@ header .subtitle {
   pointer-events: none;
   box-sizing: border-box;
   transform: translate(-50%, -50%); /* Centered layout placement */
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s, opacity 0.3s ease;
 }
 
 .admin-mode-active .canvas-junction-node {
@@ -1814,6 +1947,7 @@ header .subtitle {
 /* Custom Polygon selection highlighting */
 .family-group-panel-poly {
   transition: fill-opacity 0.2s, stroke-width 0.2s;
+  pointer-events: visiblePainted;
 }
 
 .family-group-panel-poly.poly-selected {
@@ -1821,3 +1955,725 @@ header .subtitle {
   fill-opacity: 0.08 !important;
   filter: drop-shadow(0 0 5px rgba(249, 115, 22, 0.8));
 }
+
+/* Search Results Dropdown */
+.search-results-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 5px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 1000;
+  list-style: none;
+  padding: 0;
+  display: none;
+}
+.search-result-item {
+  padding: 10px 15px;
+  cursor: pointer;
+  border-bottom: 1px solid #f0f0f0;
+  text-align: left;
+  font-size: 14px;
+  color: #333;
+}
+.search-result-item:last-child {
+  border-bottom: none;
+}
+.search-result-item:hover {
+  background-color: #f8f9fa;
+}
+.search-result-item .parent-info {
+  font-size: 12px;
+  color: #888;
+  margin-left: 8px;
+}
+
+/* Layer Control Panel */
+.layer-control-panel {
+  position: absolute;
+  top: 70px;
+  left: 20px;
+  background: var(--bg-panel);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--border-panel);
+  border-radius: 12px;
+  padding: 10px;
+  box-shadow: var(--shadow-panel);
+  z-index: 3000;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-family: 'Inter', sans-serif;
+  transition: opacity 0.3s ease;
+}
+.layer-control-panel label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #334155;
+  cursor: pointer;
+  user-select: none;
+}
+.layer-control-panel input[type="checkbox"] {
+  accent-color: #3b82f6;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  margin: 0;
+}
+
+/* Transparent Layers */
+.transparent-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* Let clicks pass through empty areas */
+}
+
+#layer-locations {
+  z-index: 1; /* 제일 바닥 (선보다 아래) */
+}
+
+#svg-layer {
+  position: relative;
+  z-index: 2; /* 연결선 (장소보다 위, 사람/사건보다 아래) */
+}
+
+#layer-events {
+  z-index: 5; /* 사건 (선과 사람 사이) */
+}
+
+/* Markers */
+.layer-marker {
+  position: absolute;
+  pointer-events: auto; /* Enable clicks on the marker itself */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translate(-50%, -50%); /* Center on coordinate */
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 10;
+}
+.layer-marker:hover {
+  transform: translate(-50%, -50%) scale(1.15);
+  z-index: 20;
+}
+
+.marker-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  border: 2px solid white;
+}
+
+/* Event Marker */
+.marker-event .marker-icon {
+  background: linear-gradient(135deg, #fef08a, #f59e0b);
+  color: #78350f;
+}
+.marker-event .marker-label {
+  background: rgba(254, 240, 138, 0.9);
+  color: #78350f;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+/* Location Marker */
+.marker-location .marker-icon {
+  background: linear-gradient(135deg, #bbf7d0, #22c55e);
+  color: #14532d;
+}
+.marker-location .marker-label {
+  background: rgba(187, 247, 208, 0.9);
+  color: #14532d;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.marker-label {
+  margin-top: 6px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  backdrop-filter: blur(4px);
+  pointer-events: none;
+}
+
+/* Highlighted Layer Markers */
+.layer-marker.highlight .marker-icon {
+  animation: pulse-marker-icon 1.5s infinite alternate;
+  border-color: #ff7800 !important;
+  box-shadow: 0 0 15px rgba(255, 120, 0, 0.8) !important;
+}
+
+@keyframes pulse-marker-icon {
+  from {
+    box-shadow: 0 0 10px rgba(255, 120, 0, 0.6);
+  }
+  to {
+    box-shadow: 0 0 25px rgba(255, 120, 0, 1), 0 0 10px rgba(255, 120, 0, 0.5);
+  }
+}
+
+/* Relation Searchable Checklist Box */
+.relation-selector-box {
+  border: 1px solid var(--border-panel);
+  border-radius: 8px;
+  background: rgba(148, 163, 184, 0.04);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.relation-search {
+  border: none !important;
+  border-bottom: 1px solid var(--border-panel) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  padding: 8px 12px !important;
+  font-size: 13px;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.relation-checklist {
+  max-height: 120px;
+  overflow-y: auto;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.relation-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 12px;
+  transition: background 0.15s ease;
+  color: var(--text-main);
+}
+
+.relation-item:hover {
+  background: rgba(148, 163, 184, 0.08);
+}
+
+.relation-item.checked {
+  background: rgba(37, 99, 235, 0.15);
+  color: var(--text-accent);
+  font-weight: 600;
+}
+
+.relation-item input[type="checkbox"] {
+  margin: 0;
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+  accent-color: var(--text-accent);
+}
+
+/* Selected Relation Tags/Badges */
+.selected-relation-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px 12px;
+  background: rgba(148, 163, 184, 0.02);
+  border-bottom: 1px dashed var(--border-panel);
+  min-height: 0;
+}
+
+.selected-relation-tags:empty {
+  display: none;
+}
+
+.relation-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(37, 99, 235, 0.1);
+  color: var(--text-accent);
+  border: 1px solid rgba(37, 99, 235, 0.25);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 11px;
+  font-weight: 500;
+  transition: all 0.15s ease;
+}
+
+.relation-tag:hover {
+  background: rgba(37, 99, 235, 0.15);
+}
+
+.relation-tag-remove {
+  cursor: pointer;
+  font-weight: 800;
+  color: var(--text-accent);
+  opacity: 0.6;
+  transition: opacity 0.15s ease;
+}
+
+.relation-tag-remove:hover {
+  opacity: 1;
+}
+
+/* Relationship Highlighting and Dimming Engine */
+.relationship-highlight-active .person-card:not(.highlight) {
+  opacity: 0.09 !important;
+  filter: grayscale(85%) !important;
+  pointer-events: none;
+  transition: opacity 0.3s ease, filter 0.3s ease;
+}
+
+.relationship-highlight-active .layer-marker:not(.highlight) {
+  opacity: 0.09 !important;
+  filter: grayscale(85%) !important;
+  pointer-events: none;
+  transition: opacity 0.3s ease, filter 0.3s ease;
+}
+
+.relationship-highlight-active .connector-line:not(.line-highlight),
+.relationship-highlight-active .spouse-connector:not(.line-highlight),
+.relationship-highlight-active .custom-visual-line:not(.line-highlight) {
+  opacity: 0.05 !important;
+  transition: opacity 0.3s ease;
+}
+
+/* Beautiful custom glow aura (no scaling/enlargement) */
+.relationship-highlight-active .person-card.highlight {
+  animation: pulse-aura-only 1.5s infinite alternate !important;
+  /* NO transform override here so the natural size/hover size stays fixed! */
+  z-index: 100 !important;
+  opacity: 1 !important;
+  transition: opacity 0.3s ease;
+}
+
+/* Specific glowing colors per card theme */
+.relationship-highlight-active .person-card.highlight.male:not(.main-line) {
+  --glow-color: rgba(59, 130, 246, 0.7);
+  border-color: rgba(59, 130, 246, 0.95) !important;
+}
+
+.relationship-highlight-active .person-card.highlight.female:not(.main-line) {
+  --glow-color: rgba(236, 72, 153, 0.7);
+  border-color: rgba(236, 72, 153, 0.95) !important;
+}
+
+.relationship-highlight-active .person-card.highlight.main-line {
+  --glow-color: rgba(245, 158, 11, 0.8);
+  border-color: rgba(245, 158, 11, 1) !important;
+}
+
+/* Glowing aura for markers (locations/events) */
+.relationship-highlight-active .layer-marker.highlight {
+  opacity: 1 !important;
+  z-index: 100 !important;
+  /* NO transform override here so the inline translate & scale remain intact! */
+  transition: opacity 0.3s ease;
+}
+
+/* Event marker aura: icon and text box */
+.relationship-highlight-active .layer-marker.highlight.marker-event .marker-icon {
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.8), 0 0 30px rgba(245, 158, 11, 0.5) !important;
+  border-color: rgba(245, 158, 11, 1) !important;
+  animation: pulse-marker-icon-orange 1.5s infinite alternate !important;
+}
+
+.relationship-highlight-active .layer-marker.highlight.marker-event .marker-label {
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.7), 0 0 24px rgba(245, 158, 11, 0.4) !important;
+  border-color: rgba(245, 158, 11, 0.8) !important;
+}
+
+/* Location marker aura: icon and text box */
+.relationship-highlight-active .layer-marker.highlight.marker-location .marker-icon {
+  box-shadow: 0 0 15px rgba(34, 197, 94, 0.8), 0 0 30px rgba(34, 197, 94, 0.5) !important;
+  border-color: rgba(34, 197, 94, 1) !important;
+  animation: pulse-marker-icon-green 1.5s infinite alternate !important;
+}
+
+.relationship-highlight-active .layer-marker.highlight.marker-location .marker-label {
+  box-shadow: 0 0 12px rgba(34, 197, 94, 0.7), 0 0 24px rgba(34, 197, 94, 0.4) !important;
+  border-color: rgba(34, 197, 94, 0.8) !important;
+}
+
+.relationship-highlight-active .canvas-annotation:not(.highlight) {
+  opacity: 0.09 !important;
+  filter: grayscale(85%) !important;
+  pointer-events: none;
+  transition: opacity 0.3s ease, filter 0.3s ease;
+}
+
+.relationship-highlight-active .canvas-annotation.highlight {
+  opacity: 1 !important;
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.7), 0 0 35px rgba(168, 85, 247, 0.4) !important;
+  z-index: 100 !important;
+  transition: opacity 0.3s ease, box-shadow 0.3s ease;
+}
+
+.relationship-highlight-active .canvas-junction-node:not(.highlight) {
+  opacity: 0.06 !important;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.relationship-highlight-active .canvas-junction-node.highlight {
+  opacity: 1 !important;
+}
+
+@keyframes pulse-aura-only {
+  from {
+    box-shadow: 0 0 10px var(--glow-color);
+  }
+  to {
+    box-shadow: 0 0 25px var(--glow-color), 0 0 40px var(--glow-color);
+  }
+}
+
+@keyframes pulse-marker-icon-orange {
+  from {
+    box-shadow: 0 0 8px rgba(245, 158, 11, 0.6);
+  }
+  to {
+    box-shadow: 0 0 20px rgba(245, 158, 11, 1), 0 0 30px rgba(245, 158, 11, 0.4);
+  }
+}
+
+@keyframes pulse-marker-icon-green {
+  from {
+    box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
+  }
+  to {
+    box-shadow: 0 0 20px rgba(34, 197, 94, 1), 0 0 30px rgba(34, 197, 94, 0.4);
+  }
+}
+
+/* Floating toggle button for spawner toolkit bar */
+.spawner-panel-toggle-btn {
+  position: fixed;
+  bottom: 24px;
+  left: 20px;
+  width: 42px;
+  height: 42px;
+  background: #38bdf8; /* sky blue theme color */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  color: #0f172a; /* dark text/icon */
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(56, 189, 248, 0.3);
+  z-index: 1400;
+  transition: all 0.2s ease;
+  outline: none;
+}
+.spawner-panel-toggle-btn:hover {
+  transform: scale(1.08) translateY(-2px);
+  box-shadow: 0 6px 20px rgba(56, 189, 248, 0.5);
+  background: #0ea5e9;
+  color: #ffffff;
+}
+
+/* Bottom Spawner Panel (Admin Palette) */
+.bottom-spawner-panel {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 1200px;
+  background: rgba(20, 20, 30, 0.92);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.4);
+  z-index: 1500;
+  color: #ffffff;
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+.spawner-header {
+  height: 32px; /* Reduced from 36px */
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  font-size: 11px; /* Reduced from 12px */
+  font-weight: 600;
+  color: #38bdf8;
+}
+
+.spawner-content {
+  height: 75px; /* Reduced from 120px to save 45px vertical space */
+  display: flex;
+  padding: 6px 12px; /* Reduced padding */
+  gap: 12px;
+  box-sizing: border-box;
+}
+
+.spawner-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.spawner-section h5 {
+  margin: 0 0 2px 0; /* Reduced from 6px */
+  font-size: 9px; /* Reduced from 11px */
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.spawner-section-divider {
+  width: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  height: 100%;
+}
+
+.spawner-chips-container {
+  flex: 1;
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 8px;
+  padding: 4px 16px 8px 16px; /* Added left/right padding and bottom breathing room */
+  align-items: center;
+}
+
+.spawner-chip {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  user-select: none;
+}
+
+.spawner-chip:hover {
+  background: #38bdf8;
+  border-color: #38bdf8;
+  color: #000000;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 10px rgba(56, 189, 248, 0.3);
+}
+
+.spawner-chip.active-tool {
+  background: #f59e0b;
+  border-color: #f59e0b;
+  color: #000000;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.5);
+  animation: pulse-spawner-active 1.5s infinite alternate;
+}
+
+@keyframes pulse-spawner-active {
+  from { box-shadow: 0 0 6px rgba(245, 158, 11, 0.4); }
+  to { box-shadow: 0 0 16px rgba(245, 158, 11, 0.8); }
+}
+
+.spawner-chips-container::-webkit-scrollbar {
+  height: 8px; /* Thickened for much easier cursor grabbing */
+}
+.spawner-chips-container::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05); /* Dark track background for guidance */
+  border-radius: 4px;
+}
+.spawner-chips-container::-webkit-scrollbar-thumb {
+  background: rgba(56, 189, 248, 0.4); /* Premium sky blue scrollbar matching theme */
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+.spawner-chips-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(56, 189, 248, 0.8); /* Glow brighter on hover */
+}
+
+.placement-mode-active {
+  cursor: crosshair !important;
+}
+
+/* Release grab/grabbing cursor during relationship/aura highlight and return to default */
+.relationship-highlight-active,
+.relationship-highlight-active #viewer-container,
+.relationship-highlight-active #tree-board {
+  cursor: default !important;
+}
+.relationship-highlight-active #viewer-container:active,
+.relationship-highlight-active #tree-board:active {
+  cursor: default !important;
+}
+
+/* Fade out spouse circles, family group polygons, and polygon labels in focus/aura modes */
+.relationship-highlight-active .spouse-node-circle:not(.line-highlight) {
+  opacity: 0.05 !important;
+  transition: opacity 0.3s ease;
+}
+.relationship-highlight-active .spouse-node-circle.line-highlight {
+  opacity: 1 !important;
+  transition: opacity 0.3s ease;
+}
+.relationship-highlight-active .family-group-panel-poly {
+  opacity: 0.03 !important;
+  transition: opacity 0.3s ease;
+}
+.relationship-highlight-active .family-group-panel-poly.highlight {
+  opacity: 0.28 !important;
+  stroke-width: 4px !important;
+}
+.relationship-highlight-active .family-group-label {
+  opacity: 0.05 !important;
+  transition: opacity 0.3s ease;
+}
+.relationship-highlight-active .family-group-label.highlight {
+  opacity: 1 !important;
+  z-index: 100 !important;
+}
+
+.tree-highlight-active .spouse-node-circle:not(.line-highlight) {
+  opacity: 0.45 !important;
+  transition: opacity 0.3s ease;
+}
+.tree-highlight-active .spouse-node-circle.line-highlight {
+  opacity: 1 !important;
+  transition: opacity 0.3s ease;
+}
+.tree-highlight-active .family-group-panel-poly {
+  opacity: 0.2 !important;
+  transition: opacity 0.3s ease;
+}
+.tree-highlight-active .family-group-label {
+  opacity: 0.2 !important;
+  transition: opacity 0.3s ease;
+}
+
+/* Filter inactive styles */
+.filter-inactive {
+  pointer-events: none !important;
+  transition: opacity 0.3s ease, filter 0.3s ease;
+}
+.person-card.filter-inactive,
+.canvas-annotation.filter-inactive,
+.family-group-label.filter-inactive,
+.layer-marker.filter-inactive {
+  opacity: 0.09 !important;
+  filter: grayscale(85%) !important;
+}
+.connector-line.filter-inactive,
+.spouse-connector.filter-inactive,
+.spouse-node-circle.filter-inactive,
+.family-group-panel-poly.filter-inactive {
+  opacity: 0.05 !important;
+}
+.canvas-junction-node.filter-inactive {
+  opacity: 0.06 !important;
+}
+
+/* Block Print / PDF Saving */
+@media print {
+  html, body {
+    display: none !important;
+  }
+}
+
+.copyright-notice {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-panel);
+  padding: 3px 7px;
+  border-radius: 4px;
+  font-size: 10px;
+  color: var(--text-muted);
+  z-index: 9999;
+  pointer-events: none;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+/* Mobile SVG Animation Optimization */
+@media (max-width: 768px) {
+  .connector-line.main-line {
+    animation: none !important;
+  }
+}
+
+/* Prophet Cards Specific Styles */
+.person-card.prophet {
+  background: var(--bg-card-prophet) !important;
+  border: 2px solid var(--border-card-prophet) !important;
+  box-shadow: 0 4px 10px rgba(139, 92, 246, 0.15) !important;
+}
+
+.person-card.prophet .card-title {
+  color: #6d28d9 !important; /* Deep purple in light mode */
+}
+
+[data-theme="dark"] .person-card.prophet .card-title {
+  color: #c084fc !important; /* Light purple in dark mode */
+}
+
+/* Hide connection lines & spouse node circles completely under prophets filter */
+.prophets-filter-active .connector-line,
+.prophets-filter-active .spouse-connector,
+.prophets-filter-active .spouse-node-circle {
+  display: none !important;
+}
+
+/* Beautiful glow aura on cards when prophets layer filter is active */
+.prophets-filter-active .person-card:not(.filter-inactive) {
+  animation: pulse-prophet-aura 1.5s infinite alternate !important;
+  border-color: rgba(139, 92, 246, 0.8) !important;
+  z-index: 100 !important;
+}
+
+@keyframes pulse-prophet-aura {
+  0% {
+    box-shadow: 0 0 8px rgba(139, 92, 246, 0.4), 0 0 15px rgba(139, 92, 246, 0.2) !important;
+  }
+  100% {
+    box-shadow: 0 0 18px rgba(139, 92, 246, 0.8), 0 0 35px rgba(139, 92, 246, 0.4) !important;
+  }
+}
+
+
+

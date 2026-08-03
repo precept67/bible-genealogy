@@ -2294,6 +2294,7 @@ function initDatabase() {
     stableBoardWidth = (totalCols * COL_WIDTH) + (BOARD_PADDING_X * 2);
     stableCenterX = stableBoardWidth / 2;
   }
+  precomputeProphets();
 }
 
 function saveDatabase() {
@@ -4871,8 +4872,67 @@ function getElementFilterClass(id) {
   return "filter-inactive";
 }
 
+const PROPHET_BASE_IDS = new Set([
+  'enoch', 'noah', 'abraham', 'isaac', 'jacob', 'moses', 'aaron', 'miriam', 'deborah_eph', 'david', 'solomon', 'john_baptist', 'John_the_Baptist'
+]);
+
+let prophetIds = new Set();
+let prophetRelatedIds = new Set();
+
+function precomputeProphets() {
+  prophetIds.clear();
+  prophetRelatedIds.clear();
+
+  db.forEach(char => {
+    const desc = char.desc || "";
+    const name = char.name || "";
+    if (PROPHET_BASE_IDS.has(char.id) || desc.includes("선지자") || desc.includes("예언자") || name.includes("선지자") || name.includes("예언자")) {
+      prophetIds.add(char.id);
+    }
+  });
+
+  db.forEach(char => {
+    if (prophetIds.has(char.id)) return;
+
+    if (char.parents && char.parents.some(pId => prophetIds.has(pId))) {
+      prophetRelatedIds.add(char.id);
+      return;
+    }
+    if (char.spouses && char.spouses.some(sId => prophetIds.has(sId))) {
+      prophetRelatedIds.add(char.id);
+      return;
+    }
+  });
+
+  db.forEach(char => {
+    if (prophetIds.has(char.id)) {
+      if (char.parents) {
+        char.parents.forEach(pId => {
+          if (!prophetIds.has(pId)) {
+            prophetRelatedIds.add(pId);
+          }
+        });
+      }
+    }
+  });
+}
+
+function isProphet(charId) {
+  return prophetIds.has(charId);
+}
+
+function isProphetRelated(charId) {
+  return prophetRelatedIds.has(charId);
+}
+
 function getCharacterFilterClass(charId) {
   if (!isFilterModeActive()) return "";
+  
+  if (activeFilters['prophets'] === true) {
+    if (isProphet(charId) || isProphetRelated(charId)) {
+      return "";
+    }
+  }
   
   const char = db.find(c => c.id === charId);
   if (!char) return "filter-inactive";
@@ -4917,6 +4977,9 @@ function getCharacterFilterClass(charId) {
 
 function getSpouseFilterClass(charId1, charId2) {
   if (!isFilterModeActive()) return "";
+  if (activeFilters['prophets'] === true) {
+    return "filter-inactive prophets-hide";
+  }
   
   const char1 = db.find(c => c.id === charId1);
   const char2 = db.find(c => c.id === charId2);
@@ -4949,6 +5012,9 @@ function getSpouseFilterClass(charId1, charId2) {
 
 function getChildLineFilterClass(childId, parentIds) {
   if (!isFilterModeActive()) return "";
+  if (activeFilters['prophets'] === true) {
+    return "filter-inactive prophets-hide";
+  }
   if (getCharacterFilterClass(childId) === "filter-inactive") {
     return "filter-inactive";
   }
@@ -5125,6 +5191,15 @@ function applyFilters() {
   initBoard();
   renderTree();
   updateTransform();
+  
+  const treeBoard = document.getElementById('tree-board');
+  if (treeBoard) {
+    if (activeFilters['prophets'] === true) {
+      treeBoard.classList.add('prophets-filter-active');
+    } else {
+      treeBoard.classList.remove('prophets-filter-active');
+    }
+  }
 }
 
 function setupFilters() {
@@ -5173,6 +5248,7 @@ function setupFilters() {
     filterGroupEl.innerHTML = '';
 
     const builtInGroups = [
+      { id: 'prophets', label: '선지자 계보 (Prophets)' },
       { id: 'cain', label: '가인 자손 계보 (Cain)' },
       { id: 'japheth', label: '야벳 자손 계보 (Japheth)' },
       { id: 'ham', label: '함 자손 계보 (Ham)' },
@@ -5317,6 +5393,9 @@ function renderTree() {
     const card = document.createElement('div');
     card.id = `card-${char.id}`;
     card.className = `person-card ${char.gender === 'M' ? 'male' : 'female'}`;
+    if (isProphet(char.id)) {
+      card.classList.add('prophet');
+    }
     const filterClass = getCharacterFilterClass(char.id);
     if (filterClass) {
       card.classList.add(filterClass);

@@ -1,3 +1,41 @@
+// Polyfill closest on Node prototype to prevent errors when target is a Text node (common in WebKit/Safari)
+if (typeof Node !== 'undefined' && !Node.prototype.closest) {
+  Node.prototype.closest = function(selector) {
+    return this.parentElement ? this.parentElement.closest(selector) : null;
+  };
+}
+
+// Global API Base URL Fetch Wrapper for Desktop App
+if (typeof window !== 'undefined' && window.fetch) {
+  const originalFetch = window.fetch;
+  window.fetch = function(input, init) {
+    if (typeof input === 'string' && input.startsWith('/api/') && window.API_BASE_URL) {
+      input = window.API_BASE_URL + input;
+    }
+    return originalFetch(input, init);
+  };
+}
+
+// Intercept all external link clicks to open in default system browser when running inside Tauri
+if (typeof document !== 'undefined') {
+  document.addEventListener('click', (e) => {
+    const anchor = e.target.closest('a');
+    if (anchor && anchor.href && (anchor.href.startsWith('http://') || anchor.href.startsWith('https://'))) {
+      const isTauri = window.location.protocol.startsWith('tauri') || 
+                      window.location.hostname === 'tauri.localhost' || 
+                      window.location.protocol.startsWith('file') ||
+                      window.location.protocol.startsWith('asset') ||
+                      (window.__TAURI__ && window.__TAURI__.shell);
+      if (isTauri && window.__TAURI__ && window.__TAURI__.shell) {
+        e.preventDefault();
+        window.__TAURI__.shell.open(anchor.href).catch(err => {
+          console.error("Failed to open external link:", err);
+        });
+      }
+    }
+  });
+}
+
 // Configuration Constants
 const CARD_WIDTH = 152;
 const CARD_HEIGHT = 62;
@@ -6,64 +44,1098 @@ const COL_WIDTH = 240;
 const BOARD_PADDING_Y = 120;
 const BOARD_PADDING_X = 200;
 
-// Safe localStorage wrapper to prevent crashes in restricted environments (like file:// in Safari)
-const localStorage = (() => {
-  const isSupported = (() => {
-    try {
-      window.localStorage.setItem('__test__', '1');
-      window.localStorage.removeItem('__test__');
-      return true;
-    } catch (e) {
-      return false;
-    }
-  })();
+function cleanLayerName(name) {
+  if (!name) return '';
+  return name.replace(/\s*\([A-Za-z0-9\s,\.'"-]+\)/g, '').trim();
+}
 
-  const memStore = {};
+const DEFAULT_LOCATIONS = [
+  {
+    "id": "loc-eden",
+    "name": "에덴동산 (Eden)",
+    "desc": "인류 최초의 거처이자 생명나무와 선악을 알게 하는 나무가 있던 낙원.",
+    "refs": [
+      "창세기 2:8",
+      "창세기 2:15"
+    ],
+    "relatedPeople": [
+      "adam",
+      "eve"
+    ],
+    "relatedEvents": [
+      "ev-eden_sin"
+    ],
+    "x": 150,
+    "y": 150
+  },
+  {
+    "id": "loc-east_eden",
+    "name": "에덴 동쪽 놋 땅 (Land of Nod)",
+    "desc": "가인이 아벨을 죽인 후 쫓겨나 유리하며 거주하게 된 에덴 동편의 땅.",
+    "refs": [
+      "창세기 4:16"
+    ],
+    "relatedPeople": [
+      "cain",
+      "abel"
+    ],
+    "relatedEvents": [
+      "ev-cain_abel"
+    ],
+    "x": -400,
+    "y": 330
+  },
+  {
+    "id": "loc-ararat",
+    "name": "아라랏산 (Mount Ararat)",
+    "desc": "노아의 방주가 대홍수 심판이 끝난 후 머무른 산.",
+    "refs": [
+      "창세기 8:4"
+    ],
+    "relatedPeople": [
+      "noah",
+      "shem",
+      "ham",
+      "japheth"
+    ],
+    "relatedEvents": [
+      "ev-noah_flood"
+    ],
+    "x": 150,
+    "y": 1770
+  },
+  {
+    "id": "loc-shinar",
+    "name": "시날 평지 (Plain of Shinar)",
+    "desc": "노아의 후손들이 모여 바벨탑을 쌓으며 하나님께 대적했던 평원.",
+    "refs": [
+      "창세기 11:2"
+    ],
+    "relatedPeople": [
+      "noah"
+    ],
+    "relatedEvents": [
+      "ev-babel_tower"
+    ],
+    "x": 280,
+    "y": 2130
+  },
+  {
+    "id": "loc-haran",
+    "name": "하란 (Haran)",
+    "desc": "아브라함의 아버지 데라가 머물다 죽은 곳이자 아브라함이 소명을 받고 떠난 땅.",
+    "refs": [
+      "창세기 11:31",
+      "창세기 12:4"
+    ],
+    "relatedPeople": [
+      "terah",
+      "abraham",
+      "sarah"
+    ],
+    "relatedEvents": [
+      "ev-abraham_haran"
+    ],
+    "x": 100,
+    "y": 3480
+  },
+  {
+    "id": "loc-shechem",
+    "name": "세겜 (Shechem)",
+    "desc": "아브라함이 가나안 땅에 들어와 최초로 제단을 쌓고 하나님의 약속을 받은 장소.",
+    "refs": [
+      "창세기 12:6",
+      "창세기 12:7"
+    ],
+    "relatedPeople": [
+      "abraham"
+    ],
+    "relatedEvents": [
+      "ev-abraham_shechem"
+    ],
+    "x": 150,
+    "y": 3570
+  },
+  {
+    "id": "loc-sodom",
+    "name": "소돔과 고모라 (Sodom & Gomorrah)",
+    "desc": "도덕적 타락으로 인해 유황과 불의 심판을 받아 멸망한 요단 평지의 성읍들.",
+    "refs": [
+      "창세기 19:24",
+      "창세기 19:25"
+    ],
+    "relatedPeople": [
+      "lot",
+      "abraham"
+    ],
+    "relatedEvents": [
+      "ev-sodom_destruction"
+    ],
+    "x": -200,
+    "y": 3540
+  },
+  {
+    "id": "loc-moriah",
+    "name": "모리아산 (Mount Moriah)",
+    "desc": "아브라함이 독자 이삭을 번제로 바치려 했던 산이자 훗날 솔로몬 성전이 건축된 장소.",
+    "refs": [
+      "창세기 22:2"
+    ],
+    "relatedPeople": [
+      "abraham",
+      "isaac"
+    ],
+    "relatedEvents": [
+      "ev-isaac_offering"
+    ],
+    "x": 150,
+    "y": 3660
+  },
+  {
+    "id": "loc-beersheba",
+    "name": "브엘세바 (Beersheba)",
+    "desc": "맹세의 우물이라는 뜻으로, 아브라함และ 이삭이 그랄 왕 아비멜렉과 평화 언약을 맺은 곳.",
+    "refs": [
+      "창세기 21:31",
+      "창세기 26:33"
+    ],
+    "relatedPeople": [
+      "abraham",
+      "isaac"
+    ],
+    "relatedEvents": [
+      "ev-isaac_covenant"
+    ],
+    "x": 150,
+    "y": 3750
+  },
+  {
+    "id": "loc-bethel",
+    "name": "벧엘 (Bethel)",
+    "desc": "하나님의 집이라는 뜻으로, 야곱이 형 에서를 피해 도망치던 중 돌베개를 베고 자다 하늘 사다리 환상을 본 곳.",
+    "refs": [
+      "창세기 28:19"
+    ],
+    "relatedPeople": [
+      "jacob"
+    ],
+    "relatedEvents": [
+      "ev-jacob_bethel"
+    ],
+    "x": 150,
+    "y": 3930
+  },
+  {
+    "id": "loc-peniel",
+    "name": "브니엘 (Peniel)",
+    "desc": "하나님의 얼굴이라는 뜻으로, 야곱이 얍복 나루에서 하나님의 사자와 밤새 씨름하여 '이스라엘'이라는 이름을 얻은 곳.",
+    "refs": [
+      "창세기 32:30"
+    ],
+    "relatedPeople": [
+      "jacob"
+    ],
+    "relatedEvents": [
+      "ev-jacob_peniel"
+    ],
+    "x": 150,
+    "y": 3990
+  },
+  {
+    "id": "loc-hebron",
+    "name": "헤브론 막벨라 굴 (Cave of Machpelah)",
+    "desc": "아브라함이 사라를 장사하기 위해 매입한 굴로, 아브라함, 사라, 이삭, 리브가, 야곱, 레아가 묻힌 족장들의 묘실.",
+    "refs": [
+      "창세기 23:19",
+      "창세기 49:30"
+    ],
+    "relatedPeople": [
+      "abraham",
+      "sarah",
+      "isaac",
+      "jacob"
+    ],
+    "relatedEvents": [
+      "ev-machpelah_buy"
+    ],
+    "x": 120,
+    "y": 3610
+  },
+  {
+    "id": "loc-goshen",
+    "name": "애굽 고센 땅 (Goshen in Egypt)",
+    "desc": "가나안 기근 때 요셉의 초청으로 입성한 야곱의 가족들이 정착하여 번성한 비옥한 목초지.",
+    "refs": [
+      "창세기 47:6"
+    ],
+    "relatedPeople": [
+      "jacob",
+      "joseph"
+    ],
+    "relatedEvents": [
+      "ev-goshen_migration"
+    ],
+    "x": 350,
+    "y": 4080
+  },
+  {
+    "id": "loc-nile",
+    "name": "나일강 (Nile River)",
+    "desc": "바로의 히브리 유아 학살 명령 속에서 모세가 갈대 상자에 담겨 떠내려가다 바로의 딸에게 구출된 강.",
+    "refs": [
+      "출애굽기 2:3",
+      "출애굽기 2:5"
+    ],
+    "relatedPeople": [
+      "moses",
+      "jochebed"
+    ],
+    "relatedEvents": [
+      "ev-moses_rescue"
+    ],
+    "x": -5900,
+    "y": 4560
+  },
+  {
+    "id": "loc-midian",
+    "name": "미디안 광야 (Midian Wilderness)",
+    "desc": "모세가 애굽 사람을 죽인 후 도망하여 40년간 목자로 살았던 땅이자 호렙산 떨기나무에서 하나님의 부르심을 받은 곳.",
+    "refs": [
+      "출애굽기 2:15",
+      "출애굽기 3:1"
+    ],
+    "relatedPeople": [
+      "moses",
+      "zipporah"
+    ],
+    "relatedEvents": [
+      "ev-burning_bush"
+    ],
+    "x": -6100,
+    "y": 4620
+  },
+  {
+    "id": "loc-pharaoh_palace",
+    "name": "애굽 바로의 궁전 (Pharaoh's Palace)",
+    "desc": "모세와 아론이 이스라엘 백성의 해방을 요구하며 바로와 대치하고 열 가지 재앙을 선포했던 궁전.",
+    "refs": [
+      "출애굽기 5:1",
+      "출애굽기 7:10"
+    ],
+    "relatedPeople": [
+      "moses",
+      "aaron"
+    ],
+    "relatedEvents": [
+      "ev-ten_plagues"
+    ],
+    "x": -5600,
+    "y": 4560
+  },
+  {
+    "id": "loc-red_sea",
+    "name": "홍해 (Red Sea)",
+    "desc": "뒤쫓아오는 애굽 군대 앞에서 모세가 지팡이를 내밀어 밤새 동풍으로 바다를 가르고 마른 땅처럼 건넌 기적의 바다.",
+    "refs": [
+      "출애굽기 14:21",
+      "출애굽기 14:22"
+    ],
+    "relatedPeople": [
+      "moses",
+      "aaron"
+    ],
+    "relatedEvents": [
+      "ev-crossing_red_sea"
+    ],
+    "x": -5900,
+    "y": 4740
+  },
+  {
+    "id": "loc-sinai",
+    "name": "시내산 (Mount Sinai)",
+    "desc": "출애굽한 이스라엘 백성들이 당도하여 하나님과 언약을 맺고 모세가 십계명과 성막 설계도를 받은 성산.",
+    "refs": [
+      "출애굽기 19:11",
+      "출애굽기 20:1"
+    ],
+    "relatedPeople": [
+      "moses"
+    ],
+    "relatedEvents": [
+      "ev-ten_commandments"
+    ],
+    "x": -5900,
+    "y": 4860
+  },
+  {
+    "id": "loc-kadesh",
+    "name": "가데스 바네아 (Kadesh Barnea)",
+    "desc": "가나안 접경 지역으로, 각 지파별로 12명의 정탐꾼을 보내 가나안 땅을 탐지하고 보고를 들었던 역사적 광야 기지.",
+    "refs": [
+      "민수기 13:26",
+      "신명기 1:19"
+    ],
+    "relatedPeople": [
+      "moses",
+      "joshua_eph",
+      "caleb_jephunneh"
+    ],
+    "relatedEvents": [
+      "ev-kadesh_spies"
+    ],
+    "x": -5900,
+    "y": 4980
+  },
+  {
+    "id": "loc-nebo",
+    "name": "느보산 비스가산대 (Mount Nebo)",
+    "desc": "모세가 약속의 땅 가나안을 멀리 바라본 후, 들어가지 못하고 120세로 생을 마감한 모압 땅의 산.",
+    "refs": [
+      "신명기 34:1",
+      "신명기 34:5"
+    ],
+    "relatedPeople": [
+      "moses"
+    ],
+    "relatedEvents": [
+      "ev-moses_death"
+    ],
+    "x": -5700,
+    "y": 4900
+  },
+  {
+    "id": "loc-jordan",
+    "name": "요단강 (Jordan River)",
+    "desc": "여호수아의 인도 하에 제사장들이 언약궤를 메고 물에 발을 딛자 흐르던 강물이 멈추어 마른 땅으로 건넌 약속의 땅 관문.",
+    "refs": [
+      "여호수아 3:15",
+      "여호수아 3:17"
+    ],
+    "relatedPeople": [
+      "joshua_eph"
+    ],
+    "relatedEvents": [
+      "ev-crossing_jordan"
+    ],
+    "x": -200,
+    "y": 5160
+  },
+  {
+    "id": "loc-jericho",
+    "name": "여리고 (Jericho)",
+    "desc": "가나안 첫 성읍으로, 정탐꾼을 숨긴 라합의 집이 있던 곳이며 언약궤를 메고 성을 7일간 돌아 무너뜨린 기적의 성.",
+    "refs": [
+      "여호수아 2:1",
+      "여호수아 6:20"
+    ],
+    "relatedPeople": [
+      "joshua_eph",
+      "rahab"
+    ],
+    "relatedEvents": [
+      "ev-fall_of_jericho"
+    ],
+    "x": -200,
+    "y": 5220
+  },
+  {
+    "id": "loc-shiloh",
+    "name": "실로 (Shiloh)",
+    "desc": "사사 시대 성막과 언약궤가 오랫동안 위치했던 영적 중심지이자 어린 사무엘이 하나님의 음성을 듣고 소명을 받은 곳.",
+    "refs": [
+      "여호수아 18:1",
+      "사무엘상 3:21"
+    ],
+    "relatedPeople": [
+      "david"
+    ],
+    "relatedEvents": [
+      "ev-samuel_call"
+    ],
+    "x": 100,
+    "y": 5580
+  },
+  {
+    "id": "loc-bethlehem",
+    "name": "베들레헴 (Bethlehem)",
+    "desc": "룻과 보아스의 만남이 성취된 곳이자 다윗 왕의 고향이며, 선지자 사무엘이 이새의 아들 다윗에게 기름을 부어 왕으로 세운 떡집의 땅.",
+    "refs": [
+      "룻기 1:22",
+      "사무엘상 16:1"
+    ],
+    "relatedPeople": [
+      "david"
+    ],
+    "relatedEvents": [
+      "ev-david_anointed"
+    ],
+    "x": 120,
+    "y": 5820
+  },
+  {
+    "id": "loc-elah",
+    "name": "엘라 골짜기 (Valley of Elah)",
+    "desc": "블레셋 군대와 이스라엘 군대가 대치하던 중, 소년 다윗이 물맷돌 5개와 만군의 여호와의 이름으로 거인 골리앗을 쓰러뜨린 전쟁터.",
+    "refs": [
+      "사무엘상 17:2",
+      "사무엘상 17:49"
+    ],
+    "relatedPeople": [
+      "david"
+    ],
+    "relatedEvents": [
+      "ev-david_goliath"
+    ],
+    "x": 50,
+    "y": 5940
+  },
+  {
+    "id": "loc-jerusalem",
+    "name": "예루살렘 성전산 (Mount Moriah Temple)",
+    "desc": "다윗이 오르난의 타작마당을 매입해 예배한 터로, 솔로몬 왕이 이스라엘 영광의 상징인 제1성전을 건축하여 헌당한 장소.",
+    "refs": [
+      "역대하 3:1",
+      "열왕기상 8:1"
+    ],
+    "relatedPeople": [
+      "david",
+      "solomon"
+    ],
+    "relatedEvents": [
+      "ev-temple_building"
+    ],
+    "x": 120,
+    "y": 6060
+  },
+  {
+    "id": "loc-carmel",
+    "name": "갈멜산 (Mount Carmel)",
+    "desc": "선지자 엘리야가 바알과 아세라 선지자 850명과 대결하여 여호와의 제단에 불이 내리게 함으로써 참 신이 누구인지 입증한 산.",
+    "refs": [
+      "열왕기상 18:19",
+      "열왕기상 18:38"
+    ],
+    "relatedPeople": [
+      "david"
+    ],
+    "relatedEvents": [
+      "ev-elijah_fire"
+    ],
+    "x": -450,
+    "y": 6960
+  },
+  {
+    "id": "loc-babylon",
+    "name": "바벨론 강가 (Rivers of Babylon)",
+    "desc": "예루살렘 멸망 이후 유다 백성들이 포로로 잡혀가 눈물로 시온을 기억하며 수금을 나무에 걸었던 슬픔과 탄식의 유배지.",
+    "refs": [
+      "시편 137:1",
+      "열왕기하 25:11"
+    ],
+    "relatedPeople": [
+      "jeconiah"
+    ],
+    "relatedEvents": [
+      "ev-babylon_captivity"
+    ],
+    "x": 400,
+    "y": 8220
+  },
+  {
+    "id": "loc-second_temple",
+    "name": "예루살렘 제2성전 터 (Second Temple Ruins)",
+    "desc": "바벨론 포로에서 귀환한 유다 백성들이 총독 스룹바벨의 주도 하에 눈물과 기쁨 속에 재건한 하나님의 성전.",
+    "refs": [
+      "에스라 3:8",
+      "에스라 6:15"
+    ],
+    "relatedPeople": [
+      "zerubbabel"
+    ],
+    "relatedEvents": [
+      "ev-temple_rebuild"
+    ],
+    "x": 120,
+    "y": 9444
+  },
+  {
+    "id": "loc-jerusalem_walls",
+    "name": "예루살렘 성벽 (Jerusalem Walls)",
+    "desc": "느헤미야 총독의 헌신과 이스라엘 백성들의 일치단결로 방해자들의 위협 속에서도 52일 만에 중건한 예루살렘 성벽 성곽.",
+    "refs": [
+      "느헤미야 2:17",
+      "느헤미야 6:15"
+    ],
+    "relatedPeople": [
+      "zerubbabel"
+    ],
+    "relatedEvents": [
+      "ev-walls_rebuild"
+    ],
+    "x": 120,
+    "y": 9550
+  }
+];
 
-  return {
-    getItem(key) {
-      if (isSupported) return window.localStorage.getItem(key);
-      return memStore[key] || null;
-    },
-    setItem(key, value) {
-      if (isSupported) {
-        try {
-          window.localStorage.setItem(key, value);
-          return;
-        } catch (e) {}
-      }
-      memStore[key] = String(value);
-    },
-    removeItem(key) {
-      if (isSupported) {
-        try {
-          window.localStorage.removeItem(key);
-          return;
-        } catch (e) {}
-      }
-      delete memStore[key];
-    },
-    clear() {
-      if (isSupported) {
-        try {
-          window.localStorage.clear();
-          return;
-        } catch (e) {}
-      }
-      for (const k in memStore) delete memStore[k];
-    }
-  };
-})();
+const DEFAULT_EVENTS = [
+  {
+    "id": "ev-eden_sin",
+    "name": "선악과 사건과 인류의 타락 (Fall of Man)",
+    "desc": "뱀의 유혹으로 하와와 아담이 선악과를 먹고 하나님의 명령을 어겨 에덴동산에서 추방당하고 인류에 죄가 들어온 사건.",
+    "refs": [
+      "창세기 3:6",
+      "창세기 3:23"
+    ],
+    "relatedPeople": [
+      "adam",
+      "eve"
+    ],
+    "relatedLocations": [
+      "loc-eden"
+    ],
+    "x": 240,
+    "y": 150
+  },
+  {
+    "id": "ev-cain_abel",
+    "name": "가인의 아벨 살인 사건 (Cain and Abel)",
+    "desc": "하나님께서 아벨의 제사만 받으시자 이에 분노한 형 가인이 들판에서 아우 아벨을 돌로 쳐 죽인 인류 최초의 살인 사건.",
+    "refs": [
+      "창세기 4:8"
+    ],
+    "relatedPeople": [
+      "cain",
+      "abel"
+    ],
+    "relatedLocations": [
+      "loc-east_eden"
+    ],
+    "x": -310,
+    "y": 330
+  },
+  {
+    "id": "ev-enoch_ascension",
+    "name": "에녹의 하나님 동행과 승천 (Enoch's Translation)",
+    "desc": "에녹이 65세에 므두셀라를 낳고 300년 동안 하나님과 동행하다가, 하나님이 그를 데려가시므로 세상에 있지 아니한 신비한 사건.",
+    "refs": [
+      "창세기 5:24"
+    ],
+    "relatedPeople": [
+      "enoch_seth",
+      "methuselah"
+    ],
+    "relatedLocations": [
+      "loc-eden"
+    ],
+    "x": 240,
+    "y": 150
+  },
+  {
+    "id": "ev-noah_flood",
+    "name": "노아의 방주와 대홍수 심판 (Noah's Flood)",
+    "desc": "온 세상의 해악이 가득 참에 분노하신 하나님께서 40일 동안 비를 내려 전 지구를 홍수로 심판하시고 노아의 여덟 식구만 구원하신 사건.",
+    "refs": [
+      "창세기 7:11",
+      "창세기 7:23"
+    ],
+    "relatedPeople": [
+      "noah",
+      "shem",
+      "ham",
+      "japheth"
+    ],
+    "relatedLocations": [
+      "loc-ararat"
+    ],
+    "x": 240,
+    "y": 1770
+  },
+  {
+    "id": "ev-babel_tower",
+    "name": "바벨탑 건설과 언어의 혼잡 (Tower of Babel)",
+    "desc": "인류가 하늘에 닿는 탑을 쌓아 자기 이름을 내고 흩어짐을 면하려 하자, 하나님이 언어를 혼잡하게 하사 온 지면에 흩으신 심판.",
+    "refs": [
+      "창세기 11:4",
+      "창세기 11:9"
+    ],
+    "relatedPeople": [
+      "noah"
+    ],
+    "relatedLocations": [
+      "loc-shinar"
+    ],
+    "x": 370,
+    "y": 2130
+  },
+  {
+    "id": "ev-abraham_haran",
+    "name": "아브라함의 갈대아 우르 및 하란 소명 (Call of Abraham)",
+    "desc": "본토 친척 아비 집을 떠나 보여줄 땅으로 가라는 하나님의 명령에 순종하여 75세에 아브라함이 믿음의 여정을 시작한 사건.",
+    "refs": [
+      "창세기 12:1",
+      "창세기 12:4"
+    ],
+    "relatedPeople": [
+      "terah",
+      "abraham",
+      "sarah"
+    ],
+    "relatedLocations": [
+      "loc-haran"
+    ],
+    "x": 190,
+    "y": 3480
+  },
+  {
+    "id": "ev-abraham_shechem",
+    "name": "세겜에서의 첫 단 축조와 약속 (Abraham's Altar at Shechem)",
+    "desc": "약속의 땅 가나안에 들어온 아브라함에게 하나님이 나타나 '이 땅을 네 자손에게 주리라' 하시자 제단을 쌓아 예배한 사건.",
+    "refs": [
+      "창세기 12:7"
+    ],
+    "relatedPeople": [
+      "abraham"
+    ],
+    "relatedLocations": [
+      "loc-shechem"
+    ],
+    "x": 240,
+    "y": 3570
+  },
+  {
+    "id": "ev-sodom_destruction",
+    "name": "소돔과 고모라의 유황불 비 심판 (Destruction of Sodom)",
+    "desc": "소돔성 주민들의 죄악이 심히 무거움으로 하늘에서 유황과 불이 비처럼 내려와 성읍들과 그곳에 살던 생물들을 완전히 소멸시킨 사건.",
+    "refs": [
+      "창세기 19:24"
+    ],
+    "relatedPeople": [
+      "lot",
+      "abraham"
+    ],
+    "relatedLocations": [
+      "loc-sodom"
+    ],
+    "x": -110,
+    "y": 3540
+  },
+  {
+    "id": "ev-isaac_offering",
+    "name": "독자 이삭의 모리아산 번제 봉헌 (Binding of Isaac)",
+    "desc": "하나님이 아브라함의 믿음을 시험하고자 백세에 얻은 외아들 이삭을 바치라 하실 때, 칼을 들어 드리려 하자 야훼 이레로 수양을 준비하신 사건.",
+    "refs": [
+      "창세기 22:10",
+      "창세기 22:13"
+    ],
+    "relatedPeople": [
+      "abraham",
+      "isaac"
+    ],
+    "relatedLocations": [
+      "loc-moriah"
+    ],
+    "x": 240,
+    "y": 3660
+  },
+  {
+    "id": "ev-isaac_covenant",
+    "name": "이삭의 브엘세바 평화 언약 체결 (Isaac's Covenant at Beersheba)",
+    "desc": "이삭이 그랄 목자들과의 우물 분쟁을 평화롭게 온유함으로 해결한 후, 아비멜렉 왕이 스스로 찾아와 여호와가 함께하심을 고백하고 맺은 맹세.",
+    "refs": [
+      "창세기 26:28",
+      "창세기 26:31"
+    ],
+    "relatedPeople": [
+      "abraham",
+      "isaac"
+    ],
+    "relatedLocations": [
+      "loc-beersheba"
+    ],
+    "x": 240,
+    "y": 3750
+  },
+  {
+    "id": "ev-jacob_bethel",
+    "name": "야곱의 벧엘 사다리 꿈과 서원 (Jacob's Ladder at Bethel)",
+    "desc": "형 에서의 낯을 피해 도망하던 중 광야에서 잠든 야곱에게 하나님이 하늘 사다리 환상으로 나타나 임마누엘 동행을 약속해 주신 은혜의 서원.",
+    "refs": [
+      "창세기 28:12",
+      "창세기 28:15"
+    ],
+    "relatedPeople": [
+      "jacob"
+    ],
+    "relatedLocations": [
+      "loc-bethel"
+    ],
+    "x": 240,
+    "y": 3930
+  },
+  {
+    "id": "ev-jacob_peniel",
+    "name": "야곱의 얍복강가 천사 씨름과 이스라엘 축복 (Jacob wrestles at Peniel)",
+    "desc": "에서와의 해후를 앞두고 두려움 속에 홀로 남은 야곱이 하나님의 사자와 밤새 목숨 걸고 씨름하다 환도뼈가 부러지며 '이스라엘'로 개명한 축복.",
+    "refs": [
+      "창세기 32:24",
+      "창세기 32:28"
+    ],
+    "relatedPeople": [
+      "jacob"
+    ],
+    "relatedLocations": [
+      "loc-peniel"
+    ],
+    "x": 240,
+    "y": 3990
+  },
+  {
+    "id": "ev-machpelah_buy",
+    "name": "아브라함의 막벨라 굴 묘실 매입 사건 (Purchase of Machpelah)",
+    "desc": "가나안 헷 족속에게서 은 사백 세겔을 주고 밭과 굴을 정식 매입하여 영구 기업의 묘실로 삼아 향후 3대 족장이 그곳에 함께 묻힌 사건.",
+    "refs": [
+      "창세기 23:16",
+      "창세기 23:18"
+    ],
+    "relatedPeople": [
+      "abraham",
+      "sarah",
+      "isaac",
+      "jacob"
+    ],
+    "relatedLocations": [
+      "loc-hebron"
+    ],
+    "x": 210,
+    "y": 3610
+  },
+  {
+    "id": "ev-goshen_migration",
+    "name": "야곱 온 가족의 고센 땅 애굽 이주 (Jacob's Migration to Egypt)",
+    "desc": "전례 없는 기근 속에서 요셉의 통치권 하에 있던 애굽으로 70명의 야곱 권속이 수레를 타고 정착하여 거대한 민족의 기틀을 마련한 사건.",
+    "refs": [
+      "창세기 46:27",
+      "창세기 47:1"
+    ],
+    "relatedPeople": [
+      "jacob",
+      "joseph"
+    ],
+    "relatedLocations": [
+      "loc-goshen"
+    ],
+    "x": 440,
+    "y": 4080
+  },
+  {
+    "id": "ev-moses_rescue",
+    "name": "아기 모세의 갈대 상자 나일강 방류와 구조 (Finding of Moses)",
+    "desc": "히브리 남아가 태어나면 죽이라는 바로의 서슬 퍼런 명령 속에 역청을 칠한 상자에 담긴 아기가 나일강에서 건짐을 받아 바로 왕궁의 왕자가 된 사건.",
+    "refs": [
+      "출애굽기 2:3",
+      "출애굽기 2:10"
+    ],
+    "relatedPeople": [
+      "moses",
+      "jochebed"
+    ],
+    "relatedLocations": [
+      "loc-nile"
+    ],
+    "x": -5810,
+    "y": 4560
+  },
+  {
+    "id": "ev-burning_bush",
+    "name": "호렙산 떨기나무 불꽃 소명 수여 (Moses and the Burning Bush)",
+    "desc": "양을 치던 80세의 노인 모세에게 타지 않는 불꽃 떨기나무 가운데서 여호와 하나님이 나타나 이스라엘의 구원자로 세우시며 '스스로 계신 자'를 밝히신 소명.",
+    "refs": [
+      "출애굽기 3:2",
+      "출애굽기 3:14"
+    ],
+    "relatedPeople": [
+      "moses",
+      "zipporah"
+    ],
+    "relatedLocations": [
+      "loc-midian"
+    ],
+    "x": -6010,
+    "y": 4620
+  },
+  {
+    "id": "ev-ten_plagues",
+    "name": "애굽에 내린 여호와의 열 가지 재앙 심판 (Ten Plagues of Egypt)",
+    "desc": "완악한 바로가 백성을 보내지 않자 모세와 아론을 통해 나일강이 피로 변하는 재앙부터 장자의 죽음에 이르기까지 애굽의 우상들을 징벌하신 심판.",
+    "refs": [
+      "출애굽기 7:20",
+      "출애굽기 12:29"
+    ],
+    "relatedPeople": [
+      "moses",
+      "aaron"
+    ],
+    "relatedLocations": [
+      "loc-pharaoh_palace"
+    ],
+    "x": -5510,
+    "y": 4560
+  },
+  {
+    "id": "ev-crossing_red_sea",
+    "name": "홍해 바다의 갈라짐과 애굽 군대 몰살 (Crossing the Red Sea)",
+    "desc": "진퇴양난의 홍해 앞에서 모세가 지팡이로 바다를 갈라 밤새 마른 땅으로 이스라엘 백성을 건너게 하시고, 뒤쫓던 애굽 마병들을 수장시키신 해방의 기적.",
+    "refs": [
+      "출애굽기 14:21",
+      "출애굽기 14:28"
+    ],
+    "relatedPeople": [
+      "moses",
+      "aaron"
+    ],
+    "relatedLocations": [
+      "loc-red_sea"
+    ],
+    "x": -5810,
+    "y": 4740
+  },
+  {
+    "id": "ev-ten_commandments",
+    "name": "시내산 십계명 돌판 수여와 언약 (The Ten Commandments)",
+    "desc": "번개와 빽빽한 구름이 덮인 시내산 정상에서 모세가 하나님과 단독 대면하여 두 돌판에 새겨진 십계명 율법과 성막 법령을 받아 백성에게 공포한 일.",
+    "refs": [
+      "출애굽기 20:1",
+      "출애굽기 31:18"
+    ],
+    "relatedPeople": [
+      "moses"
+    ],
+    "relatedLocations": [
+      "loc-sinai"
+    ],
+    "x": -5810,
+    "y": 4860
+  },
+  {
+    "id": "ev-kadesh_spies",
+    "name": "가데스 바네아 12정탐꾼의 보고와 심판 (The 12 Spies at Kadesh)",
+    "desc": "가나안을 탐지하고 돌아온 10명의 부정적인 정탐꾼과 백성의 통곡으로 인해, 하나님이 진노하사 가나안 입국을 거부한 세대를 광야 40년 동안 방황하게 하신 심판.",
+    "refs": [
+      "민수기 14:1",
+      "민수기 14:34"
+    ],
+    "relatedPeople": [
+      "moses",
+      "joshua_eph",
+      "caleb_jephunneh"
+    ],
+    "relatedLocations": [
+      "loc-kadesh"
+    ],
+    "x": -5810,
+    "y": 4980
+  },
+  {
+    "id": "ev-moses_death",
+    "name": "느보산에서의 가나안 조망과 모세의 죽음 (Death of Moses)",
+    "desc": "화가 나 므리바 반석을 지팡이로 두 번 침으로 하나님의 거룩함을 가린 모세가, 약속의 땅 가나안을 요단강 건너편 느보산에서 바라만 본 채 별세한 종말.",
+    "refs": [
+      "신명기 34:5",
+      "신명기 34:6"
+    ],
+    "relatedPeople": [
+      "moses"
+    ],
+    "relatedLocations": [
+      "loc-nebo"
+    ],
+    "x": -5610,
+    "y": 4900
+  },
+  {
+    "id": "ev-crossing_jordan",
+    "name": "요단강 물의 멈춤과 마른 땅 도하 (Crossing of Jordan)",
+    "desc": "제사장들의 언약궤 멘 발이 가득 차 흐르던 요단강 상류에 닿자, 흐르던 물이 사르단에 이르기까지 둑처럼 일어서 멈추고 온 이스라엘이 마른 땅으로 강을 건넌 이적.",
+    "refs": [
+      "여호수아 3:16",
+      "여호수아 3:17"
+    ],
+    "relatedPeople": [
+      "joshua_eph"
+    ],
+    "relatedLocations": [
+      "loc-jordan"
+    ],
+    "x": -110,
+    "y": 5160
+  },
+  {
+    "id": "ev-fall_of_jericho",
+    "name": "여리고성의 7일간의 순행과 성벽 함락 (Fall of Jericho)",
+    "desc": "하루에 성을 한 바퀴씩 돌고 일곱째 날에 일곱 번 돌며 양각 나팔 소리와 함께 백성들이 일제히 큰 소리로 외치자 난공불락의 견고한 여리고 성벽이 와르르 무너져 내린 함락.",
+    "refs": [
+      "여호수아 6:15",
+      "여호수아 6:20"
+    ],
+    "relatedPeople": [
+      "joshua_eph",
+      "rahab"
+    ],
+    "relatedLocations": [
+      "loc-jericho"
+    ],
+    "x": -110,
+    "y": 5220
+  },
+  {
+    "id": "ev-samuel_call",
+    "name": "실로 성막 안의 어린 사무엘 소명 (Call of Samuel)",
+    "desc": "엘리 제사장의 눈이 어두워져 실로의 등불이 꺼져갈 때, 성막 안 여호와의 궤 곁에 누워있던 어린 사무엘을 하나님이 이름을 불러 불러 선지자로 세우신 소명.",
+    "refs": [
+      "사무엘상 3:4",
+      "사무엘상 3:10"
+    ],
+    "relatedPeople": [
+      "david"
+    ],
+    "relatedLocations": [
+      "loc-shiloh"
+    ],
+    "x": 190,
+    "y": 5580
+  },
+  {
+    "id": "ev-david_anointed",
+    "name": "사무엘의 이새 아들 다윗 기름 부음 (David Anointed by Samuel)",
+    "desc": "사울 왕을 폐하고 새 왕을 세우려 하신 하나님의 지시로 베들레헴 이새의 집에 당도한 사무엘이, 막내인 양치기 소년 다윗에게 기름을 붓자 하나님의 신이 임한 사건.",
+    "refs": [
+      "사무엘상 16:12",
+      "사무엘상 16:13"
+    ],
+    "relatedPeople": [
+      "david"
+    ],
+    "relatedLocations": [
+      "loc-bethlehem"
+    ],
+    "x": 210,
+    "y": 5820
+  },
+  {
+    "id": "ev-david_goliath",
+    "name": "소년 다윗과 거인 골리앗의 물맷돌 결투 (David and Goliath)",
+    "desc": "갑옷을 입지 않고 물매와 시냇가의 매끄러운 돌 5개만 가지고 나가, 하나님의 이름을 모욕하는 블레셋의 3미터 거구 장수 골리앗의 이마를 단 한 방으로 맞추어 죽인 승리.",
+    "refs": [
+      "사무엘상 17:45",
+      "사무엘상 17:49"
+    ],
+    "relatedPeople": [
+      "david"
+    ],
+    "relatedLocations": [
+      "loc-elah"
+    ],
+    "x": 140,
+    "y": 5940
+  },
+  {
+    "id": "ev-temple_building",
+    "name": "솔로몬의 예루살렘 성전 건축 준공 봉헌 (Dedicating Solomon's Temple)",
+    "desc": "다윗이 성전 준비를 마치고 아들 솔로몬이 즉위하여 예루살렘 모리아산 터에 7년 반 동안 영광스러운 대성전을 건축하여 지성소에 언약궤를 입당시키며 봉헌한 사건.",
+    "refs": [
+      "열왕기상 6:38",
+      "열왕기상 8:10"
+    ],
+    "relatedPeople": [
+      "david",
+      "solomon"
+    ],
+    "relatedLocations": [
+      "loc-jerusalem"
+    ],
+    "x": 210,
+    "y": 6060
+  },
+  {
+    "id": "ev-elijah_fire",
+    "name": "선지자 엘리야의 갈멜산 번제 불 응답 (Elijah's Carmel Victory)",
+    "desc": "백성과 아합 왕 앞에서 여호와를 잊고 바알을 섬기는 자들과 대결할 때, 밤낮 기도해도 반응 없는 바알과 달리 엘리야의 번제 제단에 야훼의 불이 임해 도랑의 물을 핥은 참 신의 역사.",
+    "refs": [
+      "열왕기상 18:36",
+      "열왕기상 18:38"
+    ],
+    "relatedPeople": [
+      "david"
+    ],
+    "relatedLocations": [
+      "loc-carmel"
+    ],
+    "x": -360,
+    "y": 6960
+  },
+  {
+    "id": "ev-babylon_captivity",
+    "name": "유다 왕국의 패망과 바벨론 강제 유배 (Babylonian Captivity)",
+    "desc": "여호와의 목전에 악을 행하던 유다 왕국이 결국 느부갓네살 왕의 바벨론 제국 군대에 의해 성전이 불타고 성벽이 허물어지며 귀인과 백성들이 포로로 끌려간 수치와 심판의 비극.",
+    "refs": [
+      "열왕기하 25:9",
+      "열왕기하 25:11"
+    ],
+    "relatedPeople": [
+      "jeconiah"
+    ],
+    "relatedLocations": [
+      "loc-babylon"
+    ],
+    "x": 490,
+    "y": 8220
+  },
+  {
+    "id": "ev-temple_rebuild",
+    "name": "스룹바벨의 성전 재건 공사 필역 (Rebuilding the Temple)",
+    "desc": "고레스 왕의 조서로 포로 귀환한 유다 백성들이 대적들의 끈질긴 방해와 중단 압박 속에서도 학개와 스가랴 선지자의 격려 속에 성전 기초를 놓고 완공하여 봉헌한 감격의 역사.",
+    "refs": [
+      "에스라 5:2",
+      "에스라 6:15"
+    ],
+    "relatedPeople": [
+      "zerubbabel"
+    ],
+    "relatedLocations": [
+      "loc-second_temple"
+    ],
+    "x": 210,
+    "y": 9444
+  },
+  {
+    "id": "ev-walls_rebuild",
+    "name": "느헤미야의 예루살렘 성벽 성곽 중건 완공 (Rebuilding Jerusalem's Walls)",
+    "desc": "예루살렘 성벽이 허물어지고 성문이 소화되었다는 소식을 듣고 눈물로 기도한 술관원 느헤미야가, 총독으로 부임해 대적들의 방해 속에 한 손엔 병기를 들고 52일 만에 성벽을 완성한 중건.",
+    "refs": [
+      "느헤미야 4:17",
+      "느헤미야 6:15"
+    ],
+    "relatedPeople": [
+      "zerubbabel"
+    ],
+    "relatedLocations": [
+      "loc-jerusalem_walls"
+    ],
+    "x": 210,
+    "y": 9550
+  }
+];
 
-// Database State Variable (Loads from LocalStorage or Fallback)
 let db = [];
 let lineBends = {};
-
+let events = [];
+let locations = [];
 // Style Editor Settings (Loads from LocalStorage or Defaults)
 let styleSettings = {
-  lineColor: '#94a3b8',
+  lineColor: '#ff7800',
   mainLineColor: '#ff7800',
   spouseLineColor: '#ef4444',
+  preacherLineColor: '#ff7800',
   lineWidth: 3,
   cornerRadius: 12,
   splitOffset: 90,
@@ -75,7 +1147,7 @@ let styleSettings = {
 let currentScale = 1.0;
 const MIN_SCALE = 0.15;
 const MAX_SCALE = 2.5;
-const ZOOM_STEP = 0.1;
+const ZOOM_STEP = 0.15;
 
 let isDragging = false;
 let startX, startY;
@@ -84,6 +1156,11 @@ let panY = 0;
 let startPanX = 0;
 let startPanY = 0;
 let initialCentered = false;
+let targetScale = 1.0;
+let targetPanX = 0;
+let targetPanY = 0;
+let isZoomAnimating = false;
+let scaleAtAnimationStart = 1.0;
 
 // Touch Zoom/Pan State
 let touchStartDistance = 0;
@@ -91,10 +1168,32 @@ let touchStartScale = 1.0;
 let isTouchZooming = false;
 let touchStartPanX = 0;
 let touchStartPanY = 0;
+let lastTouchX = 0;
+let lastTouchY = 0;
+let lastTouchTime = 0;
+let velocityX = 0;
+let velocityY = 0;
+let inertiaFrameId = null;
+const friction = 0.95;
+
+function stopInertia() {
+  if (inertiaFrameId) {
+    cancelAnimationFrame(inertiaFrameId);
+    inertiaFrameId = null;
+  }
+  velocityX = 0;
+  velocityY = 0;
+}
 
 // Selected person for study panel
 let activePersonId = null;
+let wasOpenedFromFilter = false;
+let activeStudyPanelType = null;
 let selectedPersonId = null;
+let activeLayerItem = null;
+let activeLayerType = null;
+let isLayerItemAddMode = false;
+let newLayerItemCoords = { x: 0, y: 0 };
 let selectedPersonIds = new Set();
 let hoveredPersonId = null; // Currently hovered card in admin mode
 let selectedLineKey = null; // Currently selected line key for editing bends
@@ -106,6 +1205,7 @@ let selectedJunctionId = null; // Currently selected junction node ID
 let isAddLinkModeActive = false; // Add Link mode toggle state
 let linkSourceId = null; // Source element ID for link drawing
 let spouseSplits = {}; // Custom horizontal split ratios for spouse connector lines
+let lineZIndices = {}; // Custom z-order weights for connection lines (maps line key to numeric z-index)
 let coupleMidpoints = {}; // Midpoints for spouse lines
 let customPolygons = []; // Custom arbitrary polygons (filled regions)
 let selectedPolygonId = null; // Selected custom polygon ID
@@ -123,18 +1223,19 @@ let boardHeight = 0;
 // Filter Settings
 const charGroups = {};
 let activeFilters = {
-  cain: true,
-  japheth: true,
-  ham: true,
-  joktan: true,
-  keturah: true,
-  ishmael: true,
-  esau: true,
-  north_kings: true,
-  independent_1chr4: true,
-  levite_priests: true,
-  horite_chiefs: true,
-  reuben_simeon: true
+  cain: false,
+  japheth: false,
+  ham: false,
+  joktan: false,
+  keturah: false,
+  ishmael: false,
+  esau: false,
+  mary: false,
+  north_kings: false,
+  independent_1chr4: false,
+  levite_priests: false,
+  horite_chiefs: false,
+  reuben_simeon: false
 };
 
 // Undo / Redo Stacks for Admin Actions
@@ -153,7 +1254,9 @@ function pushHistoryState() {
     spouseSplits: localStorage.getItem('bible_tree_spouse_splits'),
     customVisualLines: localStorage.getItem('bible_tree_custom_visual_lines'),
     canvasJunctions: localStorage.getItem('bible_tree_canvas_junctions'),
-    customPolygons: localStorage.getItem('bible_tree_custom_polygons')
+    customPolygons: localStorage.getItem('bible_tree_custom_polygons'),
+    events: localStorage.getItem('bible_tree_events'),
+    locations: localStorage.getItem('bible_tree_locations')
   };
   undoStack.push(state);
   if (undoStack.length > MAX_HISTORY) {
@@ -342,6 +1445,20 @@ window.addEventListener('keydown', (e) => {
     return;
   }
 
+  if (activeSpawnerItem && e.key === 'Escape') {
+    e.preventDefault();
+    cancelPlacementMode();
+    showToast("복사 배치가 취소되었습니다.");
+    return;
+  }
+
+  if (isAddAnnotationModeActive && e.key === 'Escape') {
+    e.preventDefault();
+    deactivateAddAnnotationMode();
+    showToast("텍스트 상자 추가가 취소되었습니다.");
+    return;
+  }
+
   // Handle Add Polygon Mode shortcuts
   if (isAddPolygonModeActive) {
     if (e.key === 'Escape') {
@@ -409,9 +1526,8 @@ window.addEventListener('keydown', (e) => {
 function deleteSelectedLine() {
   if (!selectedLineKey) return;
   
-  const isCustomLine = selectedLineKey.startsWith('link-');
-  const isSingleRelationLine = selectedLineKey.startsWith('rel-');
-  const isSpouseLine = selectedLineKey.includes('+') && !isSingleRelationLine && !isCustomLine;
+  const isTeacherLine = selectedLineKey.startsWith('teacher-') || selectedLineKey.startsWith('preacher-');
+  const isSpouseLine = selectedLineKey.includes('+') && !isSingleRelationLine && !isCustomLine && !isTeacherLine;
   
   if (isCustomLine) {
     if (confirm("선택한 연결선을 정말 삭제하시겠습니까?")) {
@@ -423,6 +1539,31 @@ function deleteSelectedLine() {
       saveLineBends();
       drawConnections();
       showToast("연결선이 삭제되었습니다.");
+    }
+  } else if (isTeacherLine) {
+    if (confirm("선택한 전도자 연결선을 삭제하시겠습니까?\n이 작업은 해당 인물의 전도자 ID 목록에서 상대방을 해제(삭제)합니다.")) {
+      pushHistoryState();
+      const prefix = selectedLineKey.startsWith('teacher-') ? 'teacher-' : 'preacher-';
+      const relContent = selectedLineKey.replace(prefix, '');
+      const arrowParts = relContent.split('->');
+      const teacherId = arrowParts[0];
+      const discipleId = arrowParts[1];
+      
+      db.forEach(c => {
+        if (c.id === discipleId && Array.isArray(c.teachers)) {
+          c.teachers = c.teachers.filter(t => t !== teacherId);
+          c.isManual = true;
+        }
+      });
+      
+      delete lineBends[selectedLineKey];
+      selectedLineKey = null;
+      
+      saveDatabase();
+      saveLineBends();
+      initBoard();
+      renderTree();
+      showToast("선택한 전도자 연결선이 해제되었습니다.");
     }
   } else if (isSingleRelationLine) {
     if (confirm("선택한 인물의 가족 관계선(부모-자녀 연결선)을 삭제하시겠습니까?\n이 작업은 해당 인물 한 명의 부모 관계 데이터를 해제(삭제)합니다.")) {
@@ -598,14 +1739,34 @@ let annotOriginalY = 0;
 
 // Admin Mode State
 let isAdminMode = false;
+let cachedAdminPassword = '';
 let editingPersonId = null; // null means adding a new person
 let isAddPersonModeActive = false;
+let isAddAnnotationModeActive = false;
+let activeSpawnerItem = null;
+let activeSpawnerType = null;
 
 // DOM Elements
 const viewerContainer = document.getElementById('viewer-container');
 const zoomWrapper = document.getElementById('zoom-wrapper');
 const treeBoard = document.getElementById('tree-board');
 const svgLayer = document.getElementById('svg-layer');
+
+// Recreates the SVG filter inside svgLayer whenever it is cleared to prevent losing the glow filter.
+function clearSvgLayer() {
+  svgLayer.innerHTML = `
+    <defs>
+      <filter id="line-glow-filter" filterUnits="userSpaceOnUse" x="-10000" y="-10000" width="20000" height="20000">
+        <feGaussianBlur stdDeviation="5" result="coloredBlur"/>
+        <feMerge>
+          <feMergeNode in="coloredBlur"/>
+          <feMergeNode in="coloredBlur"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+    </defs>
+  `;
+}
 const zoomLevelText = document.getElementById('zoom-level');
 const searchInput = document.getElementById('searchInput');
 const studyPanel = document.getElementById('study-panel');
@@ -619,7 +1780,10 @@ const adminAddNoteBtn = document.getElementById('admin-add-note-btn');
 const adminAddLinkBtn = document.getElementById('admin-add-link-btn');
 const adminAddJunctionBtn = document.getElementById('admin-add-junction-btn');
 const adminAddPolygonBtn = document.getElementById('admin-add-polygon-btn');
+const adminAddEventBtn = document.getElementById('admin-add-event-btn');
+const adminAddLocationBtn = document.getElementById('admin-add-location-btn');
 const adminExportBtn = document.getElementById('admin-export-btn');
+const adminSyncBtn = document.getElementById('admin-sync-btn');
 const adminImportBtn = document.getElementById('admin-import-btn');
 const adminResetBtn = document.getElementById('admin-reset-btn');
 const importFileInput = document.getElementById('import-file-input');
@@ -632,6 +1796,14 @@ const modalCancel = document.getElementById('modal-cancel');
 const adminForm = document.getElementById('admin-form');
 const formDeleteBtn = document.getElementById('form-delete-btn');
 
+// Layer Item Modal Elements
+const layerItemModal = document.getElementById('layer-item-modal');
+const layerItemModalTitle = document.getElementById('layer-item-modal-title');
+const layerItemModalClose = document.getElementById('layer-item-modal-close');
+const layerItemModalCancel = document.getElementById('layer-item-modal-cancel');
+const layerItemForm = document.getElementById('layer-item-form');
+const layerItemDeleteBtn = document.getElementById('layer-item-delete-btn');
+
 // Style Editor Elements
 const styleEditorToggle = document.getElementById('style-editor-toggle');
 const styleEditorPanel = document.getElementById('style-editor-panel');
@@ -642,6 +1814,7 @@ const styleResetBtn = document.getElementById('style-reset-btn');
 const inputLineColor = document.getElementById('style-line-color');
 const inputMainLineColor = document.getElementById('style-main-line-color');
 const inputSpouseLineColor = document.getElementById('style-spouse-line-color');
+const inputPreacherLineColor = document.getElementById('style-preacher-line-color');
 const inputLineWidth = document.getElementById('style-line-width');
 const inputCornerRadius = document.getElementById('style-corner-radius');
 const inputSplitOffset = document.getElementById('style-split-offset');
@@ -667,14 +1840,15 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
   precomputeGroups();
+  setupThemeToggle();
+  initStyleSettings();
   setupFilters();
   applyFilters();
-  initStyleSettings();
   setupZoomPan();
   setupSearch();
   setupStudyPanel();
-  setupThemeToggle();
   setupAdminMode();
+  setupLayerItemModalEvents();
   setupStyleEditor();
   updateStats();
   
@@ -723,6 +1897,13 @@ window.addEventListener('DOMContentLoaded', () => {
       selectedPersonIds.clear();
       selectedPersonId = null;
       renderTree();
+    }
+  });
+
+  // Handle click outside text box to deselect annotation (hiding toolbar)
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.canvas-annotation')) {
+      document.querySelectorAll('.canvas-annotation').forEach(n => n.classList.remove('selected'));
     }
   });
 
@@ -801,8 +1982,7 @@ function nudgeSelectedPerson(amount, isVertical = false, forceMoveDescendants = 
   if (selectedPersonIds.size === 0) return;
   pushHistoryState();
   
-  const checkbox = document.getElementById('admin-move-descendants-toggle');
-  const moveDescendants = forceMoveDescendants || (checkbox && checkbox.checked);
+  const moveDescendants = forceMoveDescendants; // Move only selected card by default, hold Shift key to move descendants together
   
   let allTargets = new Set();
   selectedPersonIds.forEach(personId => {
@@ -850,8 +2030,7 @@ function nudgePersonDirect(personId, amount, isVertical = false, adjustCamera = 
   
   selectedPersonId = personId;
   
-  const checkbox = document.getElementById('admin-move-descendants-toggle');
-  const moveDescendants = forceMoveDescendants || (checkbox && checkbox.checked);
+  const moveDescendants = forceMoveDescendants; // Move only selected card by default, hold Shift key to move descendants together
   
   let targets = [];
   if (moveDescendants) {
@@ -1058,10 +2237,14 @@ function initDatabase() {
         if (!Array.isArray(c.spouses)) {
           c.spouses = canon.spouses ? [...canon.spouses] : [];
         }
+        if (!Array.isArray(c.teachers)) {
+          c.teachers = canon.teachers ? [...canon.teachers] : [];
+        }
       } else {
         // For custom characters, make sure parents and spouses are arrays
         if (!Array.isArray(c.parents)) c.parents = [];
         if (!Array.isArray(c.spouses)) c.spouses = [];
+        if (!Array.isArray(c.teachers)) c.teachers = [];
       }
 
       if (typeof c.column !== 'number' || isNaN(c.column)) {
@@ -1077,7 +2260,10 @@ function initDatabase() {
   }
   
   loadAnnotations();
+  loadEvents();
+  loadLocations();
   loadLineBends();
+  loadLineZIndices();
   loadSpouseSplits();
   loadCustomVisualLines();
   loadCanvasJunctions();
@@ -1108,6 +2294,7 @@ function initDatabase() {
     stableBoardWidth = (totalCols * COL_WIDTH) + (BOARD_PADDING_X * 2);
     stableCenterX = stableBoardWidth / 2;
   }
+  precomputeProphets();
 }
 
 function saveDatabase() {
@@ -1125,7 +2312,10 @@ function saveDatabase() {
   // Helper to check if a group is hidden
   const isGroupHidden = (group) => {
     if (!group) return false;
-    return activeFilters[group] === false;
+    if (isFilterModeActive()) {
+      return activeFilters[group] !== true;
+    }
+    return false;
   };
   
   // 1. Process current db (active/visible items)
@@ -1215,6 +2405,9 @@ function loadAnnotations() {
 
 function saveAnnotations() {
   localStorage.setItem('bible_tree_annotations', JSON.stringify(annotations));
+  if (isAdminMode) {
+    debouncedAutoSaveToServer();
+  }
 }
 
 function loadLineBends() {
@@ -1255,6 +2448,28 @@ function loadLineBends() {
 
 function saveLineBends() {
   localStorage.setItem('bible_tree_line_bends', JSON.stringify(lineBends));
+  autoSaveToServer();
+}
+
+function saveLineZIndices() {
+  localStorage.setItem('bible_tree_line_zindices', JSON.stringify(lineZIndices));
+  autoSaveToServer();
+}
+
+function loadLineZIndices() {
+  const saved = localStorage.getItem('bible_tree_line_zindices');
+  if (saved) {
+    try {
+      lineZIndices = JSON.parse(saved);
+      if (!lineZIndices || typeof lineZIndices !== 'object' || Array.isArray(lineZIndices)) {
+        lineZIndices = {};
+      }
+    } catch (e) {
+      lineZIndices = {};
+    }
+  } else {
+    lineZIndices = {};
+  }
 }
 
 function loadSpouseSplits() {
@@ -1339,6 +2554,47 @@ function saveCanvasJunctions() {
   localStorage.setItem('bible_tree_canvas_junctions', JSON.stringify(canvasJunctions));
 }
 
+function loadEvents() {
+  const saved = localStorage.getItem('bible_tree_events');
+  if (saved && saved !== '[]') {
+    try {
+      events = JSON.parse(saved);
+      if (!Array.isArray(events)) events = [];
+    } catch (e) {
+      console.error("Failed to parse events.", e);
+      events = [];
+    }
+  } else {
+    events = [];
+  }
+}
+
+function saveEvents() {
+  localStorage.setItem('bible_tree_events', JSON.stringify(events));
+  if (isAdminMode && typeof renderSpawnerPanel === 'function') renderSpawnerPanel();
+}
+
+function loadLocations() {
+  const saved = localStorage.getItem('bible_tree_locations');
+  if (saved && saved !== '[]') {
+    try {
+      locations = JSON.parse(saved);
+      if (!Array.isArray(locations)) locations = [];
+    } catch (e) {
+      console.error("Failed to parse locations.", e);
+      locations = [];
+    }
+  } else {
+    locations = [];
+  }
+}
+
+// Ensure local storage save triggers spawner render
+function saveLocations() {
+  localStorage.setItem('bible_tree_locations', JSON.stringify(locations));
+  if (isAdminMode && typeof renderSpawnerPanel === 'function') renderSpawnerPanel();
+}
+
 function loadCustomPolygons() {
   const saved = localStorage.getItem('bible_tree_custom_polygons');
   if (saved) {
@@ -1354,8 +2610,21 @@ function loadCustomPolygons() {
   }
 }
 
+let autoSaveTimer = null;
+function debouncedAutoSaveToServer() {
+  if (autoSaveTimer) clearTimeout(autoSaveTimer);
+  autoSaveTimer = setTimeout(() => {
+    if (typeof autoSaveToServer === 'function') {
+      autoSaveToServer();
+    }
+  }, 1000);
+}
+
 function saveCustomPolygons() {
   localStorage.setItem('bible_tree_custom_polygons', JSON.stringify(customPolygons));
+  if (isAdminMode) {
+    debouncedAutoSaveToServer();
+  }
 }
 
 function isJunctionId(id) {
@@ -1601,9 +2870,9 @@ function getBoxPorts(id) {
     const w = CARD_WIDTH;
     const h = CARD_HEIGHT;
     return {
-      top:          { x: x + w / 2 + 15, y: y,         dir: 'UP' },
+      top:          { x: x + w / 2, y: y,         dir: 'UP' },
       right:        { x: x + w,          y: y + h / 2, dir: 'RIGHT' },
-      bottom:       { x: x + w / 2 + 15, y: y + h,     dir: 'DOWN' },
+      bottom:       { x: x + w / 2, y: y + h,     dir: 'DOWN' },
       left:         { x: x,         y: y + h / 2, dir: 'LEFT' },
       'top-left':     { x: x,         y: y,         dir: 'UP' },
       'top-right':    { x: x + w,     y: y,         dir: 'UP' },
@@ -1777,6 +3046,22 @@ function routeOrthogonal(start, end) {
   return vertices;
 }
 
+function applyAnnotationBorder(el, annot) {
+  const style = annot.borderStyle || 'dashed';
+  const width = annot.borderWidth || 1;
+  const color = annot.borderColor || (isAdminMode ? 'var(--text-accent)' : 'var(--border-panel)');
+  
+  if (style === 'none') {
+    if (isAdminMode) {
+      el.style.border = `1px dashed rgba(168, 85, 247, 0.4)`;
+    } else {
+      el.style.border = 'none';
+    }
+  } else {
+    el.style.border = `${width}px ${style} ${color}`;
+  }
+}
+
 function renderAnnotations() {
   // Clear existing annotation elements on the board
   document.querySelectorAll('.canvas-annotation').forEach(el => el.remove());
@@ -1787,27 +3072,61 @@ function renderAnnotations() {
   annotations.forEach(annot => {
     const el = document.createElement('div');
     el.id = `annot-${annot.id}`;
-    el.className = 'canvas-annotation';
+    const filterClass = getAnnotationFilterClass(annot);
+    el.className = `canvas-annotation ${filterClass}`;
     el.dataset.x = annot.x;
     el.dataset.y = annot.y;
     el.style.width = `${annot.width}px`;
     el.style.height = `${annot.height}px`;
     el.style.backgroundColor = annot.bgColor || '#ffffff';
+    el.style.resize = 'none'; // Disable default browser resize which requires overflow hidden
+    el.style.minWidth = '10px';
+    el.style.minHeight = '10px';
     
-    // Add text element
-    const textarea = document.createElement('textarea');
-    textarea.className = 'annotation-text';
-    textarea.value = annot.text;
-    textarea.style.fontSize = `${annot.fontSize || 14}px`;
-    textarea.style.fontWeight = annot.bold ? 'bold' : 'normal';
-    textarea.style.color = annot.color || '#1e293b';
+    // Apply border styles
+    applyAnnotationBorder(el, annot);
     
-    textarea.addEventListener('input', (e) => {
-      annot.text = e.target.value;
-      saveAnnotations();
-    });
+    // Render note badge if note exists
+    if (userNotes[annot.id]) {
+      const badgeEl = document.createElement('div');
+      badgeEl.className = 'annot-note-badge';
+      badgeEl.title = '메모 있음';
+      badgeEl.textContent = '📝';
+      badgeEl.style.position = 'absolute';
+      badgeEl.style.top = '-8px';
+      badgeEl.style.right = '-8px';
+      badgeEl.style.fontSize = '12px';
+      badgeEl.style.zIndex = '100';
+      el.appendChild(badgeEl);
+    }
     
-    el.appendChild(textarea);
+    // Add text element (using contenteditable div for perfect vertical centering and rich behavior)
+    const textDiv = document.createElement('div');
+    textDiv.className = 'annotation-text';
+    textDiv.contentEditable = 'false';
+    textDiv.innerText = annot.text || '';
+    
+    textDiv.style.fontSize = `${annot.fontSize || 14}px`;
+    textDiv.style.fontWeight = annot.bold ? 'bold' : 'normal';
+    textDiv.style.fontStyle = annot.italic ? 'italic' : 'normal';
+    textDiv.style.textDecoration = annot.underline ? 'underline' : 'none';
+    textDiv.style.textAlign = annot.align || 'center';
+    textDiv.style.color = annot.color || '#1e293b';
+    
+    // Flexbox styling to ensure perfect vertical and horizontal alignment
+    textDiv.style.display = 'flex';
+    textDiv.style.alignItems = 'center';
+    textDiv.style.justifyContent = annot.align === 'left' ? 'flex-start' : annot.align === 'right' ? 'flex-end' : 'center';
+    textDiv.style.width = '100%';
+    textDiv.style.height = '100%';
+    textDiv.style.whiteSpace = 'pre-wrap';
+    textDiv.style.outline = 'none';
+    textDiv.style.wordBreak = 'break-word';
+    textDiv.style.overflow = 'hidden';
+    textDiv.style.boxSizing = 'border-box';
+    textDiv.style.padding = '4px 8px';
+    
+    el.appendChild(textDiv);
     
     // Add Toolbar (for Admin Mode)
     const toolbar = document.createElement('div');
@@ -1823,7 +3142,7 @@ function renderAnnotations() {
     sizeInput.step = 2;
     sizeInput.addEventListener('change', (e) => {
       annot.fontSize = parseInt(e.target.value) || 14;
-      textarea.style.fontSize = `${annot.fontSize}px`;
+      textDiv.style.fontSize = `${annot.fontSize}px`;
       saveAnnotations();
     });
     toolbar.appendChild(sizeInput);
@@ -1835,10 +3154,84 @@ function renderAnnotations() {
     boldBtn.addEventListener('click', () => {
       annot.bold = !annot.bold;
       boldBtn.classList.toggle('active', annot.bold);
-      textarea.style.fontWeight = annot.bold ? 'bold' : 'normal';
+      textDiv.style.fontWeight = annot.bold ? 'bold' : 'normal';
       saveAnnotations();
     });
     toolbar.appendChild(boldBtn);
+    
+    // Italic button
+    const italicBtn = document.createElement('button');
+    italicBtn.className = `annot-btn annot-italic-btn ${annot.italic ? 'active' : ''}`;
+    italicBtn.innerHTML = '<i>I</i>';
+    italicBtn.title = '기울임꼴';
+    italicBtn.addEventListener('click', () => {
+      annot.italic = !annot.italic;
+      italicBtn.classList.toggle('active', annot.italic);
+      textDiv.style.fontStyle = annot.italic ? 'italic' : 'normal';
+      saveAnnotations();
+    });
+    toolbar.appendChild(italicBtn);
+    
+    // Underline button
+    const underlineBtn = document.createElement('button');
+    underlineBtn.className = `annot-btn annot-underline-btn ${annot.underline ? 'active' : ''}`;
+    underlineBtn.innerHTML = '<u>U</u>';
+    underlineBtn.title = '밑줄';
+    underlineBtn.addEventListener('click', () => {
+      annot.underline = !annot.underline;
+      underlineBtn.classList.toggle('active', annot.underline);
+      textDiv.style.textDecoration = annot.underline ? 'underline' : 'none';
+      saveAnnotations();
+    });
+    toolbar.appendChild(underlineBtn);
+    
+    // Align button (cycles left, center, right)
+    const alignBtn = document.createElement('button');
+    alignBtn.className = `annot-btn`;
+    const getAlignChar = (a) => a === 'left' ? '▤' : a === 'right' ? '▥' : '▧';
+    alignBtn.textContent = getAlignChar(annot.align || 'center');
+    alignBtn.title = '텍스트 정렬 (왼쪽/가운데/오른쪽)';
+    alignBtn.addEventListener('click', () => {
+      const current = annot.align || 'center';
+      const next = current === 'center' ? 'left' : current === 'left' ? 'right' : 'center';
+      annot.align = next;
+      alignBtn.textContent = getAlignChar(next);
+      textDiv.style.textAlign = next;
+      textDiv.style.justifyContent = next === 'left' ? 'flex-start' : next === 'right' ? 'flex-end' : 'center';
+      saveAnnotations();
+    });
+    toolbar.appendChild(alignBtn);
+    
+    // Border Style button (cycles dashed, solid, none)
+    const borderStyleBtn = document.createElement('button');
+    borderStyleBtn.className = `annot-btn`;
+    const getBorderStyleLabel = (s) => s === 'solid' ? '▬' : s === 'dashed' ? '╍' : '☐';
+    borderStyleBtn.textContent = getBorderStyleLabel(annot.borderStyle || 'dashed');
+    borderStyleBtn.title = '테두리 선 스타일 (실선/점선/없음)';
+    borderStyleBtn.addEventListener('click', () => {
+      const current = annot.borderStyle || 'dashed';
+      const next = current === 'dashed' ? 'solid' : current === 'solid' ? 'none' : 'dashed';
+      annot.borderStyle = next;
+      borderStyleBtn.textContent = getBorderStyleLabel(next);
+      applyAnnotationBorder(el, annot);
+      saveAnnotations();
+    });
+    toolbar.appendChild(borderStyleBtn);
+    
+    // Border Width button (cycles 1px, 2px, 4px)
+    const borderWidthBtn = document.createElement('button');
+    borderWidthBtn.className = `annot-btn`;
+    borderWidthBtn.textContent = `${annot.borderWidth || 1}px`;
+    borderWidthBtn.title = '테두리 두께';
+    borderWidthBtn.addEventListener('click', () => {
+      const current = annot.borderWidth || 1;
+      const next = current === 1 ? 2 : current === 2 ? 4 : 1;
+      annot.borderWidth = next;
+      borderWidthBtn.textContent = `${next}px`;
+      applyAnnotationBorder(el, annot);
+      saveAnnotations();
+    });
+    toolbar.appendChild(borderWidthBtn);
     
     // Color pickers
     const colorWrapper = document.createElement('div');
@@ -1851,7 +3244,7 @@ function renderAnnotations() {
     colorPicker.title = '글자 색상';
     colorPicker.addEventListener('input', (e) => {
       annot.color = e.target.value;
-      textarea.style.color = annot.color;
+      textDiv.style.color = annot.color;
       saveAnnotations();
     });
     colorWrapper.appendChild(colorPicker);
@@ -1868,7 +3261,95 @@ function renderAnnotations() {
     });
     colorWrapper.appendChild(bgPicker);
     
+    const borderPicker = document.createElement('input');
+    borderPicker.type = 'color';
+    borderPicker.className = 'annot-color-picker';
+    borderPicker.value = annot.borderColor || '#cbd5e1';
+    borderPicker.title = '테두리 색상';
+    borderPicker.addEventListener('input', (e) => {
+      annot.borderColor = e.target.value;
+      applyAnnotationBorder(el, annot);
+      saveAnnotations();
+    });
+    colorWrapper.appendChild(borderPicker);
+    
     toolbar.appendChild(colorWrapper);
+    
+    // Relation button
+    const relBtn = document.createElement('button');
+    relBtn.className = 'annot-btn';
+    relBtn.innerHTML = '🔗';
+    relBtn.title = '아우라 연동 관계 설정';
+    relBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      editLayerItem(annot, 'annotation');
+    });
+    toolbar.appendChild(relBtn);
+
+    // Aura toggle button (Per-annotation aura toggle)
+    const auraBtn = document.createElement('button');
+    auraBtn.className = 'annot-btn';
+    auraBtn.innerHTML = '💡';
+    
+    const updateAuraBtnStyle = () => {
+      if (annot.auraEnabled !== false) {
+        auraBtn.style.backgroundColor = '#a855f7'; // Purple
+        auraBtn.style.color = '#ffffff';
+        auraBtn.title = '클릭 시 아우라 강조 기능 활성화됨';
+      } else {
+        auraBtn.style.backgroundColor = '#cbd5e1'; // Gray
+        auraBtn.style.color = '#64748b';
+        auraBtn.title = '클릭 시 아우라 강조 기능 비활성화됨';
+      }
+    };
+    updateAuraBtnStyle();
+
+    auraBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      annot.auraEnabled = (annot.auraEnabled !== false) ? false : true;
+      updateAuraBtnStyle();
+      saveAnnotations();
+      showToast(annot.auraEnabled ? "💡 이 상자의 아우라 강조가 활성화되었습니다." : "📴 이 상자의 아우라 강조가 비활성화되었습니다.");
+    });
+    toolbar.appendChild(auraBtn);
+    
+    // Copy/Duplicate button
+    const copyBtn = document.createElement('button');
+    copyBtn.className = 'annot-btn';
+    copyBtn.innerHTML = '📋';
+    copyBtn.title = '이 텍스트 상자 복제 (동일 스타일로 복사)';
+    copyBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      pushHistoryState();
+      
+      const newId = 'annotation_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+      const newAnnot = {
+        id: newId,
+        text: (annot.text || '') + ' (복사본)',
+        x: (annot.x || 0) + 30,
+        y: (annot.y || 0) + 30,
+        width: annot.width || 180,
+        height: annot.height || 60,
+        fontSize: annot.fontSize || 14,
+        bold: annot.bold || false,
+        italic: annot.italic || false,
+        underline: annot.underline || false,
+        align: annot.align || 'center',
+        borderStyle: annot.borderStyle || 'dashed',
+        borderWidth: annot.borderWidth || 1,
+        color: annot.color || '#1e293b',
+        bgColor: annot.bgColor || '#ffffff',
+        borderColor: annot.borderColor || '#cbd5e1',
+        auraEnabled: annot.auraEnabled !== false
+      };
+      
+      annotations.push(newAnnot);
+      saveAnnotations();
+      renderAnnotations();
+      drawConnections();
+      showToast("📋 텍스트 상자가 동일한 스타일로 복제되었습니다.");
+    });
+    toolbar.appendChild(copyBtn);
     
     // Delete button
     const delBtn = document.createElement('button');
@@ -1891,10 +3372,142 @@ function renderAnnotations() {
     
     el.appendChild(toolbar);
     
+    // Custom Resize Handle (Admin Mode)
+    if (isAdminMode) {
+      const resizeHandle = document.createElement('div');
+      resizeHandle.className = 'annot-resize-handle';
+      resizeHandle.style.position = 'absolute';
+      resizeHandle.style.bottom = '2px';
+      resizeHandle.style.right = '2px';
+      resizeHandle.style.width = '10px';
+      resizeHandle.style.height = '10px';
+      resizeHandle.style.cursor = 'se-resize';
+      resizeHandle.style.borderBottom = '2.5px solid var(--text-accent)';
+      resizeHandle.style.borderRight = '2.5px solid var(--text-accent)';
+      resizeHandle.style.zIndex = '110';
+      resizeHandle.title = '드래그하여 크기 조절';
+      
+      resizeHandle.addEventListener('mousedown', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        
+        const startX = e.clientX;
+        const startY = e.clientY;
+        const startWidth = annot.width || 120;
+        const startHeight = annot.height || 60;
+        
+        const onMouseMove = (moveEvt) => {
+          const dx = (moveEvt.clientX - startX) / currentScale;
+          const dy = (moveEvt.clientY - startY) / currentScale;
+          
+          annot.width = Math.max(10, Math.round(startWidth + dx));
+          annot.height = Math.max(10, Math.round(startHeight + dy));
+          
+          el.style.width = `${annot.width}px`;
+          el.style.height = `${annot.height}px`;
+          
+          saveAnnotations();
+          
+          if (typeof drawConnections === 'function') {
+            drawConnections();
+          }
+        };
+        
+        const onMouseUp = () => {
+          document.removeEventListener('mousemove', onMouseMove);
+          document.removeEventListener('mouseup', onMouseUp);
+          autoSaveToServer();
+        };
+        
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+      });
+      
+      el.appendChild(resizeHandle);
+    }
+    
+    // Click to highlight related elements & open study memo panel
+    el.addEventListener('click', (e) => {
+      if (e.target.closest('.annotation-toolbar') || e.target.closest('.annot-resize-handle')) return;
+      
+      e.stopPropagation(); // Avoid triggering board deselection
+      
+      if (isAdminMode) {
+        // Just select, do not focus text edit yet (Figma style)
+        document.querySelectorAll('.canvas-annotation').forEach(n => n.classList.remove('selected'));
+        el.classList.add('selected');
+      } else {
+        if (annot.auraEnabled !== false) {
+          highlightRelatedElementsForAnnotation(annot);
+        }
+      }
+      openLayerDetails(annot, 'annotation');
+    });
+
+    // Double-click to Edit (Figma style with a simple textarea)
+    el.addEventListener('dblclick', (e) => {
+      if (!isAdminMode) return;
+      if (e.target.closest('.annotation-toolbar') || e.target.closest('.annot-resize-handle')) return;
+      
+      e.stopPropagation();
+      el.classList.add('editing');
+      textDiv.style.display = 'none';
+      
+      const textarea = document.createElement('textarea');
+      textarea.className = 'annotation-edit-textarea';
+      textarea.value = annot.text || '';
+      textarea.style.position = 'absolute';
+      textarea.style.top = '0';
+      textarea.style.left = '0';
+      textarea.style.width = '100%';
+      textarea.style.height = '100%';
+      textarea.style.border = 'none';
+      textarea.style.outline = 'none';
+      textarea.style.background = 'transparent';
+      textarea.style.color = annot.color || '#1e293b';
+      textarea.style.fontSize = `${annot.fontSize || 14}px`;
+      textarea.style.fontWeight = annot.bold ? 'bold' : 'normal';
+      textarea.style.fontStyle = annot.italic ? 'italic' : 'normal';
+      textarea.style.textDecoration = annot.underline ? 'underline' : 'none';
+      textarea.style.textAlign = annot.align || 'center';
+      textarea.style.fontFamily = 'inherit';
+      textarea.style.boxSizing = 'border-box';
+      textarea.style.padding = '8px';
+      textarea.style.resize = 'none';
+      textarea.style.overflow = 'hidden';
+      textarea.style.zIndex = '10';
+      
+      const saveAndClose = () => {
+        if (textarea.parentNode) {
+          annot.text = textarea.value;
+          textDiv.innerText = annot.text;
+          textarea.remove();
+          textDiv.style.display = 'flex';
+          el.classList.remove('editing');
+          saveAnnotations();
+        }
+      };
+      
+      textarea.addEventListener('blur', saveAndClose);
+      textarea.addEventListener('keydown', (evt) => {
+        if (evt.key === 'Escape') {
+          evt.stopPropagation();
+          saveAndClose();
+        }
+      });
+      
+      el.appendChild(textarea);
+      setTimeout(() => {
+        textarea.focus();
+        textarea.select();
+      }, 10);
+    });
+
     // Drag handlers
     el.addEventListener('mousedown', (e) => {
       if (!isAdminMode) return;
-      if (e.target.closest('.annotation-toolbar')) return; // Avoid drag when clicking toolbar
+      if (el.classList.contains('editing')) return; // Do not drag while editing text
+      if (e.target.closest('.annotation-toolbar') || e.target.closest('.annot-resize-handle')) return; // Avoid drag when clicking toolbar or resize handle
       
       e.stopPropagation(); // Avoid dragging board
       activeAnnotationId = annot.id;
@@ -2103,6 +3716,9 @@ function renderAnnotations() {
   
   // Call renderJunctions at the end of renderAnnotations to keep them in sync
   renderJunctions();
+  if (typeof updateTransform === 'function') {
+    updateTransform();
+  }
 }
 
 function getAllBoardSegments() {
@@ -2637,6 +4253,7 @@ function renderJunctions() {
 
 // Ancestor Highlighting Engine
 function highlightAncestors(charId) {
+  if (isAdminMode) return;
   const ancestors = new Set();
   getAncestors(charId, ancestors);
   
@@ -2659,13 +4276,23 @@ function highlightAncestors(charId) {
     }
   });
   
-  // Highlight spouse connector paths
+  // Highlight spouse connector paths and circles
   document.querySelectorAll('.spouse-connector').forEach(path => {
     const spouseIdsAttr = path.getAttribute('data-spouse-ids');
     if (spouseIdsAttr) {
       const ids = spouseIdsAttr.split(',');
       if (ids.every(id => ancestors.has(id))) {
         path.classList.add('line-highlight');
+      }
+    }
+  });
+  
+  document.querySelectorAll('.spouse-node-circle').forEach(circle => {
+    const spouseIdsAttr = circle.getAttribute('data-spouse-ids');
+    if (spouseIdsAttr) {
+      const ids = spouseIdsAttr.split(',');
+      if (ids.every(id => ancestors.has(id))) {
+        circle.classList.add('line-highlight');
       }
     }
   });
@@ -2676,9 +4303,22 @@ function clearHighlight() {
   document.querySelectorAll('.person-card').forEach(card => {
     card.classList.remove('ancestor-highlight');
   });
-  document.querySelectorAll('.connector-line, .spouse-connector').forEach(path => {
-    path.classList.remove('line-highlight');
-  });
+  
+  const studyPanel = document.getElementById('study-panel');
+  if (studyPanel && studyPanel.classList.contains('active') && activePersonId && activeStudyPanelType) {
+    if (activeStudyPanelType === 'annotation') {
+      const annot = annotations.find(a => a.id === activePersonId);
+      if (annot) {
+        highlightRelatedElementsForAnnotation(annot);
+      }
+    } else {
+      highlightRelatedElements(activePersonId, activeStudyPanelType);
+    }
+  } else {
+    document.querySelectorAll('.connector-line, .spouse-connector, .spouse-node-circle').forEach(path => {
+      path.classList.remove('line-highlight');
+    });
+  }
 }
 
 function getAncestors(charId, set) {
@@ -2692,6 +4332,23 @@ function getAncestors(charId, set) {
   }
 }
 
+function isGrayHexColor(hex) {
+  if (!hex || typeof hex !== 'string') return true;
+  const clean = hex.replace('#', '');
+  if (clean.length !== 6 && clean.length !== 3) return true;
+  let r, g, b;
+  if (clean.length === 6) {
+    r = parseInt(clean.substring(0, 2), 16);
+    g = parseInt(clean.substring(2, 4), 16);
+    b = parseInt(clean.substring(4, 6), 16);
+  } else {
+    r = parseInt(clean[0] + clean[0], 16);
+    g = parseInt(clean[1] + clean[1], 16);
+    b = parseInt(clean[2] + clean[2], 16);
+  }
+  return Math.max(r, g, b) - Math.min(r, g, b) < 45;
+}
+
 // Load and Apply Style Settings
 function initStyleSettings() {
   const savedSettings = localStorage.getItem('bible_tree_style_settings');
@@ -2699,10 +4356,14 @@ function initStyleSettings() {
     try {
       styleSettings = { ...styleSettings, ...JSON.parse(savedSettings) };
       
-      // Auto-upgrade / self-heal old faint style settings
+      // Auto-upgrade / self-heal old empty settings
       let changed = false;
       if (!styleSettings.lineColor) {
-        styleSettings.lineColor = '#94a3b8';
+        styleSettings.lineColor = '#ff7800';
+        changed = true;
+      }
+      if (!styleSettings.preacherLineColor) {
+        styleSettings.preacherLineColor = '#ff7800';
         changed = true;
       }
       if (styleSettings.lineWidth === 2 || typeof styleSettings.lineWidth !== 'number' || isNaN(styleSettings.lineWidth) || styleSettings.lineWidth < 1) {
@@ -2735,23 +4396,29 @@ function applyStyleSettings() {
   let activeLineColor = styleSettings.lineColor;
   let activeMainLineColor = styleSettings.mainLineColor;
   let activeSpouseLineColor = styleSettings.spouseLineColor;
+  let activePreacherLineColor = styleSettings.preacherLineColor || '#ff7800';
   
   if (isDark) {
-    if (activeLineColor === '#94a3b8') activeLineColor = '#64748b';
+    if (activeLineColor === '#ff7800') activeLineColor = '#f97316';
+    else if (activeLineColor === '#94a3b8' || activeLineColor === '#919191' || activeLineColor === '#cbd5e1') activeLineColor = '#64748b';
+    
     if (activeMainLineColor === '#ff7800') activeMainLineColor = '#f97316';
     if (activeSpouseLineColor === '#ef4444') activeSpouseLineColor = '#f87171';
+    if (activePreacherLineColor === '#ff7800') activePreacherLineColor = '#f97316';
   }
   
   // Set CSS Variables on root element
   document.documentElement.style.setProperty('--line-color', activeLineColor);
   document.documentElement.style.setProperty('--line-main-color', activeMainLineColor);
   document.documentElement.style.setProperty('--spouse-line-color', activeSpouseLineColor);
+  document.documentElement.style.setProperty('--preacher-line-color', activePreacherLineColor);
   document.documentElement.style.setProperty('--line-width', `${styleSettings.lineWidth}px`);
   
   // Update inputs values
   inputLineColor.value = styleSettings.lineColor;
   inputMainLineColor.value = styleSettings.mainLineColor;
   inputSpouseLineColor.value = styleSettings.spouseLineColor;
+  if (inputPreacherLineColor) inputPreacherLineColor.value = styleSettings.preacherLineColor || '#ff7800';
   
   inputLineWidth.value = styleSettings.lineWidth;
   inputCornerRadius.value = styleSettings.cornerRadius;
@@ -2811,43 +4478,59 @@ function initBoard() {
   if (db.length === 0) return;
   
   if (stableCenterX === null) {
-    // Find min/max generations and columns based on active db
-    // to ensure centerX remains consistent for the currently visible cards.
+    // Find min/max generations based on active db
     let minGen = 0;
     let maxGen = 0;
-    let minCol = 0;
-    let maxCol = 0;
     
     db.forEach(char => {
       if (char.generation > maxGen) maxGen = char.generation;
       if (char.generation < minGen) minGen = char.generation;
-      if (char.column > maxCol) maxCol = char.column;
-      if (char.column < minCol) minCol = char.column;
     });
     
-    // Add safety padding for custom additions/nudges
-    minCol -= 5;
-    maxCol += 5;
     maxGen += 2;
     
     // Total dimensions
     const totalGens = maxGen - minGen + 1;
-    const totalCols = maxCol - minCol + 1;
     
     stableBoardHeight = (totalGens * GEN_HEIGHT) + (BOARD_PADDING_Y * 2);
-    stableBoardWidth = (totalCols * COL_WIDTH) + (BOARD_PADDING_X * 2);
-    stableCenterX = stableBoardWidth / 2;
+    // Lock horizontal board width and center to the Messiah lineage (column 0) to avoid any layout shifts.
+    stableBoardWidth = 60000;
+    stableCenterX = 30000;
   }
   
   boardHeight = stableBoardHeight;
   boardWidth = stableBoardWidth;
   centerX = stableCenterX;
   
+  // Filter out and delete default relative events/locations that were never manually placed by the admin
+  let needsSave = false;
+  events = events.filter(ev => {
+    if (ev.x !== undefined && ev.x < 5000) {
+      needsSave = true;
+      return false; // delete it
+    }
+    return true;
+  });
+  locations = locations.filter(loc => {
+    if (loc.x !== undefined && loc.x < 5000) {
+      needsSave = true;
+      return false; // delete it
+    }
+    return true;
+  });
+  if (needsSave) {
+    saveEvents();
+    saveLocations();
+    autoSaveToServer();
+  }
+  
   // Set dimensions on elements
   treeBoard.style.width = `${boardWidth}px`;
   treeBoard.style.height = `${boardHeight}px`;
   zoomWrapper.style.width = `${boardWidth}px`;
   zoomWrapper.style.height = `${boardHeight}px`;
+  zoomWrapper.style.left = '0px';
+  zoomWrapper.style.top = '0px';
   
   // Set SVG viewbox and explicit width/height attributes to prevent browser clipping on the right edge
   svgLayer.setAttribute('viewBox', `0 0 ${boardWidth} ${boardHeight}`);
@@ -2892,44 +4575,69 @@ function initBoard() {
   });
   
   // Self-healing horizontal layout center shift auto-alignment
+  let lastCenterX = null;
   const lastCenterXStr = localStorage.getItem('bible_tree_last_center_x');
   if (lastCenterXStr !== null) {
-    const lastCenterX = parseFloat(lastCenterXStr);
-    if (!isNaN(lastCenterX) && Math.abs(centerX - lastCenterX) > 0.01) {
-      const deltaX = centerX - lastCenterX;
-      console.log(`[Auto-Alignment] Board center shifted by ${deltaX.toFixed(1)}px. Realigning lines, junctions, and polygons...`);
-      
-      // 1. Shift custom line bends
-      let bendsChanged = false;
-      Object.keys(lineBends).forEach(key => {
-        if (Array.isArray(lineBends[key])) {
-          lineBends[key].forEach(pt => {
+    lastCenterX = parseFloat(lastCenterXStr);
+  } else {
+    // Fallback: If localStorage center is missing (first load or imported database),
+    // calculate what the old dynamic stableCenterX would have been for the current database,
+    // so we can seamlessly align the existing database coordinates to the new fixed 30000 center!
+    let minCol = 0;
+    let maxCol = 0;
+    allChars.forEach(char => {
+      if (char.column > maxCol) maxCol = char.column;
+      if (char.column < minCol) minCol = char.column;
+    });
+    minCol -= 5;
+    maxCol += 5;
+    const totalCols = maxCol - minCol + 1;
+    const oldBoardWidth = (totalCols * COL_WIDTH) + (BOARD_PADDING_X * 2);
+    lastCenterX = oldBoardWidth / 2;
+  }
+  
+  if (lastCenterX !== null && !isNaN(lastCenterX) && Math.abs(centerX - lastCenterX) > 0.01) {
+    const deltaX = centerX - lastCenterX;
+    console.log(`[Auto-Alignment] Board center shifted by ${deltaX.toFixed(1)}px. Realigning lines, junctions, polygons, and annotations...`);
+    
+    // 1. Shift custom line bends
+    let bendsChanged = false;
+    Object.keys(lineBends).forEach(key => {
+      if (Array.isArray(lineBends[key])) {
+        lineBends[key].forEach(pt => {
+          pt.x += deltaX;
+        });
+        bendsChanged = true;
+      }
+    });
+    if (bendsChanged) saveLineBends();
+    
+    // 2. Shift canvas junctions
+    if (canvasJunctions.length > 0) {
+      canvasJunctions.forEach(jNode => {
+        jNode.x += deltaX;
+      });
+      saveCanvasJunctions();
+    }
+    
+    // 3. Shift custom polygons
+    if (customPolygons.length > 0) {
+      customPolygons.forEach(poly => {
+        if (Array.isArray(poly.points)) {
+          poly.points.forEach(pt => {
             pt.x += deltaX;
           });
-          bendsChanged = true;
         }
       });
-      if (bendsChanged) saveLineBends();
-      
-      // 2. Shift canvas junctions
-      if (canvasJunctions.length > 0) {
-        canvasJunctions.forEach(jNode => {
-          jNode.x += deltaX;
-        });
-        saveCanvasJunctions();
-      }
-      
-      // 3. Shift custom polygons
-      if (customPolygons.length > 0) {
-        customPolygons.forEach(poly => {
-          if (Array.isArray(poly.points)) {
-            poly.points.forEach(pt => {
-              pt.x += deltaX;
-            });
-          }
-        });
-        saveCustomPolygons();
-      }
+      saveCustomPolygons();
+    }
+    
+    // 4. Shift annotations
+    if (annotations && annotations.length > 0) {
+      annotations.forEach(annot => {
+        annot.x += deltaX;
+      });
+      saveAnnotations();
     }
   }
   localStorage.setItem('bible_tree_last_center_x', centerX);
@@ -3090,30 +4798,408 @@ function getCharacterGroup(char) {
   return charGroups[char.id] || null;
 }
 
+function isFilterModeActive() {
+  return Object.values(activeFilters).some(val => val === true);
+}
+
+function isPointInPolygon(point, vs) {
+  const x = point.x, y = point.y;
+  let inside = false;
+  for (let i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+    const xi = vs[i].x, yi = vs[i].y;
+    const xj = vs[j].x, yj = vs[j].y;
+    const intersect = ((yi > y) !== (yj > y))
+        && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+    if (intersect) inside = !inside;
+  }
+  return inside;
+}
+
+const TRIBE_KEYWORDS = {
+  "르우벤": "reuben",
+  "시므온": "simeon",
+  "레위": "levi",
+  "유다": "judah",
+  "잇사갈": "issachar",
+  "스불론": "zebulun",
+  "단": "dan",
+  "베냐민": "benjamin",
+  "납달리": "naphtali",
+  "갓": "gad",
+  "아셀": "asher",
+  "므낫세": "joseph",
+  "에브라임": "joseph"
+};
+
+function getTribeId(charId) {
+  const sonsOfJacob = ['reuben', 'simeon', 'levi', 'judah', 'issachar', 'zebulun', 'dan', 'joseph', 'benjamin', 'naphtali', 'gad', 'asher'];
+  
+  let queue = [charId];
+  let visited = new Set();
+  while (queue.length > 0) {
+    const currentId = queue.shift();
+    if (visited.has(currentId)) continue;
+    visited.add(currentId);
+    
+    if (sonsOfJacob.includes(currentId)) {
+      return currentId;
+    }
+    
+    const c = db.find(x => x.id === currentId);
+    if (c && c.parents) {
+      c.parents.forEach(pId => {
+        if (!visited.has(pId)) {
+          queue.push(pId);
+        }
+      });
+    }
+  }
+  return null;
+}
+
+function getElementFilterClass(id) {
+  if (!isFilterModeActive()) return "";
+  if (typeof id !== 'string') return "";
+  if (id.startsWith('annot-')) {
+    const annotId = id.replace('annot-', '');
+    const annot = annotations.find(a => a.id === annotId);
+    return annot ? getAnnotationFilterClass(annot) : "filter-inactive";
+  }
+  const char = db.find(c => c.id === id);
+  if (char) {
+    return getCharacterFilterClass(id);
+  }
+  return "filter-inactive";
+}
+
+const PROPHET_BASE_IDS = new Set([
+  'enoch', 'noah', 'abraham', 'isaac', 'jacob', 'moses', 'aaron', 'miriam', 'deborah_eph', 'david', 'solomon', 'john_baptist', 'John_the_Baptist'
+]);
+
+let prophetIds = new Set();
+let prophetRelatedIds = new Set();
+
+function precomputeProphets() {
+  prophetIds.clear();
+  prophetRelatedIds.clear();
+
+  db.forEach(char => {
+    const desc = char.desc || "";
+    const name = char.name || "";
+    if (PROPHET_BASE_IDS.has(char.id) || desc.includes("선지자") || desc.includes("예언자") || name.includes("선지자") || name.includes("예언자")) {
+      prophetIds.add(char.id);
+    }
+  });
+
+  db.forEach(char => {
+    if (prophetIds.has(char.id)) return;
+
+    if (char.parents && char.parents.some(pId => prophetIds.has(pId))) {
+      prophetRelatedIds.add(char.id);
+      return;
+    }
+    if (char.spouses && char.spouses.some(sId => prophetIds.has(sId))) {
+      prophetRelatedIds.add(char.id);
+      return;
+    }
+  });
+
+  db.forEach(char => {
+    if (prophetIds.has(char.id)) {
+      if (char.parents) {
+        char.parents.forEach(pId => {
+          if (!prophetIds.has(pId)) {
+            prophetRelatedIds.add(pId);
+          }
+        });
+      }
+    }
+  });
+}
+
+function isProphet(charId) {
+  return prophetIds.has(charId);
+}
+
+function isProphetRelated(charId) {
+  return prophetRelatedIds.has(charId);
+}
+
+function getCharacterFilterClass(charId) {
+  if (!isFilterModeActive()) return "";
+  
+  if (activeFilters['prophets'] === true) {
+    if (isProphet(charId) || isProphetRelated(charId)) {
+      return "";
+    }
+  }
+  
+  const char = db.find(c => c.id === charId);
+  if (!char) return "filter-inactive";
+  
+  // 1. Check built-in filters
+  const group = getCharacterGroup(char);
+  if (group && activeFilters[group] === true) {
+    return "";
+  }
+  
+  // 2. Check custom polygon filters geometrically
+  const coords = coordinates[charId];
+  if (coords) {
+    const charTribe = getTribeId(charId);
+    for (const poly of customPolygons) {
+      const baseGroup = poly.id.replace('poly-', '');
+      if (activeFilters[baseGroup] === true) {
+        if (poly.points && poly.points.length >= 3) {
+          if (isPointInPolygon(coords, poly.points)) {
+            let isTribeMatch = true;
+            if (poly.label) {
+              for (const [kw, tId] of Object.entries(TRIBE_KEYWORDS)) {
+                if (poly.label.includes(kw)) {
+                  if (charTribe && charTribe !== tId) {
+                    isTribeMatch = false;
+                  }
+                  break;
+                }
+              }
+            }
+            if (isTribeMatch) {
+              return "";
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  return "filter-inactive";
+}
+
+function getSpouseFilterClass(charId1, charId2) {
+  if (!isFilterModeActive()) return "";
+  if (activeFilters['prophets'] === true) {
+    return "filter-inactive prophets-hide";
+  }
+  
+  const char1 = db.find(c => c.id === charId1);
+  const char2 = db.find(c => c.id === charId2);
+  const group1 = char1 ? getCharacterGroup(char1) : null;
+  const group2 = char2 ? getCharacterGroup(char2) : null;
+  if ((group1 && activeFilters[group1] === true) || (group2 && activeFilters[group2] === true)) {
+    return "";
+  }
+  
+  // Check custom polygon filters geometrically for spouses
+  for (const charId of [charId1, charId2]) {
+    if (!charId) continue;
+    const coords = coordinates[charId];
+    if (coords) {
+      for (const poly of customPolygons) {
+        const baseGroup = poly.id.replace('poly-', '');
+        if (activeFilters[baseGroup] === true) {
+          if (poly.points && poly.points.length >= 3) {
+            if (isPointInPolygon(coords, poly.points)) {
+              return "";
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  return "filter-inactive";
+}
+
+function getChildLineFilterClass(childId, parentIds) {
+  if (!isFilterModeActive()) return "";
+  if (activeFilters['prophets'] === true) {
+    return "filter-inactive prophets-hide";
+  }
+  if (getCharacterFilterClass(childId) === "filter-inactive") {
+    return "filter-inactive";
+  }
+  if (parentIds && parentIds.length > 0) {
+    const anyParentActive = parentIds.some(pId => getCharacterFilterClass(pId) === "");
+    if (!anyParentActive) {
+      return "filter-inactive";
+    }
+  }
+  return "";
+}
+
+function getAnnotationFilterClass(annot) {
+  if (!isFilterModeActive()) return "";
+  
+  // Matthew's genealogy specific boxes should always fade out when any filter is active
+  if (annot.id === 'note-1784793168468' || annot.id === 'note-1784796431452' || annot.id === 'note-1784797119640') {
+    return "filter-inactive";
+  }
+  
+  // 1. Check if the annotation itself is inside an active custom polygon
+  const annotPoint = {
+    x: annot.x + (annot.width || 0) / 2,
+    y: annot.y + (annot.height || 0) / 2
+  };
+  
+  for (const poly of customPolygons) {
+    const baseGroup = poly.id.replace('poly-', '');
+    if (activeFilters[baseGroup] === true) {
+      if (poly.points && poly.points.length >= 3) {
+        if (isPointInPolygon(annotPoint, poly.points)) {
+          return "";
+        }
+      }
+    }
+  }
+  
+  // 2. Check related people if any
+  if (annot.relatedPeople && annot.relatedPeople.length > 0) {
+    const hasActivePerson = annot.relatedPeople.some(pId => {
+      return getCharacterFilterClass(pId) === "";
+    });
+    if (hasActivePerson) {
+      return "";
+    }
+  } else {
+    // 3. Fallback: If no relatedPeople, check the closest character card (within 1200px)
+    let minD = Infinity;
+    let closestId = null;
+    db.forEach(c => {
+      const coords = coordinates[c.id];
+      if (coords) {
+        const d = Math.hypot(coords.x - annotPoint.x, coords.y - annotPoint.y);
+        if (d < minD) {
+          minD = d;
+          closestId = c.id;
+        }
+      }
+    });
+    if (closestId && minD < 1200) {
+      if (getCharacterFilterClass(closestId) === "") {
+        return "";
+      }
+    } else if (minD >= 1200) {
+      return ""; // General board header/welcome note far from any character stays active
+    }
+  }
+  
+  return "filter-inactive";
+}
+
+function getEventFilterClass(ev) {
+  if (!isFilterModeActive()) return "";
+  
+  // 1. Check custom polygons geometrically
+  const evPoint = { x: ev.x || 0, y: ev.y || 0 };
+  for (const poly of customPolygons) {
+    const baseGroup = poly.id.replace('poly-', '');
+    if (activeFilters[baseGroup] === true) {
+      if (poly.points && poly.points.length >= 3) {
+        if (isPointInPolygon(evPoint, poly.points)) {
+          return "";
+        }
+      }
+    }
+  }
+  
+  // 2. Check related people if any
+  if (ev.relatedPeople && ev.relatedPeople.length > 0) {
+    const hasActivePerson = ev.relatedPeople.some(pId => {
+      return getCharacterFilterClass(pId) === "";
+    });
+    if (hasActivePerson) {
+      return "";
+    }
+  } else {
+    // 3. Fallback: If no relatedPeople, check closest card
+    let minD = Infinity;
+    let closestId = null;
+    db.forEach(c => {
+      const coords = coordinates[c.id];
+      if (coords) {
+        const d = Math.hypot(coords.x - evPoint.x, coords.y - evPoint.y);
+        if (d < minD) {
+          minD = d;
+          closestId = c.id;
+        }
+      }
+    });
+    if (closestId && minD < 1200) {
+      if (getCharacterFilterClass(closestId) === "") {
+        return "";
+      }
+    } else if (minD >= 1200) {
+      return "";
+    }
+  }
+  
+  return "filter-inactive";
+}
+
+function getLocationFilterClass(loc) {
+  if (!isFilterModeActive()) return "";
+  
+  // 1. Check custom polygons geometrically
+  const locPoint = { x: loc.x || 0, y: loc.y || 0 };
+  for (const poly of customPolygons) {
+    const baseGroup = poly.id.replace('poly-', '');
+    if (activeFilters[baseGroup] === true) {
+      if (poly.points && poly.points.length >= 3) {
+        if (isPointInPolygon(locPoint, poly.points)) {
+          return "";
+        }
+      }
+    }
+  }
+  
+  // 2. Check related people if any
+  if (loc.relatedPeople && loc.relatedPeople.length > 0) {
+    const hasActivePerson = loc.relatedPeople.some(pId => {
+      return getCharacterFilterClass(pId) === "";
+    });
+    if (hasActivePerson) {
+      return "";
+    }
+  } else {
+    // 3. Fallback: If no relatedPeople, check closest card
+    let minD = Infinity;
+    let closestId = null;
+    db.forEach(c => {
+      const coords = coordinates[c.id];
+      if (coords) {
+        const d = Math.hypot(coords.x - locPoint.x, coords.y - locPoint.y);
+        if (d < minD) {
+          minD = d;
+          closestId = c.id;
+        }
+      }
+    });
+    if (closestId && minD < 1200) {
+      if (getCharacterFilterClass(closestId) === "") {
+        return "";
+      }
+    } else if (minD >= 1200) {
+      return "";
+    }
+  }
+  
+  return "filter-inactive";
+}
+
 function applyFilters() {
   initDatabase();
-  
-  // Filter out characters belonging to hidden lineages
-  db = db.filter(char => {
-    const group = getCharacterGroup(char);
-    if (group === 'cain' && !activeFilters.cain) return false;
-    if (group === 'japheth' && !activeFilters.japheth) return false;
-    if (group === 'ham' && !activeFilters.ham) return false;
-    if (group === 'joktan' && !activeFilters.joktan) return false;
-    if (group === 'keturah' && !activeFilters.keturah) return false;
-    if (group === 'ishmael' && !activeFilters.ishmael) return false;
-    if (group === 'esau' && !activeFilters.esau) return false;
-    if (group === 'north_kings' && !activeFilters.north_kings) return false;
-    if (group === 'independent_1chr4' && !activeFilters.independent_1chr4) return false;
-    if (group === 'levite_priests' && !activeFilters.levite_priests) return false;
-    if (group === 'horite_chiefs' && !activeFilters.horite_chiefs) return false;
-    if (group === 'reuben_simeon' && !activeFilters.reuben_simeon) return false;
-    return true;
-  });
-  
   initBoard();
   renderTree();
   updateTransform();
+  
+  const treeBoard = document.getElementById('tree-board');
+  if (treeBoard) {
+    if (activeFilters['prophets'] === true) {
+      treeBoard.classList.add('prophets-filter-active');
+    } else {
+      treeBoard.classList.remove('prophets-filter-active');
+    }
+  }
 }
 
 function setupFilters() {
@@ -3124,6 +5210,10 @@ function setupFilters() {
   // Toggle panel
   toggleBtn.addEventListener('click', () => {
     filterPanel.classList.toggle('active');
+    if (filterPanel.classList.contains('active')) {
+      wasOpenedFromFilter = false; // Reset flag when manually opened
+      renderFilterItems();
+    }
   });
   
   closeBtn.addEventListener('click', () => {
@@ -3136,26 +5226,108 @@ function setupFilters() {
     try {
       const parsed = JSON.parse(savedFilters);
       if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-        activeFilters = parsed;
+        activeFilters = { ...activeFilters, ...parsed };
       }
     } catch (err) {
       console.error("Failed to parse saved filters", err);
     }
   }
-  
-  // Sync checkboxes
-  const groups = ['cain', 'japheth', 'ham', 'joktan', 'keturah', 'ishmael', 'esau', 'north_kings', 'independent_1chr4', 'levite_priests', 'horite_chiefs', 'reuben_simeon'];
-  groups.forEach(group => {
-    const cb = document.getElementById(`filter-${group}`);
-    if (cb) {
-      cb.checked = activeFilters[group];
-      cb.addEventListener('change', (e) => {
-        activeFilters[group] = e.target.checked;
+
+  // One-time reset migration to default all filters to false (for the new invert/fade-out branch highlight logic)
+  if (!localStorage.getItem('bible_tree_filters_reset_v3')) {
+    Object.keys(activeFilters).forEach(k => {
+      activeFilters[k] = false;
+    });
+    localStorage.setItem('bible_tree_filters', JSON.stringify(activeFilters));
+    localStorage.setItem('bible_tree_filters_reset_v3', 'true');
+  }
+
+  function renderFilterItems() {
+    const filterGroupEl = filterPanel.querySelector('.filter-group');
+    if (!filterGroupEl) return;
+    filterGroupEl.innerHTML = '';
+
+    const builtInGroups = [
+      { id: 'prophets', label: '선지자 계보 (Prophets)' },
+      { id: 'cain', label: '가인 자손 계보 (Cain)' },
+      { id: 'japheth', label: '야벳 자손 계보 (Japheth)' },
+      { id: 'ham', label: '함 자손 계보 (Ham)' },
+      { id: 'joktan', label: '욕단 자손 계보 (Joktan)' },
+      { id: 'keturah', label: '그두라 자손 계보 (Keturah)' },
+      { id: 'ishmael', label: '이스마엘 자손 계보 (Ishmael)' },
+      { id: 'esau', label: '에서(에돔) 자손 계보 (Esau)' },
+      { id: 'mary', label: '마리아 계보 (누가복음 3장 혈통 / Mary)' },
+      { id: 'north_kings', label: '북이스라엘 왕 계보 (North Israel Kings)' },
+      { id: 'independent_1chr4', label: '대상 4장 독립 족보 (1 Chr 4 Lineages)' },
+      { id: 'levite_priests', label: '제사장 및 레위인 독립 족보 (Levite Priests)' },
+      { id: 'horite_chiefs', label: '호리 족속의 족장들 (Horite Chiefs)' },
+      { id: 'reuben_simeon', label: '르우벤 및 시므온 독립 족보 (Reuben & Simeon)' }
+    ];
+
+    const allFilters = [...builtInGroups];
+
+    // Add custom polygons dynamically
+    customPolygons.forEach(poly => {
+      const baseGroup = poly.id.replace('poly-', '');
+      if (!builtInGroups.some(g => g.id === baseGroup)) {
+        allFilters.push({
+          id: baseGroup,
+          label: poly.label || `영역 (${baseGroup})`,
+          isCustom: true
+        });
+      }
+    });
+
+    allFilters.forEach(group => {
+      if (activeFilters[group.id] === undefined) {
+        activeFilters[group.id] = false;
+      }
+
+      const labelEl = document.createElement('label');
+      labelEl.className = 'filter-item';
+
+      const input = document.createElement('input');
+      input.type = 'checkbox';
+      input.id = `filter-${group.id}`;
+      input.checked = activeFilters[group.id];
+
+      const span = document.createElement('span');
+      span.className = 'filter-label';
+      span.textContent = group.label;
+
+      labelEl.appendChild(input);
+      labelEl.appendChild(span);
+      filterGroupEl.appendChild(labelEl);
+
+      input.addEventListener('change', (e) => {
+        activeFilters[group.id] = e.target.checked;
         localStorage.setItem('bible_tree_filters', JSON.stringify(activeFilters));
         applyFilters();
+        
+        if (e.target.checked) {
+          // Automatically open study panel on the right
+          let poly = customPolygons.find(p => p.id === `poly-${group.id}` || p.id === group.id || p.id.replace('poly-', '') === group.id);
+          if (!poly) {
+            poly = {
+              id: `poly-${group.id}`,
+              label: group.label
+            };
+          }
+          wasOpenedFromFilter = true;
+          document.getElementById('filter-panel')?.classList.remove('active');
+          openLayerDetails(poly, 'polygon');
+        } else {
+          // Close study panel if it was open for this group
+          const targetId = `poly-${group.id}`;
+          if (activePersonId === targetId || activePersonId === group.id) {
+            closeStudyPanel();
+          }
+        }
       });
-    }
-  });
+    });
+  }
+
+  renderFilterItems();
 }
 
 function updateTreeLayout() {
@@ -3174,16 +5346,6 @@ function updateTreeLayout() {
   // Redraw SVG connections (drawConnections uses unscaled coordinates internally, which is correct because the SVG layer viewBox handles the scaling)
   svgLayer.innerHTML = '';
   drawConnections();
-  
-  // Update generation divider dataset coordinates
-  const divider = treeBoard.querySelector('.generation-divider-badge');
-  if (divider) {
-    const coordsNoah = coordinates['noah'];
-    if (coordsNoah) {
-      divider.dataset.x = coordsNoah.x - 260;
-      divider.dataset.y = coordsNoah.y + 40;
-    }
-  }
   
   // Re-render custom polygons
   renderCustomPolygons();
@@ -3204,26 +5366,8 @@ function renderTree() {
   
   if (db.length === 0) return;
 
-  // Render Generation Divider Badge at bottom-left of Noah
-  const divider = document.createElement('div');
-  divider.className = 'generation-divider-badge';
-  const coordsNoah = coordinates['noah'];
-  let divX, divY;
-  if (coordsNoah) {
-    divX = coordsNoah.x - 260;
-    divY = coordsNoah.y + 40;
-  } else {
-    divX = centerX - 260;
-    divY = BOARD_PADDING_Y + (10 * GEN_HEIGHT) + 40;
-  }
-  divider.dataset.x = divX;
-  divider.dataset.y = divY;
-  divider.style.left = `${divX}px`;
-  divider.style.top = `${divY}px`;
-  divider.innerHTML = '<span>✦ 대홍수 이후 인류의 재분산 및 바벨탑 사건 세대 ✦</span>';
-  treeBoard.appendChild(divider);
-
-  // 1. Render Generation Labels on the left edge (Admin Mode only)
+  // 1. Render Generation Labels on the left edge (Admin Mode only) - Removed as per user request to hide generation numbers
+  /*
   if (isAdminMode) {
     const maxGen = Math.max(...db.map(c => c.generation), 0);
     for (let g = 0; g <= maxGen; g++) {
@@ -3234,6 +5378,7 @@ function renderTree() {
       treeBoard.appendChild(label);
     }
   }
+  */
 
   // Render Family Group Custom Polygons
   renderCustomPolygons();
@@ -3248,6 +5393,13 @@ function renderTree() {
     const card = document.createElement('div');
     card.id = `card-${char.id}`;
     card.className = `person-card ${char.gender === 'M' ? 'male' : 'female'}`;
+    if (isProphet(char.id)) {
+      card.classList.add('prophet');
+    }
+    const filterClass = getCharacterFilterClass(char.id);
+    if (filterClass) {
+      card.classList.add(filterClass);
+    }
     if (char.isMain) {
       card.classList.add('main-line');
     }
@@ -3262,8 +5414,8 @@ function renderTree() {
     card.dataset.x = coords.x;
     card.dataset.y = coords.y;
     
-    // Check if notes exist in localStorage
-    const hasNote = localStorage.getItem(`bible_tree_note_${char.id}`);
+    // Check if notes exist in userNotes
+    const hasNote = userNotes && userNotes[char.id];
     const noteBadgeHTML = hasNote ? `<div class="card-note-badge" title="메모 있음">📝</div>` : '';
     
     // Render Inner HTML: Centered name, no gender icons, combined English & Description line
@@ -3271,17 +5423,8 @@ function renderTree() {
     const subtitle = `${char.engName}${descText}`;
     
     const editOverlayHTML = isAdminMode ? `
-      <div class="card-edit-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 4px; padding: 6px; box-sizing: border-box; transform: translateZ(0); will-change: transform; pointer-events: none; opacity: 0; transition: opacity 0.2s ease; z-index: 15;">
-        <div class="card-edit-overlay-btns">
-          <button class="card-edit-btn" onmousedown="event.preventDefault(); event.stopPropagation();" ontouchstart="event.preventDefault(); event.stopPropagation();" onclick="event.stopPropagation(); openAdminForm('${char.id}')" title="상세 정보 수정">✏️</button>
-          <button class="card-edit-btn delete" onmousedown="event.preventDefault(); event.stopPropagation();" ontouchstart="event.preventDefault(); event.stopPropagation();" onclick="event.stopPropagation(); deletePersonDirect('${char.id}')" title="인물 삭제">🗑️</button>
-        </div>
-        <div class="card-nudge-grid">
-          <button class="nudge-btn" onmousedown="event.preventDefault(); event.stopPropagation();" ontouchstart="event.preventDefault(); event.stopPropagation();" onclick="event.stopPropagation(); nudgePersonDirect('${char.id}', -0.1, false, false, event ? event.shiftKey : false)" title="왼쪽 Nudge (◀)">◀</button>
-          <button class="nudge-btn" onmousedown="event.preventDefault(); event.stopPropagation();" ontouchstart="event.preventDefault(); event.stopPropagation();" onclick="event.stopPropagation(); nudgePersonDirect('${char.id}', -0.1, true, false, event ? event.shiftKey : false)" title="위쪽 Nudge (▲)">▲</button>
-          <button class="nudge-btn" onmousedown="event.preventDefault(); event.stopPropagation();" ontouchstart="event.preventDefault(); event.stopPropagation();" onclick="event.stopPropagation(); nudgePersonDirect('${char.id}', 0.1, true, false, event ? event.shiftKey : false)" title="아래쪽 Nudge (▼)">▼</button>
-          <button class="nudge-btn" onmousedown="event.preventDefault(); event.stopPropagation();" ontouchstart="event.preventDefault(); event.stopPropagation();" onclick="event.stopPropagation(); nudgePersonDirect('${char.id}', 0.1, false, false, event ? event.shiftKey : false)" title="오른쪽 Nudge (▶)">▶</button>
-        </div>
+      <div class="card-edit-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); border-radius: 10px; display: flex; align-items: center; justify-content: center; padding: 6px; box-sizing: border-box; transform: translateZ(0); will-change: transform; pointer-events: none; opacity: 0; transition: opacity 0.2s ease; z-index: 15;">
+        <button class="card-edit-btn" onmousedown="event.preventDefault(); event.stopPropagation();" ontouchstart="event.preventDefault(); event.stopPropagation();" onclick="event.stopPropagation(); openAdminForm('${char.id}')" title="상세 정보 수정">✏️</button>
       </div>
     ` : '';
 
@@ -3317,7 +5460,7 @@ function renderTree() {
         // Handle selection during drag start
         const isDraggedSelected = selectedPersonIds.has(char.id);
         if (!isDraggedSelected) {
-          if (!e.shiftKey && !e.ctrlKey && !e.metaKey) {
+          if (!e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
             selectedPersonIds.clear();
           }
           selectedPersonIds.add(char.id);
@@ -3331,8 +5474,7 @@ function renderTree() {
           updateTransform();
         }
         
-        const checkbox = document.getElementById('admin-move-descendants-toggle');
-        const moveDescendants = e.shiftKey || (checkbox && checkbox.checked);
+        const moveDescendants = e.shiftKey; // Move only selected card by default, hold Shift key to move descendants together
         
         descendantDragData = [];
         
@@ -3532,7 +5674,7 @@ function renderTree() {
         openAdminFormWithParent(char.id);
       } else {
         if (isAdminMode) {
-          const isModifierPressed = e.shiftKey || e.ctrlKey || e.metaKey;
+          const isModifierPressed = e.shiftKey || e.ctrlKey || e.metaKey || e.altKey;
           if (isModifierPressed) {
             if (selectedPersonIds.has(char.id)) {
               selectedPersonIds.delete(char.id);
@@ -3757,6 +5899,8 @@ function renderTree() {
   
   // 4. Render Floating Annotation Boxes
   renderAnnotations();
+  renderEvents();
+  renderLocations();
 
   // Update Area Editor panel inputs
   updateAreaEditorPanel();
@@ -3769,6 +5913,7 @@ function renderTree() {
 function drawConnections() {
   svgLayer.innerHTML = "";
   const svgNS = "http://www.w3.org/2000/svg";
+  const pathsToDraw = [];
   const spouseCirclesToDraw = [];
   const drawnSpouses = new Set();
   const parentGroups = {};
@@ -3813,11 +5958,11 @@ function drawConnections() {
         let vertices = [{ x: x1, y: y1 }, ...(customBends || []), { x: x2, y: y2 }];
         let pathD = getRoundedCornersPath(vertices, styleSettings.cornerRadius);
         
+        const spouseFilterClass = getSpouseFilterClass(char.id, spouseId);
         path.setAttribute("d", pathD);
-        path.setAttribute("class", `spouse-connector ${selectedLineKey === spouseKey ? 'line-highlight' : ''}`);
+        path.setAttribute("class", `spouse-connector ${selectedLineKey === spouseKey ? 'line-highlight' : ''} ${spouseFilterClass}`);
         path.setAttribute("data-spouse-ids", `${char.id},${spouseId}`);
         path.style.pointerEvents = 'none'; // Visible path doesn't capture clicks
-        svgLayer.appendChild(path);
         
         // Transparent thick helper path for easy selection
         const helperPath = document.createElementNS(svgNS, "path");
@@ -3825,6 +5970,7 @@ function drawConnections() {
         helperPath.setAttribute("fill", "none");
         helperPath.setAttribute("stroke", "transparent");
         helperPath.setAttribute("stroke-width", "14");
+        helperPath.setAttribute("class", spouseFilterClass);
         helperPath.style.pointerEvents = 'stroke';
         helperPath.style.cursor = 'pointer';
         
@@ -3851,7 +5997,11 @@ function drawConnections() {
           drawConnections();
         });
         
-        svgLayer.appendChild(helperPath);
+        pathsToDraw.push({
+          key: spouseKey,
+          elements: [path, helperPath],
+          zIndex: lineZIndices[spouseKey] || 0
+        });
         
         // Midpoint with custom spouse split ratio along the bent path
         const ratio = spouseSplits[spousePair] !== undefined ? spouseSplits[spousePair] : 0.5;
@@ -3867,7 +6017,9 @@ function drawConnections() {
         circle.setAttribute("fill", "#fff");
         circle.setAttribute("stroke", "var(--spouse-line-color)");
         circle.setAttribute("stroke-width", "2");
-        circle.setAttribute("class", "spouse-node-circle");
+        circle.setAttribute("class", `spouse-node-circle ${selectedLineKey === spouseKey ? 'line-highlight' : ''} ${spouseFilterClass}`);
+        circle.setAttribute("data-spouse-ids", `${char.id},${spouseId}`);
+        circle.id = `circle-${char.id}-${spouseId}`;
         
         if (isAdminMode) {
           circle.style.cursor = 'ew-resize';
@@ -4010,12 +6162,12 @@ function drawConnections() {
         }
       }
       
+      const filterClass = getChildLineFilterClass(childId, parentIds);
       childPath.setAttribute("d", pathD);
-      childPath.setAttribute("class", `connector-line ${isChildMain ? 'main-line' : ''} ${selectedLineKey === key ? 'line-highlight' : ''}`);
+      childPath.setAttribute("class", `connector-line ${isChildMain ? 'main-line' : ''} ${selectedLineKey === key ? 'line-highlight' : ''} ${filterClass}`);
       childPath.setAttribute("data-parent-key", parentKey);
       childPath.setAttribute("data-child-id", childId);
       childPath.style.pointerEvents = 'none'; // Visible path doesn't capture clicks
-      svgLayer.appendChild(childPath);
       
       // Transparent thick helper path for easy selection
       const helperPath = document.createElementNS(svgNS, "path");
@@ -4023,6 +6175,7 @@ function drawConnections() {
       helperPath.setAttribute("fill", "none");
       helperPath.setAttribute("stroke", "transparent");
       helperPath.setAttribute("stroke-width", "14");
+      helperPath.setAttribute("class", filterClass);
       helperPath.style.pointerEvents = 'stroke';
       helperPath.style.cursor = 'pointer';
       
@@ -4049,7 +6202,11 @@ function drawConnections() {
         drawConnections();
       });
       
-      svgLayer.appendChild(helperPath);
+      pathsToDraw.push({
+        key: key,
+        elements: [childPath, helperPath],
+        zIndex: lineZIndices[key] || 0
+      });
     } else {
       // Multiple children: draw individual rounded orthogonal lines to each child
       validChildrenIds.forEach(childId => {
@@ -4074,13 +6231,13 @@ function drawConnections() {
           }
         }
         
+        const filterClass = getChildLineFilterClass(childId, parentIds);
         childPath.setAttribute("d", pathD);
         const isSelected = selectedLineKey === childRelationKey;
-        childPath.setAttribute("class", `connector-line ${isChildMain ? 'main-line' : ''} ${isSelected ? 'line-highlight' : ''}`);
+        childPath.setAttribute("class", `connector-line ${isChildMain ? 'main-line' : ''} ${isSelected ? 'line-highlight' : ''} ${filterClass}`);
         childPath.setAttribute("data-parent-key", parentKey);
         childPath.setAttribute("data-child-id", childId);
         childPath.style.pointerEvents = 'none'; // Visible path doesn't capture clicks
-        svgLayer.appendChild(childPath);
         
         // Transparent thick helper path for easy selection
         const helperPath = document.createElementNS(svgNS, "path");
@@ -4088,6 +6245,7 @@ function drawConnections() {
         helperPath.setAttribute("fill", "none");
         helperPath.setAttribute("stroke", "transparent");
         helperPath.setAttribute("stroke-width", "14");
+        helperPath.setAttribute("class", filterClass);
         helperPath.style.pointerEvents = 'stroke';
         helperPath.style.cursor = 'pointer';
         
@@ -4114,16 +6272,29 @@ function drawConnections() {
           drawConnections();
         });
         
-        svgLayer.appendChild(helperPath);
+        pathsToDraw.push({
+          key: childRelationKey,
+          elements: [childPath, helperPath],
+          zIndex: lineZIndices[childRelationKey] || 0
+        });
       });
     }
   });
   
+  // Draw Preacher/Discipleship lines
+  drawTeacherConnections(svgNS, true, pathsToDraw);
+
+  // 4. Render Custom Visual Lines (Logos style)
+  renderCustomVisualLines(svgNS, true, pathsToDraw);
+  
+  // Sort and append all connector lines by z-index
+  pathsToDraw.sort((a, b) => a.zIndex - b.zIndex);
+  pathsToDraw.forEach(item => {
+    item.elements.forEach(el => svgLayer.appendChild(el));
+  });
+
   // Draw deferred spouse node circles so they render on top of all spouse/parent-child connector lines
   spouseCirclesToDraw.forEach(c => svgLayer.appendChild(c));
-  
-  // 4. Render Custom Visual Lines (Logos style)
-  renderCustomVisualLines(svgNS, true);
   
   // Render bend handles if in Admin Mode
   renderBendHandles();
@@ -4131,7 +6302,7 @@ function drawConnections() {
   // Render Custom Polygons
   renderCustomPolygons();
   
-  // Update line editor buttons state
+  // Update line editor buttons state and z-order controls
   const clearSelectedBtn = document.getElementById('style-clear-selected-line-btn');
   if (clearSelectedBtn) {
     clearSelectedBtn.disabled = !selectedLineKey;
@@ -4139,6 +6310,10 @@ function drawConnections() {
   const deleteSelectedBtn = document.getElementById('style-delete-selected-line-btn');
   if (deleteSelectedBtn) {
     deleteSelectedBtn.disabled = !selectedLineKey;
+  }
+  const zorderGroup = document.getElementById('style-line-zorder-group');
+  if (zorderGroup) {
+    zorderGroup.style.display = selectedLineKey ? 'block' : 'none';
   }
 }
 
@@ -4253,6 +6428,8 @@ function renderBendHandles() {
     
     treeBoard.appendChild(handle);
   });
+  
+  observeAllConnectorPaths();
 }
 
 function simplifyBends(key) {
@@ -4290,6 +6467,7 @@ function simplifyBends(key) {
 // Special lightweight redraw function to prevent handle recreation glitches during drag
 function drawConnectionsWithoutRecreatingHandles() {
   const svgNS = "http://www.w3.org/2000/svg";
+  const pathsToDraw = [];
   const spouseCirclesToDraw = [];
   const drawnSpouses = new Set();
   const parentGroups = {};
@@ -4332,11 +6510,11 @@ function drawConnectionsWithoutRecreatingHandles() {
         let vertices = [{ x: x1, y: y1 }, ...(customBends || []), { x: x2, y: y2 }];
         let pathD = getRoundedCornersPath(vertices, styleSettings.cornerRadius);
         
+        const spouseFilterClass = getSpouseFilterClass(char.id, spouseId);
         path.setAttribute("d", pathD);
-        path.setAttribute("class", `spouse-connector ${selectedLineKey === spouseKey ? 'line-highlight' : ''}`);
+        path.setAttribute("class", `spouse-connector ${selectedLineKey === spouseKey ? 'line-highlight' : ''} ${spouseFilterClass}`);
         path.setAttribute("data-spouse-ids", `${char.id},${spouseId}`);
         path.style.pointerEvents = 'none'; // Visible path doesn't capture clicks
-        svgLayer.appendChild(path);
         
         // Transparent thick helper path for easy selection
         const helperPath = document.createElementNS(svgNS, "path");
@@ -4344,6 +6522,7 @@ function drawConnectionsWithoutRecreatingHandles() {
         helperPath.setAttribute("fill", "none");
         helperPath.setAttribute("stroke", "transparent");
         helperPath.setAttribute("stroke-width", "14");
+        helperPath.setAttribute("class", spouseFilterClass);
         helperPath.style.pointerEvents = 'stroke';
         helperPath.style.cursor = 'pointer';
         
@@ -4370,7 +6549,11 @@ function drawConnectionsWithoutRecreatingHandles() {
           drawConnections();
         });
         
-        svgLayer.appendChild(helperPath);
+        pathsToDraw.push({
+          key: spouseKey,
+          elements: [path, helperPath],
+          zIndex: lineZIndices[spouseKey] || 0
+        });
         
         const ratio = spouseSplits[spousePair] !== undefined ? spouseSplits[spousePair] : 0.5;
         const midPoint = getPointAlongPath(vertices, ratio);
@@ -4384,7 +6567,9 @@ function drawConnectionsWithoutRecreatingHandles() {
         circle.setAttribute("fill", isAdminMode ? "#10b981" : "#fff");
         circle.setAttribute("stroke", "var(--spouse-line-color)");
         circle.setAttribute("stroke-width", "2");
-        circle.setAttribute("class", "spouse-node-circle");
+        circle.setAttribute("class", `spouse-node-circle ${selectedLineKey === spouseKey ? 'line-highlight' : ''} ${spouseFilterClass}`);
+        circle.setAttribute("data-spouse-ids", `${char.id},${spouseId}`);
+        circle.id = `circle-${char.id}-${spouseId}`;
         
         if (isAdminMode) {
           circle.style.cursor = 'ew-resize';
@@ -4491,12 +6676,12 @@ function drawConnectionsWithoutRecreatingHandles() {
         }
       }
       
+      const filterClass = getChildLineFilterClass(childId, parentIds);
       childPath.setAttribute("d", pathD);
-      childPath.setAttribute("class", `connector-line ${isChildMain ? 'main-line' : ''} ${selectedLineKey === key ? 'line-highlight' : ''}`);
+      childPath.setAttribute("class", `connector-line ${isChildMain ? 'main-line' : ''} ${selectedLineKey === key ? 'line-highlight' : ''} ${filterClass}`);
       childPath.setAttribute("data-parent-key", parentKey);
       childPath.setAttribute("data-child-id", childId);
       childPath.style.pointerEvents = 'none'; // Visible path doesn't capture clicks
-      svgLayer.appendChild(childPath);
       
       // Transparent thick helper path for easy selection
       const helperPath = document.createElementNS(svgNS, "path");
@@ -4504,6 +6689,7 @@ function drawConnectionsWithoutRecreatingHandles() {
       helperPath.setAttribute("fill", "none");
       helperPath.setAttribute("stroke", "transparent");
       helperPath.setAttribute("stroke-width", "14");
+      helperPath.setAttribute("class", filterClass);
       helperPath.style.pointerEvents = 'stroke';
       helperPath.style.cursor = 'pointer';
       
@@ -4530,7 +6716,11 @@ function drawConnectionsWithoutRecreatingHandles() {
         drawConnections();
       });
       
-      svgLayer.appendChild(helperPath);
+      pathsToDraw.push({
+        key: key,
+        elements: [childPath, helperPath],
+        zIndex: lineZIndices[key] || 0
+      });
     } else {
       // Multiple children: draw individual rounded orthogonal lines to each child
       validChildrenIds.forEach(childId => {
@@ -4555,13 +6745,13 @@ function drawConnectionsWithoutRecreatingHandles() {
           }
         }
         
+        const filterClass = getChildLineFilterClass(childId, parentIds);
         childPath.setAttribute("d", pathD);
         const isSelected = selectedLineKey === childRelationKey;
-        childPath.setAttribute("class", `connector-line ${isChildMain ? 'main-line' : ''} ${isSelected ? 'line-highlight' : ''}`);
+        childPath.setAttribute("class", `connector-line ${isChildMain ? 'main-line' : ''} ${isSelected ? 'line-highlight' : ''} ${filterClass}`);
         childPath.setAttribute("data-parent-key", parentKey);
         childPath.setAttribute("data-child-id", childId);
         childPath.style.pointerEvents = 'none'; // Visible path doesn't capture clicks
-        svgLayer.appendChild(childPath);
         
         // Transparent thick helper path for easy selection
         const helperPath = document.createElementNS(svgNS, "path");
@@ -4569,6 +6759,7 @@ function drawConnectionsWithoutRecreatingHandles() {
         helperPath.setAttribute("fill", "none");
         helperPath.setAttribute("stroke", "transparent");
         helperPath.setAttribute("stroke-width", "14");
+        helperPath.setAttribute("class", filterClass);
         helperPath.style.pointerEvents = 'stroke';
         helperPath.style.cursor = 'pointer';
         
@@ -4584,16 +6775,119 @@ function drawConnectionsWithoutRecreatingHandles() {
           drawConnections();
         });
         
-        svgLayer.appendChild(helperPath);
+        pathsToDraw.push({
+          key: childRelationKey,
+          elements: [childPath, helperPath],
+          zIndex: lineZIndices[childRelationKey] || 0
+        });
       });
     }
   });
   
+  // Draw Preacher/Discipleship lines
+  drawTeacherConnections(svgNS, false, pathsToDraw);
+
+  // Render Custom Visual Lines (Logos style)
+  renderCustomVisualLines(svgNS, false, pathsToDraw);
+  
+  // Sort and append all connector lines by z-index
+  pathsToDraw.sort((a, b) => a.zIndex - b.zIndex);
+  pathsToDraw.forEach(item => {
+    item.elements.forEach(el => svgLayer.appendChild(el));
+  });
+
   // Draw deferred spouse node circles so they render on top of all spouse/parent-child connector lines
   spouseCirclesToDraw.forEach(c => svgLayer.appendChild(c));
+}
+
+function drawTeacherConnections(svgNS, recreateClickListeners, pathsToDraw) {
+  db.forEach(char => {
+    if (char.teachers && char.teachers.length > 0) {
+      char.teachers.forEach(teacherId => {
+        const teacherNode = db.find(c => c.id === teacherId);
+        if (!teacherNode) return;
+        
+        const startCoord = coordinates[teacherId];
+        const endCoord = coordinates[char.id];
+        if (!startCoord || !endCoord) return;
+        
+        const ports1 = getBoxPorts(teacherId);
+        const ports2 = getBoxPorts(char.id);
+        
+        let start = (ports1 && ports1.bottom) ? ports1.bottom : { x: startCoord.x, y: startCoord.y + (CARD_HEIGHT / 2), dir: 'DOWN' };
+        let end = (ports2 && ports2.top) ? ports2.top : { x: endCoord.x, y: endCoord.y - (CARD_HEIGHT / 2), dir: 'UP' };
+        
+        const key = `teacher-${teacherId}->${char.id}`;
+        const customBends = lineBends[key] || lineBends[`preacher-${teacherId}->${char.id}`];
+        
+        let pathD = "";
+        if (customBends && customBends.length > 0) {
+          let vertices = [start, ...customBends, end];
+          pathD = getRoundedCornersPath(vertices, styleSettings.cornerRadius);
+        } else {
+          const vertices = routeOrthogonal(start, end);
+          pathD = getRoundedCornersPath(vertices, styleSettings.cornerRadius);
+        }
+        
+        const path = document.createElementNS(svgNS, "path");
+        path.setAttribute("d", pathD);
+        path.setAttribute("class", `connector-line preacher-line ${selectedLineKey === key ? 'line-highlight' : ''}`);
+        path.setAttribute("data-teacher-id", teacherId);
+        path.setAttribute("data-disciple-id", char.id);
+        path.style.pointerEvents = 'none';
+        
+        // Use preacher arrow marker (and highlight if selected)
+        path.setAttribute("marker-end", selectedLineKey === key ? "url(#preacher-arrow-highlight)" : "url(#preacher-arrow)");
+        
+        // Transparent thick helper path for selection
+        const helperPath = document.createElementNS(svgNS, "path");
+        helperPath.setAttribute("d", pathD);
+        helperPath.setAttribute("fill", "none");
+        helperPath.setAttribute("stroke", "transparent");
+        helperPath.setAttribute("stroke-width", "14");
+        helperPath.style.pointerEvents = 'stroke';
+        helperPath.style.cursor = 'pointer';
+        
+        if (recreateClickListeners) {
+          helperPath.addEventListener('click', (e) => {
+            if (!isAdminMode || !isLineEditModeActive) return;
+            e.stopPropagation();
+            
+            if (selectedLineKey !== key) {
+              selectedLineKey = key;
+              drawConnections();
+              return;
+            }
+            
+            const rect = treeBoard.getBoundingClientRect();
+            const clickX = (e.clientX - rect.left) / currentScale;
+            const clickY = (e.clientY - rect.top) / currentScale;
+            
+            pushHistoryState();
+            if (!lineBends[key]) {
+              lineBends[key] = [];
+            }
+            lineBends[key].push({ x: clickX, y: clickY });
+            saveLineBends();
+            drawConnections();
+          });
+        }
+        
+        if (pathsToDraw) {
+          pathsToDraw.push({
+            key: key,
+            elements: [path, helperPath],
+            zIndex: lineZIndices[key] || 0
+          });
+        } else {
+          svgLayer.appendChild(path);
+          svgLayer.appendChild(helperPath);
+        }
+      });
+    }
+  });
   
-  // Render Custom Visual Lines (Logos style)
-  renderCustomVisualLines(svgNS, false);
+  observeAllConnectorPaths();
 }
 
 function adjustJunctionIntersection(centerPt, nextPt, radius) {
@@ -4622,13 +6916,27 @@ function renderCustomPolygons() {
   } else {
     polyGroup = document.createElementNS(svgNS, 'g');
     polyGroup.id = 'custom-polygons-group';
-    svgLayer.insertBefore(polyGroup, svgLayer.firstChild); // Render behind lines
+    const polygonsLayer = document.getElementById('svg-polygons-layer') || svgLayer;
+    polygonsLayer.appendChild(polyGroup);
+  }
+  
+  const isLayerVisible = document.getElementById('toggle-layer-polygons')?.checked !== false;
+  if (polyGroup) {
+    polyGroup.style.display = isLayerVisible ? '' : 'none';
+  }
+  const polygonsLayer = document.getElementById('svg-polygons-layer');
+  if (polygonsLayer) {
+    polygonsLayer.style.display = isLayerVisible ? '' : 'none';
   }
   
   customPolygons.forEach(poly => {
-    // Check if the polygon's lineage filter is off
     const baseGroup = poly.id.replace('poly-', '');
-    if (activeFilters[baseGroup] === false) return;
+    let filterClass = "";
+    if (isFilterModeActive()) {
+      if (activeFilters[baseGroup] !== true) {
+        filterClass = "filter-inactive";
+      }
+    }
     
     if (!poly.points || poly.points.length < 3) return;
     
@@ -4657,30 +6965,103 @@ function renderCustomPolygons() {
     polyEl.setAttribute('stroke-dasharray', dashArray);
     
     // Custom class for selection styling
-    polyEl.setAttribute('class', `family-group-panel-poly ${isSelected ? 'poly-selected' : ''}`);
-    polyEl.style.pointerEvents = isAdminMode ? 'all' : 'none'; // Only interactive in Admin Mode
+    polyEl.setAttribute('class', `family-group-panel-poly ${isSelected ? 'poly-selected' : ''} ${filterClass}`);
+    polyEl.style.pointerEvents = isAdminMode ? 'all' : 'none'; // Only intercept pointer events in Admin mode
     polyGroup.appendChild(polyEl);
     
-    // Admin Click to select / Edit boundary
+    // Admin Drag entire polygon or Click to select / Edit boundary
     if (isAdminMode) {
-      polyEl.addEventListener('click', (e) => {
+      // Double click to rename SVG polygon shape directly in admin mode
+      polyEl.addEventListener('dblclick', (e) => {
         e.stopPropagation();
-        
-        const rect = treeBoard.getBoundingClientRect();
-        const clickX = (e.clientX - rect.left) / currentScale;
-        const clickY = (e.clientY - rect.top) / currentScale;
-        
-        if (selectedPolygonId !== poly.id) {
-          selectedPolygonId = poly.id;
-          selectedLineKey = null;
-          selectedJunctionId = null;
+        const newName = prompt("영역 이름을 변경하시겠습니까?", poly.label);
+        if (newName !== null) {
+          pushHistoryState();
+          poly.label = newName;
+          saveCustomPolygons();
           renderTree();
           updateTransform();
-        } else {
-          // If already selected, try to insert a vertex
-          insertVertexOnClosestSegment(poly, clickX, clickY);
         }
       });
+      let dragStartPos = null;
+      let hasDragged = false;
+      
+      polyEl.addEventListener('mousedown', (e) => {
+        if (e.button !== 0 || isAddPolygonModeActive) return;
+        e.stopPropagation();
+        
+        dragStartPos = { x: e.clientX, y: e.clientY };
+        hasDragged = false;
+        
+        const startPoints = poly.points.map(pt => ({ x: pt.x, y: pt.y }));
+        
+        const onMouseMove = (moveEvt) => {
+          if (!dragStartPos) return;
+          let dx = (moveEvt.clientX - dragStartPos.x) / currentScale;
+          let dy = (moveEvt.clientY - dragStartPos.y) / currentScale;
+          
+          if (Math.abs(dx) > 2 || Math.abs(dy) > 2) {
+            if (!hasDragged) {
+              pushHistoryState();
+              hasDragged = true;
+            }
+          }
+          
+          if (hasDragged) {
+            if (isGridSnapActive) {
+              dx = Math.round(dx / 10) * 10;
+              dy = Math.round(dy / 10) * 10;
+            }
+            poly.points.forEach((pt, idx) => {
+              pt.x = startPoints[idx].x + dx;
+              pt.y = startPoints[idx].y + dy;
+            });
+            drawPolygonsRealTime();
+            updateLabelRealTime(poly);
+          }
+        };
+        
+        const onMouseUp = () => {
+          window.removeEventListener('mousemove', onMouseMove);
+          window.removeEventListener('mouseup', onMouseUp);
+          dragStartPos = null;
+          
+          if (hasDragged) {
+            saveCustomPolygons();
+            renderTree();
+            updateTransform();
+          } else {
+            // It was a simple click!
+            if (selectedPolygonId !== poly.id) {
+              selectedPolygonId = poly.id;
+              selectedLineKey = null;
+              selectedJunctionId = null;
+              renderTree();
+              updateTransform();
+              openStyleEditorPanel();
+              setTimeout(() => {
+                document.getElementById('area-editor-section')?.scrollIntoView({ behavior: 'smooth' });
+              }, 300);
+            } else {
+              // Already selected, try to insert a vertex
+              const rect = treeBoard.getBoundingClientRect();
+              const clickX = (e.clientX - rect.left) / currentScale;
+              const clickY = (e.clientY - rect.top) / currentScale;
+              insertVertexOnClosestSegment(poly, clickX, clickY);
+            }
+          }
+        };
+        
+        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mouseup', onMouseUp);
+      });
+    } else {
+      // User mode click listener on the polygon SVG element itself to open study panel
+      polyEl.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openLayerDetails(poly, 'polygon');
+      });
+      polyEl.style.cursor = 'pointer';
     }
     
     // Find top-left-most point for placing the HTML label
@@ -4693,7 +7074,7 @@ function renderCustomPolygons() {
     
     // Create HTML text label on board
     const label = document.createElement('div');
-    label.className = `family-group-label ${baseGroup}`;
+    label.className = `family-group-label ${baseGroup} ${filterClass}`;
     label.id = `label-poly-${poly.id}`;
     const offX = poly.labelOffsetX || 0;
     const offY = poly.labelOffsetY || 0;
@@ -4702,6 +7083,7 @@ function renderCustomPolygons() {
     label.style.color = poly.color;
     label.style.borderColor = poly.color + '40'; // add opacity to border
     label.textContent = poly.label;
+    label.style.display = isLayerVisible ? '' : 'none';
     
     if (isAdminMode) {
       label.style.cursor = isSelected ? 'move' : 'pointer';
@@ -4714,6 +7096,10 @@ function renderCustomPolygons() {
         selectedJunctionId = null;
         renderTree();
         updateTransform();
+        openStyleEditorPanel();
+        setTimeout(() => {
+          document.getElementById('area-editor-section')?.scrollIntoView({ behavior: 'smooth' });
+        }, 300);
       });
 
       // Drag label to adjust title position
@@ -4784,6 +7170,12 @@ function renderCustomPolygons() {
           updateTransform();
         }
       });
+    } else {
+      label.style.cursor = 'pointer';
+      label.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openLayerDetails(poly, 'polygon');
+      });
     }
     
     treeBoard.appendChild(label);
@@ -4798,6 +7190,7 @@ function renderCustomPolygons() {
         handle.style.left = `${pt.x * currentScale}px`;
         handle.style.top = `${pt.y * currentScale}px`;
         handle.title = "드래그하여 정점 이동, 더블클릭 또는 우클릭하여 삭제";
+        handle.style.display = isLayerVisible ? '' : 'none';
         
         handle.addEventListener('mousedown', (e) => {
           e.stopPropagation();
@@ -4813,11 +7206,30 @@ function renderCustomPolygons() {
             let dx = (moveEvt.clientX - dragStartX) / currentScale;
             let dy = (moveEvt.clientY - dragStartY) / currentScale;
             
-            if (moveEvt && moveEvt.shiftKey && (moveEvt.ctrlKey || moveEvt.metaKey)) {
-              if (Math.abs(dx) >= Math.abs(dy)) {
-                dy = 0;
-              } else {
-                dx = 0;
+            if (moveEvt && moveEvt.shiftKey) {
+              const dist = Math.hypot(dx, dy);
+              if (dist > 0) {
+                const angleRad = Math.atan2(dy, dx);
+                let angleDeg = angleRad * (180 / Math.PI);
+                if (angleDeg < 0) angleDeg += 360;
+                const quadrant = Math.floor(angleDeg / 90);
+                const relativeAngle = angleDeg % 90;
+                
+                // Snap to 0, 30, 45, 70, 90
+                const allowedBaseAngles = [0, 30, 45, 70, 90];
+                let closestBase = 0;
+                let minDiff = Infinity;
+                for (const base of allowedBaseAngles) {
+                  const diff = Math.abs(relativeAngle - base);
+                  if (diff < minDiff) {
+                    minDiff = diff;
+                    closestBase = base;
+                  }
+                }
+                const constrainedDeg = (quadrant * 90) + closestBase;
+                const constrainedRad = constrainedDeg * (Math.PI / 180);
+                dx = dist * Math.cos(constrainedRad);
+                dy = dist * Math.sin(constrainedRad);
               }
             }
             
@@ -4939,7 +7351,7 @@ function insertVertexOnClosestSegment(poly, clickX, clickY) {
   return false;
 }
 
-function renderCustomVisualLines(svgNS, recreateClickListeners) {
+function renderCustomVisualLines(svgNS, recreateClickListeners, pathsToDraw) {
   customVisualLines.forEach(line => {
     if (!line || !line.from || !line.to || typeof line.from !== 'string' || typeof line.to !== 'string') return;
     let start = null;
@@ -5068,13 +7480,24 @@ function renderCustomVisualLines(svgNS, recreateClickListeners) {
       pathD = getRoundedCornersPath(vertices, styleSettings.cornerRadius);
     }
     
+    let filterClass = "";
+    if (isFilterModeActive()) {
+      const fromFilter = getElementFilterClass(line.from);
+      const toFilter = getElementFilterClass(line.to);
+      if (fromFilter === "filter-inactive" || toFilter === "filter-inactive") {
+        filterClass = "filter-inactive";
+      }
+    }
+    
     const path = document.createElementNS(svgNS, "path");
     path.setAttribute("d", pathD);
     const lineStyleClass = line.style === 'main' ? 'line-main' : line.style === 'spouse' ? 'line-spouse' : 'line-normal';
-    path.setAttribute("class", `connector-line custom-visual-line ${lineStyleClass} ${selectedLineKey === key ? 'line-highlight' : ''}`);
+    path.setAttribute("class", `connector-line custom-visual-line ${lineStyleClass} ${selectedLineKey === key ? 'line-highlight' : ''} ${filterClass}`);
     path.setAttribute("data-link-id", line.id);
     path.style.pointerEvents = 'none'; // Visible path doesn't capture clicks
-    svgLayer.appendChild(path);
+    if (!pathsToDraw) {
+      svgLayer.appendChild(path);
+    }
     
     // Transparent thick helper path for easy selection
     const helperPath = document.createElementNS(svgNS, "path");
@@ -5082,6 +7505,7 @@ function renderCustomVisualLines(svgNS, recreateClickListeners) {
     helperPath.setAttribute("fill", "none");
     helperPath.setAttribute("stroke", "transparent");
     helperPath.setAttribute("stroke-width", "14");
+    helperPath.setAttribute("class", `custom-visual-line-helper ${filterClass}`);
     helperPath.style.pointerEvents = 'stroke';
     helperPath.style.cursor = 'pointer';
     
@@ -5128,7 +7552,15 @@ function renderCustomVisualLines(svgNS, recreateClickListeners) {
       });
     }
     
-    svgLayer.appendChild(helperPath);
+    if (pathsToDraw) {
+      pathsToDraw.push({
+        key: key,
+        elements: [path, helperPath],
+        zIndex: lineZIndices[key] || 0
+      });
+    } else {
+      svgLayer.appendChild(helperPath);
+    }
     
     // Create drag handles for endpoints of all custom lines in admin edit mode
     if (isAdminMode && isLineEditModeActive) {
@@ -5484,48 +7916,132 @@ function setupZoomPan() {
   });
   resizeObserver.observe(viewerContainer);
   
-  // Intercept wheel events: Figma style zoom (with Ctrl Key / trackpad pinch) and panning (without Ctrl)
-  viewerContainer.addEventListener('wheel', (e) => {
+  // Track global mouse position for centering zoom anchoring
+  let globalMouseX = window.innerWidth / 2;
+  let globalMouseY = window.innerHeight / 2;
+  window.addEventListener('mousemove', (e) => {
+    globalMouseX = e.clientX;
+    globalMouseY = e.clientY;
+  });
+
+  // Helper to determine if wheel/gesture target is inside a scrollable modal/panel
+  function isScrollableOverlay(target) {
+    if (!target) return false;
+    return target.closest('#study-panel') || 
+           target.closest('.layer-control-panel') || 
+           target.closest('#search-panel') || 
+           target.closest('.modal-content') || 
+           target.closest('#style-editor-panel') ||
+           target.closest('#help-guide-modal') ||
+           target.closest('#install-guide-modal') ||
+           target.closest('#desktop-license-modal') ||
+           target.closest('#admin-dashboard-modal');
+  }
+
+  // Intercept wheel events globally on window (ignoring scrollable panels) to prevent dead-zones
+  window.addEventListener('wheel', (e) => {
+    if (isScrollableOverlay(e.target)) {
+      return;
+    }
     e.preventDefault();
     
-    if (e.ctrlKey) {
-      // Zoom
-      const direction = e.deltaY < 0 ? 'in' : 'out';
-      let targetScale = currentScale;
-      if (direction === 'in') targetScale = Math.min(MAX_SCALE, currentScale + ZOOM_STEP);
-      else targetScale = Math.max(MIN_SCALE, currentScale - ZOOM_STEP);
+    if (e.ctrlKey || e.metaKey || e.altKey) {
+      // High-precision smooth zoom with delta clamping for perfect trackpad pinch & mouse wheel feel
+      const maxDelta = 30;
+      const clampedDelta = Math.min(maxDelta, Math.max(-maxDelta, e.deltaY));
+      let nextScale = targetScale * Math.exp(-clampedDelta * 0.005);
+      nextScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, nextScale));
       
-      if (targetScale === currentScale) return;
+      if (nextScale === targetScale) return;
       
       const rect = viewerContainer.getBoundingClientRect();
-      const mouseX = e.clientX - rect.left;
-      const mouseY = e.clientY - rect.top;
+      const mouseX = globalMouseX - rect.left;
+      const mouseY = globalMouseY - rect.top;
       
-      const worldX = (mouseX - panX) / currentScale;
-      const worldY = (mouseY - panY) / currentScale;
+      const worldX = (mouseX - targetPanX) / targetScale;
+      const worldY = (mouseY - targetPanY) / targetScale;
       
-      currentScale = targetScale;
-      zoomLevelText.textContent = `${Math.round(currentScale * 100)}%`;
+      // If we are starting a new zoom gesture, record the start scale
+      if (!isZoomAnimating) {
+        scaleAtAnimationStart = currentScale;
+      }
       
-      panX = mouseX - worldX * currentScale;
-      panY = mouseY - worldY * currentScale;
+      targetScale = nextScale;
+      targetPanX = mouseX - worldX * targetScale;
+      targetPanY = mouseY - worldY * targetScale;
       
-      updateTransform();
+      startZoomAnimation();
     } else {
       // Trackpad Swipe/Mouse Scroll panning
       panX -= e.deltaX;
       panY -= e.deltaY;
-      updateTransform();
+      targetPanX = panX;
+      targetPanY = panY;
+      updateTransform(true);
     }
   }, { passive: false });
+
+  // Native macOS WebKit gesture events for extremely smooth 100% reliable trackpad pinch-to-zoom
+  let gestureStartScale = 1.0;
+  let gestureStartPanX = 0;
+  let gestureStartPanY = 0;
+
+  window.addEventListener('gesturestart', (e) => {
+    if (isScrollableOverlay(e.target)) {
+      return;
+    }
+    e.preventDefault();
+    gestureStartScale = currentScale;
+    gestureStartPanX = panX;
+    gestureStartPanY = panY;
+    scaleAtAnimationStart = currentScale; // Set baseline for updateTransformLightweight calculations
+    isZoomAnimating = false; // stop animation during active gesture tracking
+  });
+
+  window.addEventListener('gesturechange', (e) => {
+    if (isScrollableOverlay(e.target)) {
+      return;
+    }
+    e.preventDefault();
+    const factor = e.scale;
+    const nextScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, gestureStartScale * factor));
+    
+    const rect = viewerContainer.getBoundingClientRect();
+    const mouseX = globalMouseX - rect.left;
+    const mouseY = globalMouseY - rect.top;
+    
+    const worldX = (mouseX - gestureStartPanX) / gestureStartScale;
+    const worldY = (mouseY - gestureStartPanY) / gestureStartScale;
+    
+    currentScale = nextScale;
+    zoomLevelText.textContent = `${Math.round(currentScale * 100)}%`;
+    
+    panX = mouseX - worldX * currentScale;
+    panY = mouseY - worldY * currentScale;
+    
+    targetScale = currentScale;
+    targetPanX = panX;
+    targetPanY = panY;
+    
+    updateTransformLightweight();
+  });
+
+  window.addEventListener('gestureend', (e) => {
+    if (isScrollableOverlay(e.target)) {
+      return;
+    }
+    e.preventDefault();
+    updateTransform();
+  });
   
   let startClickX = 0;
   let startClickY = 0;
   viewerContainer.addEventListener('mousedown', (e) => {
-    if (e.target.closest('.person-card') || e.target.closest('header') || e.target.closest('#control-panel') || e.target.closest('#search-panel') || e.target.closest('#admin-actions-bar') || e.target.closest('.modal-content') || e.target.closest('#style-editor-panel') || e.target.closest('.canvas-annotation')) return;
+    if (e.target.closest('.person-card') || e.target.closest('header') || e.target.closest('#control-panel') || e.target.closest('#search-panel') || e.target.closest('#admin-actions-bar') || e.target.closest('.modal-content') || e.target.closest('#style-editor-panel') || e.target.closest('.canvas-annotation') || e.target.closest('.layer-marker')) return;
     
     // Prevent native selection/drag on background
     e.preventDefault();
+    isZoomAnimating = false; // Stop any ongoing zoom animation when dragging starts
     
     startClickX = e.clientX;
     startClickY = e.clientY;
@@ -5547,6 +8063,10 @@ function setupZoomPan() {
     if (activeAnnotationId) {
       activeAnnotationId = null;
       saveAnnotations();
+      
+      // Final redraw of lines and ports to ensure perfect sync
+      drawConnections();
+      renderJunctions();
     }
     
     // Resize check: save note sizes on mouseup
@@ -5562,9 +8082,19 @@ function setupZoomPan() {
     }
   });
   
-  // Prevent Chrome native drag/select interference
-  viewerContainer.addEventListener('dragstart', (e) => e.preventDefault());
-  viewerContainer.addEventListener('selectstart', (e) => e.preventDefault());
+  // Prevent Chrome native drag/select interference (except inside input/editable controls)
+  viewerContainer.addEventListener('dragstart', (e) => {
+    const targetEl = e.target.nodeType === 3 ? e.target.parentElement : e.target;
+    if (!targetEl) return;
+    if (targetEl.tagName === 'INPUT' || targetEl.tagName === 'TEXTAREA' || targetEl.isContentEditable || (targetEl.closest && targetEl.closest('[contenteditable="true"]'))) return;
+    e.preventDefault();
+  });
+  viewerContainer.addEventListener('selectstart', (e) => {
+    const targetEl = e.target.nodeType === 3 ? e.target.parentElement : e.target;
+    if (!targetEl) return;
+    if (targetEl.tagName === 'INPUT' || targetEl.tagName === 'TEXTAREA' || targetEl.isContentEditable || (targetEl.closest && targetEl.closest('[contenteditable="true"]'))) return;
+    e.preventDefault();
+  });
   
   viewerContainer.addEventListener('mouseleave', () => {
     isDragging = false;
@@ -5573,6 +8103,10 @@ function setupZoomPan() {
     if (activeAnnotationId) {
       activeAnnotationId = null;
       saveAnnotations();
+      
+      // Final redraw of lines and ports to ensure perfect sync
+      drawConnections();
+      renderJunctions();
     }
   });
   
@@ -5628,9 +8162,14 @@ function setupZoomPan() {
         annot.y = annotOriginalY + dy;
         const el = document.getElementById(`annot-${annot.id}`);
         if (el) {
-          el.style.left = `${annot.x}px`;
-          el.style.top = `${annot.y}px`;
+          el.dataset.x = annot.x;
+          el.dataset.y = annot.y;
+          el.style.left = `${annot.x * currentScale}px`;
+          el.style.top = `${annot.y * currentScale}px`;
         }
+        // Redraw connection lines and ports in real-time
+        drawConnections();
+        renderJunctions();
       }
       return;
     }
@@ -5640,11 +8179,108 @@ function setupZoomPan() {
     const dy = e.clientY - startY;
     panX = startPanX + dx;
     panY = startPanY + dy;
-    updateTransform();
+    targetPanX = panX;
+    targetPanY = panY;
+    zoomWrapper.style.transform = `translate3d(${panX}px, ${panY}px, 0)`;
   });
   
   // Mobile Touch Support
+  const onTouchMove = (e) => {
+    const rect = viewerContainer.getBoundingClientRect();
+    if (isTouchZooming && e.touches.length === 2) {
+      e.preventDefault();
+      const currentDist = getTouchDistance(e.touches[0], e.touches[1]);
+      const factor = currentDist / touchStartDistance;
+      const nextScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, touchStartScale * factor));
+      
+      const touchCenterX = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left;
+      const touchCenterY = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top;
+      
+      const worldX = (touchCenterX - touchStartPanX) / touchStartScale;
+      const worldY = (touchCenterY - touchStartPanY) / touchStartScale;
+      
+      currentScale = nextScale;
+      zoomLevelText.textContent = `${Math.round(currentScale * 100)}%`;
+      
+      panX = touchCenterX - worldX * currentScale;
+      panY = touchCenterY - worldY * currentScale;
+      
+      // Keep target coordinates synced for touch zooming (no LERP needed here as fingers do physical easing)
+      targetScale = currentScale;
+      targetPanX = panX;
+      targetPanY = panY;
+      
+      updateTransform();
+    } else if (isDragging && e.touches.length === 1) {
+      e.preventDefault(); // Stop mobile native elastic scrolling and bounce
+      const currentX = e.touches[0].clientX;
+      const currentY = e.touches[0].clientY;
+      const dx = currentX - startX;
+      const dy = currentY - startY;
+      
+      panX = startPanX + dx;
+      panY = startPanY + dy;
+      targetPanX = panX;
+      targetPanY = panY;
+      zoomWrapper.style.transform = `translate3d(${panX}px, ${panY}px, 0)`;
+      
+      const now = Date.now();
+      const dt = now - lastTouchTime;
+      if (dt > 0) {
+        const instantaneousVx = (currentX - lastTouchX) / dt;
+        const instantaneousVy = (currentY - lastTouchY) / dt;
+        velocityX = velocityX * 0.6 + instantaneousVx * 0.4;
+        velocityY = velocityY * 0.6 + instantaneousVy * 0.4;
+      }
+      
+      lastTouchX = currentX;
+      lastTouchY = currentY;
+      lastTouchTime = now;
+    }
+  };
+  
+  const onTouchEnd = (e) => {
+    if (isDragging) {
+      const speed = Math.sqrt(velocityX * velocityX + velocityY * velocityY);
+      if (speed > 0.15) {
+        let lastFrameTime = Date.now();
+        const runInertia = () => {
+          const nowTime = Date.now();
+          const elapsed = nowTime - lastFrameTime;
+          lastFrameTime = nowTime;
+          
+          if (elapsed > 0) {
+            velocityX *= Math.pow(friction, elapsed / 16.67);
+            velocityY *= Math.pow(friction, elapsed / 16.67);
+            
+            const currentSpeed = Math.sqrt(velocityX * velocityX + velocityY * velocityY);
+            if (currentSpeed < 0.05) {
+              stopInertia();
+              return;
+            }
+            
+            panX += velocityX * elapsed;
+            panY += velocityY * elapsed;
+            targetPanX = panX;
+            targetPanY = panY;
+            zoomWrapper.style.transform = `translate3d(${panX}px, ${panY}px, 0)`;
+          }
+          inertiaFrameId = requestAnimationFrame(runInertia);
+        };
+        inertiaFrameId = requestAnimationFrame(runInertia);
+      }
+    }
+    isTouchZooming = false;
+    isDragging = false;
+    
+    window.removeEventListener('touchmove', onTouchMove, { passive: false });
+    window.removeEventListener('touchend', onTouchEnd, { passive: false });
+    window.removeEventListener('touchcancel', onTouchEnd, { passive: false });
+  };
+  
   viewerContainer.addEventListener('touchstart', (e) => {
+    stopInertia();
+    isZoomAnimating = false; // Stop any ongoing zoom animation when touch starts
     const rect = viewerContainer.getBoundingClientRect();
     if (e.touches.length === 2) {
       isTouchZooming = true;
@@ -5658,52 +8294,73 @@ function setupZoomPan() {
       startY = e.touches[0].clientY;
       startPanX = panX;
       startPanY = panY;
+      
+      lastTouchX = e.touches[0].clientX;
+      lastTouchY = e.touches[0].clientY;
+      lastTouchTime = Date.now();
+      velocityX = 0;
+      velocityY = 0;
     }
-  });
-  
-  viewerContainer.addEventListener('touchmove', (e) => {
-    const rect = viewerContainer.getBoundingClientRect();
-    if (isTouchZooming && e.touches.length === 2) {
-      e.preventDefault();
-      const currentDist = getTouchDistance(e.touches[0], e.touches[1]);
-      const factor = currentDist / touchStartDistance;
-      const targetScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, touchStartScale * factor));
-      
-      const touchCenterX = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left;
-      const touchCenterY = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top;
-      
-      const worldX = (touchCenterX - touchStartPanX) / touchStartScale;
-      const worldY = (touchCenterY - touchStartPanY) / touchStartScale;
-      
-      currentScale = targetScale;
-      zoomLevelText.textContent = `${Math.round(currentScale * 100)}%`;
-      
-      panX = touchCenterX - worldX * currentScale;
-      panY = touchCenterY - worldY * currentScale;
-      
-      updateTransform();
-    } else if (isDragging && e.touches.length === 1) {
-      e.preventDefault(); // Stop mobile native elastic scrolling and bounce
-      const dx = e.touches[0].clientX - startX;
-      const dy = e.touches[0].clientY - startY;
-      panX = startPanX + dx;
-      panY = startPanY + dy;
-      updateTransform();
-    }
-  });
-  
-  viewerContainer.addEventListener('touchend', () => {
-    isTouchZooming = false;
-    isDragging = false;
-  });
+    
+    window.addEventListener('touchmove', onTouchMove, { passive: false });
+    window.addEventListener('touchend', onTouchEnd, { passive: false });
+    window.addEventListener('touchcancel', onTouchEnd, { passive: false });
+  }, { passive: false });
 
   viewerContainer.addEventListener('click', (e) => {
     // Ignore click if the user was dragging/panning the board
     const clickDist = Math.sqrt(Math.pow(e.clientX - startClickX, 2) + Math.pow(e.clientY - startClickY, 2));
     if (clickDist > 6) return;
 
-    // If a card or line is selected in Admin Mode, clicking empty space clears it
+    if (isAdminMode && activeSpawnerItem) {
+      if (e.target.closest('header') || e.target.closest('#control-panel') || e.target.closest('#search-panel') || e.target.closest('#admin-actions-bar') || e.target.closest('.modal-content') || e.target.closest('#style-editor-panel') || e.target.closest('.bottom-spawner-panel')) return;
+      
+      const rect = treeBoard.getBoundingClientRect();
+      const clickX = (e.clientX - rect.left) / currentScale;
+      const clickY = (e.clientY - rect.top) / currentScale;
+      
+      pushHistoryState();
+      
+      if (activeSpawnerType === 'location') {
+        const newLoc = {
+          id: 'loc-' + Date.now(),
+          name: activeSpawnerItem.name,
+          desc: activeSpawnerItem.desc || '',
+          refs: activeSpawnerItem.refs ? [...activeSpawnerItem.refs] : [],
+          relatedEvents: activeSpawnerItem.relatedEvents ? [...activeSpawnerItem.relatedEvents] : [],
+          relatedPeople: activeSpawnerItem.relatedPeople ? [...activeSpawnerItem.relatedPeople] : [],
+          x: Math.round(clickX),
+          y: Math.round(clickY)
+        };
+        locations.push(newLoc);
+        saveLocations();
+        renderLocations();
+        showToast(`📍 '${activeSpawnerItem.name}' 장소가 복사되어 배치되었습니다.`);
+      } else if (activeSpawnerType === 'event') {
+        const newEv = {
+          id: 'ev-' + Date.now(),
+          name: activeSpawnerItem.name,
+          desc: activeSpawnerItem.desc || '',
+          refs: activeSpawnerItem.refs ? [...activeSpawnerItem.refs] : [],
+          relatedLocations: activeSpawnerItem.relatedLocations ? [...activeSpawnerItem.relatedLocations] : [],
+          relatedPeople: activeSpawnerItem.relatedPeople ? [...activeSpawnerItem.relatedPeople] : [],
+          x: Math.round(clickX),
+          y: Math.round(clickY)
+        };
+        events.push(newEv);
+        saveEvents();
+        renderEvents();
+        showToast(`📜 '${activeSpawnerItem.name}' 사건이 복사되어 배치되었습니다.`);
+      }
+      
+      cancelPlacementMode();
+      autoSaveToServer();
+      return;
+    }
+
     const clickedEmptySpace = !e.target.closest('.person-card') && 
+                              !e.target.closest('.layer-marker') && 
+                              !e.target.closest('#study-panel') && 
                               !e.target.closest('header') && 
                               !e.target.closest('#control-panel') && 
                               !e.target.closest('#search-panel') && 
@@ -5719,14 +8376,20 @@ function setupZoomPan() {
                               !e.target.closest('.spouse-connector') && 
                               !e.target.closest('.connector-line');
                               
-    if (clickedEmptySpace && (selectedPersonId || selectedPersonIds.size > 0 || selectedLineKey || selectedJunctionId || selectedPolygonId)) {
-      selectedPersonId = null;
-      selectedPersonIds.clear();
-      selectedLineKey = null;
-      selectedJunctionId = null;
-      selectedPolygonId = null;
-      document.querySelectorAll('.canvas-junction-node').forEach(n => n.classList.remove('selected-junction'));
-      renderTree();
+    if (clickedEmptySpace) {
+      if (selectedPersonId || selectedPersonIds.size > 0 || selectedLineKey || selectedJunctionId || selectedPolygonId) {
+        selectedPersonId = null;
+        selectedPersonIds.clear();
+        selectedLineKey = null;
+        selectedJunctionId = null;
+        selectedPolygonId = null;
+        document.querySelectorAll('.canvas-junction-node').forEach(n => n.classList.remove('selected-junction'));
+        renderTree();
+      }
+      closeStudyPanel();
+      closeStyleEditorPanel();
+      document.getElementById('filter-panel')?.classList.remove('active');
+      clearAllHighlights();
     }
 
     if (isAddPolygonModeActive) {
@@ -5786,6 +8449,40 @@ function setupZoomPan() {
       return;
     }
     
+    if (isAddAnnotationModeActive) {
+      if (e.target.closest('header') || e.target.closest('#control-panel') || e.target.closest('#search-panel') || e.target.closest('#admin-actions-bar') || e.target.closest('.modal-content') || e.target.closest('#style-editor-panel')) return;
+      
+      const dist = Math.hypot(e.clientX - startClickX, e.clientY - startClickY);
+      if (dist > 5) return;
+      
+      const rect = treeBoard.getBoundingClientRect();
+      const clickX = (e.clientX - rect.left) / currentScale;
+      const clickY = (e.clientY - rect.top) / currentScale;
+      
+      pushHistoryState();
+      
+      const newNote = {
+        id: `note-${Date.now()}`,
+        text: "새 텍스트 상자\n(클릭하여 편집)",
+        x: Math.round(clickX - 100),
+        y: Math.round(clickY - 30),
+        width: 200,
+        height: 60,
+        fontSize: 14,
+        bold: false,
+        color: "#1e293b",
+        bgColor: "#ffffff"
+      };
+      
+      annotations.push(newNote);
+      saveAnnotations();
+      renderAnnotations();
+      deactivateAddAnnotationMode();
+      autoSaveToServer();
+      showToast("📝 텍스트 상자가 성공적으로 생성되었습니다.");
+      return;
+    }
+    
     if (!isAddPersonModeActive) return;
     if (e.target.closest('.person-card') || e.target.closest('header') || e.target.closest('#control-panel') || e.target.closest('#search-panel') || e.target.closest('#admin-actions-bar') || e.target.closest('.modal-content') || e.target.closest('#style-editor-panel') || e.target.closest('.canvas-annotation')) return;
     
@@ -5814,18 +8511,61 @@ function getTouchDistance(t1, t2) {
   return Math.sqrt(dx * dx + dy * dy);
 }
 
-function applyZoom(direction) {
-  let targetScale = currentScale;
-  if (direction === 'in') targetScale = Math.min(MAX_SCALE, currentScale + ZOOM_STEP);
-  if (direction === 'out') targetScale = Math.max(MIN_SCALE, currentScale - ZOOM_STEP);
-  if (direction === 'reset') targetScale = 1.0;
+function updateTransformLightweight() {
+  const scaleFactor = currentScale / scaleAtAnimationStart;
+  zoomWrapper.style.transform = `translate3d(${panX}px, ${panY}px, 0) scale(${scaleFactor})`;
+  zoomWrapper.style.transformOrigin = '0 0';
+}
+
+function startZoomAnimation() {
+  if (isZoomAnimating) return;
+  isZoomAnimating = true;
   
-  if (targetScale === currentScale && direction !== 'reset') return;
+  function step() {
+    if (!isZoomAnimating) return;
+    
+    const dScale = targetScale - currentScale;
+    const dPanX = targetPanX - panX;
+    const dPanY = targetPanY - panY;
+    
+    // If extremely close, snap to targets and stop
+    if (Math.abs(dScale) < 0.001 && Math.abs(dPanX) < 0.1 && Math.abs(dPanY) < 0.1) {
+      currentScale = targetScale;
+      panX = targetPanX;
+      panY = targetPanY;
+      zoomLevelText.textContent = `${Math.round(currentScale * 100)}%`;
+      
+      // Reset zoomWrapper's temporary scale factor (as updateTransform will draw elements at targetScale)
+      zoomWrapper.style.transform = `translate3d(${panX}px, ${panY}px, 0)`;
+      updateTransform();
+      isZoomAnimating = false;
+      return;
+    }
+    
+    currentScale += dScale * 0.5;
+    panX += dPanX * 0.5;
+    panY += dPanY * 0.5;
+    
+    zoomLevelText.textContent = `${Math.round(currentScale * 100)}%`;
+    updateTransformLightweight();
+    
+    requestAnimationFrame(step);
+  }
+  
+  requestAnimationFrame(step);
+}
+
+function applyZoom(direction) {
+  let nextScale = currentScale;
+  if (direction === 'in') nextScale = Math.min(MAX_SCALE, currentScale + ZOOM_STEP);
+  if (direction === 'out') nextScale = Math.max(MIN_SCALE, currentScale - ZOOM_STEP);
+  if (direction === 'reset') nextScale = 1.0;
+  
+  if (nextScale === currentScale && direction !== 'reset') return;
   
   let containerCenterX = viewerContainer.clientWidth / 2;
   let containerCenterY = viewerContainer.clientHeight / 2;
   
-  // Fallback if container is not fully rendered yet
   if (containerCenterX === 0) {
     containerCenterX = window.innerWidth / 2;
     containerCenterY = (window.innerHeight - 80) / 2;
@@ -5834,43 +8574,71 @@ function applyZoom(direction) {
   const worldX = (containerCenterX - panX) / currentScale;
   const worldY = (containerCenterY - panY) / currentScale;
   
-  currentScale = targetScale;
-  zoomLevelText.textContent = `${Math.round(currentScale * 100)}%`;
+  if (!isZoomAnimating) {
+    scaleAtAnimationStart = currentScale;
+  }
+  targetScale = nextScale;
   
   if (direction === 'reset') {
-    centerOnNode('adam');
+    const coords = coordinates['adam'];
+    if (coords) {
+      targetPanX = containerCenterX - coords.x * targetScale;
+      targetPanY = containerCenterY - coords.y * targetScale;
+    } else {
+      targetPanX = containerCenterX - worldX * targetScale;
+      targetPanY = containerCenterY - worldY * targetScale;
+    }
+    initialCentered = true;
   } else {
-    panX = containerCenterX - worldX * currentScale;
-    panY = containerCenterY - worldY * currentScale;
+    targetPanX = containerCenterX - worldX * targetScale;
+    targetPanY = containerCenterY - worldY * targetScale;
+  }
+  
+  startZoomAnimation();
+}
+
+function centerOnCoords(x, y) {
+  let containerCenterX = viewerContainer.clientWidth / 2;
+  let containerCenterY = viewerContainer.clientHeight / 2;
+  
+  if (containerCenterX === 0) {
+    containerCenterX = window.innerWidth / 2;
+    containerCenterY = (window.innerHeight - 80) / 2;
+  }
+  
+  const targetX = containerCenterX - x * currentScale;
+  const targetY = containerCenterY - y * currentScale;
+  
+  if (!initialCentered) {
+    panX = targetX;
+    panY = targetY;
+    targetPanX = targetX;
+    targetPanY = targetY;
     updateTransform();
+  } else {
+    if (!isZoomAnimating) {
+      scaleAtAnimationStart = currentScale;
+    }
+    targetPanX = targetX;
+    targetPanY = targetY;
+    startZoomAnimation();
   }
 }
 
 function centerOnNode(nodeId) {
   const coords = coordinates[nodeId];
   if (!coords) return;
-  
-  let containerCenterX = viewerContainer.clientWidth / 2;
-  let containerCenterY = viewerContainer.clientHeight / 2;
-  
-  // Fallback if container is not fully rendered yet
-  if (containerCenterX === 0) {
-    containerCenterX = window.innerWidth / 2;
-    containerCenterY = (window.innerHeight - 80) / 2;
-  }
-  
-  panX = containerCenterX - coords.x * currentScale;
-  panY = containerCenterY - coords.y * currentScale;
-  
-  updateTransform();
+  centerOnCoords(coords.x, coords.y);
 }
 
-function updateTransform() {
-  // Pan zoomWrapper (No composite scale or zoom, 100% texture safe!)
-  zoomWrapper.style.left = `${panX}px`;
-  zoomWrapper.style.top = `${panY}px`;
-  zoomWrapper.style.transform = 'none';
+function updateTransform(onlyPan = false) {
+  // Pan zoomWrapper (Using translate3d for GPU-composited, zero-lag rendering!)
+  zoomWrapper.style.transform = `translate3d(${panX}px, ${panY}px, 0)`;
   zoomWrapper.style.zoom = 'normal';
+  
+  if (onlyPan) {
+    return;
+  }
   
   // Set dimensions on board and wrapper based on scale
   const scaledWidth = boardWidth * currentScale;
@@ -5881,9 +8649,17 @@ function updateTransform() {
   zoomWrapper.style.height = `${scaledHeight}px`;
   
   // Update SVG layer size and viewBox (which scales the paths automatically!)
-  svgLayer.style.width = `${scaledWidth}px`;
-  svgLayer.style.height = `${scaledHeight}px`;
-  svgLayer.setAttribute("viewBox", `0 0 ${boardWidth} ${boardHeight}`);
+  if (svgLayer) {
+    svgLayer.style.width = `${scaledWidth}px`;
+    svgLayer.style.height = `${scaledHeight}px`;
+    svgLayer.setAttribute("viewBox", `0 0 ${boardWidth} ${boardHeight}`);
+  }
+  const polygonsLayer = document.getElementById('svg-polygons-layer');
+  if (polygonsLayer) {
+    polygonsLayer.style.width = `${scaledWidth}px`;
+    polygonsLayer.style.height = `${scaledHeight}px`;
+    polygonsLayer.setAttribute("viewBox", `0 0 ${boardWidth} ${boardHeight}`);
+  }
   
   // Scale cards
   const cards = treeBoard.querySelectorAll('.person-card');
@@ -5902,6 +8678,23 @@ function updateTransform() {
     card.style.transformOrigin = '50% 50%';
   });
   
+  // Scale markers (Events and Locations)
+  const markers = treeBoard.querySelectorAll('.layer-marker');
+  markers.forEach(marker => {
+    let item;
+    if (marker.id.startsWith('event-')) {
+      item = events.find(e => e.id === marker.id.replace('event-', ''));
+    } else {
+      item = locations.find(l => l.id === marker.id.replace('location-', ''));
+    }
+    if (item) {
+      marker.style.left = `${item.x * currentScale}px`;
+      marker.style.top = `${item.y * currentScale}px`;
+      marker.style.transform = `translate(-50%, -50%) scale(${currentScale})`;
+      marker.style.transformOrigin = '50% 50%';
+    }
+  });
+
   // Scale annotations
   const annots = treeBoard.querySelectorAll('.canvas-annotation');
   annots.forEach(annot => {
@@ -6010,36 +8803,601 @@ function updateTransform() {
       label.style.transformOrigin = '0 50%';
     });
   }
+
+  // Safari SVG filter compatibility check (now observed once during drawing)
+}
+
+// SVG glow path MutationObserver (safely duplicates highlighted lines in background for 100% Safari/WebKit compatibility)
+const highlightObserver = new MutationObserver((mutationsList) => {
+  for (const mutation of mutationsList) {
+    if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+      const target = mutation.target;
+      const isHighlighted = target.classList.contains('line-highlight');
+      
+      if (target.classList.contains('spouse-connector')) {
+        const spouseIdsAttr = target.getAttribute('data-spouse-ids');
+        if (spouseIdsAttr) {
+          const ids = spouseIdsAttr.split(',');
+          const circle = document.getElementById(`circle-${ids[0]}-${ids[1]}`) || 
+                         document.getElementById(`circle-${ids[1]}-${ids[0]}`);
+          if (circle) {
+            if (isHighlighted) {
+              circle.classList.add('line-highlight');
+            } else {
+              circle.classList.remove('line-highlight');
+            }
+          }
+        }
+      }
+      
+      const lineKey = target.getAttribute('data-line-key') || target.getAttribute('d') || '';
+      const sanitizedKey = lineKey.replace(/[^a-zA-Z0-9-]/g, '');
+      const glowId = `glow-${target.id || 'path'}-${sanitizedKey}`;
+      let glowPath = document.getElementById(glowId);
+      
+      if (isHighlighted) {
+        if (!glowPath) {
+          glowPath = target.cloneNode(false);
+          glowPath.id = glowId;
+          glowPath.setAttribute('class', 'connector-line-glow');
+          glowPath.setAttribute('stroke', '#ff7a00'); // Beautiful orange aura color
+          glowPath.setAttribute('stroke-width', '11px');
+          glowPath.setAttribute('opacity', '0.45');
+          glowPath.setAttribute('fill', 'none');
+          glowPath.setAttribute('stroke-linecap', 'round');
+          glowPath.removeAttribute('filter');
+          glowPath.removeAttribute('stroke-dasharray');
+          glowPath.style.animation = 'none';
+          
+          // Insert right behind the main highlighted path so it draws underneath
+          const parent = target.parentNode;
+          if (parent) {
+            parent.insertBefore(glowPath, target);
+          }
+        }
+      } else {
+        if (glowPath) {
+          glowPath.remove();
+        }
+      }
+    }
+  }
+});
+
+function observeAllConnectorPaths() {
+  document.querySelectorAll('.connector-line, .spouse-connector, .preacher-line, .custom-visual-line').forEach(el => {
+    highlightObserver.observe(el, { attributes: true, attributeFilter: ['class'] });
+  });
+}
+
+// Descendants helper functions
+function getDescendants(charId, set) {
+  if (set.has(charId)) return;
+  set.add(charId);
+  db.forEach(c => {
+    if (c.parents && c.parents.includes(charId)) {
+      getDescendants(c.id, set);
+    }
+  });
+}
+
+function getDirectLineage(charId) {
+  const lineage = new Set();
+  getAncestors(charId, lineage);
+  getDescendants(charId, lineage);
+  return lineage;
+}
+
+// Relationship Highlighting Helper Functions
+function clearAllHighlights() {
+  document.querySelectorAll('.person-card.highlight, .layer-marker.highlight, .canvas-annotation.highlight, .canvas-junction-node.highlight').forEach(el => {
+    el.classList.remove('highlight');
+  });
+  document.querySelectorAll('.connector-line.line-highlight, .spouse-connector.line-highlight, .spouse-node-circle.line-highlight').forEach(el => {
+    el.classList.remove('line-highlight');
+  });
+  if (treeBoard) treeBoard.classList.remove('relationship-highlight-active');
+  if (viewerContainer) viewerContainer.classList.remove('relationship-highlight-active');
+}
+
+function highlightRelatedElementsForAnnotation(annot) {
+  if (isAdminMode) return;
+  const toggle = document.getElementById('toggle-relationship-highlight');
+  if (toggle && !toggle.checked) return;
+
+  // 1. Clear previous highlights
+  clearAllHighlights();
+  if (treeBoard) treeBoard.classList.add('relationship-highlight-active');
+  if (viewerContainer) viewerContainer.classList.add('relationship-highlight-active');
+  
+  // Highlight the annotation itself
+  const annotEl = document.getElementById(`annot-${annot.id}`);
+  if (annotEl) annotEl.classList.add('highlight');
+  
+  const text = (annot.text || '').trim();
+  
+  // Helper to safely clean string and match Korean names
+  const safeContains = (textVal, name) => {
+    if (!textVal || !name) return false;
+    const cleanText = textVal.replace(/\s*\([A-Za-z0-9\s,\.'"-]+\)/g, '').trim().toLowerCase();
+    const cleanName = name.replace(/\s*\([A-Za-z0-9\s,\.'"-]+\)/g, '').trim().toLowerCase();
+    return cleanText.includes(cleanName) || cleanName.includes(cleanText);
+  };
+  
+  // 2. Text-based Matching: Highlight people, events, and locations containing or contained by annotation text
+  if (text) {
+    db.forEach(person => {
+      if (safeContains(text, person.name)) {
+        const el = document.getElementById(`card-${person.id}`);
+        if (el) el.classList.add('highlight');
+      }
+    });
+    
+    events.forEach(ev => {
+      if (safeContains(text, ev.name)) {
+        const el = document.getElementById(`event-${ev.id}`);
+        if (el) el.classList.add('highlight');
+      }
+    });
+    
+    locations.forEach(loc => {
+      if (safeContains(text, loc.name)) {
+        const el = document.getElementById(`location-${loc.id}`);
+        if (el) el.classList.add('highlight');
+      }
+    });
+  }
+  
+  // 3. Connection-based Matching (lines connected to this annotation)
+  customVisualLines.forEach(line => {
+    const targetId = `annot-${annot.id}`;
+    let connectedElId = null;
+    let lineKey = null;
+    
+    if (line.from === targetId) {
+      connectedElId = line.to;
+      lineKey = `${line.from}-${line.to}`;
+    } else if (line.to === targetId) {
+      connectedElId = line.from;
+      lineKey = `${line.from}-${line.to}`;
+    }
+    
+    if (connectedElId) {
+      let el = null;
+      if (connectedElId.startsWith('card-')) {
+        const charId = connectedElId.replace('card-', '');
+        el = document.getElementById(`card-${charId}`);
+      } else if (connectedElId.startsWith('event-')) {
+        const evId = connectedElId.replace('event-', '');
+        el = document.getElementById(`event-${evId}`);
+      } else if (connectedElId.startsWith('location-')) {
+        const locId = connectedElId.replace('location-', '');
+        el = document.getElementById(`location-${locId}`);
+      } else if (connectedElId.startsWith('annot-')) {
+        const annotId = connectedElId.replace('annot-', '');
+        el = document.getElementById(`annot-${annotId}`);
+      }
+      
+      if (el) el.classList.add('highlight');
+      
+      const pathEl = document.querySelector(`path[data-line-key="${lineKey}"]`);
+      if (pathEl) pathEl.classList.add('line-highlight');
+    }
+  });
+  
+  // 4. Explicit Relation Matching (selected via 🔗 button)
+  if (annot.relatedPeople && Array.isArray(annot.relatedPeople)) {
+    annot.relatedPeople.forEach(ref => {
+      const el = document.getElementById(`card-${ref}`) || document.getElementById(`card-${db.find(p => p.name === ref)?.id}`);
+      if (el) el.classList.add('highlight');
+    });
+  }
+  
+  if (annot.relatedEvents && Array.isArray(annot.relatedEvents)) {
+    annot.relatedEvents.forEach(ref => {
+      const el = document.getElementById(`event-${ref}`);
+      if (el) el.classList.add('highlight');
+    });
+  }
+  
+  if (annot.relatedLocations && Array.isArray(annot.relatedLocations)) {
+    annot.relatedLocations.forEach(ref => {
+      const el = document.getElementById(`location-${ref}`);
+      if (el) el.classList.add('highlight');
+    });
+  }
+}
+
+function highlightRelatedElements(itemId, itemType) {
+  if (isAdminMode) return;
+  const toggle = document.getElementById('toggle-relationship-highlight');
+  if (toggle && !toggle.checked) return;
+
+  // 1. Clear previous highlights
+  clearAllHighlights();
+  if (treeBoard) treeBoard.classList.add('relationship-highlight-active');
+  if (viewerContainer) viewerContainer.classList.add('relationship-highlight-active');
+
+  // 2. Find target item
+  let targetItem = null;
+  if (itemType === 'person') {
+    targetItem = db.find(c => c.id === itemId);
+  } else if (itemType === 'event') {
+    targetItem = events.find(e => e.id === itemId);
+  } else if (itemType === 'location') {
+    targetItem = locations.find(l => l.id === itemId);
+  } else if (itemType === 'polygon') {
+    targetItem = customPolygons.find(p => p.id === itemId);
+  }
+  
+  if (!targetItem) return;
+
+  // Highlight target itself
+  if (itemType === 'person') {
+    const el = document.getElementById(`card-${itemId}`);
+    if (el) el.classList.add('highlight');
+  } else if (itemType === 'polygon') {
+    const el = document.getElementById(`svg-poly-${itemId}`);
+    if (el) el.classList.add('highlight');
+    const labelEl = document.getElementById(`label-poly-${itemId}`);
+    if (labelEl) labelEl.classList.add('highlight');
+  } else {
+    const el = document.getElementById(`${itemType}-${itemId}`);
+    if (el) el.classList.add('highlight');
+  }
+
+  // Helper to safely clean string and match Korean names/locations
+  const safeContains = (text, name) => {
+    if (!text || !name) return false;
+    return text.includes(name);
+  };
+
+  // Helper to check explicit array values
+  const hasExplicitRelation = (arr, val1, val2) => {
+    if (!arr || !Array.isArray(arr)) return false;
+    return (val1 && arr.includes(val1)) || (val2 && arr.includes(val2));
+  };
+
+  // 3. Highlight based on relationship type
+  if (itemType === 'event') {
+    // Highlight related people
+    db.forEach(person => {
+      const isRelated = 
+        safeContains(targetItem.name, person.name) ||
+        safeContains(targetItem.desc, person.name) ||
+        safeContains(person.desc, targetItem.name) ||
+        (targetItem.refs && targetItem.refs.some(r => safeContains(r, person.name))) ||
+        hasExplicitRelation(targetItem.relatedPeople, person.id, person.name);
+      
+      if (isRelated) {
+        const el = document.getElementById(`card-${person.id}`);
+        if (el) el.classList.add('highlight');
+      }
+    });
+
+    // Highlight related locations
+    locations.forEach(loc => {
+      const isRelated = 
+        safeContains(targetItem.name, loc.name) ||
+        safeContains(targetItem.desc, loc.name) ||
+        safeContains(loc.desc, targetItem.name) ||
+        hasExplicitRelation(targetItem.relatedLocations, loc.id, loc.name) ||
+        hasExplicitRelation(loc.relatedEvents, targetItem.id, targetItem.name);
+      
+      if (isRelated) {
+        const el = document.getElementById(`location-${loc.id}`);
+        if (el) el.classList.add('highlight');
+      }
+    });
+  } 
+  else if (itemType === 'location') {
+    // Highlight related people
+    db.forEach(person => {
+      const isRelated = 
+        safeContains(targetItem.name, person.name) ||
+        safeContains(targetItem.desc, person.name) ||
+        safeContains(person.desc, targetItem.name) ||
+        hasExplicitRelation(targetItem.relatedPeople, person.id, person.name);
+      
+      if (isRelated) {
+        const el = document.getElementById(`card-${person.id}`);
+        if (el) el.classList.add('highlight');
+      }
+    });
+
+    // Highlight related events
+    events.forEach(ev => {
+      const isRelated = 
+        safeContains(ev.name, targetItem.name) ||
+        safeContains(ev.desc, targetItem.name) ||
+        safeContains(targetItem.desc, ev.name) ||
+        hasExplicitRelation(targetItem.relatedEvents, ev.id, ev.name) ||
+        hasExplicitRelation(ev.relatedLocations, targetItem.id, targetItem.name);
+      
+      if (isRelated) {
+        const el = document.getElementById(`event-${ev.id}`);
+        if (el) el.classList.add('highlight');
+      }
+    });
+  }
+  else if (itemType === 'person') {
+    // Highlight related events
+    events.forEach(ev => {
+      const isRelated = 
+        safeContains(ev.name, targetItem.name) ||
+        safeContains(ev.desc, targetItem.name) ||
+        safeContains(targetItem.desc, ev.name) ||
+        (ev.refs && ev.refs.some(r => safeContains(r, targetItem.name))) ||
+        hasExplicitRelation(ev.relatedPeople, targetItem.id, targetItem.name) ||
+        hasExplicitRelation(targetItem.relatedEvents, ev.id, ev.name);
+      
+      if (isRelated) {
+        const el = document.getElementById(`event-${ev.id}`);
+        if (el) el.classList.add('highlight');
+      }
+    });
+
+    // Highlight related locations
+    locations.forEach(loc => {
+      const isRelated = 
+        safeContains(loc.name, targetItem.name) ||
+        safeContains(loc.desc, targetItem.name) ||
+        safeContains(targetItem.desc, loc.name) ||
+        hasExplicitRelation(loc.relatedPeople, targetItem.id, targetItem.name) ||
+        hasExplicitRelation(targetItem.relatedLocations, loc.id, loc.name);
+      
+      if (isRelated) {
+        const el = document.getElementById(`location-${loc.id}`);
+        if (el) el.classList.add('highlight');
+      }
+    });
+
+    // Highlight direct lineage (ancestors and descendants)
+    const lineage = getDirectLineage(itemId);
+    lineage.forEach(id => {
+      const el = document.getElementById(`card-${id}`);
+      if (el) el.classList.add('highlight');
+    });
+
+    // Highlight connection lines for direct lineage members
+    document.querySelectorAll('.connector-line').forEach(path => {
+      const childId = path.getAttribute('data-child-id');
+      if (childId && lineage.has(childId)) {
+        path.classList.add('line-highlight');
+      }
+    });
+    
+    document.querySelectorAll('.spouse-connector').forEach(path => {
+      const spouseIdsAttr = path.getAttribute('data-spouse-ids');
+      if (spouseIdsAttr) {
+        const ids = spouseIdsAttr.split(',');
+        if (ids.every(id => lineage.has(id))) {
+          path.classList.add('line-highlight');
+        }
+      }
+    });
+
+    document.querySelectorAll('.spouse-node-circle').forEach(circle => {
+      const spouseIdsAttr = circle.getAttribute('data-spouse-ids');
+      if (spouseIdsAttr) {
+        const ids = spouseIdsAttr.split(',');
+        if (ids.every(id => lineage.has(id))) {
+          circle.classList.add('line-highlight');
+        }
+      }
+    });
+  }
+  else if (itemType === 'polygon') {
+    if (targetItem.points && targetItem.points.length >= 3) {
+      // Highlight characters geometrically inside (applying tribe keywords)
+      db.forEach(char => {
+        const coords = coordinates[char.id];
+        if (coords && isPointInPolygon(coords, targetItem.points)) {
+          let isTribeMatch = true;
+          const charTribe = getTribeId(char.id);
+          if (targetItem.label) {
+            for (const [kw, tId] of Object.entries(TRIBE_KEYWORDS)) {
+              if (targetItem.label.includes(kw)) {
+                if (charTribe && charTribe !== tId) {
+                  isTribeMatch = false;
+                }
+                break;
+              }
+            }
+          }
+          if (isTribeMatch) {
+            const card = document.getElementById(`card-${char.id}`);
+            if (card) card.classList.add('highlight');
+          }
+        }
+      });
+      
+      // Highlight events geometrically inside
+      events.forEach(ev => {
+        if (ev.x !== undefined && ev.y !== undefined && isPointInPolygon(ev, targetItem.points)) {
+          const el = document.getElementById(`event-${ev.id}`);
+          if (el) el.classList.add('highlight');
+        }
+      });
+      
+      // Highlight locations geometrically inside
+      locations.forEach(loc => {
+        if (loc.x !== undefined && loc.y !== undefined && isPointInPolygon(loc, targetItem.points)) {
+          const el = document.getElementById(`location-${loc.id}`);
+          if (el) el.classList.add('highlight');
+        }
+      });
+    }
+  }
 }
 
 // Setup Search
 function setupSearch() {
+  const searchResults = document.getElementById('search-results');
+  
+  let savedPanX = panX;
+  let savedPanY = panY;
+  let savedScale = currentScale;
+
+  searchInput.addEventListener('focus', () => {
+    savedPanX = panX;
+    savedPanY = panY;
+    savedScale = currentScale;
+  });
+
   searchInput.addEventListener('input', (e) => {
     const query = e.target.value.trim().toLowerCase();
     
-    document.querySelectorAll('.person-card.highlight').forEach(el => {
+    document.querySelectorAll('.person-card.highlight, .layer-marker.highlight, .canvas-annotation.highlight, .canvas-junction-node.highlight').forEach(el => {
       el.classList.remove('highlight');
     });
     
-    if (!query) return;
+    if (searchResults) {
+      searchResults.innerHTML = '';
+      searchResults.style.display = 'none';
+    }
     
-    const matched = db.find(char => 
-      char.name.toLowerCase().includes(query) || 
-      char.engName.toLowerCase().includes(query)
-    );
+    if (!query) {
+      clearAllHighlights();
+      panX = savedPanX;
+      panY = savedPanY;
+      currentScale = savedScale;
+      updateTransform();
+      return;
+    }
     
-    if (matched) {
-      const card = document.getElementById(`card-${matched.id}`);
-      if (card) {
-        card.classList.add('highlight');
-        centerOnNode(matched.id);
+    // Combine data sources based on active legend layer checkboxes
+    const showPeople = document.getElementById('toggle-layer-people')?.checked !== false;
+    const showEvents = document.getElementById('toggle-layer-events')?.checked !== false;
+    const showLocations = document.getElementById('toggle-layer-locations')?.checked !== false;
+    
+    const combinedData = [
+      ...(showPeople ? db.map(c => ({...c, dataType: 'person'})) : []),
+      ...(showEvents ? events.map(e => ({...e, dataType: 'event'})) : []),
+      ...(showLocations ? locations.map(l => ({...l, dataType: 'location'})) : [])
+    ];
+    
+    // Find the best match, prioritizing exact match -> starts-with match -> contains match
+    let partialMatch = combinedData.find(item => item.name.toLowerCase() === query);
+    if (!partialMatch) {
+      partialMatch = combinedData.find(item => item.engName && item.engName.toLowerCase() === query);
+    }
+    if (!partialMatch) {
+      partialMatch = combinedData.find(item => item.name.toLowerCase().startsWith(query));
+    }
+    if (!partialMatch) {
+      partialMatch = combinedData.find(item => 
+        item.name.toLowerCase().includes(query) || 
+        (item.engName && item.engName.toLowerCase().includes(query))
+      );
+    }
+    
+    if (partialMatch) {
+      if (partialMatch.dataType === 'person') {
+        const card = document.getElementById(`card-${partialMatch.id}`);
+        if (card) {
+          card.classList.add('highlight');
+          centerOnNode(partialMatch.id);
+        }
+      } else {
+        const marker = document.getElementById(`${partialMatch.dataType}-${partialMatch.id}`);
+        if (marker) {
+          marker.classList.add('highlight');
+          centerOnCoords(partialMatch.x, partialMatch.y);
+        }
       }
+    }
+
+    // Next, check for EXACT namesakes to populate the dropdown
+    const exactMatches = combinedData.filter(item => item.name === query);
+    
+    // Only show dropdown if they typed a full name that has multiple identical matches
+    if (exactMatches.length > 1 && searchResults) {
+      searchResults.style.display = 'block';
+      exactMatches.forEach(matched => {
+        const li = document.createElement('li');
+        li.className = 'search-result-item';
+        
+        let parentInfo = '';
+        if (matched.dataType === 'person' && matched.parents && matched.parents.length > 0) {
+          const parentId = matched.parents[0];
+          const parent = db.find(p => p.id === parentId);
+          if (parent) {
+            parentInfo = `<span class="parent-info">(${parent.name}의 자녀)</span>`;
+          }
+        } else if (matched.dataType === 'event') {
+          parentInfo = `<span class="parent-info">(📜 사건)</span>`;
+        } else if (matched.dataType === 'location') {
+          parentInfo = `<span class="parent-info">(📍 장소)</span>`;
+        }
+        
+        const displayName = matched.dataType === 'person' ? matched.name : cleanLayerName(matched.name);
+        li.innerHTML = `<strong>${displayName}</strong> ${parentInfo}`;
+        
+        li.addEventListener('click', () => {
+          searchInput.value = matched.name;
+          searchResults.style.display = 'none';
+          
+          document.querySelectorAll('.person-card.highlight, .layer-marker.highlight').forEach(el => {
+            el.classList.remove('highlight');
+          });
+          
+          if (matched.dataType === 'person') {
+            const card = document.getElementById(`card-${matched.id}`);
+            if (card) {
+              card.classList.add('highlight');
+              centerOnNode(matched.id);
+            }
+          } else {
+            const marker = document.getElementById(`${matched.dataType}-${matched.id}`);
+            if (marker) {
+              marker.classList.add('highlight');
+              centerOnCoords(matched.x, matched.y);
+            }
+          }
+        });
+        
+        searchResults.appendChild(li);
+      });
     }
   });
   
   searchInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
       searchInput.blur();
+    }
+  });
+
+  document.addEventListener('click', (e) => {
+    if (searchResults && !searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+      searchResults.style.display = 'none';
+    }
+
+    // 1. Lineage Filter Panel (#filter-panel) auto close when clicking outside
+    const filterPanel = document.getElementById('filter-panel');
+    if (filterPanel && filterPanel.classList.contains('active')) {
+      if (!e.target.closest('#filter-panel') && !e.target.closest('#filter-panel-toggle')) {
+        filterPanel.classList.remove('active');
+      }
+    }
+
+    // 2. Personal Study/Memo Panel (#study-panel) auto close when clicking outside
+    const studyPanel = document.getElementById('study-panel');
+    if (studyPanel && studyPanel.classList.contains('active')) {
+      const isClickInsideStudyPanel = e.target.closest('#study-panel');
+      const isClickOnTrigger = 
+        e.target.closest('.person-card') || 
+        e.target.closest('.layer-marker') || 
+        e.target.closest('.canvas-annotation') ||
+        e.target.closest('#control-panel') ||
+        e.target.closest('#main-header') ||
+        e.target.closest('#search-panel') ||
+        e.target.closest('.modal-content') ||
+        e.target.closest('.toast');
+        
+      if (!isClickInsideStudyPanel && !isClickOnTrigger) {
+        closeStudyPanel();
+      }
     }
   });
 }
@@ -6061,31 +9419,109 @@ function setupStudyPanel() {
     const noteContent = noteTextarea.value.trim();
     
     if (noteContent) {
-      localStorage.setItem(`bible_tree_note_${activePersonId}`, noteContent);
+      userNotes[activePersonId] = noteContent;
     } else {
-      localStorage.removeItem(`bible_tree_note_${activePersonId}`);
+      delete userNotes[activePersonId];
     }
+    saveUserNotes();
     
     const card = document.getElementById(`card-${activePersonId}`);
     if (card) {
       let badge = card.querySelector('.card-note-badge');
       if (noteContent) {
         if (!badge) {
-          const body = card.querySelector('.card-body');
           const badgeEl = document.createElement('div');
           badgeEl.className = 'card-note-badge';
           badgeEl.title = '메모 있음';
           badgeEl.textContent = '📝';
-          body.appendChild(badgeEl);
+          card.appendChild(badgeEl);
         }
       } else {
         if (badge) {
           badge.remove();
         }
       }
+    } else {
+      const annotEl = document.getElementById(`annot-${activePersonId}`);
+      if (annotEl) {
+        let badge = annotEl.querySelector('.annot-note-badge');
+        if (noteContent) {
+          if (!badge) {
+            const badgeEl = document.createElement('div');
+            badgeEl.className = 'annot-note-badge';
+            badgeEl.title = '메모 있음';
+            badgeEl.textContent = '📝';
+            badgeEl.style.position = 'absolute';
+            badgeEl.style.top = '-8px';
+            badgeEl.style.right = '-8px';
+            badgeEl.style.fontSize = '12px';
+            badgeEl.style.zIndex = '100';
+            annotEl.appendChild(badgeEl);
+          }
+        } else {
+          if (badge) {
+            badge.remove();
+          }
+        }
+      }
     }
     
     closeStudyPanel();
+  });
+  
+  // Auto-save note on input in real-time
+  noteTextarea.addEventListener('input', () => {
+    if (!activePersonId) return;
+    
+    const noteContent = noteTextarea.value.trim();
+    if (noteContent) {
+      userNotes[activePersonId] = noteContent;
+    } else {
+      delete userNotes[activePersonId];
+    }
+    saveUserNotes();
+    
+    // Update badge on card or annotation
+    const card = document.getElementById(`card-${activePersonId}`);
+    if (card) {
+      let badge = card.querySelector('.card-note-badge');
+      if (noteContent) {
+        if (!badge) {
+          const badgeEl = document.createElement('div');
+          badgeEl.className = 'card-note-badge';
+          badgeEl.title = '메모 있음';
+          badgeEl.textContent = '📝';
+          card.appendChild(badgeEl);
+        }
+      } else {
+        if (badge) {
+          badge.remove();
+        }
+      }
+    } else {
+      const annotEl = document.getElementById(`annot-${activePersonId}`);
+      if (annotEl) {
+        let badge = annotEl.querySelector('.annot-note-badge');
+        if (noteContent) {
+          if (!badge) {
+            const badgeEl = document.createElement('div');
+            badgeEl.className = 'annot-note-badge';
+            badgeEl.title = '메모 있음';
+            badgeEl.textContent = '📝';
+            badgeEl.style.position = 'absolute';
+            badgeEl.style.top = '-8px';
+            badgeEl.style.right = '-8px';
+            badgeEl.style.fontSize = '12px';
+            badgeEl.style.zIndex = '100';
+            annotEl.appendChild(badgeEl);
+          }
+        } else {
+          if (badge) {
+            badge.remove();
+          }
+        }
+      }
+    }
   });
   
   addResourceBtn.addEventListener('click', () => {
@@ -6110,29 +9546,39 @@ function setupStudyPanel() {
 }
 
 function openStudyPanel(personId) {
-  if (isAdminMode) return; // Prevent study panel from blocking edits in admin mode
-  
   activePersonId = personId;
+  activeStudyPanelType = 'person';
   const char = db.find(c => c.id === personId);
   if (!char) return;
+  
+  const infoTitleEl = document.getElementById('panel-info-title');
+  if (infoTitleEl) infoTitleEl.textContent = '성경 속 인물 정보';
   
   document.getElementById('panel-name').textContent = char.name;
   document.getElementById('panel-eng').textContent = `${char.engName} (${char.gender === 'M' ? '남성' : '여성'})`;
   document.getElementById('panel-desc').textContent = char.desc || '정보가 없습니다.';
   
   const noteTextarea = document.getElementById('note-text');
-  const savedNote = localStorage.getItem(`bible_tree_note_${personId}`) || '';
+  const savedNote = userNotes[personId] || '';
   noteTextarea.value = savedNote;
   
   const resources = JSON.parse(localStorage.getItem(`bible_tree_resources_${personId}`)) || [];
   renderResourcesList(resources);
   
   studyPanel.classList.add('active');
+  highlightRelatedElements(personId, 'person');
 }
 
 function closeStudyPanel() {
   studyPanel.classList.remove('active');
   activePersonId = null;
+  activeStudyPanelType = null;
+  clearAllHighlights();
+  
+  if (wasOpenedFromFilter) {
+    wasOpenedFromFilter = false;
+    document.getElementById('filter-panel')?.classList.add('active');
+  }
 }
 
 function renderResourcesList(resources) {
@@ -6184,7 +9630,12 @@ function setupThemeToggle() {
 
 function updateThemeIcon(theme) {
   const toggleBtn = document.getElementById('theme-toggle');
-  toggleBtn.textContent = theme === 'dark' ? '☀️' : '🌙';
+  if (!toggleBtn) return;
+  if (theme === 'dark') {
+    toggleBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+  } else {
+    toggleBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>`;
+  }
 }
 
 function updateStats() {
@@ -6200,15 +9651,36 @@ function updateStats() {
 // ==========================================
 
 function setupAdminMode() {
-  adminLockBtn.addEventListener('click', () => {
+  adminLockBtn.addEventListener('click', async () => {
     if (isAdminMode) {
       exitAdminMode();
+      cachedAdminPassword = '';
     } else {
-      const pw = prompt("관리자 비밀번호를 입력하세요 (기본값: admin):", "");
-      if (pw === 'admin') {
+      if (currentUser && currentUser.status === 'admin') {
+        // If already authenticated via standard web login
+        cachedAdminPassword = 'admin'; 
         enterAdminMode();
-      } else if (pw !== null) {
-        alert("비밀번호가 올바르지 않습니다.");
+      } else {
+        const pw = prompt("관리자 비밀번호를 입력하세요:", "");
+        if (pw === null) return;
+        
+        try {
+          const apiBase = window.API_BASE_URL || "";
+          const res = await fetch(apiBase + '/api/admin/verify-password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password: pw })
+          });
+          if (res.ok) {
+            cachedAdminPassword = pw;
+            enterAdminMode();
+          } else {
+            const data = await res.json();
+            alert(data.error || "비밀번호가 올바르지 않습니다.");
+          }
+        } catch (e) {
+          alert("서버 연결 실패. 네트워크 상태를 확인하세요.");
+        }
       }
     }
   });
@@ -6222,28 +9694,44 @@ function setupAdminMode() {
   });
 
   adminAddNoteBtn.addEventListener('click', () => {
-    const containerCenterX = viewerContainer.clientWidth / 2;
-    const containerCenterY = viewerContainer.clientHeight / 2;
-    const worldX = (containerCenterX - panX) / currentScale;
-    const worldY = (containerCenterY - panY) / currentScale;
-    
-    const newNote = {
-      id: `note-${Date.now()}`,
-      text: "새 텍스트 상자\n(클릭하여 편집)",
-      x: Math.round(worldX - 100),
-      y: Math.round(worldY - 30),
-      width: 200,
-      height: 60,
-      fontSize: 14,
-      bold: false,
-      color: "#1e293b",
-      bgColor: "#ffffff"
-    };
-    
-    annotations.push(newNote);
-    saveAnnotations();
-    renderAnnotations();
+    if (isAddAnnotationModeActive) {
+      deactivateAddAnnotationMode();
+    } else {
+      activateAddAnnotationMode();
+    }
   });
+
+  if (adminAddEventBtn) {
+    adminAddEventBtn.addEventListener('click', () => {
+      let containerCenterX = viewerContainer.clientWidth / 2;
+      let containerCenterY = viewerContainer.clientHeight / 2;
+      if (containerCenterX === 0) {
+        containerCenterX = window.innerWidth / 2;
+        containerCenterY = (window.innerHeight - 80) / 2;
+      }
+      const worldX = (containerCenterX - panX) / currentScale;
+      const worldY = (containerCenterY - panY) / currentScale;
+      newLayerItemCoords = { x: Math.round(worldX), y: Math.round(worldY) };
+      
+      openLayerItemAddForm('event');
+    });
+  }
+
+  if (adminAddLocationBtn) {
+    adminAddLocationBtn.addEventListener('click', () => {
+      let containerCenterX = viewerContainer.clientWidth / 2;
+      let containerCenterY = viewerContainer.clientHeight / 2;
+      if (containerCenterX === 0) {
+        containerCenterX = window.innerWidth / 2;
+        containerCenterY = (window.innerHeight - 80) / 2;
+      }
+      const worldX = (containerCenterX - panX) / currentScale;
+      const worldY = (containerCenterY - panY) / currentScale;
+      newLayerItemCoords = { x: Math.round(worldX), y: Math.round(worldY) };
+      
+      openLayerItemAddForm('location');
+    });
+  }
 
   if (adminAddLinkBtn) {
     adminAddLinkBtn.addEventListener('click', () => {
@@ -6299,7 +9787,8 @@ function setupAdminMode() {
       saveAnnotations();
       saveStyleSettings();
       saveCustomPolygons();
-      showToast("💾 모든 편집 내용이 브라우저에 안전하게 영구 저장되었습니다!");
+      autoSaveToServer();
+      showToast("💾 모든 편집 내용이 브라우저 및 서버에 안전하게 영구 저장되었습니다!");
     });
   }
 
@@ -6313,6 +9802,10 @@ function setupAdminMode() {
   }
 
   adminExportBtn.addEventListener('click', exportDatabaseJSON);
+  
+  if (adminSyncBtn) {
+    adminSyncBtn.addEventListener('click', syncToServer);
+  }
 
   adminImportBtn.addEventListener('click', () => {
     importFileInput.click();
@@ -6485,7 +9978,123 @@ function setupAdminMode() {
     });
   }
 
+  // Layout Alignment Tools
+  const alignHeightBtn = document.getElementById('admin-align-height-btn');
+  if (alignHeightBtn) {
+    alignHeightBtn.addEventListener('click', alignSelectedHeights);
+  }
+  const distributeWidthBtn = document.getElementById('admin-distribute-width-btn');
+  if (distributeWidthBtn) {
+    distributeWidthBtn.addEventListener('click', distributeSelectedWidths);
+  }
+  const distributeHeightBtn = document.getElementById('admin-distribute-height-btn');
+  if (distributeHeightBtn) {
+    distributeHeightBtn.addEventListener('click', distributeSelectedHeights);
+  }
+
   setupAutocomplete();
+}
+
+function alignSelectedHeights() {
+  if (selectedPersonIds.size < 2) {
+    showToast("📐 높이를 맞출 카드를 2개 이상 선택해 주세요. (Shift 키를 누른 채 클릭)");
+    return;
+  }
+  
+  pushHistoryState();
+  
+  const firstId = Array.from(selectedPersonIds)[0];
+  const firstChar = db.find(c => c.id === firstId);
+  if (!firstChar) return;
+  
+  const targetGen = firstChar.generation;
+  
+  selectedPersonIds.forEach(id => {
+    const char = db.find(c => c.id === id);
+    if (char) {
+      char.generation = targetGen;
+      char.isManual = true;
+    }
+  });
+  
+  saveDatabase();
+  initBoard();
+  renderTree();
+  showToast("📐 선택한 카드들의 높이가 동일하게 맞추어졌습니다.");
+}
+
+function distributeSelectedWidths() {
+  if (selectedPersonIds.size < 2) {
+    showToast("↔️ 간격을 맞출 카드를 2개 이상 선택해 주세요.");
+    return;
+  }
+  
+  pushHistoryState();
+  
+  const sortedChars = Array.from(selectedPersonIds)
+    .map(id => db.find(c => c.id === id))
+    .filter(Boolean)
+    .sort((a, b) => a.column - b.column);
+    
+  if (sortedChars.length >= 3) {
+    const leftCol = sortedChars[0].column;
+    const rightCol = sortedChars[sortedChars.length - 1].column;
+    const span = rightCol - leftCol;
+    const gap = span / (sortedChars.length - 1);
+    
+    sortedChars.forEach((char, idx) => {
+      char.column = parseFloat((leftCol + idx * gap).toFixed(3));
+      char.isManual = true;
+    });
+    showToast("↔️ 선택한 카드들 간의 간격이 균등하게 분배되었습니다.");
+  } else if (sortedChars.length === 2) {
+    // Set a standard 2.0 column gap
+    const leftCol = sortedChars[0].column;
+    sortedChars[1].column = parseFloat((leftCol + 2.0).toFixed(3));
+    sortedChars[1].isManual = true;
+    showToast("↔️ 두 카드 간의 간격을 기본 크기(2열)로 정렬했습니다.");
+  }
+  
+  saveDatabase();
+  initBoard();
+  renderTree();
+}
+
+function distributeSelectedHeights() {
+  if (selectedPersonIds.size < 2) {
+    showToast("↕️ 세로 간격을 맞출 카드를 2개 이상 선택해 주세요. (Shift 키를 누른 채 클릭)");
+    return;
+  }
+  
+  pushHistoryState();
+  
+  const sortedChars = Array.from(selectedPersonIds)
+    .map(id => db.find(c => c.id === id))
+    .filter(Boolean)
+    .sort((a, b) => a.generation - b.generation);
+    
+  if (sortedChars.length >= 3) {
+    const topGen = sortedChars[0].generation;
+    const bottomGen = sortedChars[sortedChars.length - 1].generation;
+    const span = bottomGen - topGen;
+    const gap = span / (sortedChars.length - 1);
+    
+    sortedChars.forEach((char, idx) => {
+      char.generation = parseFloat((topGen + idx * gap).toFixed(3));
+      char.isManual = true;
+    });
+    showToast("↕️ 선택한 카드들 간의 세로 간격이 균등하게 분배되었습니다.");
+  } else if (sortedChars.length === 2) {
+    // Set a standard 1.0 generation gap
+    const topGen = sortedChars[0].generation;
+    sortedChars[1].generation = parseFloat((topGen + 1.0).toFixed(3));
+    sortedChars[1].isManual = true;
+    showToast("↕️ 두 카드 간의 세로 간격을 기본 크기(1세대)로 정렬했습니다.");
+  }
+  
+  saveDatabase();
+  initBoard();
+  renderTree();
 }
 
 function setupAutocomplete() {
@@ -6540,9 +10149,125 @@ function setupAutocomplete() {
   
   if (parentsInput && parentsSug) handleInput(parentsInput, parentsSug);
   if (spousesInput && spousesSug) handleInput(spousesInput, spousesSug);
+  
+  const teachersInput = document.getElementById('form-teachers');
+  const teachersSug = document.getElementById('teachers-suggestions');
+  if (teachersInput && teachersSug) handleInput(teachersInput, teachersSug);
+
+  // Layer Item Autocomplete
+  const layerPeopleInput = document.getElementById('layer-item-people');
+  const layerPeopleSug = document.getElementById('layer-item-people-suggestions');
+  const layerEventsInput = document.getElementById('layer-item-events');
+  const layerEventsSug = document.getElementById('layer-item-events-suggestions');
+  const layerLocationsInput = document.getElementById('layer-item-locations');
+  const layerLocationsSug = document.getElementById('layer-item-locations-suggestions');
+
+  function handleLayerInput(inputEl, suggestionsEl, dataSource) {
+    if (!inputEl || !suggestionsEl) return;
+    inputEl.addEventListener('input', () => {
+      const val = inputEl.value;
+      const parts = val.split(',');
+      const currentTerm = parts[parts.length - 1].trim().toLowerCase();
+      
+      if (currentTerm.length === 0) {
+        suggestionsEl.style.display = 'none';
+        return;
+      }
+      
+      const matches = dataSource.filter(item => 
+        item.id.toLowerCase().includes(currentTerm) || 
+        item.name.toLowerCase().includes(currentTerm)
+      ).slice(0, 5);
+      
+      if (matches.length === 0) {
+        suggestionsEl.style.display = 'none';
+        return;
+      }
+      
+      suggestionsEl.innerHTML = '';
+      matches.forEach(match => {
+        const item = document.createElement('div');
+        item.className = 'suggestion-item';
+        item.innerHTML = `<span>${match.name}</span><span class="sug-id">${match.id}</span>`;
+        item.addEventListener('click', () => {
+          parts[parts.length - 1] = ` ${match.id}`;
+          inputEl.value = parts.join(',').trim();
+          suggestionsEl.style.display = 'none';
+          inputEl.focus();
+        });
+        suggestionsEl.appendChild(item);
+      });
+      suggestionsEl.style.display = 'block';
+    });
+    
+    document.addEventListener('click', (e) => {
+      if (e.target !== inputEl && e.target !== suggestionsEl && !suggestionsEl.contains(e.target)) {
+        suggestionsEl.style.display = 'none';
+      }
+    });
+  }
+
+  if (layerPeopleInput && layerPeopleSug) handleLayerInput(layerPeopleInput, layerPeopleSug, db);
+  if (layerEventsInput && layerEventsSug) handleLayerInput(layerEventsInput, layerEventsSug, events);
+  if (layerLocationsInput && layerLocationsSug) handleLayerInput(layerLocationsInput, layerLocationsSug, locations);
+}
+
+function activateAddAnnotationMode() {
+  deactivateAddPersonMode();
+  deactivateAddLinkMode();
+  deactivateAddPolygonMode();
+  cancelPlacementMode();
+  
+  isAddAnnotationModeActive = true;
+  adminAddNoteBtn.classList.add('active-tool');
+  if (adminAddNoteBtn) {
+    adminAddNoteBtn.innerHTML = '❌ 추가 취소';
+    adminAddNoteBtn.classList.add('danger');
+  }
+  viewerContainer.style.cursor = 'crosshair';
+  
+  // Create a ghost outline following the cursor
+  const ghost = document.createElement('div');
+  ghost.id = 'note-ghost-preview';
+  ghost.style.position = 'fixed';
+  ghost.style.width = '200px';
+  ghost.style.height = '60px';
+  ghost.style.border = '2px dashed var(--text-accent)';
+  ghost.style.borderRadius = '8px';
+  ghost.style.background = 'rgba(168, 85, 247, 0.1)';
+  ghost.style.pointerEvents = 'none';
+  ghost.style.transform = 'translate(-50%, -50%)';
+  ghost.style.zIndex = '9999';
+  document.body.appendChild(ghost);
+  
+  const onMouseMove = (e) => {
+    if (!isAddAnnotationModeActive) {
+      document.removeEventListener('mousemove', onMouseMove);
+      return;
+    }
+    ghost.style.left = `${e.clientX}px`;
+    ghost.style.top = `${e.clientY}px`;
+  };
+  document.addEventListener('mousemove', onMouseMove);
+  
+  showToast("📝 보드 위의 원하는 위치를 클릭(터치)하면 텍스트 상자가 즉시 생성됩니다.");
+}
+
+function deactivateAddAnnotationMode() {
+  isAddAnnotationModeActive = false;
+  adminAddNoteBtn.classList.remove('active-tool');
+  if (adminAddNoteBtn) {
+    adminAddNoteBtn.innerHTML = '📝 텍스트 상자 추가';
+    adminAddNoteBtn.classList.remove('danger');
+  }
+  viewerContainer.style.cursor = 'grab';
+  
+  const ghost = document.getElementById('note-ghost-preview');
+  if (ghost) ghost.remove();
 }
 
 function activateAddPersonMode() {
+  deactivateAddAnnotationMode();
   isAddPersonModeActive = true;
   adminAddBtn.innerHTML = '❌ 추가 취소';
   adminAddBtn.classList.add('danger');
@@ -6563,6 +10288,7 @@ function deactivateAddPersonMode() {
 }
 
 function activateAddLinkMode() {
+  deactivateAddAnnotationMode();
   isAddLinkModeActive = true;
   linkSourceId = null;
   if (adminAddLinkBtn) {
@@ -6599,6 +10325,7 @@ function deactivateAddPolygonMode() {
 }
 
 function activateAddPolygonMode() {
+  deactivateAddAnnotationMode();
   if (isAddLinkModeActive) deactivateAddLinkMode();
   if (isAddPersonModeActive) deactivateAddPersonMode();
   
@@ -6647,6 +10374,10 @@ function completePolygonCreation() {
   selectedPolygonId = polyId;
   renderTree();
   updateTransform();
+  openStyleEditorPanel();
+  setTimeout(() => {
+    document.getElementById('area-editor-section')?.scrollIntoView({ behavior: 'smooth' });
+  }, 300);
   showToast(`"${name}" 영역이 추가되었습니다.`);
 }
 
@@ -6697,6 +10428,15 @@ function enterAdminMode() {
   const lineSec = document.getElementById('line-editor-section');
   if (lineSec) lineSec.style.display = 'block';
   
+  const toggleBtn = document.getElementById('spawner-panel-toggle-btn');
+  if (toggleBtn) {
+    toggleBtn.style.display = 'flex';
+  }
+  const spawnerPanel = document.getElementById('bottom-spawner-panel');
+  if (spawnerPanel) {
+    spawnerPanel.style.display = 'none';
+  }
+  
   treeBoard.classList.add('admin-mode-active');
   closeStudyPanel();
   closeStyleEditorPanel();
@@ -6716,9 +10456,16 @@ function exitAdminMode() {
   selectedLineKey = null;
   selectedPolygonId = null;
   
+  const spawnerPanel = document.getElementById('bottom-spawner-panel');
+  if (spawnerPanel) spawnerPanel.style.display = 'none';
+  const toggleBtn = document.getElementById('spawner-panel-toggle-btn');
+  if (toggleBtn) toggleBtn.style.display = 'none';
+  cancelPlacementMode();
+  
   deactivateAddPersonMode();
   deactivateAddLinkMode();
   deactivateAddPolygonMode();
+  deactivateAddAnnotationMode();
   
   treeBoard.classList.remove('admin-mode-active');
   closeStyleEditorPanel();
@@ -6761,6 +10508,8 @@ function openAdminForm(personId) {
       if (parentsInput) parentsInput.value = char.parents ? char.parents.join(', ') : '';
       const spousesInput = document.getElementById('form-spouses');
       if (spousesInput) spousesInput.value = char.spouses ? char.spouses.join(', ') : '';
+      const teachersInput = document.getElementById('form-teachers');
+      if (teachersInput) teachersInput.value = char.teachers ? char.teachers.join(', ') : '';
       const descInput = document.getElementById('form-desc');
       if (descInput) descInput.value = char.desc || '';
       const mainCheckbox = document.getElementById('form-main');
@@ -6788,6 +10537,8 @@ function openAdminForm(personId) {
     if (genInput) genInput.value = 0;
     const colInput = document.getElementById('form-col');
     if (colInput) colInput.value = 0;
+    const teachersInput = document.getElementById('form-teachers');
+    if (teachersInput) teachersInput.value = '';
   }
   
   if (modalEl) modalEl.style.display = 'flex';
@@ -6853,8 +10604,23 @@ function saveAdminForm() {
   
   for (let pId of parents) {
     if (!db.some(c => c.id === pId)) {
-      alert(`부모 ID '${pId}'가 데이터베이스에 존재하지 않습니다.`);
-      return;
+      if (confirm(`부모 ID '${pId}'가 존재하지 않습니다. 이 ID로 새 인물을 생성하시겠습니까?`)) {
+        db.push({
+          id: pId,
+          name: pId,
+          engName: '',
+          gender: 'M',
+          generation: Math.max(0, generation - 1),
+          column: column,
+          parents: [],
+          spouses: [],
+          desc: "자동 생성된 부모",
+          isMain: false,
+          isManual: true
+        });
+      } else {
+        return;
+      }
     }
   }
   if (parents.length > 2) {
@@ -6864,11 +10630,50 @@ function saveAdminForm() {
   
   for (let sId of spouses) {
     if (!db.some(c => c.id === sId)) {
-      alert(`배우자 ID '${sId}'가 데이터베이스에 존재하지 않습니다.`);
-      return;
+      if (confirm(`배우자 ID '${sId}'가 존재하지 않습니다. 이 ID로 새 인물을 생성하시겠습니까?`)) {
+        db.push({
+          id: sId,
+          name: sId,
+          engName: '',
+          gender: gender === 'M' ? 'F' : 'M',
+          generation: generation,
+          column: column + 1.5,
+          parents: [],
+          spouses: [],
+          desc: "자동 생성된 배우자",
+          isMain: false,
+          isManual: true
+        });
+      } else {
+        return;
+      }
     }
   }
   
+  const teachersInput = document.getElementById('form-teachers').value.trim();
+  const teachers = teachersInput ? teachersInput.split(',').map(s => s.trim()).filter(s => s.length > 0) : [];
+  
+  for (let tId of teachers) {
+    if (!db.some(c => c.id === tId)) {
+      if (confirm(`전도자 ID '${tId}'가 존재하지 않습니다. 이 ID로 새 인물을 생성하시겠습니까?`)) {
+        db.push({
+          id: tId,
+          name: tId,
+          engName: '',
+          gender: 'M',
+          generation: Math.max(0, generation - 1),
+          column: column - 1.5,
+          parents: [],
+          spouses: [],
+          desc: "자동 생성된 전도자/스승",
+          isMain: false,
+          isManual: true
+        });
+      } else {
+        return;
+      }
+    }
+  }
 
   pushHistoryState();
   if (editingPersonId) {
@@ -6885,6 +10690,7 @@ function saveAdminForm() {
         column,
         parents,
         spouses,
+        teachers,
         desc,
         isMain,
         isManual: true
@@ -6924,6 +10730,7 @@ function saveAdminForm() {
       column,
       parents,
       spouses,
+      teachers,
       desc,
       isMain,
       isManual: true
@@ -6970,6 +10777,10 @@ function deletePerson(personId) {
   
   localStorage.removeItem(`bible_tree_note_${personId}`);
   localStorage.removeItem(`bible_tree_resources_${personId}`);
+  if (userNotes && userNotes[personId]) {
+    delete userNotes[personId];
+    saveUserNotes();
+  }
   
   customVisualLines = customVisualLines.filter(l => l.from !== personId && l.to !== personId);
   saveCustomVisualLines();
@@ -7285,6 +11096,7 @@ function exportDatabaseJSON() {
     version: "14.0",
     db: db,
     lineBends: lineBends,
+    lineZIndices: lineZIndices,
     customVisualLines: customVisualLines,
     canvasJunctions: canvasJunctions,
     spouseSplits: spouseSplits,
@@ -7306,6 +11118,102 @@ function exportDatabaseJSON() {
   URL.revokeObjectURL(url);
 }
 
+async function syncToServer() {
+  const adminPw = prompt("서버에 배포하기 위한 관리자 비밀번호를 입력하세요:", "");
+  if (!adminPw) return;
+
+  const btn = document.getElementById('admin-sync-btn');
+  const originalText = btn.innerText;
+  btn.innerText = "배포 중... ⏳";
+  btn.disabled = true;
+
+  const exportData = {
+    version: "15.0",
+    db: db,
+    lineBends: lineBends,
+    lineZIndices: lineZIndices,
+    customVisualLines: customVisualLines,
+    canvasJunctions: canvasJunctions,
+    spouseSplits: spouseSplits,
+    annotations: annotations,
+    styleSettings: styleSettings,
+    customPolygons: customPolygons,
+    events: events,
+    locations: locations
+  };
+
+  try {
+    const response = await fetch('/api/save', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + userToken
+      },
+      body: JSON.stringify({
+        password: adminPw,
+        payload: exportData
+      })
+    });
+
+    const result = await response.json();
+    if (result.success) {
+      alert("성공적으로 서버에 배포되었습니다! 이제 다른 사용자들도 새로고침 시 변경사항을 볼 수 있습니다.");
+    } else {
+      alert("배포 실패: " + (result.error || "알 수 없는 오류"));
+    }
+  } catch (err) {
+    console.error(err);
+    alert("서버 연결 실패. 네트워크 상태를 확인하거나 백엔드 서버가 켜져 있는지 확인하세요.");
+  } finally {
+    btn.innerText = originalText;
+    btn.disabled = false;
+  }
+}
+
+async function autoSaveToServer() {
+  if (!isAdminMode || !cachedAdminPassword) return;
+
+  const exportData = {
+    version: "15.0",
+    db: db,
+    lineBends: lineBends,
+    lineZIndices: lineZIndices,
+    customVisualLines: customVisualLines,
+    canvasJunctions: canvasJunctions,
+    spouseSplits: spouseSplits,
+    annotations: annotations,
+    styleSettings: styleSettings,
+    customPolygons: customPolygons,
+    events: events,
+    locations: locations
+  };
+
+  try {
+    const response = await fetch('/api/save', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + userToken
+      },
+      body: JSON.stringify({
+        password: cachedAdminPassword,
+        payload: exportData
+      })
+    });
+
+    const result = await response.json();
+    if (result.success) {
+      showToast("자동 저장 완료 ✓");
+    } else {
+      console.error("Auto-save failed:", result.error);
+      showToast("⚠️ 자동 저장 실패");
+    }
+  } catch (err) {
+    console.error("Auto-save connection error:", err);
+    showToast("⚠️ 자동 저장 서버 연결 실패");
+  }
+}
+
 function importDatabaseJSON(e) {
   const file = e.target.files[0];
   if (!file) return;
@@ -7321,6 +11229,7 @@ function importDatabaseJSON(e) {
       let importedCustomVisualLines = null;
       let importedCanvasJunctions = null;
       let importedSpouseSplits = null;
+      let importedLineZIndices = null;
       let importedAnnotations = null;
       let importedStyleSettings = null;
       let importedCustomPolygons = null;
@@ -7332,6 +11241,7 @@ function importDatabaseJSON(e) {
         }
         importedDb = parsed.db;
         importedLineBends = parsed.lineBends || {};
+        importedLineZIndices = parsed.lineZIndices || {};
         importedCustomVisualLines = parsed.customVisualLines || [];
         importedCanvasJunctions = parsed.canvasJunctions || [];
         importedSpouseSplits = parsed.spouseSplits || {};
@@ -7362,6 +11272,7 @@ function importDatabaseJSON(e) {
       localStorage.removeItem('bible_tree_last_center_x');
       db = importedDb;
       if (importedLineBends !== null) lineBends = importedLineBends;
+      if (importedLineZIndices !== null) lineZIndices = importedLineZIndices;
       if (importedCustomVisualLines !== null) customVisualLines = importedCustomVisualLines;
       if (importedCanvasJunctions !== null) canvasJunctions = importedCanvasJunctions;
       if (importedSpouseSplits !== null) spouseSplits = importedSpouseSplits;
@@ -7375,6 +11286,7 @@ function importDatabaseJSON(e) {
       // 2. Save everything to localStorage
       saveDatabase();
       saveLineBends();
+      if (importedLineZIndices !== null) saveLineZIndices();
       saveCustomVisualLines();
       saveCanvasJunctions();
       saveSpouseSplits();
@@ -7416,10 +11328,14 @@ function setupStyleEditor() {
   stylePanelClose.addEventListener('click', closeStyleEditorPanel);
   
   // Real-time Style Controls Binding
+  // Real-time Style Controls Binding
   inputLineColor.addEventListener('input', (e) => {
     styleSettings.lineColor = e.target.value;
     document.documentElement.style.setProperty('--line-color', styleSettings.lineColor);
     saveStyleSettings();
+  });
+  inputLineColor.addEventListener('change', () => {
+    autoSaveToServer();
   });
   
   inputMainLineColor.addEventListener('input', (e) => {
@@ -7427,18 +11343,38 @@ function setupStyleEditor() {
     document.documentElement.style.setProperty('--line-main-color', styleSettings.mainLineColor);
     saveStyleSettings();
   });
+  inputMainLineColor.addEventListener('change', () => {
+    autoSaveToServer();
+  });
   
   inputSpouseLineColor.addEventListener('input', (e) => {
     styleSettings.spouseLineColor = e.target.value;
     document.documentElement.style.setProperty('--spouse-line-color', styleSettings.spouseLineColor);
     saveStyleSettings();
   });
+  inputSpouseLineColor.addEventListener('change', () => {
+    autoSaveToServer();
+  });
+
+  if (inputPreacherLineColor) {
+    inputPreacherLineColor.addEventListener('input', (e) => {
+      styleSettings.preacherLineColor = e.target.value;
+      document.documentElement.style.setProperty('--preacher-line-color', styleSettings.preacherLineColor);
+      saveStyleSettings();
+    });
+    inputPreacherLineColor.addEventListener('change', () => {
+      autoSaveToServer();
+    });
+  }
   
   inputLineWidth.addEventListener('input', (e) => {
     styleSettings.lineWidth = parseInt(e.target.value);
     document.documentElement.style.setProperty('--line-width', `${styleSettings.lineWidth}px`);
     labelLineWidth.textContent = `${styleSettings.lineWidth}px`;
     saveStyleSettings();
+  });
+  inputLineWidth.addEventListener('change', () => {
+    autoSaveToServer();
   });
   
   inputCornerRadius.addEventListener('input', (e) => {
@@ -7449,6 +11385,9 @@ function setupStyleEditor() {
     // Curved coordinates require redrawing elements (lines paths string recalculations)
     renderTree();
   });
+  inputCornerRadius.addEventListener('change', () => {
+    autoSaveToServer();
+  });
   
   inputSplitOffset.addEventListener('input', (e) => {
     styleSettings.splitOffset = parseInt(e.target.value);
@@ -7458,11 +11397,15 @@ function setupStyleEditor() {
     // Vertical shift of split height requires line paths recalculations
     renderTree();
   });
+  inputSplitOffset.addEventListener('change', () => {
+    autoSaveToServer();
+  });
 
   inputLineType.addEventListener('change', (e) => {
     styleSettings.lineType = e.target.value;
     saveStyleSettings();
     renderTree();
+    autoSaveToServer();
   });
   
   if (inputSiblingGap) {
@@ -7476,6 +11419,9 @@ function setupStyleEditor() {
       saveDatabase();
       applyFilters();
     });
+    inputSiblingGap.addEventListener('change', () => {
+      autoSaveToServer();
+    });
   }
   
   // Reset style values to defaults
@@ -7485,6 +11431,7 @@ function setupStyleEditor() {
         lineColor: '#94a3b8',
         mainLineColor: '#ff7800',
         spouseLineColor: '#ef4444',
+        preacherLineColor: '#ff7800',
         lineWidth: 3,
         cornerRadius: 12,
         splitOffset: 90,
@@ -7496,6 +11443,7 @@ function setupStyleEditor() {
       rebuildAllLayouts();
       saveDatabase();
       applyFilters();
+      autoSaveToServer();
     }
   });
 
@@ -7550,6 +11498,40 @@ function setupStyleEditor() {
         drawConnections();
         showToast("모든 연결선 편집이 초기화되었습니다.");
       }
+    });
+  }
+
+  const bringFrontBtn = document.getElementById('style-line-bring-front-btn');
+  if (bringFrontBtn) {
+    bringFrontBtn.addEventListener('click', () => {
+      if (!selectedLineKey) return;
+      pushHistoryState();
+      let maxZ = 0;
+      Object.keys(lineZIndices).forEach(k => {
+        if (lineZIndices[k] > maxZ) maxZ = lineZIndices[k];
+      });
+      lineZIndices[selectedLineKey] = maxZ + 1;
+      saveLineZIndices();
+      drawConnections();
+      autoSaveToServer();
+      showToast("선택한 선이 맨 앞으로 이동되었습니다.");
+    });
+  }
+
+  const sendBackBtn = document.getElementById('style-line-send-back-btn');
+  if (sendBackBtn) {
+    sendBackBtn.addEventListener('click', () => {
+      if (!selectedLineKey) return;
+      pushHistoryState();
+      let minZ = 0;
+      Object.keys(lineZIndices).forEach(k => {
+        if (lineZIndices[k] < minZ) minZ = lineZIndices[k];
+      });
+      lineZIndices[selectedLineKey] = minZ - 1;
+      saveLineZIndices();
+      drawConnections();
+      autoSaveToServer();
+      showToast("선택한 선이 맨 뒤로 이동되었습니다.");
     });
   }
 
@@ -7750,3 +11732,2449 @@ function openStyleEditorPanel() {
 function closeStyleEditorPanel() {
   styleEditorPanel.classList.remove('active');
 }
+
+// ==========================================
+// Authentication & User Notes Logic
+// ==========================================
+
+let currentUser = null;
+let userToken = sessionStorage.getItem('bible_tree_token') || null;
+let userNotes = {}; // { characterId: "text" }
+
+const authModal = document.getElementById('auth-modal');
+const authUsername = document.getElementById('auth-username');
+const authPassword = document.getElementById('auth-password');
+const authLoginBtn = document.getElementById('auth-login-btn');
+const authMessage = document.getElementById('auth-message');
+
+const adminDashboardModal = document.getElementById('admin-dashboard-modal');
+const adminDashboardCloseBtn = document.getElementById('admin-dashboard-close-btn');
+const adminUserList = document.getElementById('admin-user-list');
+
+function hideAdminLockControls() {
+  const divider = document.getElementById('admin-divider');
+  const lockBtn = document.getElementById('admin-lock-btn');
+  if (divider) divider.style.display = 'none';
+  if (lockBtn) lockBtn.style.display = 'none';
+}
+
+function updateAdminLockVisibility() {
+  const divider = document.getElementById('admin-divider');
+  const lockBtn = document.getElementById('admin-lock-btn');
+  if (currentUser && currentUser.status === 'admin') {
+    if (divider) divider.style.display = 'block';
+    if (lockBtn) lockBtn.style.display = 'flex';
+  } else {
+    hideAdminLockControls();
+  }
+}
+
+async function validateSession() {
+  if (!userToken) {
+    hideAdminLockControls();
+    return showAuthModal();
+  }
+  try {
+    const res = await fetch('/api/me', { headers: { 'Authorization': 'Bearer ' + userToken } });
+    if (!res.ok) throw new Error('Invalid token');
+    currentUser = await res.json();
+    await fetchUserNotes();
+    hideAuthModal();
+    updateAdminLockVisibility();
+    const landing = document.getElementById('landing-page');
+    if (landing) landing.style.display = 'none';
+  } catch (e) {
+    userToken = null;
+    sessionStorage.removeItem('bible_tree_token');
+    hideAdminLockControls();
+    showAuthModal();
+  }
+}
+
+function showAuthModal() {
+  if (authModal) authModal.style.display = 'flex';
+}
+function hideAuthModal() {
+  const isCapacitor = !!window.Capacitor || window.location.protocol.startsWith('capacitor');
+  const isDesktop = window.location.protocol.startsWith('tauri') || 
+                    window.location.protocol.startsWith('asset') || 
+                    window.location.protocol.startsWith('file') || 
+                    isCapacitor ||
+                    (window.API_BASE_URL && window.API_BASE_URL.length > 0);
+  const landing = document.getElementById('landing-page');
+  const isLandingVisible = landing && landing.style.display !== 'none';
+  if (!userToken && !isDesktop && !isLandingVisible) {
+    alert('이 서비스는 회원 로그인 후 이용하실 수 있습니다.');
+    return;
+  }
+  if (authModal) authModal.style.display = 'none';
+}
+
+async function handleLogin() {
+  const username = authUsername.value.trim();
+  const password = authPassword.value;
+  if (!username || !password) return (authMessage.innerText = '아이디와 비밀번호를 입력하세요.');
+  
+  authMessage.innerText = '로그인 중...';
+  try {
+    const res = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      authMessage.innerText = data.error || '로그인 실패';
+      return;
+    }
+    userToken = data.token;
+    sessionStorage.setItem('bible_tree_token', userToken);
+    await validateSession();
+  } catch (e) {
+    authMessage.innerText = '서버 연결 실패';
+  }
+}
+
+async function handleRegister() {
+  const username = authUsername.value.trim();
+  const password = authPassword.value;
+  if (!username || !password) return (authMessage.innerText = '아이디와 비밀번호를 입력하세요.');
+  
+  authMessage.innerText = '가입 중...';
+  try {
+    const res = await fetch('/api/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      authMessage.innerText = data.error || '가입 실패';
+      return;
+    }
+    if (data.status === 'admin') {
+      authMessage.innerText = '최고 관리자로 가입되었습니다! 로그인해주세요.';
+    } else {
+      authMessage.innerText = '가입 신청 완료! 최고 관리자의 승인을 기다려주세요.';
+    }
+  } catch (e) {
+    authMessage.innerText = '서버 연결 실패';
+  }
+}
+
+if (authLoginBtn) authLoginBtn.addEventListener('click', handleLogin);
+
+const handleAuthEnter = (e) => {
+  if (e.key === 'Enter') {
+    handleLogin();
+  }
+};
+if (authUsername) authUsername.addEventListener('keydown', handleAuthEnter);
+if (authPassword) authPassword.addEventListener('keydown', handleAuthEnter);
+
+const authCloseBtn = document.getElementById('auth-close-btn');
+if (authCloseBtn) authCloseBtn.addEventListener('click', hideAuthModal);
+
+if (authModal) {
+  authModal.addEventListener('click', (e) => {
+    if (e.target === authModal) {
+      hideAuthModal();
+    }
+  });
+}
+
+function handleLogout() {
+  if (confirm("로그아웃 하시겠습니까?")) {
+    sessionStorage.removeItem('bible_tree_token');
+    window.location.reload();
+  }
+}
+
+const userLogoutBtn = document.getElementById('user-logout-btn');
+const adminLogoutBtn = document.getElementById('admin-logout-btn');
+if (userLogoutBtn) userLogoutBtn.addEventListener('click', handleLogout);
+if (adminLogoutBtn) adminLogoutBtn.addEventListener('click', handleLogout);
+
+// Update all cards and annotations with note badge indicators based on current userNotes
+function updateAllNoteBadges() {
+  // 1. Remove all existing card note badges
+  document.querySelectorAll('.card-note-badge').forEach(el => el.remove());
+  document.querySelectorAll('.annot-note-badge').forEach(el => el.remove());
+  
+  // 2. Add badges for active notes
+  Object.keys(userNotes).forEach(personId => {
+    const noteContent = userNotes[personId];
+    if (!noteContent) return;
+    
+    const card = document.getElementById(`card-${personId}`);
+    if (card) {
+      let badge = card.querySelector('.card-note-badge');
+      if (!badge) {
+        const badgeEl = document.createElement('div');
+        badgeEl.className = 'card-note-badge';
+        badgeEl.title = '메모 있음';
+        badgeEl.textContent = '📝';
+        card.appendChild(badgeEl);
+      }
+    } else {
+      const annotEl = document.getElementById(`annot-${personId}`);
+      if (annotEl) {
+        let badge = annotEl.querySelector('.annot-note-badge');
+        if (!badge) {
+          const badgeEl = document.createElement('div');
+          badgeEl.className = 'annot-note-badge';
+          badgeEl.title = '메모 있음';
+          badgeEl.textContent = '📝';
+          badgeEl.style.position = 'absolute';
+          badgeEl.style.top = '-8px';
+          badgeEl.style.right = '-8px';
+          badgeEl.style.fontSize = '12px';
+          badgeEl.style.zIndex = '100';
+          annotEl.appendChild(badgeEl);
+        }
+      }
+    }
+  });
+}
+
+// Load user notes
+async function fetchUserNotes() {
+  try {
+    const localNotes = localStorage.getItem('bible_tree_user_notes');
+    if (localNotes) {
+      userNotes = JSON.parse(localNotes) || {};
+      updateAllNoteBadges();
+    }
+  } catch (e) {
+    console.error("Failed to parse local notes:", e);
+  }
+
+  const licenseKey = localStorage.getItem('bible_genealogy_license_key');
+  if (!userToken && !licenseKey) {
+    updateAllNoteBadges();
+    return;
+  }
+  try {
+    const authHeader = userToken ? ('Bearer ' + userToken) : ('License ' + licenseKey);
+    const res = await fetch('/api/notes', { headers: { 'Authorization': authHeader } });
+    if (res.ok) {
+      const data = await res.json();
+      userNotes = data.notes || {};
+      localStorage.setItem('bible_tree_user_notes', JSON.stringify(userNotes));
+      updateAllNoteBadges();
+    } else {
+      updateAllNoteBadges();
+    }
+  } catch(e) {
+    updateAllNoteBadges();
+  }
+}
+
+// Trigger automatic background backup in the Documents folder when running inside Tauri
+async function triggerAutoBackup() {
+  const isTauri = window.location.protocol.startsWith('tauri') || 
+                  window.location.hostname === 'tauri.localhost' || 
+                  window.location.protocol.startsWith('file') ||
+                  window.location.protocol.startsWith('asset') ||
+                  (window.__TAURI__ && window.__TAURI__.fs);
+  
+  if (isTauri && window.__TAURI__ && window.__TAURI__.fs && window.__TAURI__.path) {
+    try {
+      const docDir = await window.__TAURI__.path.documentDir();
+      const backupPath = await window.__TAURI__.path.join(docDir, 'bible_genealogy_notes_autobackup.json');
+      await window.__TAURI__.fs.writeTextFile(backupPath, JSON.stringify(userNotes, null, 2));
+      console.log("Auto-backup successfully saved to:", backupPath);
+    } catch (err) {
+      console.error("Auto-backup failed:", err);
+    }
+  }
+}
+
+async function saveUserNotes() {
+  try {
+    localStorage.setItem('bible_tree_user_notes', JSON.stringify(userNotes));
+  } catch(e) {}
+
+  // Run automatic background backup locally (Tauri only)
+  triggerAutoBackup();
+
+  const licenseKey = localStorage.getItem('bible_genealogy_license_key');
+  if (!userToken && !licenseKey) return;
+  try {
+    const authHeader = userToken ? ('Bearer ' + userToken) : ('License ' + licenseKey);
+    await fetch('/api/notes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': authHeader },
+      body: JSON.stringify({ notes: userNotes })
+    });
+  } catch(e) {}
+}
+
+// Bottom Control Panel Notes Export & Import handlers
+const bottomBackupBtn = document.getElementById('bottom-backup-btn');
+const bottomRestoreBtn = document.getElementById('bottom-restore-btn');
+const userNotesFileInput = document.getElementById('user-notes-file-input');
+
+if (bottomBackupBtn) {
+  bottomBackupBtn.addEventListener('click', async () => {
+    const isTauri = window.location.protocol.startsWith('tauri') || 
+                    window.location.hostname === 'tauri.localhost' || 
+                    window.location.protocol.startsWith('file') ||
+                    window.location.protocol.startsWith('asset') ||
+                    (window.__TAURI__ && window.__TAURI__.fs);
+    const isCapacitor = window.Capacitor && window.Capacitor.isNativePlatform();
+
+    if (isCapacitor) {
+      try {
+        const { Filesystem } = window.Capacitor.Plugins;
+        const { Share } = window.Capacitor.Plugins;
+        
+        if (!Filesystem || !Share) {
+          throw new Error("Capacitor plugins not loaded");
+        }
+        
+        const fileName = 'bible_genealogy_notes_backup.json';
+        const fileContent = JSON.stringify(userNotes, null, 2);
+        
+        const writeResult = await Filesystem.writeFile({
+          path: fileName,
+          data: fileContent,
+          directory: 'CACHE',
+          encoding: 'utf8'
+        });
+        
+        await Share.share({
+          title: '열린족보이야기 메모 백업',
+          url: writeResult.uri
+        });
+      } catch (err) {
+        alert('모바일 메모 백업 중 오류가 발생했습니다: ' + err.message);
+      }
+    } else if (isTauri && window.__TAURI__ && window.__TAURI__.fs && window.__TAURI__.path) {
+      try {
+        const docDir = await window.__TAURI__.path.documentDir();
+        const backupPath = await window.__TAURI__.path.join(docDir, 'bible_genealogy_notes_autobackup.json');
+        await window.__TAURI__.fs.writeTextFile(backupPath, JSON.stringify(userNotes, null, 2));
+        alert('내 문서(Documents) 폴더에 전체 메모 백업 파일이 저장되었습니다.\n파일명: bible_genealogy_notes_autobackup.json');
+      } catch (err) {
+        alert('자동 저장 중 오류가 발생했습니다: ' + err.message);
+      }
+    } else {
+      // Browser fallback: download file
+      try {
+        const dataStr = JSON.stringify(userNotes, null, 2);
+        const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+        const linkElement = document.createElement('a');
+        linkElement.setAttribute('href', dataUri);
+        linkElement.setAttribute('download', 'bible_genealogy_notes_backup.json');
+        linkElement.click();
+      } catch (e) {
+        alert('메모 백업 중 오류가 발생했습니다: ' + e.message);
+      }
+    }
+  });
+}
+
+if (bottomRestoreBtn && userNotesFileInput) {
+  bottomRestoreBtn.addEventListener('click', async () => {
+    const isTauri = window.location.protocol.startsWith('tauri') || 
+                    window.location.hostname === 'tauri.localhost' || 
+                    window.location.protocol.startsWith('file') ||
+                    window.location.protocol.startsWith('asset') ||
+                    (window.__TAURI__ && window.__TAURI__.fs);
+    
+    if (isTauri && window.__TAURI__ && window.__TAURI__.fs && window.__TAURI__.path) {
+      try {
+        const docDir = await window.__TAURI__.path.documentDir();
+        const backupPath = await window.__TAURI__.path.join(docDir, 'bible_genealogy_notes_autobackup.json');
+        
+        let contents;
+        try {
+          contents = await window.__TAURI__.fs.readTextFile(backupPath);
+        } catch (readErr) {
+          // File not found / read error fallback
+          if (confirm('자동저장된 백업 파일을 찾을 수 없습니다.\n수동 백업 파일(.json)을 직접 선택하여 복원하시겠습니까?')) {
+            userNotesFileInput.click();
+          }
+          return;
+        }
+
+        const imported = JSON.parse(contents);
+        if (typeof imported !== 'object' || imported === null) {
+          throw new Error('파일 형식이 올바르지 않습니다.');
+        }
+        
+        if (confirm('내 문서 폴더에 자동저장된 백업 파일(bible_genealogy_notes_autobackup.json)을 발견했습니다.\n이 파일에서 모든 메모를 복원하시겠습니까?\n(현재 기기의 메모와 서버 데이터가 복원된 내용으로 즉시 갱신됩니다.)')) {
+          userNotes = imported;
+          localStorage.setItem('bible_tree_user_notes', JSON.stringify(userNotes));
+          
+          const noteTextarea = document.getElementById('note-text');
+          if (noteTextarea && activePersonId) {
+            noteTextarea.value = userNotes[activePersonId] || '';
+          }
+          
+          await saveUserNotes();
+          updateAllNoteBadges();
+          alert('자동저장된 백업 파일에서 모든 메모를 성공적으로 복원했습니다.');
+        } else {
+          // Cancelled automatic, ask if they want manual instead
+          if (confirm('다른 수동 백업 파일(.json)을 직접 선택하여 복원하시겠습니까?')) {
+            userNotesFileInput.click();
+          }
+        }
+      } catch (err) {
+        alert('자동 백업 파일 복원 실패: ' + err.message + '\n수동 백업 파일 선택으로 전환합니다.');
+        userNotesFileInput.click();
+      }
+    } else {
+      // Web browser: trigger file picker directly
+      userNotesFileInput.click();
+    }
+  });
+
+  userNotesFileInput.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      try {
+        const imported = JSON.parse(e.target.result);
+        if (typeof imported !== 'object' || imported === null) {
+          throw new Error('올바른 백업 파일 형식이 아닙니다.');
+        }
+        
+        if (confirm('가져온 백업 파일로 현재 메모를 덮어쓰시겠습니까? (기존 메모는 유실될 수 있습니다.)')) {
+          userNotes = imported;
+          localStorage.setItem('bible_tree_user_notes', JSON.stringify(userNotes));
+          
+          const noteTextarea = document.getElementById('note-text');
+          if (noteTextarea && activePersonId) {
+            noteTextarea.value = userNotes[activePersonId] || '';
+          }
+          
+          await saveUserNotes();
+          updateAllNoteBadges();
+          alert('수동 백업 파일에서 모든 메모를 성공적으로 복원했습니다.');
+        }
+      } catch (err) {
+        alert('백업 파일을 가져오지 못했습니다: ' + err.message);
+      }
+      userNotesFileInput.value = '';
+    };
+    reader.readAsText(file);
+  });
+}
+
+// User Dashboard
+const adminUsersBtn = document.getElementById('admin-users-btn');
+if (adminUsersBtn) {
+  adminUsersBtn.addEventListener('click', async () => {
+    if (!userToken) return alert('로그인이 필요합니다.');
+
+    try {
+      const res = await fetch('/api/admin/users', { headers: { 'Authorization': 'Bearer ' + userToken } });
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.error || '권한이 없습니다.');
+        if (res.status === 401 || res.status === 403) {
+          userToken = null;
+          sessionStorage.removeItem('bible_tree_token');
+          currentUser = null;
+          exitAdminMode();
+          hideAdminLockControls();
+          showAuthModal();
+        }
+        return;
+      }
+      
+      renderAdminDashboard(data.users);
+      adminDashboardModal.style.display = 'flex';
+    } catch (e) {
+      alert('서버 오류');
+    }
+  });
+}
+
+// Security Enhancements
+document.addEventListener('contextmenu', e => {
+  const targetEl = e.target && e.target.nodeType === 3 ? e.target.parentElement : e.target;
+  if (targetEl && (targetEl.tagName === 'INPUT' || targetEl.tagName === 'TEXTAREA' || targetEl.isContentEditable || (typeof targetEl.closest === 'function' && targetEl.closest('[contenteditable="true"]')))) return;
+  e.preventDefault();
+});
+document.addEventListener('selectstart', e => {
+  const targetEl = e.target && e.target.nodeType === 3 ? e.target.parentElement : e.target;
+  if (targetEl && (targetEl.tagName === 'INPUT' || targetEl.tagName === 'TEXTAREA' || targetEl.isContentEditable || (typeof targetEl.closest === 'function' && targetEl.closest('[contenteditable="true"]')))) return;
+  e.preventDefault();
+});
+document.addEventListener('dragstart', e => {
+  const targetEl = e.target && e.target.nodeType === 3 ? e.target.parentElement : e.target;
+  if (targetEl && (targetEl.tagName === 'INPUT' || targetEl.tagName === 'TEXTAREA' || targetEl.isContentEditable || (typeof targetEl.closest === 'function' && targetEl.closest('[contenteditable="true"]')))) return;
+  e.preventDefault();
+});
+document.addEventListener('keydown', e => {
+  if (e.keyCode === 123 || // F12
+      (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) || // Ctrl+Shift+I or J
+      (e.ctrlKey && e.keyCode === 85) || // Ctrl+U
+      (e.metaKey && e.altKey && (e.keyCode === 73 || e.keyCode === 74)) || // Cmd+Option+I or J (Mac)
+      (e.metaKey && e.keyCode === 85)) { // Cmd+U (Mac)
+    e.preventDefault();
+  }
+});
+if (adminDashboardCloseBtn) {
+  adminDashboardCloseBtn.addEventListener('click', () => {
+    adminDashboardModal.style.display = 'none';
+  });
+}
+
+function renderAdminDashboard(users) {
+  adminUserList.innerHTML = '';
+  if (users.length === 0) {
+    adminUserList.innerHTML = '<p>가입한 사용자가 없습니다.</p>';
+    return;
+  }
+  users.forEach(u => {
+    const div = document.createElement('div');
+    div.style.padding = '12px 10px';
+    div.style.borderBottom = '1px solid #eee';
+    div.style.display = 'flex';
+    div.style.justifyContent = 'space-between';
+    div.style.alignItems = 'center';
+    div.style.gap = '15px';
+    
+    let buttons = '';
+    if (u.status === 'pending') {
+      buttons += `<button onclick="approveUser('${u.username}')" style="background:#27ae60; color:white; border:none; padding:5px 10px; cursor:pointer; font-weight:bold; border-radius:4px;">승인</button>`;
+    }
+    // Password reset button is available for all accounts
+    buttons += `<button onclick="resetPasswordUser('${u.username}')" style="background:#8e44ad; color:white; border:none; padding:5px 10px; cursor:pointer; font-weight:bold; border-radius:4px;">비번 변경</button>`;
+    
+    if (u.status !== 'admin') {
+      buttons += `<button onclick="deleteUser('${u.username}')" style="background:#e74c3c; color:white; border:none; padding:5px 10px; cursor:pointer; font-weight:bold; border-radius:4px;">삭제</button>`;
+    }
+
+    let expiryHtml = '';
+    if (u.status !== 'admin') {
+      const expiryVal = u.expiryDate || '';
+      expiryHtml = `
+        <div style="display:flex; align-items:center; gap:5px; font-size:12px;">
+          <label style="color:#666; font-weight:bold;">만료일:</label>
+          <input type="date" id="expiry-date-${u.username}" value="${expiryVal}" style="padding:4px; border:1px solid #ccc; border-radius:3px; outline:none;">
+          <button onclick="setExpiryUser('${u.username}')" style="background:#f39c12; color:white; border:none; padding:4px 8px; cursor:pointer; border-radius:3px; font-weight:bold;">설정</button>
+        </div>
+      `;
+    }
+
+    div.innerHTML = `
+      <div style="flex:1; display:flex; flex-direction:column; gap:3px;">
+        <div style="font-size:14px;"><strong>${u.username}</strong> <span style="color:#888; font-size:11px; padding:2px 6px; background:#f1f5f9; border-radius:12px; margin-left:5px;">${u.status}</span></div>
+        <div style="color:#64748b; font-size:12px;">작성한 노트: <span style="color:#0f172a; font-weight:bold;">${u.noteCount || 0}</span>개</div>
+      </div>
+      ${expiryHtml}
+      <div style="display:flex; gap:5px;">${buttons}</div>
+    `;
+    adminUserList.appendChild(div);
+  });
+}
+
+window.resetPasswordUser = async function(username) {
+  const newPassword = prompt(`'${username}' 사용자의 새 비밀번호를 입력하세요:`, "");
+  if (newPassword === null) return;
+  if (newPassword.trim() === "") return alert("비밀번호를 입력해야 합니다.");
+
+  try {
+    const res = await fetch('/api/admin/users/reset-password', {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + userToken
+      },
+      body: JSON.stringify({ username, password: newPassword.trim() })
+    });
+    const data = await res.json();
+    if (!res.ok) return alert(data.error || '비밀번호 재설정 실패');
+    alert('비밀번호가 성공적으로 재설정되었습니다.');
+  } catch (e) {
+    alert('서버 오류');
+  }
+};
+
+window.setExpiryUser = async function(username) {
+  const dateInput = document.getElementById(`expiry-date-${username}`);
+  if (!dateInput) return;
+  const expiryDate = dateInput.value;
+
+  try {
+    const res = await fetch('/api/admin/users/expiry', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + userToken },
+      body: JSON.stringify({ username, expiryDate })
+    });
+    const data = await res.json();
+    if (!res.ok) return alert(data.error || '오류가 발생했습니다.');
+    alert('기간 설정이 완료되었습니다.');
+  } catch (e) {
+    alert('서버 오류');
+  }
+}
+window.approveUser = async function(username) {
+  try {
+    const res = await fetch('/api/admin/approve', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + userToken },
+      body: JSON.stringify({ username })
+    });
+    if (res.ok) {
+      alert('승인되었습니다.');
+      adminUsersBtn.click(); // refresh list
+    }
+  } catch(e) {}
+};
+
+window.deleteUser = async function(username) {
+  if (!confirm(`정말로 '${username}' 사용자의 가입을 취소하고 계정을 삭제하시겠습니까? (작성된 메모도 모두 삭제됩니다)`)) return;
+  try {
+    const res = await fetch('/api/admin/users', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + userToken },
+      body: JSON.stringify({ username })
+    });
+    if (res.ok) {
+      alert('삭제되었습니다.');
+      adminUsersBtn.click(); // refresh list
+    } else {
+      const data = await res.json();
+      alert(data.error || '삭제 실패');
+    }
+  } catch(e) {}
+};
+
+// --- Layer Functions ---
+function renderEvents() {
+  const layer = document.getElementById('layer-events');
+  if (!layer) return;
+  layer.innerHTML = '';
+  
+  events.forEach(ev => {
+    const el = document.createElement('div');
+    const filterClass = getEventFilterClass(ev);
+    el.className = `layer-marker marker-event ${filterClass}`;
+    el.style.left = `${ev.x * currentScale}px`;
+    el.style.top = `${ev.y * currentScale}px`;
+    el.style.transform = `translate(-50%, -50%) scale(${currentScale})`;
+    el.style.transformOrigin = '50% 50%';
+    el.id = `event-${ev.id}`;
+    
+    el.innerHTML = `
+      <div class="marker-icon">📜</div>
+      <div class="marker-label">${cleanLayerName(ev.name)}</div>
+    `;
+    
+    makeLayerDraggable(el, ev, 'event');
+    
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (el.isDraggingFinished) {
+        el.isDraggingFinished = false;
+        return;
+      }
+      openLayerDetails(ev, 'event');
+      highlightRelatedElements(ev.id, 'event');
+    });
+    
+    el.addEventListener('dblclick', (e) => {
+      e.stopPropagation();
+      if (isAdminMode) {
+        editLayerItem(ev, 'event');
+      }
+    });
+    
+    layer.appendChild(el);
+  });
+}
+
+function renderLocations() {
+  const layer = document.getElementById('layer-locations');
+  if (!layer) return;
+  layer.innerHTML = '';
+  
+  locations.forEach(loc => {
+    const el = document.createElement('div');
+    const filterClass = getLocationFilterClass(loc);
+    el.className = `layer-marker marker-location ${filterClass}`;
+    el.style.left = `${loc.x * currentScale}px`;
+    el.style.top = `${loc.y * currentScale}px`;
+    el.style.transform = `translate(-50%, -50%) scale(${currentScale})`;
+    el.style.transformOrigin = '50% 50%';
+    el.id = `location-${loc.id}`;
+    
+    el.innerHTML = `
+      <div class="marker-icon">📍</div>
+      <div class="marker-label">${cleanLayerName(loc.name)}</div>
+    `;
+    
+    makeLayerDraggable(el, loc, 'location');
+    
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (el.isDraggingFinished) {
+        el.isDraggingFinished = false;
+        return;
+      }
+      openLayerDetails(loc, 'location');
+      highlightRelatedElements(loc.id, 'location');
+    });
+    
+    el.addEventListener('dblclick', (e) => {
+      e.stopPropagation();
+      if (isAdminMode) {
+        editLayerItem(loc, 'location');
+      }
+    });
+    
+    layer.appendChild(el);
+  });
+}
+
+function makeLayerDraggable(el, item, type) {
+  el.addEventListener('mousedown', (e) => {
+    if (!isAdminMode) return;
+    e.stopPropagation();
+    
+    let isDragging = false;
+    let startX = e.clientX;
+    let startY = e.clientY;
+    let originalX = item.x;
+    let originalY = item.y;
+    
+    el.style.zIndex = 30;
+    
+    const onMouseMove = (moveEvent) => {
+      const dx_pixels = moveEvent.clientX - startX;
+      const dy_pixels = moveEvent.clientY - startY;
+      
+      if (Math.abs(dx_pixels) > 4 || Math.abs(dy_pixels) > 4) {
+        if (!isDragging) {
+          pushHistoryState();
+          isDragging = true;
+        }
+      }
+      
+      if (isDragging) {
+        const dx = dx_pixels / currentScale;
+        const dy = dy_pixels / currentScale;
+        item.x = Math.round(originalX + dx);
+        item.y = Math.round(originalY + dy);
+        
+        el.style.left = `${item.x * currentScale}px`;
+        el.style.top = `${item.y * currentScale}px`;
+      }
+    };
+    
+    const onMouseUp = (endEvent) => {
+      endEvent.stopPropagation();
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+      
+      el.style.zIndex = '';
+      
+      if (isDragging) {
+        if (type === 'event') saveEvents();
+        else saveLocations();
+        autoSaveToServer();
+        el.isDraggingFinished = true;
+      }
+    };
+    
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+  });
+}
+
+function openLayerDetails(data, type) {
+  const studyPanel = document.getElementById('study-panel');
+  if (!studyPanel) return;
+  
+  activePersonId = data.id; // 노트와 리소스를 이 ID에 연동
+  activeStudyPanelType = type;
+  
+  const infoTitleEl = document.getElementById('panel-info-title');
+  const titleEl = document.getElementById('panel-name');
+  const engEl = document.getElementById('panel-eng');
+  const descEl = document.getElementById('panel-desc');
+  
+  if (type === 'annotation') {
+    if (infoTitleEl) infoTitleEl.textContent = '성경 족보 텍스트 상자';
+    if (titleEl) titleEl.innerHTML = `<span style="font-size: 0.8em; color: #888;">📝 텍스트 상자</span><br>${data.text || '내용 없음'}`;
+    if (engEl) engEl.textContent = 'Text Box';
+    if (descEl) descEl.innerHTML = '텍스트 상자 메모입니다. 아래에서 개인 연구 메모를 작성하고 참고 링크를 등록할 수 있습니다.';
+  } else if (type === 'polygon') {
+    if (infoTitleEl) infoTitleEl.textContent = '사용자 정의 영역 정보';
+    if (titleEl) titleEl.innerHTML = `<span style="font-size: 0.8em; color: #888;">📐 영역</span><br>${data.label || '이름 없는 영역'}`;
+    if (engEl) engEl.textContent = 'Custom Area';
+    if (descEl) descEl.innerHTML = '사용자 정의 다각형 영역입니다. 아래에서 영역에 대한 연구 메모를 작성하고 참고 링크를 등록할 수 있습니다.';
+  } else {
+    if (infoTitleEl) {
+      infoTitleEl.textContent = type === 'event' ? '성경 속 사건 정보' : '성경 속 장소 정보';
+    }
+    if (titleEl) titleEl.innerHTML = `<span style="font-size: 0.8em; color: #888;">${type === 'event' ? '📜 사건' : '📍 장소'}</span><br>${cleanLayerName(data.name)}`;
+    if (engEl) engEl.textContent = type === 'event' ? 'Event' : 'Location';
+    
+    let descHtml = (data.desc || "상세 설명이 없습니다.").replace(/\n/g, '<br>');
+    if (data.refs && data.refs.length > 0) {
+      descHtml += `<br><br><strong>📖 관련 성구:</strong><ul>`;
+      data.refs.forEach(r => descHtml += `<li>${r}</li>`);
+      descHtml += `</ul>`;
+    }
+    if (descEl) descEl.innerHTML = descHtml;
+  }
+  
+  const noteTextarea = document.getElementById('note-text');
+  if (noteTextarea) {
+    const savedNote = userNotes[data.id] || '';
+    noteTextarea.value = savedNote;
+  }
+  
+  const resources = JSON.parse(localStorage.getItem(`bible_tree_resources_${data.id}`)) || [];
+  renderResourcesList(resources);
+  
+  studyPanel.classList.add('active');
+}
+
+function editLayerItem(data, type) {
+  isLayerItemAddMode = false;
+  activeLayerItem = data;
+  activeLayerType = type;
+  
+  // Clear search inputs
+  const peopleSearch = document.getElementById('layer-item-people-search');
+  const eventsSearch = document.getElementById('layer-item-events-search');
+  const locationsSearch = document.getElementById('layer-item-locations-search');
+  if (peopleSearch) peopleSearch.value = '';
+  if (eventsSearch) eventsSearch.value = '';
+  if (locationsSearch) locationsSearch.value = '';
+  
+  const nameInput = document.getElementById('layer-item-name');
+  const nameGroup = nameInput ? nameInput.closest('.form-group') : null;
+  const descGroup = document.getElementById('layer-item-desc') ? document.getElementById('layer-item-desc').closest('.form-group') : null;
+  const refsGroup = document.getElementById('layer-item-refs') ? document.getElementById('layer-item-refs').closest('.form-group') : null;
+  
+  if (type === 'annotation') {
+    layerItemModalTitle.textContent = "텍스트 상자 관계 설정";
+    if (nameGroup) nameGroup.style.display = 'none';
+    if (descGroup) descGroup.style.display = 'none';
+    if (refsGroup) refsGroup.style.display = 'none';
+    if (nameInput) {
+      nameInput.value = '';
+      nameInput.removeAttribute('required');
+    }
+    document.getElementById('layer-item-desc').value = '';
+    document.getElementById('layer-item-refs').value = '';
+    document.getElementById('layer-item-events-group').style.display = '';
+    document.getElementById('layer-item-locations-group').style.display = '';
+    if (layerItemDeleteBtn) {
+      layerItemDeleteBtn.style.display = 'none';
+    }
+  } else {
+    if (nameGroup) nameGroup.style.display = '';
+    if (descGroup) descGroup.style.display = '';
+    if (refsGroup) refsGroup.style.display = '';
+    if (nameInput) nameInput.setAttribute('required', 'required');
+    
+    if (type === 'event') {
+      layerItemModalTitle.textContent = "사건 정보 수정";
+      document.getElementById('layer-item-name-label').textContent = "사건 이름*";
+      document.getElementById('layer-item-events-group').style.display = 'none';
+      document.getElementById('layer-item-locations-group').style.display = '';
+      if (nameInput) nameInput.placeholder = "예: 선악과 사건";
+    } else {
+      layerItemModalTitle.textContent = "장소 정보 수정";
+      document.getElementById('layer-item-name-label').textContent = "장소 이름*";
+      document.getElementById('layer-item-events-group').style.display = '';
+      document.getElementById('layer-item-locations-group').style.display = 'none';
+      if (nameInput) nameInput.placeholder = "예: 에덴 동산";
+    }
+    
+    if (layerItemDeleteBtn) {
+      layerItemDeleteBtn.style.display = '';
+    }
+  }
+  
+  if (type !== 'annotation') {
+    if (nameInput) nameInput.value = data.name;
+    document.getElementById('layer-item-desc').value = data.desc || "";
+    document.getElementById('layer-item-refs').value = data.refs ? data.refs.join(', ') : "";
+  }
+  
+  populateRelationChecklists(data.id, type);
+  updateSelectedTags('people');
+  updateSelectedTags('events');
+  updateSelectedTags('locations');
+  
+  layerItemModal.style.display = 'flex';
+}
+
+function openLayerItemAddForm(type) {
+  isLayerItemAddMode = true;
+  activeLayerItem = null;
+  activeLayerType = type;
+  
+  // Clear search inputs
+  const peopleSearch = document.getElementById('layer-item-people-search');
+  const eventsSearch = document.getElementById('layer-item-events-search');
+  const locationsSearch = document.getElementById('layer-item-locations-search');
+  if (peopleSearch) peopleSearch.value = '';
+  if (eventsSearch) eventsSearch.value = '';
+  if (locationsSearch) locationsSearch.value = '';
+  
+  const nameInput = document.getElementById('layer-item-name');
+  if (nameInput) nameInput.setAttribute('required', 'required');
+  const nameGroup = nameInput ? nameInput.closest('.form-group') : null;
+  const descGroup = document.getElementById('layer-item-desc') ? document.getElementById('layer-item-desc').closest('.form-group') : null;
+  const refsGroup = document.getElementById('layer-item-refs') ? document.getElementById('layer-item-refs').closest('.form-group') : null;
+  
+  if (nameGroup) nameGroup.style.display = '';
+  if (descGroup) descGroup.style.display = '';
+  if (refsGroup) refsGroup.style.display = '';
+  
+  if (type === 'event') {
+    layerItemModalTitle.textContent = "새 사건 추가";
+    document.getElementById('layer-item-name-label').textContent = "사건 이름*";
+    document.getElementById('layer-item-events-group').style.display = 'none';
+    document.getElementById('layer-item-locations-group').style.display = '';
+    if (nameInput) nameInput.placeholder = "예: 선악과 사건";
+  } else {
+    layerItemModalTitle.textContent = "새 장소 추가";
+    document.getElementById('layer-item-name-label').textContent = "장소 이름*";
+    document.getElementById('layer-item-events-group').style.display = '';
+    document.getElementById('layer-item-locations-group').style.display = 'none';
+    if (nameInput) nameInput.placeholder = "예: 에덴 동산";
+  }
+  
+  if (nameInput) nameInput.value = '';
+  document.getElementById('layer-item-desc').value = '';
+  document.getElementById('layer-item-refs').value = '';
+  
+  if (layerItemDeleteBtn) {
+    layerItemDeleteBtn.style.display = 'none';
+  }
+  
+  populateRelationChecklists(null, type);
+  updateSelectedTags('people');
+  updateSelectedTags('events');
+  updateSelectedTags('locations');
+  
+  layerItemModal.style.display = 'flex';
+}
+
+function populateRelationChecklists(currentItemId, currentItemType) {
+  const peopleList = document.getElementById('layer-item-people-list');
+  const eventsList = document.getElementById('layer-item-events-list');
+  const locationsList = document.getElementById('layer-item-locations-list');
+  
+  if (peopleList) {
+    peopleList.innerHTML = '';
+    
+    // Sort checked items to the top
+    const checkedPeople = [];
+    const uncheckedPeople = [];
+    
+    db.forEach(person => {
+      const isChecked = activeLayerItem && activeLayerItem.relatedPeople && 
+        (activeLayerItem.relatedPeople.includes(person.id) || activeLayerItem.relatedPeople.includes(person.name));
+      if (isChecked) {
+        checkedPeople.push(person);
+      } else {
+        uncheckedPeople.push(person);
+      }
+    });
+    
+    checkedPeople.sort((a, b) => a.name.localeCompare(b.name, 'ko'));
+    uncheckedPeople.sort((a, b) => a.name.localeCompare(b.name, 'ko'));
+    
+    const combined = [...checkedPeople, ...uncheckedPeople];
+    combined.forEach(person => {
+      const isChecked = checkedPeople.includes(person);
+      
+      const itemEl = document.createElement('label');
+      itemEl.className = `relation-item ${isChecked ? 'checked' : ''}`;
+      itemEl.dataset.id = person.id;
+      itemEl.dataset.name = person.name;
+      
+      itemEl.innerHTML = `
+        <input type="checkbox" value="${person.id}" ${isChecked ? 'checked' : ''}>
+        <span>${person.name} (${person.id})</span>
+      `;
+      
+      itemEl.querySelector('input').addEventListener('change', (e) => {
+        if (e.target.checked) itemEl.classList.add('checked');
+        else itemEl.classList.remove('checked');
+        updateSelectedTags('people');
+      });
+      
+      peopleList.appendChild(itemEl);
+    });
+
+    // Populate any arbitrary/custom related people not in standard database
+    if (activeLayerItem && activeLayerItem.relatedPeople) {
+      activeLayerItem.relatedPeople.forEach(ref => {
+        const exists = db.some(p => p.id === ref || p.name === ref);
+        if (!exists) {
+          const itemEl = document.createElement('label');
+          itemEl.className = `relation-item checked custom-relation-item`;
+          itemEl.dataset.id = ref;
+          itemEl.dataset.name = ref;
+          
+          itemEl.innerHTML = `
+            <input type="checkbox" value="${ref}" checked>
+            <span>${ref} (임의)</span>
+          `;
+          
+          itemEl.querySelector('input').addEventListener('change', (e) => {
+            if (e.target.checked) itemEl.classList.add('checked');
+            else itemEl.classList.remove('checked');
+            updateSelectedTags('people');
+          });
+          peopleList.appendChild(itemEl);
+        }
+      });
+    }
+  }
+  
+  if (eventsList) {
+    eventsList.innerHTML = '';
+    
+    const checkedEvents = [];
+    const uncheckedEvents = [];
+    
+    events.forEach(ev => {
+      if (currentItemType === 'event' && activeLayerItem && activeLayerItem.id === ev.id) return;
+      
+      const isChecked = activeLayerItem && activeLayerItem.relatedEvents && activeLayerItem.relatedEvents.includes(ev.id);
+      if (isChecked) {
+        checkedEvents.push(ev);
+      } else {
+        uncheckedEvents.push(ev);
+      }
+    });
+    
+    checkedEvents.sort((a, b) => a.name.localeCompare(b.name, 'ko'));
+    uncheckedEvents.sort((a, b) => a.name.localeCompare(b.name, 'ko'));
+    
+    const combined = [...checkedEvents, ...uncheckedEvents];
+    combined.forEach(ev => {
+      const isChecked = checkedEvents.includes(ev);
+      
+      const itemEl = document.createElement('label');
+      itemEl.className = `relation-item ${isChecked ? 'checked' : ''}`;
+      itemEl.dataset.id = ev.id;
+      itemEl.dataset.name = ev.name;
+      
+      itemEl.innerHTML = `
+        <input type="checkbox" value="${ev.id}" ${isChecked ? 'checked' : ''}>
+        <span>${ev.name}</span>
+      `;
+      
+      itemEl.querySelector('input').addEventListener('change', (e) => {
+        if (e.target.checked) itemEl.classList.add('checked');
+        else itemEl.classList.remove('checked');
+        updateSelectedTags('events');
+      });
+      
+      eventsList.appendChild(itemEl);
+    });
+
+    // Populate any arbitrary/custom related events not in standard list
+    if (activeLayerItem && activeLayerItem.relatedEvents) {
+      activeLayerItem.relatedEvents.forEach(ref => {
+        const exists = events.some(e => e.id === ref || e.name === ref);
+        if (!exists) {
+          const itemEl = document.createElement('label');
+          itemEl.className = `relation-item checked custom-relation-item`;
+          itemEl.dataset.id = ref;
+          itemEl.dataset.name = ref;
+          
+          itemEl.innerHTML = `
+            <input type="checkbox" value="${ref}" checked>
+            <span>${ref} (임의)</span>
+          `;
+          
+          itemEl.querySelector('input').addEventListener('change', (e) => {
+            if (e.target.checked) itemEl.classList.add('checked');
+            else itemEl.classList.remove('checked');
+            updateSelectedTags('events');
+          });
+          eventsList.appendChild(itemEl);
+        }
+      });
+    }
+  }
+  
+  if (locationsList) {
+    locationsList.innerHTML = '';
+    
+    const checkedLocations = [];
+    const uncheckedLocations = [];
+    
+    locations.forEach(loc => {
+      if (currentItemType === 'location' && activeLayerItem && activeLayerItem.id === loc.id) return;
+      
+      const isChecked = activeLayerItem && activeLayerItem.relatedLocations && activeLayerItem.relatedLocations.includes(loc.id);
+      if (isChecked) {
+        checkedLocations.push(loc);
+      } else {
+        uncheckedLocations.push(loc);
+      }
+    });
+    
+    checkedLocations.sort((a, b) => a.name.localeCompare(b.name, 'ko'));
+    uncheckedLocations.sort((a, b) => a.name.localeCompare(b.name, 'ko'));
+    
+    const combined = [...checkedLocations, ...uncheckedLocations];
+    combined.forEach(loc => {
+      const isChecked = checkedLocations.includes(loc);
+      
+      const itemEl = document.createElement('label');
+      itemEl.className = `relation-item ${isChecked ? 'checked' : ''}`;
+      itemEl.dataset.id = loc.id;
+      itemEl.dataset.name = loc.name;
+      
+      itemEl.innerHTML = `
+        <input type="checkbox" value="${loc.id}" ${isChecked ? 'checked' : ''}>
+        <span>${loc.name}</span>
+      `;
+      
+      itemEl.querySelector('input').addEventListener('change', (e) => {
+        if (e.target.checked) itemEl.classList.add('checked');
+        else itemEl.classList.remove('checked');
+        updateSelectedTags('locations');
+      });
+      
+      locationsList.appendChild(itemEl);
+    });
+
+    // Populate any arbitrary/custom related locations not in standard list
+    if (activeLayerItem && activeLayerItem.relatedLocations) {
+      activeLayerItem.relatedLocations.forEach(ref => {
+        const exists = locations.some(l => l.id === ref || l.name === ref);
+        if (!exists) {
+          const itemEl = document.createElement('label');
+          itemEl.className = `relation-item checked custom-relation-item`;
+          itemEl.dataset.id = ref;
+          itemEl.dataset.name = ref;
+          
+          itemEl.innerHTML = `
+            <input type="checkbox" value="${ref}" checked>
+            <span>${ref} (임의)</span>
+          `;
+          
+          itemEl.querySelector('input').addEventListener('change', (e) => {
+            if (e.target.checked) itemEl.classList.add('checked');
+            else itemEl.classList.remove('checked');
+            updateSelectedTags('locations');
+          });
+          locationsList.appendChild(itemEl);
+        }
+      });
+    }
+  }
+}
+
+function updateSelectedTags(type) {
+  const listContainer = document.getElementById(`layer-item-${type}-list`);
+  const tagsContainer = document.getElementById(`layer-item-${type}-tags`);
+  if (!listContainer || !tagsContainer) return;
+  
+  tagsContainer.innerHTML = '';
+  
+  const checkedCheckboxes = listContainer.querySelectorAll('input[type="checkbox"]:checked');
+  checkedCheckboxes.forEach(cb => {
+    const parent = cb.closest('.relation-item');
+    const name = parent ? parent.dataset.name : cb.value;
+    const val = cb.value;
+    
+    const tag = document.createElement('span');
+    tag.className = 'relation-tag';
+    tag.innerHTML = `
+      <span>${name}</span>
+      <span class="relation-tag-remove" data-val="${val}">&times;</span>
+    `;
+    
+    tag.querySelector('.relation-tag-remove').addEventListener('click', (e) => {
+      const valueToUncheck = e.target.dataset.val;
+      const checkbox = listContainer.querySelector(`input[type="checkbox"][value="${valueToUncheck}"]`);
+      if (checkbox) {
+        checkbox.checked = false;
+        const event = new Event('change');
+        checkbox.dispatchEvent(event);
+      }
+    });
+    
+    tagsContainer.appendChild(tag);
+  });
+}
+
+function setupLayerItemModalEvents() {
+  if (layerItemModalClose) {
+    layerItemModalClose.addEventListener('click', () => {
+      layerItemModal.style.display = 'none';
+    });
+  }
+  if (layerItemModalCancel) {
+    layerItemModalCancel.addEventListener('click', () => {
+      layerItemModal.style.display = 'none';
+    });
+  }
+  
+  // Setup searches
+  const peopleSearch = document.getElementById('layer-item-people-search');
+  const eventsSearch = document.getElementById('layer-item-events-search');
+  const locationsSearch = document.getElementById('layer-item-locations-search');
+  
+  peopleSearch?.addEventListener('input', (e) => {
+    const query = e.target.value.toLowerCase().trim();
+    const items = document.querySelectorAll('#layer-item-people-list .relation-item');
+    items.forEach(item => {
+      const name = item.dataset.name.toLowerCase();
+      const id = item.dataset.id.toLowerCase();
+      if (name.includes(query) || id.includes(query)) {
+        item.style.display = '';
+      } else {
+        item.style.display = 'none';
+      }
+    });
+  });
+  peopleSearch?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const val = e.target.value.trim();
+      if (!val) return;
+      
+      const list = document.getElementById('layer-item-people-list');
+      let checkbox = list.querySelector(`input[type="checkbox"][value="${val}"]`);
+      if (!checkbox) {
+        const itemEl = document.createElement('label');
+        itemEl.className = `relation-item checked custom-relation-item`;
+        itemEl.dataset.id = val;
+        itemEl.dataset.name = val;
+        itemEl.innerHTML = `
+          <input type="checkbox" value="${val}" checked>
+          <span>${val} (임의)</span>
+        `;
+        itemEl.querySelector('input').addEventListener('change', (ev) => {
+          if (ev.target.checked) itemEl.classList.add('checked');
+          else itemEl.classList.remove('checked');
+          updateSelectedTags('people');
+        });
+        list.appendChild(itemEl);
+        checkbox = itemEl.querySelector('input');
+      } else {
+        checkbox.checked = true;
+        checkbox.closest('.relation-item').classList.add('checked');
+      }
+      updateSelectedTags('people');
+      e.target.value = '';
+      list.querySelectorAll('.relation-item').forEach(item => item.style.display = '');
+    }
+  });
+  
+  eventsSearch?.addEventListener('input', (e) => {
+    const query = e.target.value.toLowerCase().trim();
+    const items = document.querySelectorAll('#layer-item-events-list .relation-item');
+    items.forEach(item => {
+      const name = item.dataset.name.toLowerCase();
+      const id = item.dataset.id.toLowerCase();
+      if (name.includes(query) || id.includes(query)) {
+        item.style.display = '';
+      } else {
+        item.style.display = 'none';
+      }
+    });
+  });
+  eventsSearch?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const val = e.target.value.trim();
+      if (!val) return;
+      
+      const list = document.getElementById('layer-item-events-list');
+      let checkbox = list.querySelector(`input[type="checkbox"][value="${val}"]`);
+      if (!checkbox) {
+        const itemEl = document.createElement('label');
+        itemEl.className = `relation-item checked custom-relation-item`;
+        itemEl.dataset.id = val;
+        itemEl.dataset.name = val;
+        itemEl.innerHTML = `
+          <input type="checkbox" value="${val}" checked>
+          <span>${val} (임의)</span>
+        `;
+        itemEl.querySelector('input').addEventListener('change', (ev) => {
+          if (ev.target.checked) itemEl.classList.add('checked');
+          else itemEl.classList.remove('checked');
+          updateSelectedTags('events');
+        });
+        list.appendChild(itemEl);
+        checkbox = itemEl.querySelector('input');
+      } else {
+        checkbox.checked = true;
+        checkbox.closest('.relation-item').classList.add('checked');
+      }
+      updateSelectedTags('events');
+      e.target.value = '';
+      list.querySelectorAll('.relation-item').forEach(item => item.style.display = '');
+    }
+  });
+  
+  locationsSearch?.addEventListener('input', (e) => {
+    const query = e.target.value.toLowerCase().trim();
+    const items = document.querySelectorAll('#layer-item-locations-list .relation-item');
+    items.forEach(item => {
+      const name = item.dataset.name.toLowerCase();
+      const id = item.dataset.id.toLowerCase();
+      if (name.includes(query) || id.includes(query)) {
+        item.style.display = '';
+      } else {
+        item.style.display = 'none';
+      }
+    });
+  });
+  locationsSearch?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const val = e.target.value.trim();
+      if (!val) return;
+      
+      const list = document.getElementById('layer-item-locations-list');
+      let checkbox = list.querySelector(`input[type="checkbox"][value="${val}"]`);
+      if (!checkbox) {
+        const itemEl = document.createElement('label');
+        itemEl.className = `relation-item checked custom-relation-item`;
+        itemEl.dataset.id = val;
+        itemEl.dataset.name = val;
+        itemEl.innerHTML = `
+          <input type="checkbox" value="${val}" checked>
+          <span>${val} (임의)</span>
+        `;
+        itemEl.querySelector('input').addEventListener('change', (ev) => {
+          if (ev.target.checked) itemEl.classList.add('checked');
+          else itemEl.classList.remove('checked');
+          updateSelectedTags('locations');
+        });
+        list.appendChild(itemEl);
+        checkbox = itemEl.querySelector('input');
+      } else {
+        checkbox.checked = true;
+        checkbox.closest('.relation-item').classList.add('checked');
+      }
+      updateSelectedTags('locations');
+      e.target.value = '';
+      list.querySelectorAll('.relation-item').forEach(item => item.style.display = '');
+    }
+  });
+
+  if (layerItemDeleteBtn) {
+    layerItemDeleteBtn.addEventListener('click', () => {
+      if (!activeLayerItem || !activeLayerType) return;
+      if (!confirm(`정말 이 ${activeLayerType === 'event' ? '사건' : '장소'}을 삭제하시겠습니까?`)) return;
+      
+      pushHistoryState();
+      if (activeLayerType === 'event') {
+        events = events.filter(e => e.id !== activeLayerItem.id);
+        saveEvents();
+        renderEvents();
+      } else {
+        locations = locations.filter(l => l.id !== activeLayerItem.id);
+        saveLocations();
+        renderLocations();
+      }
+      autoSaveToServer();
+      layerItemModal.style.display = 'none';
+      activeLayerItem = null;
+      activeLayerType = null;
+      showToast("삭제되었습니다.");
+    });
+  }
+  if (layerItemForm) {
+    layerItemForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!activeLayerType) return;
+      
+      const nameVal = document.getElementById('layer-item-name').value.trim();
+      const descVal = document.getElementById('layer-item-desc').value.trim();
+      const refsVal = document.getElementById('layer-item-refs').value.trim();
+      
+      const refsArray = refsVal.split(',').map(r => r.trim()).filter(r => r.length > 0);
+      
+      // Get checkboxes checked
+      let checkedPeople = Array.from(document.querySelectorAll('#layer-item-people-list input[type="checkbox"]:checked'))
+        .map(cb => cb.value);
+      let checkedEvents = Array.from(document.querySelectorAll('#layer-item-events-list input[type="checkbox"]:checked'))
+        .map(cb => cb.value);
+      let checkedLocations = Array.from(document.querySelectorAll('#layer-item-locations-list input[type="checkbox"]:checked'))
+        .map(cb => cb.value);
+      
+      let dbChanged = false;
+      checkedPeople = checkedPeople.map(val => {
+        const matched = db.find(p => p.id === val || p.name === val);
+        if (matched) return matched.id;
+        
+        const newId = 'person-' + Date.now() + '-' + Math.floor(Math.random() * 100);
+        const newPerson = {
+          id: newId,
+          name: val,
+          engName: '',
+          gender: 'M',
+          generation: activeLayerItem && activeLayerItem.generation ? activeLayerItem.generation : 20,
+          column: activeLayerItem && activeLayerItem.column ? activeLayerItem.column : 0,
+          parents: [],
+          spouses: [],
+          desc: "자동 생성된 인물",
+          isMain: false,
+          isManual: true
+        };
+        db.push(newPerson);
+        dbChanged = true;
+        return newId;
+      });
+      if (dbChanged) {
+        saveDatabase();
+      }
+
+      let eventsChanged = false;
+      checkedEvents = checkedEvents.map(val => {
+        const matched = events.find(e => e.id === val || e.name === val);
+        if (matched) return matched.id;
+        
+        const newId = 'ev-' + Date.now() + '-' + Math.floor(Math.random() * 100);
+        const newEvent = {
+          id: newId,
+          name: val,
+          desc: "자동 생성된 사건",
+          refs: [],
+          relatedPeople: [],
+          x: 5000,
+          y: 5000
+        };
+        events.push(newEvent);
+        eventsChanged = true;
+        return newId;
+      });
+      if (eventsChanged) {
+        saveEvents();
+      }
+
+      let locationsChanged = false;
+      checkedLocations = checkedLocations.map(val => {
+        const matched = locations.find(l => l.id === val || l.name === val);
+        if (matched) return matched.id;
+        
+        const newId = 'loc-' + Date.now() + '-' + Math.floor(Math.random() * 100);
+        const newLocation = {
+          id: newId,
+          name: val,
+          desc: "자동 생성된 장소",
+          refs: [],
+          relatedPeople: [],
+          x: 5000,
+          y: 5000
+        };
+        locations.push(newLocation);
+        locationsChanged = true;
+        return newId;
+      });
+      if (locationsChanged) {
+        saveLocations();
+      }
+      
+      pushHistoryState();
+      
+      if (isLayerItemAddMode) {
+        const newId = (activeLayerType === 'event' ? 'ev-' : 'loc-') + Date.now();
+        const newItem = {
+          id: newId,
+          name: nameVal,
+          desc: descVal,
+          refs: refsArray,
+          relatedPeople: checkedPeople,
+          x: Math.round(newLayerItemCoords.x),
+          y: Math.round(newLayerItemCoords.y)
+        };
+        
+        if (activeLayerType === 'event') {
+          newItem.relatedLocations = checkedLocations;
+          events.push(newItem);
+          saveEvents();
+          
+          // Auto toggle events layer on
+          const toggleLayer = document.getElementById('toggle-layer-events');
+          if (toggleLayer && !toggleLayer.checked) {
+            toggleLayer.checked = true;
+            const layer = document.getElementById('layer-events');
+            if (layer) layer.style.display = '';
+          }
+          
+          renderEvents();
+          showToast("📜 새 사건이 추가되었습니다.");
+        } else {
+          newItem.relatedEvents = checkedEvents;
+          locations.push(newItem);
+          saveLocations();
+          
+          // Auto toggle locations layer on
+          const toggleLayer = document.getElementById('toggle-layer-locations');
+          if (toggleLayer && !toggleLayer.checked) {
+            toggleLayer.checked = true;
+            const layer = document.getElementById('layer-locations');
+            if (layer) layer.style.display = '';
+          }
+          
+          renderLocations();
+          showToast("📍 새 장소가 추가되었습니다.");
+        }
+      } else {
+        // Edit Mode
+        if (!activeLayerItem) return;
+        
+        if (activeLayerType === 'annotation') {
+          activeLayerItem.relatedPeople = checkedPeople;
+          activeLayerItem.relatedEvents = checkedEvents;
+          activeLayerItem.relatedLocations = checkedLocations;
+          saveAnnotations();
+          showToast("텍스트 상자 관계가 저장되었습니다.");
+        } else {
+          activeLayerItem.name = nameVal;
+          activeLayerItem.desc = descVal;
+          activeLayerItem.refs = refsArray;
+          activeLayerItem.relatedPeople = checkedPeople;
+          
+          if (activeLayerType === 'event') {
+            activeLayerItem.relatedLocations = checkedLocations;
+            saveEvents();
+            renderEvents();
+          } else {
+            activeLayerItem.relatedEvents = checkedEvents;
+            saveLocations();
+            renderLocations();
+          }
+          showToast("수정되었습니다.");
+        }
+      }
+      
+      updateTransform();
+      if (dbChanged) {
+        renderTree();
+      }
+      layerItemModal.style.display = 'none';
+      activeLayerItem = null;
+      activeLayerType = null;
+      isLayerItemAddMode = false;
+      autoSaveToServer();
+    });
+  }
+}
+
+// Layer Toggle Listeners
+document.getElementById('toggle-layer-people')?.addEventListener('change', (e) => {
+  const cards = document.querySelectorAll('.person-card, .family-group-panel, .family-group-label, #svg-layer');
+  cards.forEach(el => el.style.display = e.target.checked ? '' : 'none');
+});
+document.getElementById('toggle-layer-events')?.addEventListener('change', (e) => {
+  const layer = document.getElementById('layer-events');
+  if (layer) layer.style.display = e.target.checked ? '' : 'none';
+});
+document.getElementById('toggle-layer-locations')?.addEventListener('change', (e) => {
+  const layer = document.getElementById('layer-locations');
+  if (layer) layer.style.display = e.target.checked ? '' : 'none';
+});
+document.getElementById('toggle-layer-polygons')?.addEventListener('change', (e) => {
+  const polyGroup = document.getElementById('custom-polygons-group');
+  if (polyGroup) polyGroup.style.display = e.target.checked ? '' : 'none';
+  
+  const polygonsLayer = document.getElementById('svg-polygons-layer');
+  if (polygonsLayer) polygonsLayer.style.display = e.target.checked ? '' : 'none';
+
+  const labels = document.querySelectorAll('.family-group-label');
+  labels.forEach(el => el.style.display = e.target.checked ? '' : 'none');
+  
+  const handles = document.querySelectorAll('.poly-vertex-handle');
+  handles.forEach(el => el.style.display = e.target.checked ? '' : 'none');
+});
+
+document.getElementById('toggle-relationship-highlight')?.addEventListener('change', (e) => {
+  if (!e.target.checked) {
+    clearAllHighlights();
+  }
+});
+
+// ==========================================
+// Desktop App Licensing (DRM) Logic
+// ==========================================
+
+function getOrCreateMachineId() {
+  let machineId = localStorage.getItem('bible_genealogy_machine_id');
+  if (!machineId) {
+    machineId = 'device-' + Date.now() + '-' + Math.floor(Math.random() * 1000000);
+    localStorage.setItem('bible_genealogy_machine_id', machineId);
+  }
+  return machineId;
+}
+
+async function checkLicenseAndInit() {
+  const isCapacitor = !!window.Capacitor || window.location.protocol.startsWith('capacitor');
+  const isDesktopApp = window.location.protocol.startsWith('tauri') || 
+                       window.location.protocol.startsWith('asset') || 
+                       window.location.protocol.startsWith('file') || 
+                       (window.API_BASE_URL && window.API_BASE_URL.length > 0);
+                       
+  if (isCapacitor) {
+    return true; // Skip license check on mobile apps
+  }
+  if (!isDesktopApp) {
+    return true; // Not running in desktop mode, bypass
+  }
+
+  const machineId = getOrCreateMachineId();
+  const licenseKey = localStorage.getItem('bible_genealogy_license_key');
+
+  if (!licenseKey) {
+    showLicenseLock("프로그램 인증이 필요합니다. 발급받으신 라이선스 키를 입력해 주세요.");
+    return false;
+  }
+
+  if (licenseKey === 'KEY-OPEN-BIBLE-TREE') {
+    document.getElementById('desktop-license-modal').style.display = 'none';
+    const appContainer = document.getElementById('app-container');
+    if (appContainer) appContainer.style.display = 'flex';
+    return true;
+  }
+
+  try {
+    const apiBase = window.API_BASE_URL || "";
+    const res = await fetch(apiBase + '/api/license/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ licenseKey, machineId })
+    });
+    if (res.ok) {
+      document.getElementById('desktop-license-modal').style.display = 'none';
+      const appContainer = document.getElementById('app-container');
+      if (appContainer) appContainer.style.display = 'flex';
+      return true;
+    } else {
+      const data = await res.json();
+      localStorage.removeItem('bible_genealogy_license_key');
+      showLicenseLock(data.error || "라이선스가 유효하지 않거나 한도를 초과했습니다.");
+      return false;
+    }
+  } catch (e) {
+    // Offline fallback if license key exists in local storage
+    console.warn("Network error during license check, running offline.", e);
+    document.getElementById('desktop-license-modal').style.display = 'none';
+    const appContainer = document.getElementById('app-container');
+    if (appContainer) appContainer.style.display = 'flex';
+    return true;
+  }
+}
+
+function showLicenseLock(message) {
+  document.getElementById('desktop-license-modal').style.display = 'flex';
+  document.getElementById('license-message').innerText = message || "";
+  
+  if (authModal) authModal.style.display = 'none';
+  const appContainer = document.getElementById('app-container');
+  if (appContainer) appContainer.style.display = 'none';
+}
+
+// Bind Submit License Key Click
+document.getElementById('license-submit-btn')?.addEventListener('click', async () => {
+  const input = document.getElementById('license-key-input');
+  const licenseKey = input.value.trim().toUpperCase();
+  const messageEl = document.getElementById('license-message');
+  
+  if (!licenseKey) {
+    messageEl.innerText = "라이선스 키를 입력해 주세요.";
+    return;
+  }
+
+  if (licenseKey === 'KEY-OPEN-BIBLE-TREE') {
+    localStorage.setItem('bible_genealogy_license_key', licenseKey);
+    messageEl.innerText = "인증에 성공했습니다! 프로그램을 로딩합니다.";
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
+    return;
+  }
+
+  messageEl.innerText = "인증 중...";
+  const machineId = getOrCreateMachineId();
+
+  try {
+    const apiBase = window.API_BASE_URL || "";
+    const res = await fetch(apiBase + '/api/license/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ licenseKey, machineId })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      localStorage.setItem('bible_genealogy_license_key', licenseKey);
+      messageEl.innerText = "인증에 성공했습니다! 프로그램을 로딩합니다.";
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } else {
+      messageEl.innerText = data.error || "인증 실패";
+    }
+  } catch (e) {
+    messageEl.innerText = "서버 연결 실패. 네트워크 상태를 확인하세요.";
+  }
+});
+
+// ==========================================
+// Admin License Panel Tab Logic
+// ==========================================
+
+const adminTabUsers = document.getElementById('admin-tab-users');
+const adminTabLicenses = document.getElementById('admin-tab-licenses');
+const adminUsersTabContent = document.getElementById('admin-users-tab-content');
+const adminLicensesTabContent = document.getElementById('admin-licenses-tab-content');
+
+if (adminTabUsers) {
+  adminTabUsers.addEventListener('click', () => {
+    adminTabUsers.style.background = '#3b82f6';
+    adminTabLicenses.style.background = '#64748b';
+    adminUsersTabContent.style.display = 'block';
+    adminLicensesTabContent.style.display = 'none';
+  });
+}
+
+if (adminTabLicenses) {
+  adminTabLicenses.addEventListener('click', () => {
+    adminTabLicenses.style.background = '#ef4444';
+    adminTabUsers.style.background = '#64748b';
+    adminUsersTabContent.style.display = 'none';
+    adminLicensesTabContent.style.display = 'block';
+    loadAdminLicenses();
+  });
+}
+
+async function loadAdminLicenses() {
+  if (!userToken) return;
+  const listBody = document.getElementById('admin-license-list-body');
+  listBody.innerHTML = '<tr><td colspan="5" style="padding:10px; text-align:center;">로딩 중...</td></tr>';
+  
+  try {
+    const apiBase = window.API_BASE_URL || "";
+    const res = await fetch(apiBase + '/api/admin/licenses', { headers: { 'Authorization': 'Bearer ' + userToken } });
+    const data = await res.json();
+    if (!res.ok) {
+      listBody.innerHTML = `<tr><td colspan="5" style="padding:10px; text-align:center; color:#ef4444;">${data.error || '목록을 불러오지 못했습니다.'}</td></tr>`;
+      return;
+    }
+    
+    listBody.innerHTML = '';
+    const keys = Object.keys(data.licenses);
+    if (keys.length === 0) {
+      listBody.innerHTML = '<tr><td colspan="5" style="padding:10px; text-align:center;">발급된 라이선스가 없습니다.</td></tr>';
+      return;
+    }
+    
+    keys.forEach(key => {
+      const lic = data.licenses[key];
+      const tr = document.createElement('tr');
+      tr.style.borderBottom = '1px solid #e2e8f0';
+      
+      const devCount = lic.registeredDevices.length;
+      const maxDev = lic.maxDevices || 2;
+      
+      tr.innerHTML = `
+        <td style="padding:10px; font-weight:bold; font-family:monospace; display:flex; align-items:center; gap:8px;">
+          <span>${key}</span>
+          <button onclick="copyToClipboard('${key}')" style="background:#cbd5e1; color:#1e293b; border:none; padding:2px 6px; cursor:pointer; font-weight:600; border-radius:4px; font-size:10px;" onmouseover="this.style.background='#94a3b8'" onmouseout="this.style.background='#cbd5e1'">복사</button>
+        </td>
+        <td style="padding:10px;">${lic.owner}</td>
+        <td style="padding:10px;">${lic.expiryDate ? lic.expiryDate : '무제한'}</td>
+        <td style="padding:10px;">${devCount} / ${maxDev} 대</td>
+        <td style="padding:10px; display:flex; gap:5px;">
+          <button onclick="resetLicenseKey('${key}')" style="background:#e67e22; color:white; border:none; padding:4px 8px; cursor:pointer; font-weight:bold; border-radius:4px; font-size:12px;">기기 리셋</button>
+          <button onclick="deleteLicenseKey('${key}')" style="background:#ef4444; color:white; border:none; padding:4px 8px; cursor:pointer; font-weight:bold; border-radius:4px; font-size:12px;">삭제</button>
+        </td>
+      `;
+      listBody.appendChild(tr);
+    });
+  } catch (e) {
+    listBody.innerHTML = '<tr><td colspan="5" style="padding:10px; text-align:center; color:#ef4444;">서버 연결 오류</td></tr>';
+  }
+}
+
+// Generate New License Key Click
+document.getElementById('new-license-btn')?.addEventListener('click', async () => {
+  const ownerInput = document.getElementById('new-license-owner');
+  const devInput = document.getElementById('new-license-devices');
+  const expiryInput = document.getElementById('new-license-expiry');
+  const owner = ownerInput.value.trim();
+  const maxDevices = devInput.value;
+  const expiryDate = expiryInput ? expiryInput.value : '';
+  
+  if (!owner) {
+    alert("소유자 이름을 입력해 주세요.");
+    return;
+  }
+  
+  try {
+    const apiBase = window.API_BASE_URL || "";
+    const res = await fetch(apiBase + '/api/admin/licenses/create', {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + userToken
+      },
+      body: JSON.stringify({ owner, maxDevices, expiryDate })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      alert(`새 라이선스가 발급되었습니다!\n키: ${data.licenseKey}`);
+      ownerInput.value = '';
+      if (expiryInput) expiryInput.value = '';
+      loadAdminLicenses();
+    } else {
+      alert(data.error || "발급 실패");
+    }
+  } catch (e) {
+    alert("서버 연결 실패");
+  }
+});
+
+window.resetLicenseKey = async function(licenseKey) {
+  if (!confirm(`이 라이선스 키(${licenseKey})에 인증 등록된 모든 기기들을 리셋하시겠습니까?\n이후 기존 기기를 포함한 새로운 2대에서 재등록할 수 있습니다.`)) return;
+  try {
+    const apiBase = window.API_BASE_URL || "";
+    const res = await fetch(apiBase + '/api/admin/licenses/reset', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + userToken
+      },
+      body: JSON.stringify({ licenseKey })
+    });
+    if (res.ok) {
+      alert("등록 기기 초기화 완료!");
+      loadAdminLicenses();
+    } else {
+      const data = await res.json();
+      alert(data.error || "리셋 실패");
+    }
+  } catch (e) {
+    alert("서버 연결 실패");
+  }
+};
+
+window.deleteLicenseKey = async function(licenseKey) {
+  if (!confirm(`이 라이선스 키(${licenseKey})를 영구히 삭제하시겠습니까?\n이 키로 설치된 기존 프로그램들은 더 이상 인증되지 않고 잠기게 됩니다.`)) return;
+  try {
+    const apiBase = window.API_BASE_URL || "";
+    const res = await fetch(apiBase + '/api/admin/licenses', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + userToken
+      },
+      body: JSON.stringify({ licenseKey })
+    });
+    if (res.ok) {
+      alert("라이선스 삭제 완료!");
+      loadAdminLicenses();
+    } else {
+      const data = await res.json();
+      alert(data.error || "삭제 실패");
+    }
+  } catch (e) {
+    alert("서버 연결 실패");
+  }
+};
+
+window.addEventListener('DOMContentLoaded', async () => {
+  const isLicensed = await checkLicenseAndInit();
+  if (!isLicensed) return;
+
+  const isCapacitor = !!window.Capacitor || window.location.protocol.startsWith('capacitor');
+  const isDesktop = window.location.protocol.startsWith('tauri') || 
+                    window.location.protocol.startsWith('asset') || 
+                    window.location.protocol.startsWith('file') || 
+                    isCapacitor ||
+                    (window.API_BASE_URL && window.API_BASE_URL.length > 0);
+  const landing = document.getElementById('landing-page');
+  if (isDesktop) {
+    hideAuthModal();
+    if (landing) landing.style.display = 'none';
+  } else {
+    if (userToken) {
+      if (landing) landing.style.display = 'none';
+      validateSession();
+    } else {
+      if (landing) landing.style.display = 'flex';
+      if (authModal) authModal.style.display = 'none';
+    }
+  }
+  
+  // Make left panels draggable
+  const layerPanel = document.querySelector('.layer-control-panel');
+  if (layerPanel) makeElementDraggable(layerPanel, '.layer-bar-drag-handle');
+  
+  const adminPanel = document.getElementById('admin-actions-bar');
+  if (adminPanel) makeElementDraggable(adminPanel, '.admin-bar-drag-handle');
+
+  if (isAdminMode) {
+    const toggleBtn = document.getElementById('spawner-panel-toggle-btn');
+    if (toggleBtn) {
+      toggleBtn.style.display = 'flex';
+    }
+  }
+
+  // Spawner panel toggle and close logic
+  const spawnerToggleBtn = document.getElementById('spawner-panel-toggle-btn');
+  const spawnerPanel = document.getElementById('bottom-spawner-panel');
+  const spawnerCloseBtn = document.getElementById('spawner-panel-close-btn');
+
+  spawnerToggleBtn?.addEventListener('click', () => {
+    spawnerToggleBtn.style.display = 'none';
+    if (spawnerPanel) {
+      spawnerPanel.style.display = 'flex';
+      renderSpawnerPanel();
+    }
+  });
+
+  spawnerCloseBtn?.addEventListener('click', () => {
+    if (spawnerPanel) {
+      spawnerPanel.style.display = 'none';
+    }
+    if (spawnerToggleBtn) {
+      spawnerToggleBtn.style.display = 'flex';
+    }
+  });
+  
+  // Wire up mouse wheel horizontal scrolling for spawner containers
+  document.querySelectorAll('.spawner-chips-container').forEach(container => {
+    container.addEventListener('wheel', (e) => {
+      if (e.deltaY !== 0) {
+        e.preventDefault();
+        container.scrollLeft += e.deltaY;
+      }
+    }, { passive: false });
+  });
+  
+  // Wire up spawner search controls
+  const searchInput = document.getElementById('spawner-search-input');
+  const typeSelect = document.getElementById('spawner-custom-type');
+  
+  searchInput?.addEventListener('input', (e) => {
+    renderSpawnerPanel(e.target.value);
+  });
+  
+  searchInput?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const val = e.target.value.trim();
+      if (!val) return;
+      
+      const selectedVal = typeSelect ? typeSelect.value : 'location';
+      let matchedItem = null;
+      let matchedType = selectedVal;
+      
+      const cleanLocs = locations.map(l => ({ ...l, cleanName: l.name.replace(/\s*\([A-Za-z0-9\s,\.'"-]+\)/g, '').trim() }));
+      const cleanEvs = events.map(e => ({ ...e, cleanName: e.name.replace(/\s*\([A-Za-z0-9\s,\.'"-]+\)/g, '').trim() }));
+      
+      if (selectedVal === 'event') {
+        // Search events first
+        const foundEv = cleanEvs.find(ev => ev.cleanName.toLowerCase() === val.toLowerCase());
+        if (foundEv) {
+          matchedItem = foundEv;
+          matchedType = 'event';
+        } else {
+          const foundLoc = cleanLocs.find(l => l.cleanName.toLowerCase() === val.toLowerCase());
+          if (foundLoc) {
+            matchedItem = foundLoc;
+            matchedType = 'location';
+          }
+        }
+      } else {
+        // Search locations first
+        const foundLoc = cleanLocs.find(l => l.cleanName.toLowerCase() === val.toLowerCase());
+        if (foundLoc) {
+          matchedItem = foundLoc;
+          matchedType = 'location';
+        } else {
+          const foundEv = cleanEvs.find(ev => ev.cleanName.toLowerCase() === val.toLowerCase());
+          if (foundEv) {
+            matchedItem = foundEv;
+            matchedType = 'event';
+          }
+        }
+      }
+      
+      if (!matchedItem) {
+        // If not found in search, create a new custom item directly with the typed text!
+        matchedItem = {
+          name: val,
+          desc: '',
+          refs: [],
+          relatedPeople: [],
+          relatedEvents: [],
+          relatedLocations: []
+        };
+        matchedType = selectedVal;
+        showToast(`🛠️ '${val}' (${matchedType === 'event' ? '사건' : '장소'}) 직접 입력을 배치합니다.`);
+      } else {
+        // Prepare template from matched item
+        matchedItem = { ...matchedItem, name: matchedItem.cleanName };
+      }
+      
+      startPlacementMode(matchedItem, matchedType, searchInput);
+    }
+  });
+});
+
+function cancelPlacementMode() {
+  activeSpawnerItem = null;
+  activeSpawnerType = null;
+  
+  // Remove crosshair styling
+  viewerContainer.classList.remove('placement-mode-active');
+  
+  // Remove active styling from chips
+  document.querySelectorAll('.spawner-chip.active-tool').forEach(c => c.classList.remove('active-tool'));
+  
+  // Remove ghost cursor if exists
+  const ghost = document.getElementById('spawner-ghost-marker');
+  if (ghost) ghost.remove();
+}
+
+function startPlacementMode(item, type, element) {
+  cancelPlacementMode(); // reset first
+  
+  activeSpawnerItem = item;
+  activeSpawnerType = type;
+  
+  // Mark element as active tool
+  if (element && element.classList) {
+    element.classList.add('active-tool');
+  }
+  
+  // Change cursor
+  viewerContainer.classList.add('placement-mode-active');
+  
+  // Create ghost marker that follows cursor
+  const ghost = document.createElement('div');
+  ghost.id = 'spawner-ghost-marker';
+  ghost.className = 'layer-marker ghost-marker';
+  ghost.style.position = 'fixed';
+  ghost.style.pointerEvents = 'none';
+  ghost.style.zIndex = '9999';
+  ghost.style.transform = 'translate(-50%, -50%)';
+  
+  const icon = type === 'event' ? '📜' : '📍';
+  ghost.innerHTML = `
+    <div class="marker-icon" style="background: #f59e0b; animation: none;">${icon}</div>
+    <div class="marker-label" style="background: rgba(245, 158, 11, 0.95); color: #000; font-weight: bold; border-color: #f59e0b;">${item.name}</div>
+  `;
+  document.body.appendChild(ghost);
+  
+  const moveHandler = (e) => {
+    if (!activeSpawnerItem) {
+      document.removeEventListener('mousemove', moveHandler);
+      return;
+    }
+    ghost.style.left = `${e.clientX}px`;
+    ghost.style.top = `${e.clientY}px`;
+  };
+  document.addEventListener('mousemove', moveHandler);
+  
+  showToast("🛠️ 보드 위의 원하는 빈 공간을 클릭하면 장소/사건이 복사 배치됩니다.");
+}
+
+function renderSpawnerPanel(filterQuery = '') {
+  const eventsList = document.getElementById('spawner-events-list');
+  const locationsList = document.getElementById('spawner-locations-list');
+  const query = (filterQuery || '').toLowerCase().trim();
+  
+  if (eventsList) {
+    eventsList.innerHTML = '';
+    
+    // De-duplicate events by clean Korean name
+    const uniqueEvents = [];
+    const eventNames = new Set();
+    DEFAULT_EVENTS.forEach(e => {
+      const cleanName = e.name.replace(/\s*\([A-Za-z0-9\s,\.'"-]+\)/g, '').trim();
+      if (!eventNames.has(cleanName)) {
+        eventNames.add(cleanName);
+        uniqueEvents.push({ original: e, cleanName: cleanName });
+      }
+    });
+    
+    // Sort unique events by clean name
+    uniqueEvents.sort((a, b) => a.cleanName.localeCompare(b.cleanName, 'ko'));
+    
+    uniqueEvents.forEach(item => {
+      if (query && !item.cleanName.toLowerCase().includes(query)) return;
+      
+      const chip = document.createElement('div');
+      chip.className = 'spawner-chip';
+      chip.innerHTML = `<span>📜</span> <span>${item.cleanName}</span>`;
+      chip.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (chip.classList.contains('active-tool')) {
+          cancelPlacementMode();
+        } else {
+          const spawnTemplate = { ...item.original, name: item.cleanName };
+          startPlacementMode(spawnTemplate, 'event', chip);
+        }
+      });
+      eventsList.appendChild(chip);
+    });
+  }
+  
+  if (locationsList) {
+    locationsList.innerHTML = '';
+    
+    // De-duplicate locations by clean Korean name
+    const uniqueLocations = [];
+    const locationNames = new Set();
+    DEFAULT_LOCATIONS.forEach(l => {
+      const cleanName = l.name.replace(/\s*\([A-Za-z0-9\s,\.'"-]+\)/g, '').trim();
+      if (!locationNames.has(cleanName)) {
+        locationNames.add(cleanName);
+        uniqueLocations.push({ original: l, cleanName: cleanName });
+      }
+    });
+    
+    // Sort unique locations by clean name
+    uniqueLocations.sort((a, b) => a.cleanName.localeCompare(b.cleanName, 'ko'));
+    
+    uniqueLocations.forEach(item => {
+      if (query && !item.cleanName.toLowerCase().includes(query)) return;
+      
+      const chip = document.createElement('div');
+      chip.className = 'spawner-chip';
+      chip.innerHTML = `<span>📍</span> <span>${item.cleanName}</span>`;
+      chip.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (chip.classList.contains('active-tool')) {
+          cancelPlacementMode();
+        } else {
+          const spawnTemplate = { ...item.original, name: item.cleanName };
+          startPlacementMode(spawnTemplate, 'location', chip);
+        }
+      });
+      locationsList.appendChild(chip);
+    });
+  }
+}
+
+// ==========================================
+// DevTools Protection & Source Security
+// ==========================================
+(function() {
+  let devToolsProtectionEnabled = true;
+
+  // 1. Disable Right Click (except inside inputs)
+  document.addEventListener('contextmenu', (e) => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable || e.target.closest('[contenteditable="true"]')) {
+      return;
+    }
+    e.preventDefault();
+  });
+
+  // 2. Disable Keyboard Shortcuts (F12, Source, Print, DevTools shortcuts, Copy/Cut/SelectAll on canvas)
+  window.addEventListener('keydown', (e) => {
+    const isMetaOrCtrl = e.metaKey || e.ctrlKey;
+    const isShift = e.shiftKey;
+    const isAlt = e.altKey;
+    
+    const isInput = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable || e.target.closest('[contenteditable="true"]');
+    
+    // F12 key
+    if (e.key === 'F12') {
+      e.preventDefault();
+      return false;
+    }
+    
+    // View Source: Ctrl+U / Cmd+Alt+U
+    if (isMetaOrCtrl && (e.key === 'u' || e.key === 'U' || (isAlt && (e.key === 'u' || e.key === 'U')))) {
+      e.preventDefault();
+      return false;
+    }
+    
+    // DevTools: Ctrl+Shift+I, J, C / Cmd+Alt+I, J, C
+    if (isMetaOrCtrl && isShift && (e.key === 'i' || e.key === 'I' || e.key === 'j' || e.key === 'J' || e.key === 'c' || e.key === 'C')) {
+      e.preventDefault();
+      return false;
+    }
+    if (isMetaOrCtrl && isAlt && (e.key === 'i' || e.key === 'I' || e.key === 'j' || e.key === 'J' || e.key === 'c' || e.key === 'C')) {
+      e.preventDefault();
+      return false;
+    }
+    
+    // Save Page: Ctrl+S / Cmd+S
+    if (isMetaOrCtrl && (e.key === 's' || e.key === 'S')) {
+      e.preventDefault();
+      return false;
+    }
+
+    // Print: Ctrl+P / Cmd+P
+    if (isMetaOrCtrl && (e.key === 'p' || e.key === 'P')) {
+      e.preventDefault();
+      return false;
+    }
+
+    // Canvas Selection/Copy Blocks: Ctrl+C, Ctrl+X, Ctrl+A
+    if (!isInput && isMetaOrCtrl && (e.key === 'c' || e.key === 'C' || e.key === 'x' || e.key === 'X' || e.key === 'a' || e.key === 'A')) {
+      e.preventDefault();
+      return false;
+    }
+  }, true);
+
+  // 3. Disable Drag, Select, and Copy on non-inputs
+  document.addEventListener('selectstart', (e) => {
+    const targetEl = e.target && e.target.nodeType === 3 ? e.target.parentElement : e.target;
+    if (targetEl && (targetEl.tagName === 'INPUT' || targetEl.tagName === 'TEXTAREA' || targetEl.isContentEditable || (typeof targetEl.closest === 'function' && targetEl.closest('[contenteditable="true"]')))) return;
+    e.preventDefault();
+  });
+  
+  document.addEventListener('copy', (e) => {
+    const targetEl = e.target && e.target.nodeType === 3 ? e.target.parentElement : e.target;
+    if (targetEl && (targetEl.tagName === 'INPUT' || targetEl.tagName === 'TEXTAREA' || targetEl.isContentEditable || (typeof targetEl.closest === 'function' && targetEl.closest('[contenteditable="true"]')))) return;
+    e.preventDefault();
+  });
+
+  document.addEventListener('dragstart', (e) => {
+    const targetEl = e.target && e.target.nodeType === 3 ? e.target.parentElement : e.target;
+    if (targetEl && (targetEl.tagName === 'INPUT' || targetEl.tagName === 'TEXTAREA' || targetEl.isContentEditable || (typeof targetEl.closest === 'function' && targetEl.closest('[contenteditable="true"]')))) return;
+    e.preventDefault();
+  });
+
+  // 4. Print & Save as PDF Block
+  window.addEventListener('beforeprint', (e) => {
+    if (devToolsProtectionEnabled) {
+      e.preventDefault();
+      alert('보안 정책에 따라 인쇄 및 PDF 저장을 하실 수 없습니다.');
+    }
+  });
+
+  // 5. Iframe Embedding prevention (Clickjacking)
+  if (window.self !== window.top) {
+    try {
+      window.top.location = window.self.location;
+    } catch (e) {
+      window.self.location = 'about:blank';
+    }
+  }
+
+
+  
+  // 7. DevTools Debugger Loop (Freezes page execution if DevTools is open)
+  function startDebuggerLoop() {
+    function debug() {
+      if (!devToolsProtectionEnabled) return;
+      try {
+        (function anonymous(one) {
+          one = "debugger";
+          return one;
+        }(function() {}).constructor("debugger")());
+      } catch (err) {}
+      setTimeout(debug, 50);
+    }
+    debug();
+  }
+  startDebuggerLoop();
+  
+  // 8. Secret developer unlock code ("unlockdev")
+  let inputBuffer = "";
+  window.addEventListener('keydown', (e) => {
+    if (e && e.key && e.key.length === 1 && /[a-zA-Z]/.test(e.key)) {
+      inputBuffer += e.key.toLowerCase();
+      if (inputBuffer.length > 20) {
+        inputBuffer = inputBuffer.substring(inputBuffer.length - 20);
+      }
+      
+      if (inputBuffer.endsWith("unlockdev")) {
+        devToolsProtectionEnabled = false;
+        showToast("🔓 개발자용 보안 잠금이 해제되었습니다.");
+        inputBuffer = "";
+      }
+    }
+  });
+
+  // 9. Warning message in console
+  console.log(
+    "%c🛑 경고: 저작권 보호 구역 %c\n이 웹사이트의 소스 코드와 데이터베이스는 저작권법의 보호를 받습니다. 무단 복제, 배포 및 수집(Scraping)은 법적 처벌을 받을 수 있습니다.",
+    "color: red; font-size: 24px; font-weight: bold;",
+    "color: inherit; font-size: 14px;"
+  );
+})();
+
+function makeElementDraggable(el, handleSelector) {
+  const handle = el.querySelector(handleSelector) || el;
+  let isDragging = false;
+  let startX, startY, startLeft, startTop;
+  
+  handle.addEventListener('mousedown', (e) => {
+    if (e.button !== 0) return;
+    if (e.target.closest('button') || e.target.closest('input') || e.target.closest('select')) return;
+    
+    e.stopPropagation(); // Stop event bubbling to prevent background board panning
+    isDragging = true;
+    startX = e.clientX;
+    startY = e.clientY;
+    
+    startLeft = el.offsetLeft;
+    startTop = el.offsetTop;
+    
+    el.style.position = 'absolute';
+    el.style.left = `${startLeft}px`;
+    el.style.top = `${startTop}px`;
+    el.style.right = 'auto';
+    el.style.bottom = 'auto';
+    el.style.transform = 'none';
+    
+    e.preventDefault();
+    
+    const onMouseMove = (moveEvt) => {
+      if (!isDragging) return;
+      const dx = moveEvt.clientX - startX;
+      const dy = moveEvt.clientY - startY;
+      
+      el.style.left = `${startLeft + dx}px`;
+      el.style.top = `${startTop + dy}px`;
+    };
+    
+    const onMouseUp = () => {
+      isDragging = false;
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+    };
+    
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+  });
+}
+
+window.copyToClipboard = function(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    alert("라이선스 키가 클립보드에 복사되었습니다:\n" + text);
+  }).catch(err => {
+    var textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";  // Avoid scrolling to bottom
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      document.execCommand('copy');
+      alert("라이선스 키가 클립보드에 복사되었습니다:\n" + text);
+    } catch (e) {
+      alert("복사 실패 (직접 복사해 주세요): " + text);
+    }
+    document.body.removeChild(textArea);
+  });
+};
+
+window.demoFeature = function(type) {
+  // Hide landing page overlay
+  const landing = document.getElementById('landing-page');
+  if (landing) landing.style.display = 'none';
+  
+  // Set zoom scale
+  currentScale = 0.8;
+  
+  // Setup 5-minute timer (300 seconds)
+  if (window.demoTimeLeft === undefined) {
+    window.demoTimeLeft = 300;
+  }
+  
+  const updateTimerDisplay = () => {
+    const min = Math.floor(window.demoTimeLeft / 60);
+    const sec = String(window.demoTimeLeft % 60).padStart(2, '0');
+    const timerSpan = document.getElementById('demo-timer-span');
+    if (timerSpan) {
+      timerSpan.innerText = ` (남은 시간: ${min}:${sec})`;
+    }
+  };
+
+  // Inject demo banner if it doesn't exist
+  let banner = document.getElementById('demo-mode-banner');
+  if (!banner) {
+    banner = document.createElement('div');
+    banner.id = 'demo-mode-banner';
+    banner.style.cssText = 'position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(255,255,255,0.15); padding: 12px 24px; border-radius: 30px; z-index: 10000; box-shadow: 0 10px 25px rgba(0,0,0,0.3); font-family: sans-serif; font-size: 14px; color: #e2e8f0; display: flex; align-items: center; gap: 12px;';
+    banner.innerHTML = `
+      <span>💡 데모 체험 모드 실행 중<span id="demo-timer-span"></span></span>
+      <button onclick="window.location.reload()" style="background: #0284c7; color: white; border: none; padding: 6px 14px; border-radius: 20px; font-weight: bold; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#0369a1'" onmouseout="this.style.background='#0284c7'">
+        🏠 메인 화면으로
+      </button>
+    `;
+    document.body.appendChild(banner);
+  }
+
+  updateTimerDisplay();
+
+  if (!window.demoInterval) {
+    window.demoInterval = setInterval(() => {
+      window.demoTimeLeft--;
+      updateTimerDisplay();
+      if (window.demoTimeLeft <= 0) {
+        clearInterval(window.demoInterval);
+        window.demoInterval = null;
+        alert("5분 데모 체험이 종료되었습니다. 계속 사용하시려면 데스크톱 앱을 다운로드하여 설치해 주세요.");
+        window.location.reload();
+      }
+    }, 1000);
+  }
+  
+  if (type === 'messiah') {
+    // 1. Highlight Messiah line (Aura on Jesus)
+    selectedPersonId = 'jesus';
+    openStudyPanel('jesus');
+    centerOnNode('jesus');
+  } else if (type === 'memo') {
+    // 2. Study Panel Memo demo (Open Abraham study panel and center)
+    selectedPersonId = 'abraham';
+    openStudyPanel('abraham');
+    centerOnNode('abraham');
+  } else if (type === 'filter') {
+    // 3. Custom Tribe Filter demo (Enable Cain lineage filter, others are dimmed)
+    activeFilters = { cain: true };
+    localStorage.setItem('bible_tree_filters', JSON.stringify(activeFilters));
+    applyFilters();
+    centerOnNode('cain');
+  }
+};
+
+// Android Back Button Navigation for Capacitor
+if (typeof window !== 'undefined') {
+  window.addEventListener('DOMContentLoaded', () => {
+    const App = window.Capacitor?.Plugins?.App;
+    if (App) {
+      App.addListener('backButton', () => {
+        const studyPanel = document.getElementById('study-panel');
+        const filterPanel = document.getElementById('filter-panel');
+        
+        if (studyPanel && studyPanel.classList.contains('active')) {
+          closeStudyPanel();
+        } else if (filterPanel && filterPanel.classList.contains('active')) {
+          filterPanel.classList.remove('active');
+        } else {
+          App.exitApp();
+        }
+      });
+    }
+    
+    // Prevent native iOS Safari/WKWebView viewport pinch-zoom gestures
+    document.addEventListener('gesturestart', (e) => e.preventDefault(), { passive: false });
+    document.addEventListener('gesturechange', (e) => e.preventDefault(), { passive: false });
+    
+    // Enable immediate :active pseudo-classes on iOS Safari/WKWebView
+    document.addEventListener('touchstart', () => {}, { passive: true });
+  });
+}
+
+

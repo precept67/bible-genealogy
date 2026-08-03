@@ -9,6 +9,8 @@
   --border-card-male: rgba(59, 130, 246, 0.4);
   --bg-card-female: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
   --border-card-female: rgba(236, 72, 153, 0.4);
+  --bg-card-prophet: linear-gradient(135deg, #f5f3ff 0%, #e0e7ff 100%);
+  --border-card-prophet: rgba(139, 92, 246, 0.6);
   --bg-card-main: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
   --border-card-main: #f59e0b;
   --shadow-card-main: 0 0 15px rgba(245, 158, 11, 0.25);
@@ -36,6 +38,8 @@
   --border-card-male: rgba(59, 130, 246, 0.5);
   --bg-card-female: linear-gradient(135deg, #831843 0%, #0f172a 100%);
   --border-card-female: rgba(236, 72, 153, 0.5);
+  --bg-card-prophet: linear-gradient(135deg, #4c1d95 0%, #0f172a 100%);
+  --border-card-prophet: rgba(167, 139, 250, 0.7);
   --bg-card-main: linear-gradient(135deg, #78350f 0%, #1e293b 100%);
   --border-card-main: #fbbf24;
   --shadow-card-main: 0 0 20px rgba(251, 191, 36, 0.35);
@@ -64,11 +68,43 @@ body, html {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  position: fixed;
   overscroll-behavior: none;
   font-family: var(--font-family);
   background-color: var(--bg-board);
   color: var(--text-main);
   transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Enable instant touch response and remove iOS gray tap highlight overlay */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Snappy click-delay bypass */
+button,
+a,
+.person-card,
+.control-btn,
+.layer-marker {
+  touch-action: manipulation;
+}
+
+/* Instantly animate button depression on touch */
+button:active,
+a:active,
+.control-btn:active,
+.clickable-item:active,
+#bottom-control-panel button:active,
+#filter-panel button:active,
+#study-panel button:active {
+  transform: scale(0.95) !important;
+  opacity: 0.85;
+  transition: transform 0.04s ease-out !important;
+}
+
+.person-card:active {
+  opacity: 0.75 !important;
 }
 
 /* App Structure */
@@ -78,6 +114,7 @@ body, html {
   width: 100%;
   height: 100%;
   position: relative;
+  overflow: hidden;
 }
 
 /* Header Panel styling */
@@ -230,6 +267,7 @@ header .subtitle {
   left: 0;
   user-select: none;
   -webkit-user-select: none;
+  will-change: transform;
 }
 
 #tree-board {
@@ -248,6 +286,8 @@ header .subtitle {
   overflow: visible !important;
   pointer-events: none;
   z-index: 0; /* Render behind everything else, below locations */
+  will-change: transform;
+  transform: translateZ(0);
 }
 #svg-layer {
   position: absolute;
@@ -258,6 +298,8 @@ header .subtitle {
   overflow: visible !important;
   pointer-events: none;
   z-index: 5;
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 .connector-line {
@@ -325,7 +367,6 @@ header .subtitle {
   cursor: pointer;
   user-select: none;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.3s ease;
-  will-change: transform, left, top;
 }
 
 .person-card:hover {
@@ -681,8 +722,8 @@ header .subtitle {
 @media (max-width: 768px) {
   header {
     padding: 8px 12px;
-    top: 8px;
-    left: 8px;
+    top: calc(8px + env(safe-area-inset-top));
+    left: calc(8px + env(safe-area-inset-left));
   }
   header h1 {
     font-size: 15px;
@@ -691,8 +732,8 @@ header .subtitle {
     display: none;
   }
   #search-panel {
-    top: 8px;
-    right: 8px;
+    top: calc(8px + env(safe-area-inset-top));
+    right: calc(8px + env(safe-area-inset-right));
   }
   .search-box {
     width: 140px;
@@ -701,16 +742,28 @@ header .subtitle {
   .search-box:focus {
     width: 180px;
   }
+  .panel-header {
+    padding-top: calc(16px + env(safe-area-inset-top));
+  }
+  #control-panel {
+    bottom: calc(16px + env(safe-area-inset-bottom));
+  }
   #study-panel {
-    width: 100%;
-    right: -100%;
+    width: 75%;
+    right: -75%;
     top: 0;
     height: 100%;
-    border-radius: 0;
+    border-radius: 16px 0 0 16px;
     border: none;
+    border-left: 1px solid var(--border-panel);
+    box-shadow: -5px 0 25px rgba(0, 0, 0, 0.15);
+    z-index: 4000;
   }
   #study-panel.active {
     right: 0;
+  }
+  .copyright-notice {
+    display: none !important;
   }
 }
 
@@ -809,7 +862,6 @@ header .subtitle {
   transition: opacity 0.2s ease;
   box-sizing: border-box;
   transform: translateZ(0);
-  will-change: transform;
 }
 
 .person-card.admin-editable:hover .card-edit-overlay,
@@ -1184,12 +1236,15 @@ header .subtitle {
     left: 0;
   }
   #filter-panel {
-    width: 100%;
-    left: -100%;
+    width: 75%;
+    left: -75%;
     top: 0;
     height: 100%;
-    border-radius: 0;
+    border-radius: 0 16px 16px 0;
     border: none;
+    border-right: 1px solid var(--border-panel);
+    box-shadow: 5px 0 25px rgba(0, 0, 0, 0.15);
+    z-index: 4000;
   }
   #filter-panel.active {
     left: 0;
@@ -2573,6 +2628,51 @@ header .subtitle {
   pointer-events: none;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
+}
+
+/* Mobile SVG Animation Optimization */
+@media (max-width: 768px) {
+  .connector-line.main-line {
+    animation: none !important;
+  }
+}
+
+/* Prophet Cards Specific Styles */
+.person-card.prophet {
+  background: var(--bg-card-prophet) !important;
+  border: 2px solid var(--border-card-prophet) !important;
+  box-shadow: 0 4px 10px rgba(139, 92, 246, 0.15) !important;
+}
+
+.person-card.prophet .card-title {
+  color: #6d28d9 !important; /* Deep purple in light mode */
+}
+
+[data-theme="dark"] .person-card.prophet .card-title {
+  color: #c084fc !important; /* Light purple in dark mode */
+}
+
+/* Hide connection lines & spouse node circles completely under prophets filter */
+.prophets-filter-active .connector-line,
+.prophets-filter-active .spouse-connector,
+.prophets-filter-active .spouse-node-circle {
+  display: none !important;
+}
+
+/* Beautiful glow aura on cards when prophets layer filter is active */
+.prophets-filter-active .person-card:not(.filter-inactive) {
+  animation: pulse-prophet-aura 1.5s infinite alternate !important;
+  border-color: rgba(139, 92, 246, 0.8) !important;
+  z-index: 100 !important;
+}
+
+@keyframes pulse-prophet-aura {
+  0% {
+    box-shadow: 0 0 8px rgba(139, 92, 246, 0.4), 0 0 15px rgba(139, 92, 246, 0.2) !important;
+  }
+  100% {
+    box-shadow: 0 0 18px rgba(139, 92, 246, 0.8), 0 0 35px rgba(139, 92, 246, 0.4) !important;
+  }
 }
 
 
