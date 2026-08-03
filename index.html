@@ -239,14 +239,14 @@
         <!-- 4. Updates -->
         <div style="background: rgba(148, 163, 184, 0.08); padding: 15px; border-radius: 8px; border: 1px dashed var(--border-panel);">
           <h4 style="margin: 0 0 6px 0; font-size: 14px; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
-            <span>🔄</span> 프로그램 업데이트 및 소식
+            <span>🔄</span> 프로그램 업데이트 및 다운로드
           </h4>
           <p style="margin: 0 0 10px 0; font-size: 13px; color: var(--text-muted);">
             현재 사용 중인 버전: <b>v1.0.35 (Universal)</b><br>
-            성경 족보의 최신 버전 설치 파일 및 공지사항을 확인하시려면 아래 버튼을 통해 공식 홈페이지를 방문해 주세요.
+            아래 버튼을 클릭하면 사용 중인 PC 기기(Mac/Windows)에 최적화된 최신 설치 프로그램 파일이 즉시 다운로드됩니다.
           </p>
-          <button onclick="window.openExternalLink('https://f.jubilee.or.kr')" style="display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 10px; background: var(--text-accent, #3498db); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; transition: background 0.2s;">
-            🌐 최신 공지 및 업데이트 확인하기
+          <button onclick="window.downloadLatestProgram()" style="display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 10px; background: var(--text-accent, #3498db); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; transition: background 0.2s;">
+            🌐 최신 설치 파일 즉시 다운로드
           </button>
         </div>
       </div>
@@ -917,6 +917,15 @@
         window.__TAURI__.shell.open(url);
       } else {
         window.open(url, '_blank');
+      }
+    };
+
+    window.downloadLatestProgram = function() {
+      var isMac = navigator.userAgent.toLowerCase().includes('mac');
+      if (isMac) {
+        window.openExternalLink('https://f.jubilee.or.kr/downloads/BibleGenealogy_latest.dmg');
+      } else {
+        window.openExternalLink('https://f.jubilee.or.kr/downloads/BibleGenealogy_latest.msi');
       }
     };
 

@@ -428,3 +428,11 @@ function drawConnections() {
       - `createPersonCard` 내 카드 메모 보유 여부를 체크하는 `hasNote` 변수의 판독식을 `userNotes && userNotes[char.id]` 형태로 리팩토링했습니다.
       - 추가적으로 관리자 모드에서 인물을 영구 삭제할 시 해당 인물에 매핑된 메모 정보도 `userNotes` 객체에서 깨끗이 `delete`하고 동기화 저장하도록 삭제 프로세스를 개정하여 메모 무결성을 보장했습니다.
       - 변경 사항을 universal macOS 배포 패키지 빌드에 통합 반영했습니다.
+
+59. **"업데이트 확인하기" 버튼의 기기 맞춤형(Mac/Windows) 즉시 다운로드 기능 구현**:
+    - **원인**:
+      - 기존 [업데이트 확인하기] 버튼은 단순히 공식 홈페이지 첫 페이지(`https://f.jubilee.or.kr`)로 이동하게 설정되어 있어, 사용자가 새로운 업데이트 설치 파일을 다운로드하려면 홈페이지 주소를 다시 거쳐서 수동으로 받아야 하는 동선 낭비가 있었습니다.
+    - **조치**:
+      - 사용자의 접속 기기 운영체제(OS) 정보를 자동으로 해독하는 `window.downloadLatestProgram()` 헬퍼 함수를 추가했습니다.
+      - 버튼 클릭 시 사용자의 OS가 macOS(Mac)일 경우에는 최신 DMG 다운로드 경로(`https://f.jubilee.or.kr/downloads/BibleGenealogy_latest.dmg`)로, Windows(윈도우)일 경우에는 최신 MSI 다운로드 경로(`https://f.jubilee.or.kr/downloads/BibleGenealogy_latest.msi`)로 자동 식별하여 브라우저에서 다이렉트로 즉시 설치 파일 다운로드가 시작되도록 개선했습니다.
+      - 변경 사항을 universal macOS 배포 패키지 빌드에 통합 반영했습니다.
