@@ -9,8 +9,8 @@
   --border-card-male: rgba(59, 130, 246, 0.4);
   --bg-card-female: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
   --border-card-female: rgba(236, 72, 153, 0.4);
-  --bg-card-prophet: linear-gradient(135deg, #f3e8ff 0%, #c084fc 100%);
-  --border-card-prophet: rgba(168, 85, 247, 0.85);
+  --bg-card-prophet: linear-gradient(135deg, #f5edff 0%, #cd9dfd 100%);
+  --border-card-prophet: rgba(186, 115, 250, 0.75);
   --bg-card-main: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
   --border-card-main: #f59e0b;
   --shadow-card-main: 0 0 15px rgba(245, 158, 11, 0.25);
@@ -38,8 +38,8 @@
   --border-card-male: rgba(59, 130, 246, 0.5);
   --bg-card-female: linear-gradient(135deg, #831843 0%, #0f172a 100%);
   --border-card-female: rgba(236, 72, 153, 0.5);
-  --bg-card-prophet: linear-gradient(135deg, #6b21a8 0%, #3b0764 100%);
-  --border-card-prophet: rgba(192, 132, 252, 0.85);
+  --bg-card-prophet: linear-gradient(135deg, #8028ca 0%, #470878 100%);
+  --border-card-prophet: rgba(216, 180, 254, 0.75);
   --bg-card-main: linear-gradient(135deg, #78350f 0%, #1e293b 100%);
   --border-card-main: #fbbf24;
   --shadow-card-main: 0 0 20px rgba(251, 191, 36, 0.35);
