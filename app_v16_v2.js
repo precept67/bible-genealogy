@@ -5335,8 +5335,8 @@ function renderTree() {
     card.dataset.x = coords.x;
     card.dataset.y = coords.y;
     
-    // Check if notes exist in localStorage
-    const hasNote = localStorage.getItem(`bible_tree_note_${char.id}`);
+    // Check if notes exist in userNotes
+    const hasNote = userNotes && userNotes[char.id];
     const noteBadgeHTML = hasNote ? `<div class="card-note-badge" title="메모 있음">📝</div>` : '';
     
     // Render Inner HTML: Centered name, no gender icons, combined English & Description line
@@ -10698,6 +10698,10 @@ function deletePerson(personId) {
   
   localStorage.removeItem(`bible_tree_note_${personId}`);
   localStorage.removeItem(`bible_tree_resources_${personId}`);
+  if (userNotes && userNotes[personId]) {
+    delete userNotes[personId];
+    saveUserNotes();
+  }
   
   customVisualLines = customVisualLines.filter(l => l.from !== personId && l.to !== personId);
   saveCustomVisualLines();
