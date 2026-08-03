@@ -5285,7 +5285,7 @@ function isCharacterCardVisible(charId) {
   const isSamuelCard = charId === 'samuel' || (char.name && (char.name === '사무엘' || char.name.includes('사무엘')));
   
   if (isProphetChecked || isSamuelCard) {
-    return showPeople || showProphets;
+    return showProphets;
   }
   return showPeople;
 }
