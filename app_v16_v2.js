@@ -2240,11 +2240,15 @@ function initDatabase() {
         if (!Array.isArray(c.teachers)) {
           c.teachers = canon.teachers ? [...canon.teachers] : [];
         }
+        if (!Array.isArray(c.prophets)) {
+          c.prophets = canon.prophets ? [...canon.prophets] : [];
+        }
       } else {
         // For custom characters, make sure parents and spouses are arrays
         if (!Array.isArray(c.parents)) c.parents = [];
         if (!Array.isArray(c.spouses)) c.spouses = [];
         if (!Array.isArray(c.teachers)) c.teachers = [];
+        if (!Array.isArray(c.prophets)) c.prophets = [];
       }
 
       if (typeof c.column !== 'number' || isNaN(c.column)) {
@@ -4899,6 +4903,19 @@ function precomputeProphets() {
       return;
     }
     if (char.spouses && char.spouses.some(sId => prophetIds.has(sId))) {
+      prophetRelatedIds.add(char.id);
+      return;
+    }
+    if (char.prophets && char.prophets.some(pId => prophetIds.has(pId))) {
+      prophetRelatedIds.add(char.id);
+      return;
+    }
+    const isRelated = db.some(otherChar => 
+      prophetIds.has(otherChar.id) && 
+      otherChar.prophets && 
+      otherChar.prophets.includes(char.id)
+    );
+    if (isRelated) {
       prophetRelatedIds.add(char.id);
       return;
     }
@@ -10252,6 +10269,10 @@ function setupAutocomplete() {
   const teachersSug = document.getElementById('teachers-suggestions');
   if (teachersInput && teachersSug) handleInput(teachersInput, teachersSug);
 
+  const prophetsInput = document.getElementById('form-prophets');
+  const prophetsSug = document.getElementById('prophets-suggestions');
+  if (prophetsInput && prophetsSug) handleInput(prophetsInput, prophetsSug);
+
   // Layer Item Autocomplete
   const layerPeopleInput = document.getElementById('layer-item-people');
   const layerPeopleSug = document.getElementById('layer-item-people-suggestions');
@@ -10608,6 +10629,8 @@ function openAdminForm(personId) {
       if (spousesInput) spousesInput.value = char.spouses ? char.spouses.join(', ') : '';
       const teachersInput = document.getElementById('form-teachers');
       if (teachersInput) teachersInput.value = char.teachers ? char.teachers.join(', ') : '';
+      const prophetsInput = document.getElementById('form-prophets');
+      if (prophetsInput) prophetsInput.value = char.prophets ? char.prophets.join(', ') : '';
       const descInput = document.getElementById('form-desc');
       if (descInput) descInput.value = char.desc || '';
       const mainCheckbox = document.getElementById('form-main');
@@ -10639,6 +10662,8 @@ function openAdminForm(personId) {
     if (colInput) colInput.value = 0;
     const teachersInput = document.getElementById('form-teachers');
     if (teachersInput) teachersInput.value = '';
+    const prophetsInput = document.getElementById('form-prophets');
+    if (prophetsInput) prophetsInput.value = '';
   }
   
   if (modalEl) modalEl.style.display = 'flex';
@@ -10776,6 +10801,32 @@ function saveAdminForm() {
     }
   }
 
+  const prophetsInput = document.getElementById('form-prophets').value.trim();
+  const prophets = prophetsInput ? prophetsInput.split(',').map(s => s.trim()).filter(s => s.length > 0) : [];
+  
+  for (let pId of prophets) {
+    if (!db.some(c => c.id === pId)) {
+      if (confirm(`선지자 ID '${pId}'가 존재하지 않습니다. 이 ID로 새 인물을 생성하시겠습니까?`)) {
+        db.push({
+          id: pId,
+          name: pId,
+          engName: '',
+          gender: 'M',
+          generation: Math.max(0, generation - 1),
+          column: column - 1.5,
+          parents: [],
+          spouses: [],
+          desc: "자동 생성된 선지자",
+          isMain: false,
+          isProphet: true,
+          isManual: true
+        });
+      } else {
+        return;
+      }
+    }
+  }
+
   pushHistoryState();
   if (editingPersonId) {
     const index = db.findIndex(c => c.id === editingPersonId);
@@ -10792,6 +10843,7 @@ function saveAdminForm() {
         parents,
         spouses,
         teachers,
+        prophets,
         desc,
         isMain,
         isProphet: isProphetVal,
@@ -10833,6 +10885,7 @@ function saveAdminForm() {
       parents,
       spouses,
       teachers,
+      prophets,
       desc,
       isMain,
       isProphet: isProphetVal,
