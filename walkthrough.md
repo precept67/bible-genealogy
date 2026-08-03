@@ -499,3 +499,14 @@ function drawConnections() {
       - **빌드 동기화 및 모바일/데스크톱 빌드 검증**:
         - `dist/`, `bible-genealogy-deploy/` 내의 `index.html`, `app_v16_v2.js` 등 모든 배포용 소스를 일치 복사하고, `npm run build:mobile` 실행 및 `cargo check`를 통해 에셋 무결성을 검증하고 동기화 완료했습니다.
 
+64. **"선지자/예언자 여부" 체크 시 네임박스 배경/테두리 색상 보라색 계열로 변경 구현**:
+    - **원인**:
+      - 관리자 모달에서 "선지자/예언자(Prophet) 여부" 체크박스를 수동으로 직접 체크하여 저장한 인물의 경우, 메인보드 화면의 네임박스(인물 카드)가 해당 인물의 성별/라인 고유 색상 대신 보라색(선지자 전용 색상)으로 즉각 표시되도록 요청되었습니다.
+    - **조치**:
+      - **렌더링 조건 및 CSS 클래스 바인딩 추가**:
+        - `app_v16_v2.js` 내의 `renderTree()` 카드 생성 로직에서 `char.isProphet === true`인 인물 카드에 `.prophet` 클래스를 동적으로 부여하도록 추가했습니다.
+      - **선지자 네임박스 보라색 계열 스타일링**:
+        - `style_v16_v2.css` 및 `bible-genealogy-deploy/style_v16_v2.css`에 `.person-card.prophet` 스타일 규칙을 추가하여, 해당 클래스를 가진 카드가 은은한 보랏빛 그라데이션(`var(--bg-card-prophet)`)과 보라색 테두리(`var(--border-card-prophet)`)로 렌더링되도록 구현했습니다.
+        - 마우스 오버 시에도 보랏빛 광채 효과가 드러나도록 `:hover` 스타일링을 통합 완료했습니다.
+
+

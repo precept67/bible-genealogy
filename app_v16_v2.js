@@ -5436,6 +5436,9 @@ function renderTree() {
     const card = document.createElement('div');
     card.id = `card-${char.id}`;
     card.className = `person-card ${char.gender === 'M' ? 'male' : 'female'}`;
+    if (char.isProphet) {
+      card.classList.add('prophet');
+    }
     const filterClass = getCharacterFilterClass(char.id);
     if (filterClass) {
       card.classList.add(filterClass);

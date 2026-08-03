@@ -426,6 +426,15 @@ header .subtitle {
   box-shadow: 0 0 25px rgba(245, 158, 11, 0.45);
 }
 
+.person-card.prophet {
+  background: var(--bg-card-prophet) !important;
+  border: 2px solid var(--border-card-prophet) !important;
+}
+
+.person-card.prophet:hover {
+  box-shadow: 0 0 25px rgba(139, 92, 246, 0.45) !important;
+}
+
 /* Card Inner Content */
 .card-name-row {
   display: flex;
