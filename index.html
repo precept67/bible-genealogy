@@ -921,12 +921,24 @@
     };
 
     window.downloadLatestProgram = function() {
-      var isMac = navigator.userAgent.toLowerCase().includes('mac');
-      if (isMac) {
-        window.openExternalLink('https://f.jubilee.or.kr/downloads/BibleGenealogy_latest.dmg');
-      } else {
-        window.openExternalLink('https://f.jubilee.or.kr/downloads/BibleGenealogy_latest.msi');
-      }
+      // Fetch the public update.json to get the exact latest versioned URL dynamically
+      fetch('https://f.jubilee.or.kr/update.json')
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+          var isMac = navigator.userAgent.toLowerCase().includes('mac');
+          var platformKey = isMac ? 'darwin-universal' : 'windows-x86_64';
+          var downloadUrl = data && data.platforms && data.platforms[platformKey] && data.platforms[platformKey].url;
+          if (downloadUrl) {
+            window.openExternalLink(downloadUrl);
+          } else {
+            // Fallback to official homepage if platform URL is missing
+            window.openExternalLink('https://f.jubilee.or.kr');
+          }
+        })
+        .catch(function() {
+          // Fallback to official homepage on network error
+          window.openExternalLink('https://f.jubilee.or.kr');
+        });
     };
 
     // Synchronously fetch latest data from server and populate localStorage

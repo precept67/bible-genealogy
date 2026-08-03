@@ -432,7 +432,10 @@ function drawConnections() {
 59. **"업데이트 확인하기" 버튼의 기기 맞춤형(Mac/Windows) 즉시 다운로드 기능 구현**:
     - **원인**:
       - 기존 [업데이트 확인하기] 버튼은 단순히 공식 홈페이지 첫 페이지(`https://f.jubilee.or.kr`)로 이동하게 설정되어 있어, 사용자가 새로운 업데이트 설치 파일을 다운로드하려면 홈페이지 주소를 다시 거쳐서 수동으로 받아야 하는 동선 낭비가 있었습니다.
+      - 또한, 고정 파일명(예: `BibleGenealogy_latest.dmg`)으로 서버에 강제 덮어쓰기 업로드 처리를 하는 것은 웹 호스팅 및 보안 연동 환경에 따라 다운로드 불가를 유발할 위험이 있었습니다.
     - **조치**:
-      - 사용자의 접속 기기 운영체제(OS) 정보를 자동으로 해독하는 `window.downloadLatestProgram()` 헬퍼 함수를 추가했습니다.
-      - 버튼 클릭 시 사용자의 OS가 macOS(Mac)일 경우에는 최신 DMG 다운로드 경로(`https://f.jubilee.or.kr/downloads/BibleGenealogy_latest.dmg`)로, Windows(윈도우)일 경우에는 최신 MSI 다운로드 경로(`https://f.jubilee.or.kr/downloads/BibleGenealogy_latest.msi`)로 자동 식별하여 브라우저에서 다이렉트로 즉시 설치 파일 다운로드가 시작되도록 개선했습니다.
+      - 사용자의 접속 기기 운영체제(OS) 정보를 판별하고, 서버에 호스팅 중인 자동 업데이트 메타데이터 파일(`https://f.jubilee.or.kr/update.json`)을 동적으로 비동기 `fetch`하여 최신 버전의 파일 링크를 알아내는 `window.downloadLatestProgram()` 헬퍼 함수를 구축했습니다.
+      - 버튼 클릭 시 macOS 사용자에게는 `update.json` 내 `darwin-universal` 플랫폼의 최신 버전 설치 파일 경로(예: `BibleGenealogy_1.0.35_universal.dmg` 등 버전명이 고스란히 들어간 원래 파일명)를, Windows 사용자에게는 `windows-x86_64` 플랫폼의 최신 버전 설치 파일 경로를 실시간으로 받아와 브라우저 다이렉트 다운로드가 실행되도록 완벽하게 처리했습니다.
+      - 네트워크 오류나 메타데이터 예외 상황 시에는 공식 홈페이지 메인 화면으로 Graceful Fallback(안전 우회)하도록 설계했습니다.
+      - 이를 통해 서버 관리자가 번거롭게 파일명을 `latest` 등으로 바꾸지 않고 **원래의 버전명 파일명 그대로 서버에 올려두어도 다이렉트 다운로드가 완벽하게 가능하도록 안정화**했습니다.
       - 변경 사항을 universal macOS 배포 패키지 빌드에 통합 반영했습니다.
