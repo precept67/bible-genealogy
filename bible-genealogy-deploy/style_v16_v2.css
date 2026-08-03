@@ -426,12 +426,12 @@ header .subtitle {
   box-shadow: 0 0 25px rgba(245, 158, 11, 0.45);
 }
 
-.person-card.prophet {
+.prophets-filter-active .person-card.prophet {
   background: var(--bg-card-prophet) !important;
   border: 2px solid var(--border-card-prophet) !important;
 }
 
-.person-card.prophet:hover {
+.prophets-filter-active .person-card.prophet:hover {
   box-shadow: 0 0 25px rgba(139, 92, 246, 0.45) !important;
 }
 
@@ -2305,7 +2305,7 @@ header .subtitle {
   border-color: rgba(245, 158, 11, 1) !important;
 }
 
-.relationship-highlight-active .person-card.highlight.prophet {
+.prophets-filter-active.relationship-highlight-active .person-card.highlight.prophet {
   --glow-color: rgba(139, 92, 246, 0.7) !important;
   border-color: rgba(139, 92, 246, 0.95) !important;
 }

@@ -527,6 +527,15 @@ function drawConnections() {
       - **인물 선택(Highlight) 시 보랏빛 아우라 추가**:
         - `.relationship-highlight-active .person-card.highlight.prophet` 규칙을 추가하여, "선지자/예언자 여부"가 활성화된 인물 카드가 사용자에 의해 클릭/선택(`highlight` 상태) 되었을 때만 고유의 보라색 광채 아우라(`--glow-color: rgba(139, 92, 246, 0.7)`)가 맥박치며 나타나도록 연동했습니다.
 
+67. **선지자 네임박스 보라색 테마 스타일을 선지자 레이어 활성화 시에만 적용되도록 한정(Scope)**:
+    - **원인**:
+      - 선지자로 설정된 인물(예: 사무엘)의 네임박스(배경/테두리 색상 및 선택 시 보라색 아우라 등)가 선지자 레이어를 끈 상태(비활성화)에서도 항상 보라색으로 나타나는 문제를 해결하고, 레이어가 켜져 있을 때만 보라색 테마가 드러나고 껐을 때는 본래의 성별/메인라인 색상으로 복구되도록 구현하기 위함입니다.
+    - **조치**:
+      - **CSS 스타일 규칙 범위(Scope) 제한**:
+        - `style_v16_v2.css` 및 `bible-genealogy-deploy/style_v16_v2.css` 파일에서 기존에 무조건 적용되던 `.person-card.prophet` 및 `.person-card.prophet:hover` 선택자를 `.prophets-filter-active .person-card.prophet` 및 `.prophets-filter-active .person-card.prophet:hover`로 변경하여 선지자 필터가 켜진 상태에서만 보라색 네임박스 스타일이 드러나도록 스코프를 좁혔습니다.
+        - 인물 카드 선택 시 적용되던 보라색 하이라이트 아우라 역시 `.prophets-filter-active.relationship-highlight-active .person-card.highlight.prophet`로 한정하여, 선지자 레이어가 꺼진 상태에서는 일반 인물과 동일하게 본래 성별/라인에 맞는 빛깔로 나타나도록 보완 완료했습니다.
+
+
 
 
 
