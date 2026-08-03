@@ -2665,6 +2665,16 @@ header .subtitle {
   box-shadow: 0 0 15px rgba(168, 85, 247, 0.45) !important;
 }
 
+/* Selected states for prophet cards */
+.prophets-filter-active .person-card.samuel.selected-for-edit,
+.prophets-filter-active .person-card.prophet:not(.main-line).selected-for-edit {
+  box-shadow: 0 0 15px rgba(255, 120, 0, 0.6) !important;
+}
+.prophets-filter-active .person-card.samuel.selected-for-edit:hover,
+.prophets-filter-active .person-card.prophet:not(.main-line).selected-for-edit:hover {
+  box-shadow: 0 0 15px rgba(255, 120, 0, 0.75) !important;
+}
+
 .prophets-filter-active .person-card.samuel .card-title,
 .prophets-filter-active .person-card.prophet:not(.main-line) .card-title {
   color: #4a044e !important;
@@ -2685,6 +2695,15 @@ header .subtitle {
 [data-theme="dark"] .prophets-filter-active .person-card.samuel:hover,
 [data-theme="dark"] .prophets-filter-active .person-card.prophet:not(.main-line):hover {
   box-shadow: 0 0 20px rgba(192, 132, 252, 0.5) !important;
+}
+
+[data-theme="dark"] .prophets-filter-active .person-card.samuel.selected-for-edit,
+[data-theme="dark"] .prophets-filter-active .person-card.prophet:not(.main-line).selected-for-edit {
+  box-shadow: 0 0 20px rgba(255, 120, 0, 0.8) !important;
+}
+[data-theme="dark"] .prophets-filter-active .person-card.samuel.selected-for-edit:hover,
+[data-theme="dark"] .prophets-filter-active .person-card.prophet:not(.main-line).selected-for-edit:hover {
+  box-shadow: 0 0 25px rgba(255, 120, 0, 0.95) !important;
 }
 
 [data-theme="dark"] .prophets-filter-active .person-card.samuel .card-title,

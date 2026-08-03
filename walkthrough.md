@@ -750,5 +750,16 @@ function drawConnections() {
           - 기존 `--bg-card-prophet` 그라데이션 변수를 `#6b21a8` ~ `#3b0764`에서 약 20% 더 밝은 `#8028ca` ~ `#470878` 그라데이션으로 조정했습니다.
           - 기존 `--border-card-prophet` 테두리 값을 `rgba(192, 132, 252, 0.85)`에서 `rgba(216, 180, 254, 0.75)`로 조정했습니다.
 
+87. **선지자 카드 중복 선택 시 선택 테마/그림자 효과 정상 노출되도록 CSS 규칙 보강**:
+    - **원인**:
+      - 관리자 모드에서 여러 개의 카드를 다중 선택할 때 선택된 카드에 오렌지색 Glow 그림자(`selected-for-edit`)가 적용됩니다.
+      - 그러나 선지자 필터가 켜진 상태(`.prophets-filter-active`)의 선지자 카드 스타일 규칙이 `box-shadow: none !important;` 및 `:hover` 시 보라색 그림자를 우선적으로 강제하고 있어, 선지자 카드가 선택되더라도 시각적으로 선택 상태(오렌지색 Glow 그림자)가 정상 노출되지 않는 현상이 발견되었습니다.
+    - **조치**:
+      - **선지자 카드 선택 상태용 CSS 규칙 추가 (`style_v16_v2.css`)**:
+        - 선지자 필터 활성 상태에서 선택된 선지자 카드(`.prophets-filter-active .person-card.samuel.selected-for-edit`, `.prophets-filter-active .person-card.prophet:not(.main-line).selected-for-edit`)에 대해 오렌지색 그림자 `box-shadow: 0 0 15px rgba(255, 120, 0, 0.6) !important;`를 명시적으로 재선언하여 스타일이 생략되거나 덮어씌워지지 않도록 규칙을 보강했습니다.
+        - 마우스 호버 시에도 `box-shadow: 0 0 15px rgba(255, 120, 0, 0.75) !important;`를 적용하여 선택된 선지자 카드가 명확하게 식별되도록 보정했습니다.
+        - 다크 모드 테마에 대해서도 동일하게 오렌지색 다중 선택 Glow 그림자 오버라이드 규칙을 각각 적용했습니다.
+
+
 
 
