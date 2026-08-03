@@ -509,4 +509,14 @@ function drawConnections() {
         - `style_v16_v2.css` 및 `bible-genealogy-deploy/style_v16_v2.css`에 `.person-card.prophet` 스타일 규칙을 추가하여, 해당 클래스를 가진 카드가 은은한 보랏빛 그라데이션(`var(--bg-card-prophet)`)과 보라색 테두리(`var(--border-card-prophet)`)로 렌더링되도록 구현했습니다.
         - 마우스 오버 시에도 보랏빛 광채 효과가 드러나도록 `:hover` 스타일링을 통합 완료했습니다.
 
+65. **선지자 레이어 활성화 시 사무엘(Samuel) 카드 외 전체 페이드 아웃 처리**:
+    - **원인**:
+      - 선지자 레이어 활성화 시, 사무엘 선지자를 중점적으로 조회하기 위해 사무엘(Samuel) 네임박스만 명확히 강조되어 나타나고 그 외의 다른 모든 인물 카드들은 페이드 아웃(Fade-out, filter-inactive) 처리되도록 동작 방식 변경이 요청되었습니다.
+    - **조치**:
+      - **선지자 필터 분기 로직 수정**:
+        - `app_v16_v2.js` 내의 `getCharacterFilterClass(charId)` 함수를 수정하여, 선지자 레이어(`activeFilters['prophets'] === true`)가 켜져 있을 때 인물의 ID가 `samuel`이거나 한글 이름이 `"사무엘"` 혹은 `"사무엘"`이 포함된 경우에만 활성 상태(공백 문자열 `""` 리턴)로 두고, 그 외의 모든 인물은 비활성 클래스(`"filter-inactive"`)를 리턴하여 즉각 페이드 아웃되도록 개선했습니다.
+      - **동기화 및 빌드 검증**:
+        - 수정한 코드를 `dist/`, `bible-genealogy-deploy/` 경로로 일괄 동기화하고 `npm run build:mobile`과 `cargo check`를 정상 통과시켜 배포 프로세스를 완료했습니다.
+
+
 

@@ -4946,9 +4946,12 @@ function getCharacterFilterClass(charId) {
   if (!isFilterModeActive()) return "";
   
   if (activeFilters['prophets'] === true) {
-    if (isProphet(charId) || isProphetRelated(charId)) {
+    const char = db.find(c => c.id === charId);
+    const isSamuel = charId === 'samuel' || (char && (char.name === '사무엘' || char.name.includes('사무엘')));
+    if (isSamuel) {
       return "";
     }
+    return "filter-inactive";
   }
   
   const char = db.find(c => c.id === charId);
