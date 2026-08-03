@@ -4961,7 +4961,7 @@ function getCharacterFilterClass(charId) {
       matchesProphetFilter = true;
     } else {
       const isSamuel = charId === 'samuel' || (char.name && (char.name === '사무엘' || char.name.includes('사무엘')));
-      if (isSamuel || char.isProphet) {
+      if (isSamuel || isProphet(charId)) {
         matchesProphetFilter = true;
       }
     }
@@ -5281,11 +5281,11 @@ function isCharacterCardVisible(charId) {
     return showPeople;
   }
   
-  const isProphetChecked = char.isProphet === true;
+  const isProphetChecked = isProphet(charId);
   const isSamuelCard = charId === 'samuel' || (char.name && (char.name === '사무엘' || char.name.includes('사무엘')));
   
   if (isProphetChecked || isSamuelCard) {
-    return showProphets;
+    return showPeople || showProphets;
   }
   return showPeople;
 }
@@ -5595,7 +5595,7 @@ function renderTree() {
     const card = document.createElement('div');
     card.id = `card-${char.id}`;
     card.className = `person-card ${char.gender === 'M' ? 'male' : 'female'}`;
-    if (char.isProphet) {
+    if (isProphet(char.id)) {
       card.classList.add('prophet');
     }
     const filterClass = getCharacterFilterClass(char.id);

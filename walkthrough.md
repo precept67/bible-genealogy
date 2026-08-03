@@ -698,3 +698,16 @@ function drawConnections() {
       - **자바스크립트 관련 인물 조회 및 저장 로직 구현 (`app_v16_v2.js`)**:
         - 임시 관련인물 배열 `tempRelatedPeople`을 도입하고, 실시간 키 입력에 맞춰 어휘가 매칭되는 인물을 최대 15명까지 필터링해 노출해 주는 `renderRelatedPeopleList()` 기능을 구현했습니다.
         - 폼 제출 시 선택된 인물 간의 관계를 캐노니컬 데이터베이스 상에 양방향으로 연계하여 즉시 기록되도록 저장 핸들러를 보강했습니다.
+
+82. **선지자 레이어 활성화 시 기본 캐노니컬 선지자들이 사라지는 오류 수정**:
+    - **원인**:
+      - "선지자 (Prophets)" 레이어가 켜져 있을 때 화면 가시성을 판정하는 `isCharacterCardVisible(charId)` 함수 및 필터 활성 상태 매칭을 판정하는 `getCharacterFilterClass(charId)` 함수에서, precompute된 `prophetIds` 집합을 체크하는 `isProphet(charId)` 함수 대신 데이터베이스에 정의되어 있지 않은 `char.isProphet === true` 속성을 직접 조회하여 발생하는 버그였습니다. 이로 인해 아브라함, 모세, 노아 등 `PROPHET_BASE_IDS`에 명시된 기본 선지자들과 이름/설명 기반으로 파싱된 캐노니컬 선지자들이 노출되지 못하고 화면에서 사라지는 치명적인 오류가 있었습니다.
+    - **조치**:
+      - **선지자 판정 함수 전면 교체 (`app_v16_v2.js`)**:
+        - `getCharacterFilterClass(charId)` 함수 내부의 `char.isProphet` 판정 부분을 `isProphet(charId)` 함수 호출로 교체하여 precompute된 캐노니컬 선지자 및 커스텀 선지자 모두 필터 매칭되도록 했습니다.
+        - `isCharacterCardVisible(charId)` 함수에서도 `char.isProphet === true` 검사 대신 `isProphet(charId)` 헬퍼를 사용하도록 변경했습니다.
+        - 또한, 선지자 가시성 판정 시 단순 `showProphets` 상태를 그대로 반환해 기존 인물 족보 레이어가 켜져 있을 때도 선지자 인물이 비정상적으로 숨겨지는 논리적 오류를 바로잡아, **인물 족보(showPeople) 레이어 또는 선지자(showProphets) 레이어 중 하나라도 활성화되어 있으면 선지자 카드가 정상 표시되도록** 논리합(`showPeople || showProphets`) 가시성 로직으로 수정했습니다.
+        - 인물 카드를 최초 렌더링할 때에도 `char.isProphet` 대신 `isProphet(char.id)`를 대조하여 모든 선지자 카드에 `.prophet` CSS 클래스가 정상 주입되도록 보완했습니다.
+      - **배포 및 빌드 동기화**:
+        - 수정된 `app_v16_v2.js` 파일을 `dist/` 및 `bible-genealogy-deploy/` 하위 경로에 완전히 동기화했습니다.
+
