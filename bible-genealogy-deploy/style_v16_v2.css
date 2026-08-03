@@ -2637,21 +2637,6 @@ header .subtitle {
   }
 }
 
-/* Prophet Cards Specific Styles */
-.person-card.prophet {
-  background: var(--bg-card-prophet) !important;
-  border: 2px solid var(--border-card-prophet) !important;
-  box-shadow: 0 4px 10px rgba(139, 92, 246, 0.15) !important;
-}
-
-.person-card.prophet .card-title {
-  color: #6d28d9 !important; /* Deep purple in light mode */
-}
-
-[data-theme="dark"] .person-card.prophet .card-title {
-  color: #c084fc !important; /* Light purple in dark mode */
-}
-
 /* Hide connection lines & spouse node circles completely under prophets filter */
 .prophets-filter-active .connector-line,
 .prophets-filter-active .spouse-connector,
