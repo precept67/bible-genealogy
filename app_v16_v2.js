@@ -10391,7 +10391,7 @@ function setupAdminMode() {
 
 function alignSelectedHeights() {
   if (selectedPersonIds.size < 2) {
-    showToast("📐 높이를 맞출 카드를 2개 이상 선택해 주세요. (Shift 키를 누른 채 클릭)");
+    showToast("📐 가로를 맞출 카드를 2개 이상 선택해 주세요. (Shift 키를 누른 채 클릭)");
     return;
   }
   
@@ -10414,7 +10414,7 @@ function alignSelectedHeights() {
   saveDatabase();
   initBoard();
   renderTree();
-  showToast("📐 선택한 카드들의 높이가 동일하게 맞추어졌습니다.");
+  showToast("📐 선택한 카드들의 가로선이 동일하게 맞추어졌습니다.");
 }
 
 function alignSelectedColumns() {
