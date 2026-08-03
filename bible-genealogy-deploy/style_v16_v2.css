@@ -2652,7 +2652,7 @@ header .subtitle {
 /* Samuel and Prophet Card Visibility and Styling Rules */
 
 .prophets-filter-active .person-card.samuel,
-.prophets-filter-active .person-card.prophet {
+.prophets-filter-active .person-card.prophet:not(.main-line) {
   display: flex !important;
   /* Light purple color (Light Mode) */
   background: var(--bg-card-prophet) !important;
@@ -2661,52 +2661,52 @@ header .subtitle {
 }
 
 .prophets-filter-active .person-card.samuel:hover,
-.prophets-filter-active .person-card.prophet:hover {
+.prophets-filter-active .person-card.prophet:not(.main-line):hover {
   box-shadow: 0 0 15px rgba(168, 85, 247, 0.45) !important;
 }
 
 .prophets-filter-active .person-card.samuel .card-title,
-.prophets-filter-active .person-card.prophet .card-title {
+.prophets-filter-active .person-card.prophet:not(.main-line) .card-title {
   color: #4a044e !important;
 }
 
 .prophets-filter-active .person-card.samuel .card-eng,
-.prophets-filter-active .person-card.prophet .card-eng {
+.prophets-filter-active .person-card.prophet:not(.main-line) .card-eng {
   color: #701a75 !important;
 }
 
 [data-theme="dark"] .prophets-filter-active .person-card.samuel,
-[data-theme="dark"] .prophets-filter-active .person-card.prophet {
+[data-theme="dark"] .prophets-filter-active .person-card.prophet:not(.main-line) {
   background: var(--bg-card-prophet) !important;
   border: 2.5px solid var(--border-card-prophet) !important;
   box-shadow: none !important;
 }
 
 [data-theme="dark"] .prophets-filter-active .person-card.samuel:hover,
-[data-theme="dark"] .prophets-filter-active .person-card.prophet:hover {
+[data-theme="dark"] .prophets-filter-active .person-card.prophet:not(.main-line):hover {
   box-shadow: 0 0 20px rgba(192, 132, 252, 0.5) !important;
 }
 
 [data-theme="dark"] .prophets-filter-active .person-card.samuel .card-title,
-[data-theme="dark"] .prophets-filter-active .person-card.prophet .card-title {
+[data-theme="dark"] .prophets-filter-active .person-card.prophet:not(.main-line) .card-title {
   color: #fdf4ff !important;
 }
 
 [data-theme="dark"] .prophets-filter-active .person-card.samuel .card-eng,
-[data-theme="dark"] .prophets-filter-active .person-card.prophet .card-eng {
+[data-theme="dark"] .prophets-filter-active .person-card.prophet:not(.main-line) .card-eng {
   color: #e9d5ff !important;
 }
 
 /* Enable aura highlight glow for Samuel and Prophets under prophets filter active */
 .prophets-filter-active.relationship-highlight-active .person-card.highlight.samuel,
-.prophets-filter-active.relationship-highlight-active .person-card.highlight.prophet {
+.prophets-filter-active.relationship-highlight-active .person-card.highlight.prophet:not(.main-line) {
   animation: pulse-aura-only 1.5s infinite alternate !important;
   --glow-color: rgba(168, 85, 247, 0.75);
   border-color: rgba(168, 85, 247, 0.95) !important;
 }
 
 [data-theme="dark"] .prophets-filter-active.relationship-highlight-active .person-card.highlight.samuel,
-[data-theme="dark"] .prophets-filter-active.relationship-highlight-active .person-card.highlight.prophet {
+[data-theme="dark"] .prophets-filter-active.relationship-highlight-active .person-card.highlight.prophet:not(.main-line) {
   animation: pulse-aura-only 1.5s infinite alternate !important;
   --glow-color: rgba(192, 132, 252, 0.8);
   border-color: rgba(192, 132, 252, 0.95) !important;
