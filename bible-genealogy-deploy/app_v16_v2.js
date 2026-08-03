@@ -5200,13 +5200,34 @@ function applyFilters() {
       treeBoard.classList.remove('prophets-filter-active');
     }
   }
+
+  const prophetsToggleBtn = document.getElementById('prophets-layer-toggle');
+  if (prophetsToggleBtn) {
+    if (activeFilters['prophets'] === true) {
+      prophetsToggleBtn.classList.add('active');
+    } else {
+      prophetsToggleBtn.classList.remove('active');
+    }
+  }
 }
 
 function setupFilters() {
   const filterPanel = document.getElementById('filter-panel');
   const toggleBtn = document.getElementById('filter-panel-toggle');
   const closeBtn = document.getElementById('filter-panel-close');
+  const prophetsToggleBtn = document.getElementById('prophets-layer-toggle');
   
+  if (prophetsToggleBtn) {
+    prophetsToggleBtn.addEventListener('click', () => {
+      activeFilters['prophets'] = !activeFilters['prophets'];
+      localStorage.setItem('bible_tree_filters', JSON.stringify(activeFilters));
+      applyFilters();
+      if (filterPanel.classList.contains('active')) {
+        renderFilterItems();
+      }
+    });
+  }
+
   // Toggle panel
   toggleBtn.addEventListener('click', () => {
     filterPanel.classList.toggle('active');

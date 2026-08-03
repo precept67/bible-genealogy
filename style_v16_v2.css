@@ -193,6 +193,15 @@ header .subtitle {
   transform: scale(1.05);
 }
 
+.control-btn.active {
+  background: rgba(147, 51, 234, 0.18) !important;
+  color: #a855f7 !important;
+}
+
+.control-btn.active:hover {
+  background: rgba(147, 51, 234, 0.28) !important;
+}
+
 .control-divider {
   width: 1px;
   height: 16px;
