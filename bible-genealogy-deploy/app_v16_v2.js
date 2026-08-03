@@ -5209,6 +5209,11 @@ function applyFilters() {
       prophetsToggleBtn.classList.remove('active');
     }
   }
+
+  const toggleLayerProphets = document.getElementById('toggle-layer-prophets');
+  if (toggleLayerProphets) {
+    toggleLayerProphets.checked = (activeFilters['prophets'] === true);
+  }
 }
 
 function setupFilters() {
@@ -13396,6 +13401,17 @@ document.getElementById('toggle-layer-polygons')?.addEventListener('change', (e)
   
   const handles = document.querySelectorAll('.poly-vertex-handle');
   handles.forEach(el => el.style.display = e.target.checked ? '' : 'none');
+});
+
+document.getElementById('toggle-layer-prophets')?.addEventListener('change', (e) => {
+  activeFilters['prophets'] = e.target.checked;
+  localStorage.setItem('bible_tree_filters', JSON.stringify(activeFilters));
+  applyFilters();
+  
+  const filterPanel = document.getElementById('filter-panel');
+  if (filterPanel && filterPanel.classList.contains('active')) {
+    renderFilterItems();
+  }
 });
 
 document.getElementById('toggle-relationship-highlight')?.addEventListener('change', (e) => {
