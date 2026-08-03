@@ -2,8 +2,8 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>성경 인물 족보 시각화 연구 도구</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>열린족보이야기</title>
   <script>
     window.onerror = function(message, source, lineno, colno, error) {
       setTimeout(function() {
@@ -46,46 +46,392 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
   
   <!-- Main Stylesheet -->
-  <link rel="stylesheet" href="style_v16_v2.css?v=1643">
+  <link rel="stylesheet" href="style_v16_v2.css?v=1930">
 </head>
 <body>
+
+  <!-- Premium Landing Page Overlay -->
+  <div id="landing-page" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); z-index: 9999; justify-content: center; align-items: center; font-family: 'Inter', sans-serif; color: white; box-sizing: border-box; padding: 20px; overflow-y: auto;">
+    <div style="max-width: 800px; width: 100%; text-align: center; margin: auto; padding: 40px 20px;">
+      
+      <!-- Top Bar (No button here anymore) -->
+
+      <!-- Main Visual & Header -->
+      <div style="margin-bottom: 40px;">
+        <img src="/app_logo.png" alt="열린족보이야기 로고" style="height: 100px; width: 100px; border-radius: 24px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); object-fit: cover;">
+        <h1 style="font-family: 'Outfit', sans-serif; font-size: 40px; font-weight: 800; letter-spacing: -0.03em; margin: 0 0 16px 0; background: linear-gradient(to right, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+          열린족보이야기
+        </h1>
+        <p style="font-size: 18px; line-height: 1.6; color: #94a3b8; max-width: 600px; margin: 0 auto;">
+          아담부터 예수 그리스도에 이르는 성경의 전체 계보를<br>
+          자유로운 확대/축소와 함께 탐색하고 연구하는 시각화 플랫폼
+        </p>
+      </div>
+
+      <!-- Features Brief -->
+      <div style="display: flex; gap: 20px; justify-content: center; margin-bottom: 25px; flex-wrap: wrap;">
+        <div id="landing-feature-messiah" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); padding: 12px 24px; border-radius: 12px; font-size: 14px; color: #f0f9ff; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(56, 189, 248, 0.15)'; this.style.borderColor='rgba(56, 189, 248, 0.4)';" onmouseout="this.style.background='rgba(255,255,255,0.04)'; this.style.borderColor='rgba(255,255,255,0.1)';" title="족보에서 어떻게 강조되는지 화면으로 보기">
+          ✨ 메시아 직계선 강조
+        </div>
+        <div id="landing-feature-memo" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); padding: 12px 24px; border-radius: 12px; font-size: 14px; color: #f0f9ff; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(56, 189, 248, 0.15)'; this.style.borderColor='rgba(56, 189, 248, 0.4)';" onmouseout="this.style.background='rgba(255,255,255,0.04)'; this.style.borderColor='rgba(255,255,255,0.1)';" title="인물 상세 메모 및 자료 연동 화면 보기">
+          📝 인물별 개인 연구 메모
+        </div>
+        <div id="landing-feature-filter" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); padding: 12px 24px; border-radius: 12px; font-size: 14px; color: #f0f9ff; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(56, 189, 248, 0.15)'; this.style.borderColor='rgba(56, 189, 248, 0.4)';" onmouseout="this.style.background='rgba(255,255,255,0.04)'; this.style.borderColor='rgba(255,255,255,0.1)';" title="특정 계보만 걸러서 보기 기능 체험하기">
+          📐 맞춤형 지파 필터
+        </div>
+      </div>
+
+      <!-- Demo Info Notice -->
+      <div style="font-size: 12px; color: #64748b; margin-bottom: 35px; text-align: center;">
+        ※ 위 버튼을 클릭하면 5분 동안 실제 프로그램을 웹에서 미리 체험해 보실 수 있습니다.
+      </div>
+
+      <!-- Download Cards Container -->
+      <div style="display: flex; gap: 24px; justify-content: center; margin-bottom: 30px; flex-wrap: wrap;">
+        
+        <!-- Windows Card -->
+        <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 16px 24px; width: 280px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-5px)';" onmouseout="this.style.transform='translateY(0)';">
+          <h3 style="margin: 0 0 4px 0; font-size: 16px; font-weight: 600;">Windows용 데스크톱</h3>
+          <p style="font-size: 12px; color: #64748b; margin: 0 0 12px 0;">Windows 10 / 11 지원 (x64)</p>
+          <a href="/downloads/BibleGenealogy_Setup_x64.msi" style="display: block; width: 100%; padding: 10px; background: #0284c7; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 13px; transition: background 0.2s; box-shadow: 0 4px 12px rgba(2,132,199,0.3);" onmouseover="this.style.background='#0369a1';" onmouseout="this.style.background='#0284c7';" download>
+            Windows용 설치파일 다운로드
+          </a>
+        </div>
+
+        <!-- macOS Card -->
+        <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 16px 24px; width: 280px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-5px)';" onmouseout="this.style.transform='translateY(0)';">
+          <h3 style="margin: 0 0 4px 0; font-size: 16px; font-weight: 600;">macOS용 데스크톱</h3>
+          <p style="font-size: 12px; color: #64748b; margin: 0 0 12px 0;">Apple Silicon & Intel 지원 (Universal)</p>
+          <a href="/downloads/BibleGenealogy_macOS.dmg" style="display: block; width: 100%; padding: 10px; background: #0284c7; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 13px; transition: background 0.2s; box-shadow: 0 4px 12px rgba(2,132,199,0.3);" onmouseover="this.style.background='#0369a1';" onmouseout="this.style.background='#0284c7';" download>
+            macOS용 설치파일 다운로드
+          </a>
+        </div>
+
+      </div>
+
+      <!-- Security / Warning link -->
+      <div style="font-size: 13px; margin-bottom: 10px;">
+        <a href="javascript:void(0)" id="landing-install-guide-link" style="color: #f97316; text-decoration: underline; font-weight: 600;">⚠️ 첫 설치 시 보안 차단 경고 해결 방법 (필독!)</a>
+      </div>
+
+    </div>
+
+    <!-- Hidden Admin Login Link at the very bottom center of viewport -->
+    <div style="position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); font-size: 11px; opacity: 0.25; z-index: 10000;">
+      <a href="javascript:void(0)" id="landing-login-btn" style="color: #94a3b8; text-decoration: none; cursor: pointer; font-weight: 400; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.7';" onmouseout="this.style.opacity='1';">관리자 로그인</a>
+    </div>
+
+    </div>
+  </div>
+
+  <!-- Auth Modal -->
+  <div id="auth-modal" style="display: flex; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 10000; justify-content: center; align-items: center;">
+    <div style="background: white; padding: 40px; border-radius: 12px; width: 360px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); text-align: center; position: relative;">
+      <span id="auth-close-btn" style="position: absolute; top: 15px; right: 20px; font-size: 28px; color: #999; cursor: pointer; font-weight: 300; line-height: 1;" onmouseover="this.style.color='#333'" onmouseout="this.style.color='#999'">&times;</span>
+      <img src="/app_logo.png" alt="로고" style="height: 60px; width: 60px; border-radius: 12px; margin: 0 auto 15px auto; display: block; object-fit: cover;">
+      <h2 style="margin-top: 0; margin-bottom: 15px; font-size: 24px;">열린족보이야기</h2>
+      
+      <!-- 2-Device Synchronization Info Banner -->
+      <div style="background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 10px 14px; margin-bottom: 15px; text-align: left; font-size: 11px; color: #0369a1; line-height: 1.5; font-family: inherit;">
+        ℹ️ <strong>기기 간 메모 동기화 안내</strong><br>
+        2대의 컴퓨터(기기) 간 메모 내역을 상호 연동하여 사용하기 위한 로그인 창입니다. 양쪽 기기에서 동일한 아이디로 로그인하시면 기록한 연구 자료가 실시간 공유됩니다.
+      </div>
+
+      <input type="text" id="auth-username" placeholder="아이디" style="width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box;">
+      <input type="password" id="auth-password" placeholder="비밀번호" style="width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box;">
+      <button id="auth-login-btn" style="width: 100%; padding: 12px; background: #3498db; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-bottom: 10px;">로그인</button>
+      <p id="auth-message" style="color: #e74c3c; font-size: 13px; margin-top: 15px; height: 15px;"></p>
+    </div>
+  </div>
+
+  <!-- Installation Guide Modal -->
+  <div id="install-guide-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 25000; justify-content: center; align-items: flex-start; overflow-y: auto; padding: 20px; box-sizing: border-box; font-family: 'Inter', sans-serif;">
+    <div style="background: white; padding: 30px; border-radius: 12px; width: 500px; max-height: 80vh; overflow-y: auto; text-align: left; box-sizing: border-box; position: relative; margin: auto;">
+      <span id="install-guide-close-btn" style="position: absolute; top: 15px; right: 20px; font-size: 28px; color: #999; cursor: pointer; font-weight: 300; line-height: 1;" onmouseover="this.style.color='#333'" onmouseout="this.style.color='#999'">&times;</span>
+      <h3 style="margin-top: 0; margin-bottom: 20px; font-size: 17px; color: #2c3e50; border-bottom: 2px solid #e67e22; padding-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+        <span>⚠️</span> 프로그램 설치 시 보안 경고 해결 안내
+      </h3>
+      
+      <p style="font-size: 13px; color: #495057; line-height: 1.6; margin-bottom: 20px; background: #fff3e0; border: 1px solid #ffe0b2; padding: 12px; border-radius: 6px;">
+        본 프로그램은 정식 서버에서 직접 빌드된 안전한 앱입니다. 대기업의 고가 유료 보안 서명을 거치지 않은 순수 배포용 파일이므로 운영체제가 차단 경고를 표시할 수 있으나 안심하고 실행하셔도 됩니다.
+      </p>
+
+      <!-- Windows Guide -->
+      <div style="margin-bottom: 25px;">
+        <h4 style="margin: 0 0 10px 0; color: #2980b9; font-size: 15px;">🪟 Windows 설치 안내 (SmartScreen 우회)</h4>
+        <ol style="font-size: 13px; color: #333; margin: 0; padding-left: 20px; line-height: 1.7;">
+          <li>다운로드받은 <b>msi</b> 파일을 실행합니다.</li>
+          <li>"Windows의 PC 보호" 파란색 차단 창이 뜨면 당황하지 마시고 창 본문의 <b>[추가 정보]</b> 링크를 클릭합니다.</li>
+          <li>그럼 화면 우측 하단에 나타나는 <b>[실행]</b>(Run anyway) 버튼을 누르면 정상적으로 설치가 시작됩니다!</li>
+        </ol>
+      </div>
+
+      <!-- macOS Guide -->
+      <div>
+        <h4 style="margin: 0 0 10px 0; color: #8e44ad; font-size: 15px;">🍎 macOS 설치 안내 (Gatekeeper 우회)</h4>
+        <ol style="font-size: 13px; color: #333; margin: 0; padding-left: 20px; line-height: 1.7;">
+          <li>다운로드받은 <b>dmg</b> 파일을 열고 프로그램 아이콘을 <b>[응용 프로그램]</b>(Applications) 폴더로 끌어다 놓습니다.</li>
+          <li>응용 프로그램 폴더로 이동하여 해당 앱을 그냥 더블클릭하지 마시고, 마우스 <b>[우클릭]</b>(또는 Control + 클릭)을 합니다.</li>
+          <li>메뉴에서 <b>[열기]</b>를 선택한 뒤, 팝업 경고창이 나타나면 아래쪽의 <b>[열기]</b> 버튼을 누르면 즉시 실행됩니다. (최초 1회만 설정하시면 됩니다.)</li>
+          <li>또는 맥의 <b>[시스템 설정] ➡️ [개인정보 보호 및 보안]</b> 메뉴의 하단에서 <b>[확인 없이 열기]</b> 버튼을 누르셔도 실행 가능합니다.</li>
+        </ol>
+      </div>
+      
+      <button id="install-guide-confirm-btn" style="width: 100%; padding: 12px; background: #2c3e50; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; margin-top: 20px;">확인했습니다</button>
+    </div>
+  </div>
+
+  <!-- Help and Usage Guide Modal -->
+  <div id="help-guide-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); z-index: 25000; justify-content: center; align-items: flex-start; overflow-y: auto; padding: 20px; box-sizing: border-box; font-family: 'Inter', sans-serif; backdrop-filter: blur(4px);">
+    <div style="background: var(--bg-panel, white); color: var(--text-main, #1e293b); padding: 30px; border-radius: 16px; width: 550px; max-height: 85vh; overflow-y: auto; text-align: left; box-sizing: border-box; position: relative; border: 1px solid var(--border-panel, #e2e8f0); box-shadow: 0 20px 40px rgba(0,0,0,0.25); margin: auto;">
+      <span id="help-guide-close-btn" style="position: absolute; top: 15px; right: 20px; font-size: 28px; color: var(--text-muted, #94a3b8); cursor: pointer; font-weight: 300; line-height: 1;" onmouseover="this.style.color='var(--text-accent)'" onmouseout="this.style.color='var(--text-muted)'">&times;</span>
+      
+      <h3 style="margin-top: 0; margin-bottom: 20px; font-size: 18px; color: var(--text-accent, #3498db); border-bottom: 2px solid var(--border-panel, #e2e8f0); padding-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+        <span>📖</span> 성경 족보 사용법 및 안내 가이드
+      </h3>
+      
+      <div style="display: flex; flex-direction: column; gap: 20px; font-size: 14px; line-height: 1.6;">
+        <!-- Local Storage Notice -->
+        <div style="background: rgba(37, 99, 235, 0.08); border: 1px solid rgba(37, 99, 235, 0.2); padding: 14px 18px; border-radius: 8px; color: var(--text-main); font-weight: 500; display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; align-items: center; gap: 8px; font-size: 14px;">
+            <span>💡</span>
+            <span>이 프로그램은 개별 로컬 저장 방식으로 운영됩니다.</span>
+          </div>
+          <ul style="margin: 0; padding-left: 20px; color: var(--text-muted); font-size: 13px; font-weight: normal; line-height: 1.5; list-style-type: disc;">
+            <li style="margin-bottom: 4px;"><b>로컬 데이터 저장</b>: 모든 데이터는 사용자의 개인 컴퓨터에 안전하게 저장됩니다.</li>
+            <li><b>데이터 공유 지원</b>: 동일한 ID로 로그인 시 여러 기기에서 데이터를 함께 공유할 수 있습니다.</li>
+          </ul>
+        </div>
+
+        <!-- 1. Basic Operation -->
+        <div>
+          <h4 style="margin: 0 0 6px 0; font-size: 15px; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
+            <span>🔍</span> 기본 조작 및 인물/사건 검색
+          </h4>
+          <ul style="margin: 0; padding-left: 20px; color: var(--text-muted);">
+            <li><b>화면 조작</b>: 마우스 드래그로 화면 이동, 휠 또는 하단 컨트롤러(<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align: middle;"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg> / <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align: middle;"><line x1="5" y1="12" x2="19" y2="12" /></svg>) 버튼으로 확대/축소할 수 있습니다.</li>
+            <li><b>기본 홈(원점)</b>: 하단 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align: middle;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg> 버튼을 누르면 첫 화면(100% 비율)으로 돌아옵니다.</li>
+            <li><b>검색창</b>: 화면 상단 검색창에 이름, 장소, 사건을 입력하면 해당 인물이나 마커로 즉시 이동하며 하이라이트됩니다.</li>
+          </ul>
+        </div>
+
+        <!-- 2. Presentation -->
+        <div>
+          <h4 style="margin: 0 0 6px 0; font-size: 15px; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
+            <span>📺</span> 강의 및 설교 프레젠테이션 활용
+          </h4>
+          <p style="margin: 0; color: var(--text-muted); padding-left: 20px;">
+            성경을 가르치거나 설교할 때 <b>시각 자료로 아주 유용하게 사용</b>할 수 있습니다. 빔 프로젝터나 화면 공유를 통해 인물 간의 관계선(대조) 및 계보 흐름을 한눈에 명확하게 보여줄 수 있습니다.
+          </p>
+        </div>
+
+        <!-- 3. Notes & Filter -->
+        <div>
+          <h4 style="margin: 0 0 6px 0; font-size: 15px; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
+            <span>🎛️</span> 계보 필터 및 묵상 메모 작성
+          </h4>
+          <ul style="margin: 0; padding-left: 20px; color: var(--text-muted);">
+            <li><b>계보 필터링</b>: 하단 조절기(<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align: middle;"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>) 버튼을 누르면 특정 계보(가인, 함, 마리아 계보 등)만 활성화하여 볼 수 있습니다.</li>
+            <li><b>메모 연동</b>: 필터를 체크하여 활성화하는 순간, 우측에 해당 계보에 관한 개인 묵상 메모와 링크를 기록할 수 있는 사이드바 패널이 자동으로 활성화됩니다.</li>
+          </ul>
+        </div>
+
+        <!-- 4. Updates -->
+        <div style="background: rgba(148, 163, 184, 0.08); padding: 15px; border-radius: 8px; border: 1px dashed var(--border-panel);">
+          <h4 style="margin: 0 0 6px 0; font-size: 14px; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
+            <span>🔄</span> 프로그램 업데이트 및 다운로드
+          </h4>
+          <p style="margin: 0 0 10px 0; font-size: 13px; color: var(--text-muted);">
+            현재 사용 중인 버전: <b>v1.0.35 (Universal)</b><br>
+            아래 버튼을 클릭하면 사용 중인 PC 기기(Mac/Windows)에 최적화된 최신 설치 프로그램 파일이 즉시 다운로드됩니다.
+          </p>
+          <button onclick="window.downloadLatestProgram()" style="display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 10px; background: var(--text-accent, #3498db); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; transition: background 0.2s;">
+            🌐 최신 설치 파일 즉시 다운로드
+          </button>
+        </div>
+      </div>
+
+      <button id="help-guide-confirm-btn" style="width: 100%; padding: 12px; background: var(--border-panel, #2c3e50); color: var(--text-main, white); border: 1px solid var(--border-panel); border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; margin-top: 20px;">닫기</button>
+    </div>
+  </div>
+
+  <!-- Desktop App License Key Modal -->
+  <div id="desktop-license-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #0f172a; z-index: 20000; justify-content: center; align-items: flex-start; overflow-y: auto; padding: 20px; box-sizing: border-box; font-family: 'Inter', sans-serif;">
+    <div style="background: white; padding: 40px; border-radius: 12px; width: 420px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); text-align: center; box-sizing: border-box; margin: auto;">
+      <span style="font-size: 48px; display: block; margin-bottom: 15px;">🔑</span>
+      <h2 style="margin-top: 0; margin-bottom: 10px; font-size: 22px; color: #1e293b;">프로그램 라이선스 인증</h2>
+      <p style="font-size: 13px; color: #64748b; line-height: 1.6; margin-bottom: 25px;">
+        본 프로그램은 정식 사용자만 이용하실 수 있습니다.<br>
+        발급받으신 16자리 라이선스 키를 입력해 주세요.<br>
+        (한 키당 최대 2대의 기기에서만 인증 및 실행 가능)
+      </p>
+      <input type="text" id="license-key-input" placeholder="KEY-XXXX-XXXX-XXXX" style="width: 100%; padding: 12px; margin-bottom: 20px; border: 2px solid #e2e8f0; border-radius: 6px; box-sizing: border-box; text-align: center; font-size: 16px; font-weight: bold; text-transform: uppercase;">
+      <button id="license-submit-btn" style="width: 100%; padding: 12px; background: #3b82f6; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 15px;">인증하기</button>
+      <p id="license-message" style="color: #ef4444; font-size: 13px; margin-top: 15px; min-height: 15px; margin-bottom: 0;"></p>
+    </div>
+  </div>
+
+  <!-- Admin Approval Dashboard Modal -->
+  <div id="admin-dashboard-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center;">
+    <div style="background: white; padding: 30px; border-radius: 12px; width: 700px; max-height: 80vh; overflow-y: auto; font-family: 'Inter', sans-serif;">
+      <h2 style="margin-top: 0; display: flex; justify-content: space-between; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; margin-bottom: 20px;">
+        설정 대시보드
+        <button id="admin-dashboard-close-btn" style="background:none; border:none; font-size:24px; cursor:pointer; color:#64748b;">&times;</button>
+      </h2>
+      
+      <!-- Tab Headers -->
+      <div style="display: flex; gap: 15px; margin-bottom: 20px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">
+        <button id="admin-tab-users" style="padding: 8px 16px; background: #3b82f6; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">👥 가입 승인 및 회원 관리</button>
+        <button id="admin-tab-licenses" style="padding: 8px 16px; background: #64748b; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">🔑 데스크톱 라이선스 발급</button>
+      </div>
+
+      <!-- Users Tab Content -->
+      <div id="admin-users-tab-content">
+        <div id="admin-user-list">
+          <!-- User list injected here -->
+        </div>
+      </div>
+
+      <!-- Licenses Tab Content -->
+      <div id="admin-licenses-tab-content" style="display: none;">
+        <div style="background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
+          <h4 style="margin-top:0; margin-bottom:10px; font-size:15px; color:#1e293b;">신규 라이선스 키 생성</h4>
+          <div style="display:flex; gap:10px;">
+            <input type="text" id="new-license-owner" placeholder="소유자 이름 (예: 홍길동)" style="flex:1; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
+            <input type="number" id="new-license-devices" value="2" min="1" max="10" style="width: 80px; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; text-align: center;" title="최대 설치 대수">
+            <input type="date" id="new-license-expiry" style="width: 140px; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;" title="만료일 (비워두면 무제한)">
+            <button id="new-license-btn" style="padding: 10px 20px; background: #10b981; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">발급하기</button>
+          </div>
+        </div>
+        
+        <h4 style="margin-top:0; margin-bottom:10px; font-size:15px; color:#1e293b;">발급된 라이선스 목록</h4>
+        <div style="overflow-x: auto;">
+          <table style="width:100%; border-collapse: collapse; text-align: left; font-size: 13px;">
+            <thead>
+              <tr style="background:#f1f5f9; border-bottom:2px solid #cbd5e1;">
+                <th style="padding:10px;">라이선스 키</th>
+                <th style="padding:10px;">소유자</th>
+                <th style="padding:10px;">만료일</th>
+                <th style="padding:10px;">기기 대수</th>
+                <th style="padding:10px; width:150px;">동작</th>
+              </tr>
+            </thead>
+            <tbody id="admin-license-list-body">
+              <!-- License list items injected here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div id="app-container">
     
     <!-- Header Title Panel -->
     <header id="main-header">
-      <h1>성경 전체 족보 <small style="font-size: 11px; opacity: 0.5; vertical-align: middle;">v14.0</small></h1>
+      <img src="/app_logo.png" alt="로고" style="height: 24px; width: 24px; border-radius: 6px; object-fit: cover;">
+      <h1>열린족보이야기 <small style="font-size: 11px; opacity: 0.5; vertical-align: middle;">v14.0</small></h1>
       <span class="subtitle" id="stats">분석 중...</span>
     </header>
     
     <!-- Search Panel -->
     <div id="search-panel">
-      <input type="text" id="searchInput" class="search-box" placeholder="인물 이름으로 검색..." autocomplete="off">
+      <input type="text" id="searchInput" class="search-box" placeholder="검색 (인물, 사건, 장소)..." autocomplete="off">
+      <ul id="search-results" class="search-results-dropdown"></ul>
+    </div>
+    
+    <!-- Layer Toggle Controls Panel -->
+    <div class="layer-control-panel" style="z-index: 3000;">
+      <div class="layer-bar-drag-handle" style="font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; cursor: move; user-select: none; display: flex; align-items: center; justify-content: space-between;">
+        <span>레이어 표시 설정</span>
+        <span style="font-size: 10px; opacity: 0.5; margin-left: 8px;">⋮⋮</span>
+      </div>
+      <label><input type="checkbox" id="toggle-layer-people" checked> 인물 족보</label>
+      <label><input type="checkbox" id="toggle-layer-events"> 주요 사건 (Events)</label>
+      <label><input type="checkbox" id="toggle-layer-locations"> 장소/지명 (Locations)</label>
+      <label><input type="checkbox" id="toggle-layer-polygons" checked> 영역 (Areas)</label>
+      <input type="checkbox" id="toggle-relationship-highlight" checked style="display: none;">
     </div>
     
     <!-- Main Scroll/Pan Viewer Container -->
     <main id="viewer-container">
+
+
       <div id="zoom-wrapper">
         <div id="tree-board">
-          <!-- Background Connection Lines Layer -->
-          <svg id="svg-layer" xmlns="http://www.w3.org/2000/svg"></svg>
+          <svg id="svg-polygons-layer" xmlns="http://www.w3.org/2000/svg" style="position: absolute; top: 0; left: 0; max-width: none !important; max-height: none !important; overflow: visible !important; pointer-events: none; z-index: 2;"></svg>
+          <svg id="svg-layer" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <filter id="line-glow-filter" filterUnits="userSpaceOnUse" x="-10000" y="-10000" width="20000" height="20000">
+                <feGaussianBlur stdDeviation="5" result="coloredBlur"/>
+                <feMerge>
+                  <feMergeNode in="coloredBlur"/>
+                  <feMergeNode in="coloredBlur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+              <!-- 일반 스승-제자 화살표 -->
+              <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#a855f7" />
+              </marker>
+              <!-- 하이라이트 상태 화살표 (주황) -->
+              <marker id="arrow-highlight" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#ff7a00" />
+              </marker>
+              <!-- 전도자 화살표 (전도자 연결선 색상과 동조) -->
+              <marker id="preacher-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--preacher-line-color)" />
+              </marker>
+              <!-- 전도자 하이라이트 상태 화살표 -->
+              <marker id="preacher-arrow-highlight" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--text-accent)" />
+              </marker>
+            </defs>
+          </svg>
           <!-- HTML Person Cards will be rendered here dynamically -->
+          
+          <!-- New Transparent Layers -->
+          <div id="layer-events" class="transparent-layer" style="display: none;"></div>
+          <div id="layer-locations" class="transparent-layer" style="display: none;"></div>
         </div>
       </div>
     </main>
     
-    <!-- Bottom Float Control Bar -->
     <div id="control-panel">
-      <button id="zoom-out" class="control-btn" title="축소">➖</button>
+      <button id="zoom-out" class="control-btn" title="축소">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12" /></svg>
+      </button>
       <span id="zoom-level" class="zoom-indicator">100%</span>
-      <button id="zoom-in" class="control-btn" title="확대">➕</button>
+      <button id="zoom-in" class="control-btn" title="확대">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+      </button>
       <div class="control-divider"></div>
-      <button id="zoom-reset" class="control-btn" title="원본 크기">🔄</button>
-      <button id="theme-toggle" class="control-btn" title="테마 변경">🌙</button>
-      <button id="style-editor-toggle" class="control-btn" title="선 디자인 편집기">🎨</button>
-      <button id="filter-panel-toggle" class="control-btn" title="계보 필터 설정">👁️</button>
-      <div class="control-divider"></div>
-      <button id="admin-lock-btn" class="control-btn" title="관리자 편집 모드 토글">🔒</button>
+      <button id="zoom-reset" class="control-btn" title="원본 크기">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+      </button>
+      <button id="theme-toggle" class="control-btn" title="테마 변경">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>
+      </button>
+      <button id="filter-panel-toggle" class="control-btn" title="계보 필터 설정">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+      </button>
+      <button id="help-guide-btn" class="control-btn" title="도움말 및 사용 가이드">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M 13 10.5 L 11 16.5"></path><path d="M 11.8 11 L 13 10.5"></path><path d="M 10 17 L 11.5 16.5 C 12.5 16.5 13 16 13.5 15.5"></path><circle cx="13.8" cy="7.2" r="0.8" fill="currentColor"></circle></svg>
+      </button>
+      <button id="bottom-backup-btn" class="control-btn" title="전체 메모 백업 (개인 폴더로 자동 저장)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+      </button>
+      <button id="bottom-restore-btn" class="control-btn" title="자동저장된 메모 복원 (또는 백업 파일 불러오기)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+      </button>
+      <input type="file" id="user-notes-file-input" accept=".json" style="display: none;">
+      <div id="admin-divider" class="control-divider" style="display: none;"></div>
+      <button id="admin-lock-btn" class="control-btn" title="관리자 편집 모드 토글" style="display: none;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+      </button>
+      <button id="user-logout-btn" class="control-btn" title="로그아웃" style="margin-left: 4px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+      </button>
     </div>
     
     <!-- Left Sliding Design Style Editor Panel -->
@@ -124,6 +470,10 @@
           <div class="style-control-group">
             <label for="style-spouse-line-color">배우자 연결선</label>
             <input type="color" id="style-spouse-line-color" value="#ef4444">
+          </div>
+          <div class="style-control-group">
+            <label for="style-preacher-line-color">전도자 연결선</label>
+            <input type="color" id="style-preacher-line-color" value="#ff7800">
           </div>
         </section>
         
@@ -165,17 +515,24 @@
           <h3 class="panel-sec-title">선 개별 편집기</h3>
           <div class="style-control-group" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
             <label for="style-line-edit-toggle" style="font-weight: 600; cursor: pointer;">선 편집 모드 활성화</label>
-            <input type="checkbox" id="style-line-edit-toggle" checked style="cursor: pointer; width: 18px; height: 18px;">
+            <input type="checkbox" id="style-line-edit-toggle" checked style="cursor: pointer; width: 16px; height: 16px; margin: 0;">
           </div>
           <div class="style-control-group" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
             <label for="style-grid-snap-toggle" style="font-weight: 600; cursor: pointer;">그리드 스냅 (10px)</label>
-            <input type="checkbox" id="style-grid-snap-toggle" checked style="cursor: pointer; width: 18px; height: 18px;">
+            <input type="checkbox" id="style-grid-snap-toggle" checked style="cursor: pointer; width: 16px; height: 16px; margin: 0;">
           </div>
           <div style="display: flex; gap: 8px; margin-top: 12px;">
             <button id="style-clear-selected-line-btn" class="style-action-btn danger" disabled style="flex: 1; padding: 8px; font-size: 11px; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid #ef4444; background: transparent; color: #ef4444; transition: all 0.2s ease;">선택선 초기화</button>
             <button id="style-clear-all-lines-btn" class="style-action-btn danger" style="flex: 1; padding: 8px; font-size: 11px; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid #ef4444; background: #ef4444; color: #fff; transition: all 0.2s ease;">전체선 초기화</button>
           </div>
           <button id="style-delete-selected-line-btn" class="style-action-btn danger" disabled style="width: 100%; margin-top: 8px; padding: 8px; font-size: 11px; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid #ef4444; background: #ef4444; color: #fff; transition: all 0.2s ease; display: block;">선택한 연결선 삭제</button>
+          <div id="style-line-zorder-group" style="margin-top: 12px; display: none;">
+            <label style="font-weight: 600; font-size: 12px; color: var(--text-main); margin-bottom: 4px; display: block;">선 레이어 순서 (상하 관계)</label>
+            <div style="display: flex; gap: 8px;">
+              <button id="style-line-bring-front-btn" class="style-action-btn primary" style="flex: 1; padding: 6px; font-size: 11px; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid #7c3aed; background: #7c3aed; color: #fff;">맨 앞으로 보내기 ⬆️</button>
+              <button id="style-line-send-back-btn" class="style-action-btn secondary" style="flex: 1; padding: 6px; font-size: 11px; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid #cbd5e1; background: transparent; color: var(--text-main);">맨 뒤로 보내기 ⬇️</button>
+            </div>
+          </div>
         </section>
 
         <!-- 4. Area Editor (Custom Polygons) -->
@@ -292,18 +649,30 @@
     
     <!-- Admin Database Action Panel (Visible only in Admin Mode) -->
     <div id="admin-actions-bar" style="display: none;">
+       <div class="admin-bar-drag-handle" style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-align: center; border-bottom: 1px dashed var(--border-panel); padding-bottom: 6px; margin-bottom: 4px; cursor: move; user-select: none; display: flex; align-items: center; justify-content: center; gap: 4px;">
+         <span>⋮⋮ 관리자 도구 상자</span>
+       </div>
        <button id="admin-save-btn" class="admin-action-btn success" style="background: #10b981; border-color: #10b981; font-weight: bold; color: #ffffff; padding: 0 12px; border-radius: 6px; cursor: pointer;">💾 전체 저장</button>
        <button id="admin-undo-btn" class="admin-action-btn primary" style="background: #4b5563; border-color: #4b5563; font-weight: bold; color: #ffffff; padding: 0 12px; border-radius: 6px; cursor: pointer; opacity: 0.5;" disabled>↩️ 되돌리기 (Ctrl+Z)</button>
        <button id="admin-redo-btn" class="admin-action-btn primary" style="background: #4b5563; border-color: #4b5563; font-weight: bold; color: #ffffff; padding: 0 12px; border-radius: 6px; cursor: pointer; opacity: 0.5;" disabled>↪️ 다시 실행 (Ctrl+Y)</button>
        <button id="admin-add-btn" class="admin-action-btn primary">➕ 인물 추가</button>
+       <button id="admin-add-event-btn" class="admin-action-btn primary" style="background: #eab308; border-color: #eab308;">📜 사건 추가</button>
+       <button id="admin-add-location-btn" class="admin-action-btn primary" style="background: #22c55e; border-color: #22c55e;">📍 장소 추가</button>
        <button id="admin-add-note-btn" class="admin-action-btn primary">📝 텍스트 상자 추가</button>
        <button id="admin-add-link-btn" class="admin-action-btn primary">🔗 시각적 연결 추가</button>
        <button id="admin-add-junction-btn" class="admin-action-btn primary" style="background: #059669; border-color: #059669;">🟢 연결점(분기점) 추가</button>
        <button id="admin-add-polygon-btn" class="admin-action-btn primary" style="background: #ea580c; border-color: #ea580c;">⬡ 영역(다각형) 추가</button>
+       <button id="style-editor-toggle" class="admin-action-btn primary" style="background: #7c3aed; border-color: #7c3aed; font-weight: bold; color: #ffffff; cursor: pointer;">🎨 선 디자인 편집기</button>
+       <button id="admin-align-height-btn" class="admin-action-btn primary" style="background: #0284c7; border-color: #0284c7; font-weight: bold; color: #ffffff; cursor: pointer;" title="선택한 카드들의 높이를 동일하게 맞춥니다.">📐 높이 맞춤</button>
+       <button id="admin-distribute-width-btn" class="admin-action-btn primary" style="background: #0284c7; border-color: #0284c7; font-weight: bold; color: #ffffff; cursor: pointer;" title="선택한 카드들 간의 가로 간격을 동일하게 정렬합니다.">↔️ 가로간격 맞춤</button>
+       <button id="admin-distribute-height-btn" class="admin-action-btn primary" style="background: #0284c7; border-color: #0284c7; font-weight: bold; color: #ffffff; cursor: pointer;" title="선택한 카드들 간의 세로 간격을 동일하게 정렬합니다.">↕️ 세로간격 맞춤</button>
+       <button id="admin-sync-btn" class="admin-action-btn" style="background-color: #27ae60; color: white;">💾 서버에 배포하기 (Sync)</button>
+       <button id="admin-users-btn" class="admin-action-btn" style="background-color: #8e44ad; color: white;">👥 사용자 가입 승인</button>
        <button id="admin-export-btn" class="admin-action-btn">📥 데이터 내보내기 (JSON)</button>
       <button id="admin-import-btn" class="admin-action-btn">📤 데이터 가져오기</button>
       <button id="admin-reset-btn" class="admin-action-btn danger">⚠️ 데이터 초기화</button>
-      <label class="admin-checkbox-label" style="display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; color: #f8fafc; cursor: pointer; padding: 0 8px; margin-left: auto;">
+      <button id="admin-logout-btn" class="admin-action-btn danger" style="background-color: #ef4444; border-color: #ef4444; color: white;">🚪 로그아웃</button>
+      <label class="admin-checkbox-label" style="display: none !important; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; color: #f8fafc; cursor: pointer; padding: 0 8px; margin-left: auto;">
         <input type="checkbox" id="admin-move-descendants-toggle" style="cursor: pointer; width: 14px; height: 14px;">
         <span>자손 동시 이동 (Shift 키)</span>
       </label>
@@ -323,7 +692,7 @@
       <div class="panel-body">
         <!-- 1. Biblical context description -->
         <section>
-          <h3 class="panel-sec-title">성경 속 인물 정보</h3>
+          <h3 class="panel-sec-title" id="panel-info-title">성경 속 인물 정보</h3>
           <p id="panel-desc" class="desc-text">성경 관련 정보가 노출됩니다.</p>
         </section>
         
@@ -415,6 +784,11 @@
               <input type="text" id="form-spouses" placeholder="예: sarah, hagar" autocomplete="off">
               <div id="spouses-suggestions" class="autocomplete-suggestions"></div>
             </div>
+            <div class="form-group full-width" style="position: relative;">
+              <label for="form-teachers">전도자 ID 목록 (콤마로 구분)</label>
+              <input type="text" id="form-teachers" placeholder="예: jesus, paul" autocomplete="off">
+              <div id="teachers-suggestions" class="autocomplete-suggestions"></div>
+            </div>
             <div class="form-group full-width">
               <label for="form-desc">인물 설명</label>
               <textarea id="form-desc" rows="3" placeholder="성경적 배경이나 인물에 대한 짧은 소개..."></textarea>
@@ -422,6 +796,10 @@
             <div class="form-group full-width checkbox-group">
               <input type="checkbox" id="form-main">
               <label for="form-main">예수 그리스도 메시아 계보 직계 ("Main Line") 여부</label>
+            </div>
+            <div class="form-group full-width checkbox-group" style="margin-top: 10px;">
+              <input type="checkbox" id="form-prophet">
+              <label for="form-prophet">선지자/예언자 (Prophet) 여부</label>
             </div>
           </div>
           <div class="modal-footer">
@@ -434,10 +812,330 @@
       </div>
     </div>
 
+    <!-- Layer Item Edit Modal (Events & Locations) -->
+    <div id="layer-item-modal" class="modal-overlay" style="display: none;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="layer-item-modal-title">사건/장소 정보 수정</h2>
+          <button id="layer-item-modal-close" class="close-btn">&times;</button>
+        </div>
+        <form id="layer-item-form" onsubmit="return false;">
+          <div class="form-grid">
+            <div class="form-group full-width">
+              <label id="layer-item-name-label" for="layer-item-name">이름*</label>
+              <input type="text" id="layer-item-name" required placeholder="예: 에덴 동산">
+            </div>
+            <div class="form-group full-width">
+              <label for="layer-item-desc">상세 설명</label>
+              <textarea id="layer-item-desc" rows="3" placeholder="상세 설명을 적어주세요..."></textarea>
+            </div>
+            <div class="form-group full-width">
+              <label for="layer-item-refs">관련 성구 (쉼표로 구분)</label>
+              <input type="text" id="layer-item-refs" placeholder="예: 창 3:24, 창 4:1">
+            </div>
+            
+            <!-- Relations -->
+            <div class="form-group full-width">
+              <label>관련 인물 (선택)</label>
+              <div class="relation-selector-box">
+                <input type="text" id="layer-item-people-search" class="relation-search" placeholder="🔍 인물 검색... (존재하지 않는 이름은 입력 후 Enter로 임의 추가)">
+                <div id="layer-item-people-tags" class="selected-relation-tags"></div>
+                <div id="layer-item-people-list" class="relation-checklist"></div>
+              </div>
+            </div>
+            
+            <div class="form-group full-width" id="layer-item-events-group">
+              <label>관련 사건 (선택)</label>
+              <div class="relation-selector-box">
+                <input type="text" id="layer-item-events-search" class="relation-search" placeholder="🔍 사건 검색... (존재하지 않는 사건은 입력 후 Enter로 임의 추가)">
+                <div id="layer-item-events-tags" class="selected-relation-tags"></div>
+                <div id="layer-item-events-list" class="relation-checklist"></div>
+              </div>
+            </div>
+            
+            <div class="form-group full-width" id="layer-item-locations-group">
+              <label>관련 장소 (선택)</label>
+              <div class="relation-selector-box">
+                <input type="text" id="layer-item-locations-search" class="relation-search" placeholder="🔍 장소 검색... (존재하지 않는 장소는 입력 후 Enter로 임의 추가)">
+                <div id="layer-item-locations-tags" class="selected-relation-tags"></div>
+                <div id="layer-item-locations-list" class="relation-checklist"></div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" id="layer-item-delete-btn" class="modal-btn danger-outline">삭제하기</button>
+            <div style="flex: 1;"></div>
+            <button type="button" id="layer-item-modal-cancel" class="modal-btn">취소</button>
+            <button type="submit" id="layer-item-modal-submit" class="modal-btn primary">확인</button>
+          </div>
+        </form>
+      </div>
+    </div>
 
+    <!-- Admin Spawner Palette for Events and Locations -->
+    <div id="bottom-spawner-panel" class="bottom-spawner-panel" style="display: none;">
+      <div class="spawner-header">
+        <span>🛠️ 장소/사건 복사 및 배치 툴킷</span>
+        <small style="font-size: 11px; opacity: 0.7; margin-left: 8px;">원하는 항목을 클릭하거나 검색창에 타이핑 후 Enter를 눌러 배치하세요.</small>
+        <div class="spawner-controls" style="margin-left: auto; display: flex; gap: 8px; align-items: center;">
+          <input type="text" id="spawner-search-input" placeholder="🔍 이름 검색 또는 직접 작성 후 Enter..." style="width: 220px; padding: 3px 10px; font-size: 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.3); color: #fff; outline: none; transition: border-color 0.2s ease;">
+          <select id="spawner-custom-type" style="padding: 3px 8px; font-size: 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.3); color: #fff; outline: none; cursor: pointer;">
+            <option value="location">📍 장소</option>
+            <option value="event">📜 사건</option>
+          </select>
+          <button type="button" id="spawner-panel-close-btn" style="background: none; border: none; color: #fff; font-size: 14px; cursor: pointer; padding: 0 4px; display: flex; align-items: center; justify-content: center; opacity: 0.6; transition: opacity 0.2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.6" title="툴킷 닫기">❌</button>
+        </div>
+      </div>
+      <div class="spawner-content">
+        <div class="spawner-section">
+          <h5>사건 복사</h5>
+          <div id="spawner-events-list" class="spawner-chips-container"></div>
+        </div>
+        <div class="spawner-section-divider"></div>
+        <div class="spawner-section">
+          <h5>장소 복사</h5>
+          <div id="spawner-locations-list" class="spawner-chips-container"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Floating toggle button for spawner toolkit bar -->
+    <button id="spawner-panel-toggle-btn" class="spawner-panel-toggle-btn" style="display: none;" title="장소/사건 복사 및 배치 툴킷 열기">🛠️</button>
   </div>
 
-  <script src="data_v16_v2.js?v=1643"></script>
-  <script src="app_v16_v2.js?v=1643"></script>
+  <!-- Copyright Notice -->
+  <div class="copyright-notice">
+    &copy; precept67@gmail.com
+  </div>
+
+  <script src="data_v16_v2.js?v=1670"></script>
+  <script>
+    var isTauri = window.location.protocol.startsWith('tauri') || 
+                  window.location.hostname === 'tauri.localhost' || 
+                  window.location.protocol.startsWith('file') ||
+                  window.location.protocol.startsWith('asset');
+    window.API_BASE_URL = isTauri ? "https://f.jubilee.or.kr" : "";
+
+    window.openExternalLink = function(url) {
+      if (isTauri && window.__TAURI__ && window.__TAURI__.shell) {
+        window.__TAURI__.shell.open(url);
+      } else {
+        window.open(url, '_blank');
+      }
+    };
+
+    window.downloadLatestProgram = function() {
+      // Fetch the public update.json to get the exact latest versioned URL dynamically
+      fetch('https://f.jubilee.or.kr/update.json')
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+          var isMac = navigator.userAgent.toLowerCase().includes('mac');
+          var platformKey = isMac ? 'darwin-universal' : 'windows-x86_64';
+          var downloadUrl = data && data.platforms && data.platforms[platformKey] && data.platforms[platformKey].url;
+          if (downloadUrl) {
+            window.openExternalLink(downloadUrl);
+          } else {
+            // Fallback to official homepage if platform URL is missing
+            window.openExternalLink('https://f.jubilee.or.kr');
+          }
+        })
+        .catch(function() {
+          // Fallback to official homepage on network error
+          window.openExternalLink('https://f.jubilee.or.kr');
+        });
+    };
+
+    // Synchronously fetch latest data from server and populate localStorage
+    // This blocks the page load just enough to ensure the latest data is available before app.js runs.
+    try {
+      var req = new XMLHttpRequest();
+      var dataUrl = isTauri ? 'database.json' : '/api/data';
+      req.open('GET', dataUrl + '?t=' + new Date().getTime(), false); // false = synchronous
+      req.send(null);
+      if (req.status === 200) {
+        var parsed = JSON.parse(req.responseText);
+        if (parsed && parsed.db) {
+          var characterEdits = {};
+          var customCharacters = [];
+          
+          // Build a lookup object of canonical IDs from data_v16_v2.js
+          var canonIds = {};
+          if (typeof BIBLE_CHARACTERS !== 'undefined') {
+            BIBLE_CHARACTERS.forEach(function(c) {
+              canonIds[c.id] = true;
+            });
+          }
+          
+          if (parsed.db && Array.isArray(parsed.db)) {
+            parsed.db.forEach(function(c) {
+              if (canonIds[c.id]) {
+                characterEdits[c.id] = c;
+              } else {
+                customCharacters.push(c);
+              }
+            });
+          }
+          window.localStorage.setItem('bible_tree_character_edits', JSON.stringify(characterEdits));
+          window.localStorage.setItem('bible_tree_custom_characters', JSON.stringify(customCharacters));
+          if(parsed.lineBends) window.localStorage.setItem('bible_tree_line_bends', JSON.stringify(parsed.lineBends));
+          if(parsed.customVisualLines) window.localStorage.setItem('bible_tree_custom_visual_lines', JSON.stringify(parsed.customVisualLines));
+          if(parsed.canvasJunctions) window.localStorage.setItem('bible_tree_canvas_junctions', JSON.stringify(parsed.canvasJunctions));
+          if(parsed.spouseSplits) window.localStorage.setItem('bible_tree_spouse_splits', JSON.stringify(parsed.spouseSplits));
+          if(parsed.annotations) window.localStorage.setItem('bible_tree_annotations', JSON.stringify(parsed.annotations));
+          if(parsed.styleSettings) window.localStorage.setItem('bible_tree_style_settings', JSON.stringify(parsed.styleSettings));
+          if(parsed.customPolygons) window.localStorage.setItem('bible_tree_custom_polygons', JSON.stringify(parsed.customPolygons));
+          if(parsed.events) window.localStorage.setItem('bible_tree_events', JSON.stringify(parsed.events));
+          if(parsed.locations) window.localStorage.setItem('bible_tree_locations', JSON.stringify(parsed.locations));
+        }
+      }
+    } catch(e) {
+      console.log('API data not available, falling back to local database.json.');
+      try {
+        var localReq = new XMLHttpRequest();
+        localReq.open('GET', 'database.json?t=' + new Date().getTime(), false);
+        localReq.send(null);
+        if (localReq.status === 200) {
+          var parsed = JSON.parse(localReq.responseText);
+          if (parsed && parsed.db) {
+            var characterEdits = {};
+            var customCharacters = [];
+            var canonIds = {};
+            if (typeof BIBLE_CHARACTERS !== 'undefined') {
+              BIBLE_CHARACTERS.forEach(function(c) {
+                canonIds[c.id] = true;
+              });
+            }
+            parsed.db.forEach(function(c) {
+              if (canonIds[c.id]) {
+                characterEdits[c.id] = c;
+              } else {
+                customCharacters.push(c);
+              }
+            });
+            window.localStorage.setItem('bible_tree_character_edits', JSON.stringify(characterEdits));
+            window.localStorage.setItem('bible_tree_custom_characters', JSON.stringify(customCharacters));
+            if(parsed.lineBends) window.localStorage.setItem('bible_tree_line_bends', JSON.stringify(parsed.lineBends));
+            if(parsed.customVisualLines) window.localStorage.setItem('bible_tree_custom_visual_lines', JSON.stringify(parsed.customVisualLines));
+            if(parsed.canvasJunctions) window.localStorage.setItem('bible_tree_canvas_junctions', JSON.stringify(parsed.canvasJunctions));
+            if(parsed.spouseSplits) window.localStorage.setItem('bible_tree_spouse_splits', JSON.stringify(parsed.spouseSplits));
+            if(parsed.annotations) window.localStorage.setItem('bible_tree_annotations', JSON.stringify(parsed.annotations));
+            if(parsed.styleSettings) window.localStorage.setItem('bible_tree_style_settings', JSON.stringify(parsed.styleSettings));
+            if(parsed.customPolygons) window.localStorage.setItem('bible_tree_custom_polygons', JSON.stringify(parsed.customPolygons));
+            if(parsed.events) window.localStorage.setItem('bible_tree_events', JSON.stringify(parsed.events));
+            if(parsed.locations) window.localStorage.setItem('bible_tree_locations', JSON.stringify(parsed.locations));
+          }
+        }
+      } catch(innerErr) {
+        console.error('Failed to load local database.json fallback:', innerErr);
+      }
+    }
+
+    // Installation Guide Modal Handlers
+    var guideModal = document.getElementById('install-guide-modal');
+    var guideLink = document.getElementById('show-install-guide-link');
+    var guideClose = document.getElementById('install-guide-close-btn');
+    var guideConfirm = document.getElementById('install-guide-confirm-btn');
+
+    if (guideLink) {
+      guideLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (guideModal) guideModal.style.display = 'flex';
+      });
+    }
+    if (guideClose) {
+      guideClose.addEventListener('click', function() {
+        if (guideModal) guideModal.style.display = 'none';
+      });
+    }
+    if (guideConfirm) {
+      guideConfirm.addEventListener('click', function() {
+        if (guideModal) guideModal.style.display = 'none';
+      });
+    }
+    if (guideModal) {
+      guideModal.addEventListener('click', function(e) {
+        if (e.target === guideModal) {
+          guideModal.style.display = 'none';
+        }
+      });
+    }
+
+    // Help and Usage Guide Modal Handlers
+    var helpModal = document.getElementById('help-guide-modal');
+    var helpBtn = document.getElementById('help-guide-btn');
+    var helpClose = document.getElementById('help-guide-close-btn');
+    var helpConfirm = document.getElementById('help-guide-confirm-btn');
+
+    if (helpBtn) {
+      helpBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (helpModal) helpModal.style.display = 'flex';
+      });
+    }
+    if (helpClose) {
+      helpClose.addEventListener('click', function() {
+        if (helpModal) helpModal.style.display = 'none';
+      });
+    }
+    if (helpConfirm) {
+      helpConfirm.addEventListener('click', function() {
+        if (helpModal) helpModal.style.display = 'none';
+      });
+    }
+    if (helpModal) {
+      helpModal.addEventListener('click', function(e) {
+        if (e.target === helpModal) {
+          helpModal.style.display = 'none';
+        }
+      });
+
+      // Show guide modal automatically on first run/install of this version
+      if (!localStorage.getItem('help_guide_shown_v1_0_35')) {
+        helpModal.style.display = 'flex';
+        localStorage.setItem('help_guide_shown_v1_0_35', 'true');
+      }
+    }
+
+    // Landing Page Event Listeners
+    var landingLoginBtn = document.getElementById('landing-login-btn');
+    var landingInstallGuideLink = document.getElementById('landing-install-guide-link');
+    if (landingLoginBtn) {
+      landingLoginBtn.addEventListener('click', function() {
+        if (typeof showAuthModal === 'function') {
+          showAuthModal();
+        } else {
+          var modal = document.getElementById('auth-modal');
+          if (modal) modal.style.display = 'flex';
+        }
+      });
+    }
+    if (landingInstallGuideLink) {
+      landingInstallGuideLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (guideModal) guideModal.style.display = 'flex';
+      });
+    }
+
+    // Landing Page Feature Demos
+    var featureMessiah = document.getElementById('landing-feature-messiah');
+    var featureMemo = document.getElementById('landing-feature-memo');
+    var featureFilter = document.getElementById('landing-feature-filter');
+    if (featureMessiah) {
+      featureMessiah.addEventListener('click', function() {
+        if (typeof window.demoFeature === 'function') window.demoFeature('messiah');
+      });
+    }
+    if (featureMemo) {
+      featureMemo.addEventListener('click', function() {
+        if (typeof window.demoFeature === 'function') window.demoFeature('memo');
+      });
+    }
+    if (featureFilter) {
+      featureFilter.addEventListener('click', function() {
+        if (typeof window.demoFeature === 'function') window.demoFeature('filter');
+      });
+    }
+  </script>
+  <script src="app_v16_v2.js?v=1939"></script>
 </body>
 </html>

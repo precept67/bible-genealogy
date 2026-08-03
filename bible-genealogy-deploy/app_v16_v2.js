@@ -4886,7 +4886,7 @@ function precomputeProphets() {
   db.forEach(char => {
     const desc = char.desc || "";
     const name = char.name || "";
-    if (PROPHET_BASE_IDS.has(char.id) || desc.includes("선지자") || desc.includes("예언자") || name.includes("선지자") || name.includes("예언자")) {
+    if (PROPHET_BASE_IDS.has(char.id) || char.isProphet || desc.includes("선지자") || desc.includes("예언자") || name.includes("선지자") || name.includes("예언자")) {
       prophetIds.add(char.id);
     }
   });
@@ -10511,6 +10511,8 @@ function openAdminForm(personId) {
       if (descInput) descInput.value = char.desc || '';
       const mainCheckbox = document.getElementById('form-main');
       if (mainCheckbox) mainCheckbox.checked = !!char.isMain;
+      const prophetCheckbox = document.getElementById('form-prophet');
+      if (prophetCheckbox) prophetCheckbox.checked = !!char.isProphet;
     }
   } else {
     if (activePersonId) {
@@ -10588,6 +10590,7 @@ function saveAdminForm() {
   const spousesInput = document.getElementById('form-spouses').value.trim();
   const desc = document.getElementById('form-desc').value.trim();
   const isMain = document.getElementById('form-main').checked;
+  const isProphetVal = document.getElementById('form-prophet').checked;
   const column = (isMain && gender === 'M') ? 0.0 : rawColumn;
   
   const parents = parentsInput ? parentsInput.split(',').map(s => s.trim()).filter(s => s.length > 0) : [];
@@ -10690,6 +10693,7 @@ function saveAdminForm() {
         teachers,
         desc,
         isMain,
+        isProphet: isProphetVal,
         isManual: true
       };
       
@@ -10730,6 +10734,7 @@ function saveAdminForm() {
       teachers,
       desc,
       isMain,
+      isProphet: isProphetVal,
       isManual: true
     };
     
