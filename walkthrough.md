@@ -518,5 +518,15 @@ function drawConnections() {
       - **동기화 및 빌드 검증**:
         - 수정한 코드를 `dist/`, `bible-genealogy-deploy/` 경로로 일괄 동기화하고 `npm run build:mobile`과 `cargo check`를 정상 통과시켜 배포 프로세스를 완료했습니다.
 
+66. **선지자 레이어 활성화 시 자동 아우라 제거 및 수동 선택(Click) 시 아우라 표시 구현**:
+    - **원인**:
+      - 선지자 레이어가 켜졌을 때 사무엘 등 활성 카드가 자동으로 상시 발광(pulse-aura-only)하지 않도록 하고, 대신 사용자가 특정 이름을 클릭하여 수동으로 선택했을 때만 보랏빛 광채 아우라가 생성되도록 수정 요청을 받았습니다.
+    - **조치**:
+      - **선지자 필터 내 자동 아우라 애니메이션 제거**:
+        - `style_v16_v2.css` 및 `bible-genealogy-deploy/style_v16_v2.css`에서 `.prophets-filter-active .person-card:not(.filter-inactive)`에 바인딩되어 있던 `pulse-aura-only` 애니메이션 선언부를 삭제하여, 레이어 필터 활성화 시에는 카드들이 빛나지 않도록 했습니다.
+      - **인물 선택(Highlight) 시 보랏빛 아우라 추가**:
+        - `.relationship-highlight-active .person-card.highlight.prophet` 규칙을 추가하여, "선지자/예언자 여부"가 활성화된 인물 카드가 사용자에 의해 클릭/선택(`highlight` 상태) 되었을 때만 고유의 보라색 광채 아우라(`--glow-color: rgba(139, 92, 246, 0.7)`)가 맥박치며 나타나도록 연동했습니다.
+
+
 
 
