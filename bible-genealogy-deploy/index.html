@@ -46,7 +46,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
   
   <!-- Main Stylesheet -->
-  <link rel="stylesheet" href="style_v16_v2.css?v=1942">
+  <link rel="stylesheet" href="style_v16_v2.css?v=2000">
 </head>
 <body>
 
@@ -1006,7 +1006,10 @@
           if(parsed.spouseSplits) window.localStorage.setItem('bible_tree_spouse_splits', JSON.stringify(parsed.spouseSplits));
           if(parsed.annotations) window.localStorage.setItem('bible_tree_annotations', JSON.stringify(parsed.annotations));
           if(parsed.styleSettings) window.localStorage.setItem('bible_tree_style_settings', JSON.stringify(parsed.styleSettings));
-          if(parsed.customPolygons) window.localStorage.setItem('bible_tree_custom_polygons', JSON.stringify(parsed.customPolygons));
+          if(parsed.customPolygons) {
+            window.localStorage.setItem('bible_tree_custom_polygons', JSON.stringify(parsed.customPolygons));
+            window.localStorage.setItem('bible_tree_custom_polygons_initialized', 'true');
+          }
           if(parsed.events) window.localStorage.setItem('bible_tree_events', JSON.stringify(parsed.events));
           if(parsed.locations) window.localStorage.setItem('bible_tree_locations', JSON.stringify(parsed.locations));
         }
@@ -1159,6 +1162,6 @@
       });
     }
   </script>
-  <script src="app_v16_v2.js?v=1942"></script>
+  <script src="app_v16_v2.js?v=2000"></script>
 </body>
 </html>

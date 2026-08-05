@@ -294,7 +294,7 @@ header .subtitle {
   max-height: none !important;
   overflow: visible !important;
   pointer-events: none;
-  z-index: 0; /* Render behind everything else, below locations */
+  z-index: 1; /* Render behind everything else, below locations */
   will-change: transform;
   transform: translateZ(0);
 }
@@ -306,7 +306,7 @@ header .subtitle {
   max-height: none !important;
   overflow: visible !important;
   pointer-events: none;
-  z-index: 5;
+  z-index: 3;
   will-change: transform;
   transform: translateZ(0);
 }
@@ -375,7 +375,13 @@ header .subtitle {
   z-index: 10;
   cursor: pointer;
   user-select: none;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.3s ease;
+  transition: box-shadow 0.2s ease, border-color 0.3s ease;
+}
+
+/* Disable card transitions during zoom animations, wheel zoom, gesture zoom, and touch zoom to prevent size bouncing/lag */
+.zooming .person-card,
+.zooming .layer-marker {
+  transition: none !important;
 }
 
 .person-card:hover {
@@ -1416,30 +1422,33 @@ header .subtitle {
 
 /* Dim everything else when highlighting is active */
 .tree-highlight-active .person-card:not(.ancestor-highlight) {
-  opacity: 0.65;
-  filter: grayscale(20%);
+  opacity: 0.09 !important;
+  filter: grayscale(85%) !important;
+  pointer-events: none;
+  transition: opacity 0.3s ease, filter 0.3s ease;
 }
 
 .tree-highlight-active .connector-line:not(.line-highlight),
 .tree-highlight-active .spouse-connector:not(.line-highlight) {
-  opacity: 0.4;
+  opacity: 0.05 !important;
   stroke: #cbd5e1 !important;
+  transition: opacity 0.3s ease;
 }
 
 .tree-highlight-active .canvas-junction-node {
-  opacity: 0.45 !important;
+  opacity: 0.05 !important;
   pointer-events: none;
   transition: opacity 0.3s ease;
 }
 
 .tree-highlight-active .canvas-annotation {
-  opacity: 0.45 !important;
+  opacity: 0.05 !important;
   pointer-events: none;
   transition: opacity 0.3s ease;
 }
 
 .tree-highlight-active .layer-marker {
-  opacity: 0.45 !important;
+  opacity: 0.05 !important;
   pointer-events: none;
   transition: opacity 0.3s ease;
 }
@@ -1489,7 +1498,7 @@ header .subtitle {
   box-shadow: 0 2px 4px rgba(0,0,0,0.03);
   letter-spacing: 0.5px;
   white-space: nowrap;
-  z-index: 20;
+  z-index: 2;
 }
 
 .family-group-panel.cain { background-color: rgba(239, 68, 68, 0.03); border-color: rgba(239, 68, 68, 0.15); }
@@ -2043,22 +2052,22 @@ header .subtitle {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 0;
+  height: 0;
+  overflow: visible;
   pointer-events: none; /* Let clicks pass through empty areas */
 }
 
 #layer-locations {
-  z-index: 1; /* 제일 바닥 (선보다 아래) */
+  z-index: 4; /* Locations placed above polygons and labels */
 }
 
 #svg-layer {
-  position: relative;
-  z-index: 2; /* 연결선 (장소보다 위, 사람/사건보다 아래) */
+  z-index: 3; /* Connection lines below locations */
 }
 
 #layer-events {
-  z-index: 5; /* 사건 (선과 사람 사이) */
+  z-index: 5; /* Events above locations, below person cards */
 }
 
 /* Markers */
@@ -2070,8 +2079,12 @@ header .subtitle {
   align-items: center;
   transform: translate(-50%, -50%); /* Center on coordinate */
   cursor: pointer;
-  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-  z-index: 10;
+}
+.marker-location {
+  z-index: 4; /* Locations placed above polygons and labels, below cards */
+}
+.marker-event {
+  z-index: 5; /* Events placed above locations, below cards */
 }
 .layer-marker:hover {
   transform: translate(-50%, -50%) scale(1.15);
@@ -2408,7 +2421,7 @@ header .subtitle {
 /* Bottom Spawner Panel (Admin Palette) */
 .bottom-spawner-panel {
   position: fixed;
-  bottom: 0;
+  bottom: calc(60px + env(safe-area-inset-bottom));
   left: 50%;
   transform: translateX(-50%);
   width: 90%;
@@ -2416,9 +2429,8 @@ header .subtitle {
   background: rgba(20, 20, 30, 0.92);
   backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.15);
-  border-top-left-radius: 16px;
-  border-top-right-radius: 16px;
-  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.4);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   z-index: 1500;
   color: #ffffff;
   font-family: 'Inter', sans-serif;
@@ -2559,7 +2571,7 @@ header .subtitle {
   transition: opacity 0.3s ease;
 }
 .relationship-highlight-active .family-group-panel-poly {
-  opacity: 0.03 !important;
+  opacity: 0.05 !important;
   transition: opacity 0.3s ease;
 }
 .relationship-highlight-active .family-group-panel-poly.highlight {
@@ -2567,7 +2579,7 @@ header .subtitle {
   stroke-width: 4px !important;
 }
 .relationship-highlight-active .family-group-label {
-  opacity: 0.05 !important;
+  opacity: 0.09 !important;
   transition: opacity 0.3s ease;
 }
 .relationship-highlight-active .family-group-label.highlight {
@@ -2576,7 +2588,7 @@ header .subtitle {
 }
 
 .tree-highlight-active .spouse-node-circle:not(.line-highlight) {
-  opacity: 0.45 !important;
+  opacity: 0.05 !important;
   transition: opacity 0.3s ease;
 }
 .tree-highlight-active .spouse-node-circle.line-highlight {
@@ -2584,11 +2596,11 @@ header .subtitle {
   transition: opacity 0.3s ease;
 }
 .tree-highlight-active .family-group-panel-poly {
-  opacity: 0.2 !important;
+  opacity: 0.05 !important;
   transition: opacity 0.3s ease;
 }
 .tree-highlight-active .family-group-label {
-  opacity: 0.2 !important;
+  opacity: 0.09 !important;
   transition: opacity 0.3s ease;
 }
 
