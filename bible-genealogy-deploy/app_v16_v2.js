@@ -5785,7 +5785,8 @@ function renderTree() {
     
     // Render Inner HTML: Localized name, English/Korean name swap, localized description
     const localizedName = getCharName(char);
-    const localizedDesc = getCharDesc(char);
+    // In English mode, exclude Korean description from the namebox card
+    const localizedDesc = currentLang === 'en' ? (char.engDesc || '') : (char.desc || '');
     const secondaryName = currentLang === 'en' ? char.name : char.engName;
     const descText = localizedDesc ? ` · <span class="card-desc">${localizedDesc}</span>` : '';
     const subtitle = `${secondaryName}${descText}`;
