@@ -20477,10 +20477,10 @@
     {
       "id": "note-1785291855597",
       "text": "동명이인",
-      "x": 13828,
-      "y": 3596,
-      "width": 82,
-      "height": 30,
+      "x": 13816.598659087793,
+      "y": 3595.122973775984,
+      "width": 96,
+      "height": 35,
       "fontSize": 12,
       "bold": false,
       "color": "#1e293b",
@@ -20777,10 +20777,10 @@
     {
       "id": "annotation_1785464733167_cos0kd8cc",
       "text": "동명이인",
-      "x": 16215,
-      "y": 1605,
-      "width": 82,
-      "height": 30,
+      "x": 16201,
+      "y": 1601,
+      "width": 96,
+      "height": 38,
       "fontSize": 12,
       "bold": false,
       "italic": false,
@@ -20802,10 +20802,10 @@
     {
       "id": "annotation_1785465647957_2j351uc9h",
       "text": "북왕국 이스라엘의 왕들",
-      "x": 15066.866666666665,
-      "y": 5983.333333333333,
-      "width": 219,
-      "height": 40,
+      "x": 14996.029501909059,
+      "y": 5981.328507915665,
+      "width": 274,
+      "height": 42,
       "fontSize": 20,
       "bold": false,
       "italic": false,
@@ -21920,7 +21920,7 @@
         "abraham",
         "isaac"
       ],
-      "x": 16553,
+      "x": 16600,
       "y": 3632,
       "engName": "Reader Isaac’s Burnt Offering on Mount Moriah",
       "engDesc": "When God asked Abraham to sacrifice his only son Isaac, whom he had at the age of 100, to test his faith, when he was about to raise his sword to offer him up, Yahweh prepared a ram for him."
@@ -21944,22 +21944,22 @@
     },
     {
       "id": "ev-1784792646273",
-      "name": "아브라함의 갈대아 우르 �� 하란 소명",
+      "name": "아브라함의 갈대아 우르 와 하란 소명",
       "desc": "본토 친척 아비 집을 떠나 보여줄 땅으로 가라는 하나님의 명령에 순종하여 75세에 아브라함이 믿음의 여정을 시작한 사건.",
       "refs": [
         "창세기 12:1",
         "창세기 12:4"
       ],
       "relatedLocations": [
-        "loc-haran"
+        "loc-1785964008527-61"
       ],
       "relatedPeople": [
         "terah",
-        "abraham",
-        "sarah"
+        "sarah",
+        "abraham"
       ],
-      "x": 16518,
-      "y": 3408,
+      "x": 16499,
+      "y": 3407,
       "engName": "Abraham's Calling to Ur and Haran of Chaldea",
       "engDesc": "An incident in which Abraham began his journey of faith at the age of 75 by obeying God's command to leave his native country, his relatives, and his father's house and go to the land he would show him."
     },
@@ -22143,8 +22143,8 @@
         "abraham",
         "sarah"
       ],
-      "x": 16644,
-      "y": 3407,
+      "x": 16664,
+      "y": 3406,
       "engName": "Haran",
       "engDesc": "This is the place where Abraham's father Terah stayed and died, and the land where Abraham left after receiving his calling."
     },
@@ -22166,6 +22166,15 @@
       "y": 3680,
       "engName": "Mount Moriah",
       "engDesc": "This is the mountain where Abraham attempted to sacrifice his only son Isaac as a burnt offering, and the place where Solomon's temple was later built."
+    },
+    {
+      "id": "loc-1785964008527-61",
+      "name": "loc-haran",
+      "desc": "자동 생성된 장소",
+      "refs": [],
+      "relatedPeople": [],
+      "x": 5000,
+      "y": 5000
     }
   ]
 }

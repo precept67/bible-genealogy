@@ -1498,7 +1498,7 @@ header .subtitle {
   box-shadow: 0 2px 4px rgba(0,0,0,0.03);
   letter-spacing: 0.5px;
   white-space: nowrap;
-  z-index: 2;
+  z-index: 4;
 }
 
 .family-group-panel.cain { background-color: rgba(239, 68, 68, 0.03); border-color: rgba(239, 68, 68, 0.15); }
