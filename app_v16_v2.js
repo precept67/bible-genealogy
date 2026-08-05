@@ -2379,6 +2379,8 @@ function saveDatabase() {
   localStorage.setItem('bible_tree_custom_characters', JSON.stringify(customCharacters));
   localStorage.setItem('bible_tree_character_edits', JSON.stringify(characterEdits));
   localStorage.setItem('bible_tree_deleted_ids', JSON.stringify(deletedIds));
+  
+  precomputeProphets();
 }
 
 // Load Custom Annotations/Text boxes
@@ -4681,8 +4683,8 @@ function initBoard() {
     console.log("[Shift-Migration] Shifted all custom polygons an additional 10px to the left.");
   }
   
-  // Lazy-initialize default polygons if not yet initialized
-  if (!localStorage.getItem('bible_tree_custom_polygons_initialized')) {
+  // Lazy-initialize default polygons if not yet initialized and no custom polygons exist
+  if (!localStorage.getItem('bible_tree_custom_polygons_initialized') && customPolygons.length === 0) {
     initDefaultPolygons();
   }
 }
@@ -4881,7 +4883,7 @@ function getElementFilterClass(id) {
 }
 
 const PROPHET_BASE_IDS = new Set([
-  'enoch', 'noah', 'abraham', 'isaac', 'jacob', 'moses', 'aaron', 'miriam', 'deborah_eph', 'david', 'solomon', 'john_baptist', 'John_the_Baptist'
+  'moses', 'aaron', 'miriam', 'deborah_eph', 'john_baptist', 'John_the_Baptist'
 ]);
 
 let prophetIds = new Set();
@@ -4894,7 +4896,18 @@ function precomputeProphets() {
   db.forEach(char => {
     const desc = char.desc || "";
     const name = char.name || "";
-    if (PROPHET_BASE_IDS.has(char.id) || char.isProphet || desc.includes("선지자") || desc.includes("예언자") || name.includes("선지자") || name.includes("예언자")) {
+    let checkIsProphet = false;
+    
+    // If the character is in the Messiah lineage (isMain: true), they are never a prophet
+    if (char.isMain === true) {
+      checkIsProphet = false;
+    } else if (char.isProphet !== undefined) {
+      checkIsProphet = char.isProphet;
+    } else {
+      checkIsProphet = PROPHET_BASE_IDS.has(char.id) || desc.includes("선지자") || desc.includes("예언자") || name.includes("선지자") || name.includes("예언자");
+    }
+    
+    if (checkIsProphet) {
       prophetIds.add(char.id);
     }
   });
@@ -5354,9 +5367,40 @@ function updateLayersVisibility() {
   if (svgPolysLayer) {
     svgPolysLayer.style.display = showPolygons ? '' : 'none';
   }
+
+  customPolygons.forEach(poly => {
+    const polyEl = document.getElementById(`svg-poly-${poly.id}`);
+    const labelEl = document.getElementById(`label-poly-${poly.id}`);
+    
+    const isProphetPoly = poly.id === 'poly-custom-1785777570404' || 
+                          (poly.label && (poly.label.includes('선지자') || poly.label.includes('예언자'))) ||
+                          poly.id.includes('prophet');
+                          
+    let visible = showPolygons;
+    if (isProphetPoly) {
+      visible = showPolygons && showProphets;
+    }
+    
+    if (polyEl) polyEl.style.display = visible ? '' : 'none';
+    if (labelEl) labelEl.style.display = (showPeople || showPolygons) && visible ? '' : 'none';
+  });
+
   const polyHandles = document.querySelectorAll('.poly-vertex-handle');
   polyHandles.forEach(handle => {
-    handle.style.display = showPolygons ? '' : 'none';
+    const polyId = handle.dataset.polyId;
+    const poly = customPolygons.find(p => p.id === polyId);
+    if (poly) {
+      const isProphetPoly = poly.id === 'poly-custom-1785777570404' || 
+                            (poly.label && (poly.label.includes('선지자') || poly.label.includes('예언자'))) ||
+                            poly.id.includes('prophet');
+      let visible = showPolygons;
+      if (isProphetPoly) {
+        visible = showPolygons && showProphets;
+      }
+      handle.style.display = visible ? '' : 'none';
+    } else {
+      handle.style.display = showPolygons ? '' : 'none';
+    }
   });
 }
 
@@ -7104,6 +7148,55 @@ function adjustJunctionIntersection(centerPt, nextPt, radius) {
   };
 }
 
+function getPathDFromPoints(points, r = 7) {
+  if (!points || points.length < 3) return "";
+  const len = points.length;
+  let d = "";
+
+  for (let i = 0; i < len; i++) {
+    const curr = points[i];
+    const prev = points[(i - 1 + len) % len];
+    const next = points[(i + 1) % len];
+
+    const dx1 = prev.x - curr.x;
+    const dy1 = prev.y - curr.y;
+    const len1 = Math.hypot(dx1, dy1);
+
+    const dx2 = next.x - curr.x;
+    const dy2 = next.y - curr.y;
+    const len2 = Math.hypot(dx2, dy2);
+
+    if (len1 === 0 || len2 === 0) {
+      if (i === 0) d += `M ${curr.x},${curr.y}`;
+      else d += ` L ${curr.x},${curr.y}`;
+      continue;
+    }
+
+    const r1 = Math.min(r, len1 / 2);
+    const r2 = Math.min(r, len2 / 2);
+    const actualR = Math.min(r1, r2);
+
+    const ndx1 = dx1 / len1;
+    const ndy1 = dy1 / len1;
+    const ndx2 = dx2 / len2;
+    const ndy2 = dy2 / len2;
+
+    const q1x = curr.x + ndx1 * actualR;
+    const q1y = curr.y + ndy1 * actualR;
+    const q2x = curr.x + ndx2 * actualR;
+    const q2y = curr.y + ndy2 * actualR;
+
+    if (i === 0) {
+      d += `M ${q1x},${q1y}`;
+    } else {
+      d += ` L ${q1x},${q1y}`;
+    }
+    d += ` Q ${curr.x},${curr.y} ${q2x},${q2y}`;
+  }
+  d += " Z";
+  return d;
+}
+
 function renderCustomPolygons() {
   const svgNS = "http://www.w3.org/2000/svg";
   
@@ -7144,10 +7237,10 @@ function renderCustomPolygons() {
     
     if (!poly.points || poly.points.length < 3) return;
     
-    // Draw polygon SVG element
-    const polyEl = document.createElementNS(svgNS, 'polygon');
+    // Draw polygon SVG element (using path for 7px rounded corners)
+    const polyEl = document.createElementNS(svgNS, 'path');
     polyEl.id = `svg-poly-${poly.id}`;
-    polyEl.setAttribute('points', poly.points.map(pt => `${pt.x},${pt.y}`).join(' '));
+    polyEl.setAttribute('d', getPathDFromPoints(poly.points, 7));
     polyEl.setAttribute('fill', poly.color || '#94a3b8');
     polyEl.setAttribute('fill-opacity', poly.fillOpacity !== undefined ? poly.fillOpacity : 0.03);
     polyEl.setAttribute('stroke', poly.color || '#94a3b8');
@@ -7170,7 +7263,7 @@ function renderCustomPolygons() {
     
     // Custom class for selection styling
     polyEl.setAttribute('class', `family-group-panel-poly ${isSelected ? 'poly-selected' : ''} ${filterClass}`);
-    polyEl.style.pointerEvents = isAdminMode ? 'all' : 'none'; // Only intercept pointer events in Admin mode
+    polyEl.style.pointerEvents = 'visiblePainted'; // Always intercept pointer events so user can click to highlight
     polyGroup.appendChild(polyEl);
     
     // Admin Drag entire polygon or Click to select / Edit boundary
@@ -7260,10 +7353,11 @@ function renderCustomPolygons() {
         window.addEventListener('mouseup', onMouseUp);
       });
     } else {
-      // User mode click listener on the polygon SVG element itself to open study panel
+      // User mode click listener on the polygon SVG element itself to open study panel and highlight
       polyEl.addEventListener('click', (e) => {
         e.stopPropagation();
         openLayerDetails(poly, 'polygon');
+        highlightRelatedElements(poly.id, 'polygon');
       });
       polyEl.style.cursor = 'pointer';
     }
@@ -7379,6 +7473,7 @@ function renderCustomPolygons() {
       label.addEventListener('click', (e) => {
         e.stopPropagation();
         openLayerDetails(poly, 'polygon');
+        highlightRelatedElements(poly.id, 'polygon');
       });
     }
     
@@ -7518,8 +7613,7 @@ function drawPolygonsRealTime() {
   customPolygons.forEach(poly => {
     const el = document.getElementById(`svg-poly-${poly.id}`);
     if (el) {
-      const ptsAttr = poly.points.map(pt => `${pt.x},${pt.y}`).join(' ');
-      el.setAttribute('points', ptsAttr);
+      el.setAttribute('d', getPathDFromPoints(poly.points, 7));
     }
   });
 }
@@ -8200,6 +8294,7 @@ function setupZoomPan() {
     gestureStartPanY = panY;
     scaleAtAnimationStart = currentScale; // Set baseline for updateTransformLightweight calculations
     isZoomAnimating = false; // stop animation during active gesture tracking
+    if (viewerContainer) viewerContainer.classList.add('zooming');
   });
 
   window.addEventListener('gesturechange', (e) => {
@@ -8236,6 +8331,11 @@ function setupZoomPan() {
     }
     e.preventDefault();
     updateTransform();
+    setTimeout(() => {
+      if (!isZoomAnimating && !isTouchZooming) {
+        if (viewerContainer) viewerContainer.classList.remove('zooming');
+      }
+    }, 50);
   });
   
   let startClickX = 0;
@@ -8474,8 +8574,17 @@ function setupZoomPan() {
         inertiaFrameId = requestAnimationFrame(runInertia);
       }
     }
+    const wasZooming = isTouchZooming;
     isTouchZooming = false;
     isDragging = false;
+    
+    if (wasZooming) {
+      setTimeout(() => {
+        if (!isZoomAnimating && !isTouchZooming) {
+          if (viewerContainer) viewerContainer.classList.remove('zooming');
+        }
+      }, 50);
+    }
     
     window.removeEventListener('touchmove', onTouchMove, { passive: false });
     window.removeEventListener('touchend', onTouchEnd, { passive: false });
@@ -8485,6 +8594,13 @@ function setupZoomPan() {
   viewerContainer.addEventListener('touchstart', (e) => {
     stopInertia();
     isZoomAnimating = false; // Stop any ongoing zoom animation when touch starts
+    if (viewerContainer) {
+      if (e.touches.length === 2) {
+        viewerContainer.classList.add('zooming');
+      } else {
+        viewerContainer.classList.remove('zooming');
+      }
+    }
     const rect = viewerContainer.getBoundingClientRect();
     if (e.touches.length === 2) {
       isTouchZooming = true;
@@ -8725,6 +8841,8 @@ function startZoomAnimation() {
   if (isZoomAnimating) return;
   isZoomAnimating = true;
   
+  if (viewerContainer) viewerContainer.classList.add('zooming');
+  
   function step() {
     if (!isZoomAnimating) return;
     
@@ -8743,6 +8861,12 @@ function startZoomAnimation() {
       zoomWrapper.style.transform = `translate3d(${panX}px, ${panY}px, 0)`;
       updateTransform();
       isZoomAnimating = false;
+      
+      setTimeout(() => {
+        if (!isZoomAnimating && !isTouchZooming) {
+          if (viewerContainer) viewerContainer.classList.remove('zooming');
+        }
+      }, 50);
       return;
     }
     
@@ -9370,17 +9494,7 @@ function highlightRelatedElements(itemId, itemType) {
         char.spouses.forEach(sId => highlightedIds.add(sId));
       }
       
-      // 2. Add siblings (people sharing at least one parent)
-      if (char.parents && Array.isArray(char.parents)) {
-        db.forEach(c => {
-          if (c.id !== lineageId && c.parents && Array.isArray(c.parents)) {
-            const sharesParent = c.parents.some(p => char.parents.includes(p));
-            if (sharesParent) {
-              highlightedIds.add(c.id);
-            }
-          }
-        });
-      }
+
       
       // 3. Add teachers
       if (char.teachers && Array.isArray(char.teachers)) {
@@ -9475,6 +9589,8 @@ function highlightRelatedElements(itemId, itemType) {
   }
   else if (itemType === 'polygon') {
     if (targetItem.points && targetItem.points.length >= 3) {
+      const highlightedIds = new Set();
+
       // Highlight characters geometrically inside (applying tribe keywords)
       db.forEach(char => {
         const coords = coordinates[char.id];
@@ -9492,6 +9608,7 @@ function highlightRelatedElements(itemId, itemType) {
             }
           }
           if (isTribeMatch) {
+            highlightedIds.add(char.id);
             const card = document.getElementById(`card-${char.id}`);
             if (card) card.classList.add('highlight');
           }
@@ -9511,6 +9628,56 @@ function highlightRelatedElements(itemId, itemType) {
         if (loc.x !== undefined && loc.y !== undefined && isPointInPolygon(loc, targetItem.points)) {
           const el = document.getElementById(`location-${loc.id}`);
           if (el) el.classList.add('highlight');
+        }
+      });
+
+      // Highlight connection lines for direct lineage members inside the polygon
+      document.querySelectorAll('.connector-line').forEach(path => {
+        const childId = path.getAttribute('data-child-id');
+        if (childId && highlightedIds.has(childId)) {
+          path.classList.add('line-highlight');
+        }
+      });
+      
+      document.querySelectorAll('.spouse-connector').forEach(path => {
+        const spouseIdsAttr = path.getAttribute('data-spouse-ids');
+        if (spouseIdsAttr) {
+          const ids = spouseIdsAttr.split(',');
+          if (ids.every(id => highlightedIds.has(id))) {
+            path.classList.add('line-highlight');
+          }
+        }
+      });
+
+      document.querySelectorAll('.spouse-node-circle').forEach(circle => {
+        const spouseIdsAttr = circle.getAttribute('data-spouse-ids');
+        if (spouseIdsAttr) {
+          const ids = spouseIdsAttr.split(',');
+          if (ids.every(id => highlightedIds.has(id))) {
+            circle.classList.add('line-highlight');
+          }
+        }
+      });
+
+      document.querySelectorAll('.preacher-line').forEach(path => {
+        const teacherId = path.getAttribute('data-teacher-id');
+        const discipleId = path.getAttribute('data-disciple-id');
+        if (teacherId && discipleId && highlightedIds.has(teacherId) && highlightedIds.has(discipleId)) {
+          path.classList.add('line-highlight');
+        }
+      });
+
+      document.querySelectorAll('.custom-visual-line').forEach(path => {
+        const linkId = path.getAttribute('data-link-id');
+        if (linkId) {
+          const line = customVisualLines.find(l => l.id === linkId);
+          if (line) {
+            const fromId = String(line.from);
+            const toId = String(line.to);
+            if (highlightedIds.has(fromId) && highlightedIds.has(toId)) {
+              path.classList.add('line-highlight');
+            }
+          }
         }
       });
     }
@@ -11027,7 +11194,7 @@ function openAdminForm(personId) {
       const mainCheckbox = document.getElementById('form-main');
       if (mainCheckbox) mainCheckbox.checked = !!char.isMain;
       const prophetCheckbox = document.getElementById('form-prophet');
-      if (prophetCheckbox) prophetCheckbox.checked = !!char.isProphet;
+      if (prophetCheckbox) prophetCheckbox.checked = isProphet(char.id);
       
       tempRelatedPeople = char.relatedPeople && Array.isArray(char.relatedPeople) ? [...char.relatedPeople] : [];
     }

@@ -33,19 +33,26 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Get version from package.json
+        id: get_version
+        shell: bash
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
       - name: Build Web assets into dist
         shell: bash
         run: |
           mkdir -p dist
-          cp index.html style_v16_v2.css app_v16_v2.js data_v16_v2.js database.json dist/
+          cp index.html style_v16_v2.css app_v16_v2.js data_v16_v2.js database.json app_logo.png dist/
 
       - name: Build Desktop App via Tauri Action
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: v__VERSION__
-          releaseName: "App Release v__VERSION__"
+          tagName: v${{ steps.get_version.outputs.version }}-${{ github.run_number }}
+          releaseName: "App Release v${{ steps.get_version.outputs.version }} (Build ${{ github.run_number }})"
           releaseBody: "Automated draft release containing Windows (.msi) and macOS (.dmg) installers."
           releaseDraft: true
           prerelease: false

@@ -1,0 +1,39 @@
+=== DATABASE INTEGRITY AUDIT ===
+
+--- SUSPECT/INVALID ENGLISH NAMES ---
+ID: Son | KR: 아들들 | EN: 
+
+--- MISSING PARENT LINKS ---
+Character: 여델 (jether_man) references missing Parent ID: gideon_wife
+Character: 요담 (jotham_man) references missing Parent ID: gideon_wife
+
+--- MISSING SPOUSE LINKS ---
+Character: 기드온 (gideon_man) references missing Spouse ID: gideon_wife
+
+--- MISMATCHED SPOUSE LINKS ---
+Character 마길의 딸 (machir_daughter) has spouse 헤스론 (hezron), but not vice-versa.
+Character 아비야 (abiah_hezron) has spouse 헤스론 (hezron), but not vice-versa.
+Character 헬라 (helah_ashhur) has spouse 아스훌 (ashhur_hezron), but not vice-versa.
+Character 나아라 (naarah_ashhur) has spouse 아스훌 (ashhur_hezron), but not vice-versa.
+Character 아히노암 (ahinoam_david) has spouse 다윗 왕 (david), but not vice-versa.
+Character 학깃 (haggith_david) has spouse 다윗 왕 (david), but not vice-versa.
+Character 아비달 (abital_david) has spouse 다윗 왕 (david), but not vice-versa.
+Character 에글라 (eglah_david) has spouse 다윗 왕 (david), but not vice-versa.
+Character 다른 아내들 (other_wives_david) has spouse 다윗 왕 (david), but not vice-versa.
+Character 마할랏 (mahalath_rehoboam) has spouse 르호보암 왕 (rehoboam), but not vice-versa.
+Character 노아의 아내 (noah_wife) has spouse 노아 (noah), but not vice-versa.
+Character 셈의 아내 (shem_wife) has spouse 셈 (shem), but not vice-versa.
+Character 함의 아내 (ham_wife) has spouse 함 (ham), but not vice-versa.
+Character 야벳의 아내 (japheth_wife) has spouse 야벳 (japheth), but not vice-versa.
+
+--- GENERATION ORDER ANOMALIES ---
+Child: 나홀(형제) (Gen 15.19) <= Parent: 데라 (Gen 18) | Parent ID: terah
+Child: 하란 (Gen 16.1) <= Parent: 데라 (Gen 18) | Parent ID: terah
+Child: 시므란 (Gen 16.6) <= Parent: 아브라함 (Gen 19) | Parent ID: abraham
+Child: 욕산 (Gen 16.6) <= Parent: 아브라함 (Gen 19) | Parent ID: abraham
+Child: 므단 (Gen 16.6) <= Parent: 아브라함 (Gen 19) | Parent ID: abraham
+Child: 미디안 (Gen 16.6) <= Parent: 아브라함 (Gen 19) | Parent ID: abraham
+Child: 이스박 (Gen 16.6) <= Parent: 아브라함 (Gen 19) | Parent ID: abraham
+Child: 수아 (Gen 16.6) <= Parent: 아브라함 (Gen 19) | Parent ID: abraham
+Child: 에돔(에서) (Gen 19) <= Parent: 이삭 (Gen 20) | Parent ID: isaac
+Child: 에돔(에서) (Gen 19) <= Parent: 리브가 (Gen 20) | Parent ID: rebekah

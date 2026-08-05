@@ -8829,7 +8829,7 @@
       "spouses": [
         "rahab"
       ],
-      "desc": "가나안 정복의 지도자 중 하나. 여리고 기생 �����합과 결혼함.",
+      "desc": "가나안 정복의 지도자 중 하나. 여리고 기생 ������합과 결혼함.",
       "isMain": true,
       "isManual": true,
       "teachers": [],
@@ -13003,7 +13003,7 @@
       "name": "아비야",
       "engName": "Abijah",
       "gender": "M",
-      "generation": 34.37,
+      "generation": 34.47,
       "column": -4.296,
       "parents": [
         "jeroboam1"
@@ -13137,8 +13137,8 @@
       "name": "아하시야",
       "engName": "Ahaziah",
       "gender": "M",
-      "generation": 40.911,
-      "column": -4.996,
+      "generation": 40.89,
+      "column": -5.226,
       "parents": [
         "ahab",
         "jezebel"
@@ -13157,7 +13157,7 @@
       "engName": "Jehoram",
       "gender": "M",
       "generation": 40.89,
-      "column": -4.186,
+      "column": -4.516,
       "parents": [
         "ahab",
         "jezebel"
@@ -18391,7 +18391,7 @@
       "engName": "Nathan",
       "gender": "M",
       "generation": 31.97,
-      "column": -2.704,
+      "column": -2.754,
       "parents": [],
       "spouses": [],
       "teachers": [],
@@ -18429,7 +18429,7 @@
       "engName": "ahijah",
       "gender": "M",
       "generation": 32.98,
-      "column": -2.791,
+      "column": -2.754,
       "parents": [],
       "spouses": [],
       "teachers": [],
@@ -18448,7 +18448,7 @@
       "engName": "iddo",
       "gender": "M",
       "generation": 32.98,
-      "column": -2.07,
+      "column": -1.992,
       "parents": [],
       "spouses": [],
       "teachers": [],
@@ -18520,7 +18520,7 @@
       "engName": "jehu",
       "gender": "M",
       "generation": 35.06,
-      "column": -3.908,
+      "column": -4.129,
       "parents": [],
       "spouses": [],
       "teachers": [],
@@ -18540,7 +18540,7 @@
       "engName": "Elijah",
       "gender": "M",
       "generation": 40.45,
-      "column": -3.266,
+      "column": -2.866,
       "parents": [],
       "spouses": [],
       "teachers": [],
@@ -18560,7 +18560,7 @@
       "engName": "ahijah",
       "gender": "M",
       "generation": 33.69,
-      "column": -4.062,
+      "column": -4.129,
       "parents": [],
       "spouses": [],
       "teachers": [],
@@ -18579,7 +18579,7 @@
       "engName": "Elisha",
       "gender": "M",
       "generation": 40.9,
-      "column": -3.269,
+      "column": -2.866,
       "parents": [],
       "spouses": [],
       "teachers": [],
@@ -18695,7 +18695,7 @@
       "name": "오바댜",
       "engName": "obadiah",
       "gender": "M",
-      "generation": 42.11,
+      "generation": 42.13,
       "column": -2.414,
       "parents": [],
       "spouses": [],
@@ -18748,8 +18748,8 @@
       "name": "나훔",
       "engName": "nahum",
       "gender": "M",
-      "generation": 46.39,
-      "column": -3.217,
+      "generation": 46.4,
+      "column": -3.129,
       "parents": [],
       "spouses": [],
       "teachers": [],
@@ -18785,7 +18785,7 @@
       "engName": "habakkuk",
       "gender": "M",
       "generation": 47.73,
-      "column": -3.168,
+      "column": -3.129,
       "parents": [],
       "spouses": [],
       "teachers": [],
@@ -18802,7 +18802,7 @@
       "engName": "jeremiah",
       "gender": "M",
       "generation": 48.94,
-      "column": -2.016,
+      "column": -2.035,
       "parents": [],
       "spouses": [],
       "teachers": [],
@@ -18825,7 +18825,7 @@
       "engName": "Ezekiel",
       "gender": "M",
       "generation": 51.77,
-      "column": -1.631,
+      "column": -1.524,
       "parents": [],
       "spouses": [],
       "teachers": [],
@@ -18859,7 +18859,7 @@
       "engName": "haggai",
       "gender": "M",
       "generation": 54.61,
-      "column": -1.539,
+      "column": -1.524,
       "parents": [],
       "spouses": [],
       "teachers": [],
@@ -18876,7 +18876,7 @@
       "engName": "Zechariah",
       "gender": "M",
       "generation": 55.07,
-      "column": -1.534,
+      "column": -1.524,
       "parents": [],
       "spouses": [],
       "teachers": [],
@@ -18902,6 +18902,26 @@
       "desc": "느헤미야 시대 이후(B.C. 430년경), 제2성전이 완공된 후 오랜 시간이 지나 백성들과 제사장들의 영적 매너리즘과 형식주의가 만연했던 시기에 활동",
       "isMain": false,
       "isProphet": true,
+      "isManual": true
+    },
+    {
+      "id": "adah-ahab",
+      "name": "아달랴",
+      "engName": "Athaliah",
+      "gender": "F",
+      "generation": 40.89,
+      "column": -3.799,
+      "parents": [
+        "ahab",
+        "jezebel"
+      ],
+      "spouses": [],
+      "teachers": [],
+      "prophets": [],
+      "relatedPeople": [],
+      "desc": "",
+      "isMain": false,
+      "isProphet": false,
       "isManual": true
     }
   ],
@@ -19276,18 +19296,6 @@
         "y": 5970
       }
     ],
-    "rel-ahab+jezebel->ahaziah_ahab": [
-      {
-        "x": 15150,
-        "y": 7400
-      }
-    ],
-    "rel-ahab+jezebel->jehoram_ahab": [
-      {
-        "x": 15240,
-        "y": 7400
-      }
-    ],
     "rel-jehoram_ahab->jehu": [
       {
         "x": 15150,
@@ -19297,7 +19305,7 @@
     "rel-jeroboam1->abijah_jeroboam": [
       {
         "x": 15240,
-        "y": 6250
+        "y": 6290
       }
     ],
     "rel-nebat+zeruah_nebat->jeroboam1": [
@@ -19843,6 +19851,152 @@
       "bgColor": "transparent",
       "borderColor": "#cbd5e1",
       "auraEnabled": true
+    },
+    {
+      "id": "note-1785919203236",
+      "text": "항상 전쟁",
+      "x": 15533.003394538206,
+      "y": 6268.81151556546,
+      "width": 106,
+      "height": 48,
+      "fontSize": 18,
+      "bold": true,
+      "color": "#f7f7f8",
+      "bgColor": "#fb3737",
+      "relatedPeople": [
+        "rehoboam",
+        "jeroboam1"
+      ],
+      "relatedEvents": [],
+      "relatedLocations": [],
+      "borderStyle": "none"
+    },
+    {
+      "id": "annotation_1785919660429_3gwsa8oe5",
+      "text": "전쟁",
+      "x": 15533.943295560195,
+      "y": 6389.10539453285,
+      "width": 106,
+      "height": 48,
+      "fontSize": 18,
+      "bold": true,
+      "italic": false,
+      "underline": false,
+      "align": "center",
+      "borderStyle": "none",
+      "borderWidth": 1,
+      "color": "#f7f7f8",
+      "bgColor": "#fb3737",
+      "borderColor": "#cbd5e1",
+      "auraEnabled": true,
+      "relatedPeople": [
+        "abijah",
+        "jeroboam1"
+      ],
+      "relatedEvents": [],
+      "relatedLocations": []
+    },
+    {
+      "id": "annotation_1785920071058_sw24oyxja",
+      "text": "전쟁",
+      "x": 15542.148221326686,
+      "y": 6556.103004000616,
+      "width": 106,
+      "height": 48,
+      "fontSize": 18,
+      "bold": true,
+      "italic": false,
+      "underline": false,
+      "align": "center",
+      "borderStyle": "none",
+      "borderWidth": 1,
+      "color": "#f7f7f8",
+      "bgColor": "#fb3737",
+      "borderColor": "#cbd5e1",
+      "auraEnabled": true,
+      "relatedPeople": [
+        "baasha",
+        "asa"
+      ],
+      "relatedEvents": [],
+      "relatedLocations": []
+    },
+    {
+      "id": "annotation_1785920834878_76uf1fe18",
+      "text": "정략 결혼과 동맹",
+      "x": 15534.785236926387,
+      "y": 7081.162547304586,
+      "width": 165,
+      "height": 45,
+      "fontSize": 18,
+      "bold": true,
+      "italic": false,
+      "underline": false,
+      "align": "center",
+      "borderStyle": "none",
+      "borderWidth": 1,
+      "color": "#f7f7f8",
+      "bgColor": "#5d62f4",
+      "borderColor": "#cbd5e1",
+      "auraEnabled": true,
+      "relatedPeople": [
+        "ahaziah_ahab",
+        "ahab",
+        "jehoshaphat",
+        "jehoram_ahab"
+      ],
+      "relatedEvents": [],
+      "relatedLocations": []
+    },
+    {
+      "id": "annotation_1785921680651_bg5oldkbc",
+      "text": "전쟁 ",
+      "x": 15790.076296098165,
+      "y": 7842.742609068764,
+      "width": 106,
+      "height": 48,
+      "fontSize": 18,
+      "bold": true,
+      "italic": false,
+      "underline": false,
+      "align": "center",
+      "borderStyle": "none",
+      "borderWidth": 1,
+      "color": "#f7f7f8",
+      "bgColor": "#fb3737",
+      "borderColor": "#cbd5e1",
+      "auraEnabled": true,
+      "relatedPeople": [
+        "amaziah",
+        "jehoash_jehoahaz"
+      ],
+      "relatedEvents": [],
+      "relatedLocations": []
+    },
+    {
+      "id": "annotation_1785923373661_mx2hq6pp9",
+      "text": "동맹",
+      "x": 15774.422569722865,
+      "y": 7263.949077986764,
+      "width": 113,
+      "height": 43,
+      "fontSize": 18,
+      "bold": true,
+      "italic": false,
+      "underline": false,
+      "align": "center",
+      "borderStyle": "none",
+      "borderWidth": 1,
+      "color": "#f7f7f8",
+      "bgColor": "#5d62f4",
+      "borderColor": "#cbd5e1",
+      "auraEnabled": true,
+      "relatedPeople": [
+        "ahaziah",
+        "jehoram_ahab"
+      ],
+      "relatedEvents": [],
+      "relatedLocations": []
     }
   ],
   "styleSettings": {
@@ -20598,108 +20752,228 @@
           "y": 6118.864642526312
         },
         {
-          "x": 15651.438533689496,
-          "y": 6519.1827688591475
+          "x": 15650,
+          "y": 6230
         },
         {
-          "x": 16162.750944665355,
-          "y": 6519.1827688591475
+          "x": 15410,
+          "y": 6230
         },
         {
-          "x": 16162.750944665355,
-          "y": 6978.545596987449
+          "x": 15410,
+          "y": 6470
         },
         {
-          "x": 15785.831106575133,
-          "y": 6978.545596987449
+          "x": 15700,
+          "y": 6470
         },
         {
-          "x": 15785.831106575133,
-          "y": 7238.011225997032
+          "x": 15700,
+          "y": 6550
         },
         {
-          "x": 15920.216193140055,
-          "y": 7238.011225997032
+          "x": 16060,
+          "y": 6550
         },
         {
-          "x": 15920.216193140055,
-          "y": 7790.194134163253
+          "x": 16060,
+          "y": 6700
         },
         {
-          "x": 15694.673723177779,
-          "y": 7790.194134163253
+          "x": 16158.463027810003,
+          "y": 6701.3949421896805
         },
         {
-          "x": 15694.673723177779,
-          "y": 8534.145968031571
+          "x": 16160,
+          "y": 6920
         },
         {
-          "x": 15939.233249747298,
-          "y": 8534.145968031571
+          "x": 15800,
+          "y": 6920
         },
         {
-          "x": 15939.233249747298,
-          "y": 9014.654226185246
+          "x": 15800,
+          "y": 7210
         },
         {
-          "x": 15848.659151286285,
-          "y": 9014.654226185246
+          "x": 15730,
+          "y": 7210
         },
         {
-          "x": 15848.659151286285,
-          "y": 9353.778287824534
+          "x": 15730,
+          "y": 7650
         },
         {
-          "x": 16043.253160413891,
-          "y": 9353.778287824534
+          "x": 15830,
+          "y": 7650
         },
         {
-          "x": 16043.253160413891,
-          "y": 10390.033640155945
+          "x": 15830,
+          "y": 7760
         },
         {
-          "x": 15250,
-          "y": 10390
+          "x": 15630,
+          "y": 7760
         },
         {
-          "x": 15240,
+          "x": 15630,
+          "y": 8100
+        },
+        {
+          "x": 15490,
+          "y": 8100
+        },
+        {
+          "x": 15490,
+          "y": 8420
+        },
+        {
+          "x": 15700,
+          "y": 8420
+        },
+        {
+          "x": 15700,
+          "y": 8570
+        },
+        {
+          "x": 15910,
+          "y": 8570
+        },
+        {
+          "x": 15910,
+          "y": 8980
+        },
+        {
+          "x": 15840,
+          "y": 8980
+        },
+        {
+          "x": 15840,
+          "y": 9380
+        },
+        {
+          "x": 16040,
+          "y": 9380
+        },
+        {
+          "x": 16040,
+          "y": 10380
+        },
+        {
+          "x": 15840,
+          "y": 10380
+        },
+        {
+          "x": 15840,
+          "y": 9890
+        },
+        {
+          "x": 16000,
+          "y": 9890
+        },
+        {
+          "x": 16000,
+          "y": 9490
+        },
+        {
+          "x": 15650,
+          "y": 9490
+        },
+        {
+          "x": 15650,
+          "y": 9380
+        },
+        {
+          "x": 15800,
+          "y": 9380
+        },
+        {
+          "x": 15800,
+          "y": 8980
+        },
+        {
+          "x": 15720,
+          "y": 8980
+        },
+        {
+          "x": 15720,
+          "y": 8770
+        },
+        {
+          "x": 15460,
+          "y": 8770
+        },
+        {
+          "x": 15460,
+          "y": 8340
+        },
+        {
+          "x": 15270,
+          "y": 8340
+        },
+        {
+          "x": 15270,
           "y": 8070
         },
         {
-          "x": 15387.140463001591,
-          "y": 8065.322022679811
+          "x": 15600,
+          "y": 8070
         },
         {
-          "x": 15387.140463001591,
-          "y": 7358.989372154348
+          "x": 15600,
+          "y": 7530
         },
         {
-          "x": 15501.290441643872,
-          "y": 7358.989372154348
+          "x": 15520,
+          "y": 7530
         },
         {
-          "x": 15501.290441643872,
-          "y": 7241.732655900152
+          "x": 15520,
+          "y": 7350
         },
         {
-          "x": 15228.56325805138,
-          "y": 7241.732655900152
+          "x": 15690,
+          "y": 7350
+        },
+        {
+          "x": 15690,
+          "y": 7190
+        },
+        {
+          "x": 15770,
+          "y": 7190
+        },
+        {
+          "x": 15770,
+          "y": 6650
+        },
+        {
+          "x": 15680,
+          "y": 6650
+        },
+        {
+          "x": 15680,
+          "y": 6490
+        },
+        {
+          "x": 15230,
+          "y": 6490
         },
         {
           "x": 15230,
           "y": 6380
         },
         {
-          "x": 15390,
+          "x": 15380,
           "y": 6380
         },
         {
-          "x": 15391.324226377534,
-          "y": 6235.179835369567
+          "x": 15380,
+          "y": 6230
         },
         {
-          "x": 15228.533046805705,
-          "y": 6235.179835369567
+          "x": 15230,
+          "y": 6230
         },
         {
           "x": 15228.533046805705,
@@ -20712,7 +20986,657 @@
       ]
     }
   ],
-  "events": [],
+  "events": [
+    {
+      "id": "ev-eden_sin",
+      "name": "선악과 사건과 인류의 타락 (Fall of Man)",
+      "desc": "뱀의 유혹으로 하와와 아담이 선악과를 먹고 하나님의 명령을 어겨 에덴동산에서 추방당하고 인류에 죄가 들어온 사건.",
+      "refs": [
+        "창세기 3:6",
+        "창세기 3:23"
+      ],
+      "relatedPeople": [
+        "adam",
+        "eve"
+      ],
+      "relatedLocations": [
+        "loc-eden"
+      ],
+      "x": 240,
+      "y": 150
+    },
+    {
+      "id": "ev-cain_abel",
+      "name": "가인의 아벨 살인 사건 (Cain and Abel)",
+      "desc": "하나님께서 아벨의 제사만 받으시자 이에 분노한 형 가인이 들판에서 아우 아벨을 돌로 쳐 죽인 인류 최초의 살인 사건.",
+      "refs": [
+        "창세기 4:8"
+      ],
+      "relatedPeople": [
+        "cain",
+        "abel"
+      ],
+      "relatedLocations": [
+        "loc-east_eden"
+      ],
+      "x": -310,
+      "y": 330
+    },
+    {
+      "id": "ev-enoch_ascension",
+      "name": "에녹의 하나님 동행과 승천 (Enoch's Translation)",
+      "desc": "에녹이 65세에 므두셀라를 낳고 300년 동안 하나님과 동행하다가, 하나님이 그를 데려가시므로 세상에 있지 아니한 신비한 사건.",
+      "refs": [
+        "창세기 5:24"
+      ],
+      "relatedPeople": [
+        "enoch_seth",
+        "methuselah"
+      ],
+      "relatedLocations": [
+        "loc-eden"
+      ],
+      "x": 240,
+      "y": 150
+    },
+    {
+      "id": "ev-noah_flood",
+      "name": "노아의 방주와 대홍수 심판 (Noah's Flood)",
+      "desc": "온 세상의 해악이 가득 참에 분노하신 하나님께서 40일 동안 비를 내려 전 지구를 홍수로 심판하시고 노아의 여덟 식구만 구원하신 사건.",
+      "refs": [
+        "창세기 7:11",
+        "창세기 7:23"
+      ],
+      "relatedPeople": [
+        "noah",
+        "shem",
+        "ham",
+        "japheth"
+      ],
+      "relatedLocations": [
+        "loc-ararat"
+      ],
+      "x": 240,
+      "y": 1770
+    },
+    {
+      "id": "ev-babel_tower",
+      "name": "바벨탑 건설과 언어의 혼잡 (Tower of Babel)",
+      "desc": "인류가 하늘에 닿는 탑을 쌓아 자기 이름을 내고 흩어짐을 면하려 하자, 하나님이 언어를 혼잡하게 하사 온 지면에 흩으신 심판.",
+      "refs": [
+        "창세기 11:4",
+        "창세기 11:9"
+      ],
+      "relatedPeople": [
+        "noah"
+      ],
+      "relatedLocations": [
+        "loc-shinar"
+      ],
+      "x": 370,
+      "y": 2130
+    },
+    {
+      "id": "ev-abraham_haran",
+      "name": "아브라함의 갈대아 우르 및 하란 소명 (Call of Abraham)",
+      "desc": "본토 친척 아비 집을 떠나 보여줄 땅으로 가라는 하나님의 명령에 순종하여 75세에 아브라함이 믿음의 여정을 시작한 사건.",
+      "refs": [
+        "창세기 12:1",
+        "창세기 12:4"
+      ],
+      "relatedPeople": [
+        "terah",
+        "abraham",
+        "sarah"
+      ],
+      "relatedLocations": [
+        "loc-haran"
+      ],
+      "x": 190,
+      "y": 3480
+    },
+    {
+      "id": "ev-abraham_shechem",
+      "name": "세겜에서의 첫 단 축조와 약속 (Abraham's Altar at Shechem)",
+      "desc": "약속의 땅 가나안에 들어온 아브라함에게 하나님이 나타나 '이 땅을 네 자손에게 주리라' 하시자 제단을 쌓아 예배한 사건.",
+      "refs": [
+        "창세기 12:7"
+      ],
+      "relatedPeople": [
+        "abraham"
+      ],
+      "relatedLocations": [
+        "loc-shechem"
+      ],
+      "x": 240,
+      "y": 3570
+    },
+    {
+      "id": "ev-sodom_destruction",
+      "name": "소돔과 고모라의 유황불 비 심판 (Destruction of Sodom)",
+      "desc": "소돔성 주민들의 죄악이 심히 무거움으로 하늘에서 유황과 불이 비처럼 내려와 성읍들과 그곳에 살던 생물들을 완전히 소멸시킨 사건.",
+      "refs": [
+        "창세기 19:24"
+      ],
+      "relatedPeople": [
+        "lot",
+        "abraham"
+      ],
+      "relatedLocations": [
+        "loc-sodom"
+      ],
+      "x": -110,
+      "y": 3540
+    },
+    {
+      "id": "ev-isaac_offering",
+      "name": "독자 이삭의 모리아산 번제 봉헌 (Binding of Isaac)",
+      "desc": "하나님이 아브라함의 믿음을 시험하고자 백세에 얻은 외아들 이삭을 바치라 하실 때, 칼을 들어 드리려 하자 야훼 이레로 수양을 준비하신 사건.",
+      "refs": [
+        "창세기 22:10",
+        "창세기 22:13"
+      ],
+      "relatedPeople": [
+        "abraham",
+        "isaac"
+      ],
+      "relatedLocations": [
+        "loc-moriah"
+      ],
+      "x": 240,
+      "y": 3660
+    },
+    {
+      "id": "ev-isaac_covenant",
+      "name": "이삭의 브엘세바 평화 언약 체결 (Isaac's Covenant at Beersheba)",
+      "desc": "이삭이 그랄 목자들과의 우물 분쟁을 평화롭게 온유함으로 해결한 후, 아비멜렉 왕이 스스로 찾아와 여호와가 함께하심을 고백하고 맺은 맹세.",
+      "refs": [
+        "창세기 26:28",
+        "창세기 26:31"
+      ],
+      "relatedPeople": [
+        "abraham",
+        "isaac"
+      ],
+      "relatedLocations": [
+        "loc-beersheba"
+      ],
+      "x": 240,
+      "y": 3750
+    },
+    {
+      "id": "ev-jacob_bethel",
+      "name": "야곱의 벧엘 사다리 꿈과 서원 (Jacob's Ladder at Bethel)",
+      "desc": "형 에서의 낯을 피해 도망하던 중 광야에서 잠든 야곱에게 하나님이 하늘 사다리 환상으로 나타나 임마누엘 동행을 약속해 주신 은혜의 서원.",
+      "refs": [
+        "창세기 28:12",
+        "창세기 28:15"
+      ],
+      "relatedPeople": [
+        "jacob"
+      ],
+      "relatedLocations": [
+        "loc-bethel"
+      ],
+      "x": 240,
+      "y": 3930
+    },
+    {
+      "id": "ev-jacob_peniel",
+      "name": "야곱의 얍복강가 천사 씨름과 이스라엘 축복 (Jacob wrestles at Peniel)",
+      "desc": "에서와의 해후를 앞두고 두려움 속에 홀로 남은 야곱이 하나님의 사자와 밤새 목숨 걸고 씨름하다 환도뼈가 부러지며 '이스라엘'로 개명한 축복.",
+      "refs": [
+        "창세기 32:24",
+        "창세기 32:28"
+      ],
+      "relatedPeople": [
+        "jacob"
+      ],
+      "relatedLocations": [
+        "loc-peniel"
+      ],
+      "x": 240,
+      "y": 3990
+    },
+    {
+      "id": "ev-machpelah_buy",
+      "name": "아브라함의 막벨라 굴 묘실 매입 사건 (Purchase of Machpelah)",
+      "desc": "가나안 헷 족속에게서 은 사백 세겔을 주고 밭과 굴을 정식 매입하여 영구 기업의 묘실로 삼아 향후 3대 족장이 그곳에 함께 묻힌 사건.",
+      "refs": [
+        "창세기 23:16",
+        "창세기 23:18"
+      ],
+      "relatedPeople": [
+        "abraham",
+        "sarah",
+        "isaac",
+        "jacob"
+      ],
+      "relatedLocations": [
+        "loc-hebron"
+      ],
+      "x": 210,
+      "y": 3610
+    },
+    {
+      "id": "ev-goshen_migration",
+      "name": "야곱 온 가족의 고센 땅 애굽 이주 (Jacob's Migration to Egypt)",
+      "desc": "전례 없는 기근 속에서 요셉의 통치권 하에 있던 애굽으로 70명의 야곱 권속이 수레를 타고 정착하여 거대한 민족의 기틀을 마련한 사건.",
+      "refs": [
+        "창세기 46:27",
+        "창세기 47:1"
+      ],
+      "relatedPeople": [
+        "jacob",
+        "joseph"
+      ],
+      "relatedLocations": [
+        "loc-goshen"
+      ],
+      "x": 440,
+      "y": 4080
+    },
+    {
+      "id": "ev-moses_rescue",
+      "name": "아기 모세의 갈대 상자 나일강 방류와 구조 (Finding of Moses)",
+      "desc": "히브리 남아가 태어나면 죽이라는 바로의 서슬 퍼런 명령 속에 역청을 칠한 상자에 담긴 아기가 나일강에서 건짐을 받아 바로 왕궁의 왕자가 된 사건.",
+      "refs": [
+        "출애굽기 2:3",
+        "출애굽기 2:10"
+      ],
+      "relatedPeople": [
+        "moses",
+        "jochebed"
+      ],
+      "relatedLocations": [
+        "loc-nile"
+      ],
+      "x": -5810,
+      "y": 4560
+    },
+    {
+      "id": "ev-burning_bush",
+      "name": "호렙산 떨기나무 불꽃 소명 수여 (Moses and the Burning Bush)",
+      "desc": "양을 치던 80세의 노인 모세에게 타지 않는 불꽃 떨기나무 가운데서 여호와 하나님이 나타나 이스라엘의 구원자로 세우시며 '스스로 계신 자'를 밝히신 소명.",
+      "refs": [
+        "출애굽기 3:2",
+        "출애굽기 3:14"
+      ],
+      "relatedPeople": [
+        "moses",
+        "zipporah"
+      ],
+      "relatedLocations": [
+        "loc-midian"
+      ],
+      "x": -6010,
+      "y": 4620
+    },
+    {
+      "id": "ev-ten_plagues",
+      "name": "애굽에 내린 여호와의 열 가지 재앙 심판 (Ten Plagues of Egypt)",
+      "desc": "완악한 바로가 백성을 보내지 않자 모세와 아론을 통해 나일강이 피로 변하는 재앙부터 장자의 죽음에 이르기까지 애굽의 우상들을 징벌하신 심판.",
+      "refs": [
+        "출애굽기 7:20",
+        "출애굽기 12:29"
+      ],
+      "relatedPeople": [
+        "moses",
+        "aaron"
+      ],
+      "relatedLocations": [
+        "loc-pharaoh_palace"
+      ],
+      "x": -5510,
+      "y": 4560
+    },
+    {
+      "id": "ev-crossing_red_sea",
+      "name": "홍해 바다의 갈라짐과 애굽 군대 몰살 (Crossing the Red Sea)",
+      "desc": "진퇴양난의 홍해 앞에서 모세가 지팡이로 바다를 갈라 밤새 마른 땅으로 이스라엘 백성을 건너게 하시고, 뒤쫓던 애굽 마병들을 수장시키신 해방의 기적.",
+      "refs": [
+        "출애굽기 14:21",
+        "출애굽기 14:28"
+      ],
+      "relatedPeople": [
+        "moses",
+        "aaron"
+      ],
+      "relatedLocations": [
+        "loc-red_sea"
+      ],
+      "x": -5810,
+      "y": 4740
+    },
+    {
+      "id": "ev-ten_commandments",
+      "name": "시내산 십계명 돌판 수여와 언약 (The Ten Commandments)",
+      "desc": "번개와 빽빽한 구름이 덮인 시내산 정상에서 모세가 하나님과 단독 대면하여 두 돌판에 새겨진 십계명 율법과 성막 법령을 받아 백성에게 공포한 일.",
+      "refs": [
+        "출애굽기 20:1",
+        "출애굽기 31:18"
+      ],
+      "relatedPeople": [
+        "moses"
+      ],
+      "relatedLocations": [
+        "loc-sinai"
+      ],
+      "x": -5810,
+      "y": 4860
+    },
+    {
+      "id": "ev-kadesh_spies",
+      "name": "가데스 바네아 12정탐꾼의 보고와 심판 (The 12 Spies at Kadesh)",
+      "desc": "가나안을 탐지하고 돌아온 10명의 부정적인 정탐꾼과 백성의 통곡으로 인해, 하나님이 진노하사 가나안 입국을 거부한 세대를 광야 40년 동안 방황하게 하신 심판.",
+      "refs": [
+        "민수기 14:1",
+        "민수기 14:34"
+      ],
+      "relatedPeople": [
+        "moses",
+        "joshua_eph",
+        "caleb_jephunneh"
+      ],
+      "relatedLocations": [
+        "loc-kadesh"
+      ],
+      "x": -5810,
+      "y": 4980
+    },
+    {
+      "id": "ev-moses_death",
+      "name": "느보산에서의 가나안 조망과 모세의 죽음 (Death of Moses)",
+      "desc": "화가 나 므리바 반석을 지팡이로 두 번 침으로 하나님의 거룩함을 가린 모세가, 약속의 땅 가나안을 요단강 건너편 느보산에서 바라만 본 채 별세한 종말.",
+      "refs": [
+        "신명기 34:5",
+        "신명기 34:6"
+      ],
+      "relatedPeople": [
+        "moses"
+      ],
+      "relatedLocations": [
+        "loc-nebo"
+      ],
+      "x": -5610,
+      "y": 4900
+    },
+    {
+      "id": "ev-crossing_jordan",
+      "name": "요단강 물의 멈춤과 마른 땅 도하 (Crossing of Jordan)",
+      "desc": "제사장들의 언약궤 멘 발이 가득 차 흐르던 요단강 상류에 닿자, 흐르던 물이 사르단에 이르기까지 둑처럼 일어서 멈추고 온 이스라엘이 마른 땅으로 강을 건넌 이적.",
+      "refs": [
+        "여호수아 3:16",
+        "여호수아 3:17"
+      ],
+      "relatedPeople": [
+        "joshua_eph"
+      ],
+      "relatedLocations": [
+        "loc-jordan"
+      ],
+      "x": -110,
+      "y": 5160
+    },
+    {
+      "id": "ev-fall_of_jericho",
+      "name": "여리고성의 7일간의 순행과 성벽 함락 (Fall of Jericho)",
+      "desc": "하루에 성을 한 바퀴씩 돌고 일곱째 날에 일곱 번 돌며 양각 나팔 소리와 함께 백성들이 일제히 큰 소리로 외치자 난공불락의 견고한 여리고 성벽이 와르르 무너져 내린 함락.",
+      "refs": [
+        "여호수아 6:15",
+        "여호수아 6:20"
+      ],
+      "relatedPeople": [
+        "joshua_eph",
+        "rahab"
+      ],
+      "relatedLocations": [
+        "loc-jericho"
+      ],
+      "x": -110,
+      "y": 5220
+    },
+    {
+      "id": "ev-samuel_call",
+      "name": "실로 성막 안의 어린 사무엘 소명 (Call of Samuel)",
+      "desc": "엘리 제사장의 눈이 어두워져 실로의 등불이 꺼져갈 때, 성막 안 여호와의 궤 곁에 누워있던 어린 사무엘을 하나님이 이름을 불러 불러 선지자로 세우신 소명.",
+      "refs": [
+        "사무엘상 3:4",
+        "사무엘상 3:10"
+      ],
+      "relatedPeople": [
+        "david"
+      ],
+      "relatedLocations": [
+        "loc-shiloh"
+      ],
+      "x": 190,
+      "y": 5580
+    },
+    {
+      "id": "ev-david_anointed",
+      "name": "사무엘의 이새 아들 다윗 기름 부음 (David Anointed by Samuel)",
+      "desc": "사울 왕을 폐하고 새 왕을 세우려 하신 하나님의 지시로 베들레헴 이새의 집에 당도한 사무엘이, 막내인 양치기 소년 다윗에게 기름을 붓자 하나님의 신이 임한 사건.",
+      "refs": [
+        "사무엘상 16:12",
+        "사무엘상 16:13"
+      ],
+      "relatedPeople": [
+        "david"
+      ],
+      "relatedLocations": [
+        "loc-bethlehem"
+      ],
+      "x": 210,
+      "y": 5820
+    },
+    {
+      "id": "ev-david_goliath",
+      "name": "소년 다윗과 거인 골리앗의 물맷돌 결투 (David and Goliath)",
+      "desc": "갑옷을 입지 않고 물매와 시냇가의 매끄러운 돌 5개만 가지고 나가, 하나님의 이름을 모욕하는 블레셋의 3미터 거구 장수 골리앗의 이마를 단 한 방으로 맞추어 죽인 승리.",
+      "refs": [
+        "사무엘상 17:45",
+        "사무엘상 17:49"
+      ],
+      "relatedPeople": [
+        "david"
+      ],
+      "relatedLocations": [
+        "loc-elah"
+      ],
+      "x": 140,
+      "y": 5940
+    },
+    {
+      "id": "ev-temple_building",
+      "name": "솔로몬의 예루살렘 성전 건축 준공 봉헌 (Dedicating Solomon's Temple)",
+      "desc": "다윗이 성전 준비를 마치고 아들 솔로몬이 즉위하여 예루살렘 모리아산 터에 7년 반 동안 영광스러운 대성전을 건축하여 지성소에 언약궤를 입당시키며 봉헌한 사건.",
+      "refs": [
+        "열왕기상 6:38",
+        "열왕기상 8:10"
+      ],
+      "relatedPeople": [
+        "david",
+        "solomon"
+      ],
+      "relatedLocations": [
+        "loc-jerusalem"
+      ],
+      "x": 210,
+      "y": 6060
+    },
+    {
+      "id": "ev-elijah_fire",
+      "name": "선지자 엘리야의 갈멜산 번제 불 응답 (Elijah's Carmel Victory)",
+      "desc": "백성과 아합 왕 앞에서 여호와를 잊고 바알을 섬기는 자들과 대결할 때, 밤낮 기도해도 반응 없는 바알과 달리 엘리야의 번제 제단에 야훼의 불이 임해 도랑의 물을 핥은 참 신의 역사.",
+      "refs": [
+        "열왕기상 18:36",
+        "열왕기상 18:38"
+      ],
+      "relatedPeople": [
+        "david"
+      ],
+      "relatedLocations": [
+        "loc-carmel"
+      ],
+      "x": -360,
+      "y": 6960
+    },
+    {
+      "id": "ev-babylon_captivity",
+      "name": "유다 왕국의 패망과 바벨론 강제 유배 (Babylonian Captivity)",
+      "desc": "여호와의 목전에 악을 행하던 유다 왕국이 결국 느부갓네살 왕의 바벨론 제국 군대에 의해 성전이 불타고 성벽이 허물어지며 귀인과 백성들이 포로로 끌려간 수치와 심판의 비극.",
+      "refs": [
+        "열왕기하 25:9",
+        "열왕기하 25:11"
+      ],
+      "relatedPeople": [
+        "jeconiah"
+      ],
+      "relatedLocations": [
+        "loc-babylon"
+      ],
+      "x": 490,
+      "y": 8220
+    },
+    {
+      "id": "ev-temple_rebuild",
+      "name": "스룹바벨의 성전 재건 공사 필역 (Rebuilding the Temple)",
+      "desc": "고레스 왕의 조서로 포로 귀환한 유다 백성들이 대적들의 끈질긴 방해와 중단 압박 속에서도 학개와 스가랴 선지자의 격려 속에 성전 기초를 놓고 완공하여 봉헌한 감격의 역사.",
+      "refs": [
+        "에스라 5:2",
+        "에스라 6:15"
+      ],
+      "relatedPeople": [
+        "zerubbabel"
+      ],
+      "relatedLocations": [
+        "loc-second_temple"
+      ],
+      "x": 210,
+      "y": 9444
+    },
+    {
+      "id": "ev-walls_rebuild",
+      "name": "느헤미야의 예루살렘 성벽 성곽 중건 완공 (Rebuilding Jerusalem's Walls)",
+      "desc": "예루살렘 성벽이 허물어지고 성문이 소화되었다는 소식을 듣고 눈물로 기도한 술관원 느헤미야가, 총독으로 부임해 대적들의 방해 속에 한 손엔 병기를 들고 52일 만에 성벽을 완성한 중건.",
+      "refs": [
+        "느헤미야 4:17",
+        "느헤미야 6:15"
+      ],
+      "relatedPeople": [
+        "zerubbabel"
+      ],
+      "relatedLocations": [
+        "loc-jerusalem_walls"
+      ],
+      "x": 210,
+      "y": 9550
+    },
+    {
+      "id": "ev-1784788761811",
+      "name": "가인의 아벨 살인 사건",
+      "desc": "하나님께서 아벨의 제사만 받으시자 이에 분노한 형 가인이 들판에서 아우 아벨을 돌로 쳐 죽인 인류 최초의 살인 사건.",
+      "refs": [
+        "창세기 4:8"
+      ],
+      "relatedLocations": [
+        "loc-east_eden"
+      ],
+      "relatedPeople": [
+        "cain",
+        "abel"
+      ],
+      "x": 15104,
+      "y": 245
+    },
+    {
+      "id": "ev-1784789196127",
+      "name": "노아의 방주와 대홍수 심판",
+      "desc": "온 세상의 해악이 가득 참에 분노하신 하나님께서 40일 동안 비를 내려 전 지구를 홍수로 심판하시고 노아의 여덟 식구만 구원하신 사건.",
+      "refs": [
+        "창세기 7:11",
+        "창세기 7:23"
+      ],
+      "relatedLocations": [
+        "loc-ararat"
+      ],
+      "relatedPeople": [
+        "noah",
+        "shem",
+        "japheth",
+        "ham",
+        "noah_wife",
+        "shem_wife",
+        "japheth_wife",
+        "ham_wife"
+      ],
+      "x": 15621,
+      "y": 1793
+    },
+    {
+      "id": "ev-1784791438912",
+      "name": "천지창조",
+      "desc": "",
+      "refs": [],
+      "relatedLocations": [],
+      "relatedPeople": [],
+      "x": 15461,
+      "y": -19
+    },
+    {
+      "id": "ev-1784792467976",
+      "name": "독자 이삭의 모리아산 번제드림",
+      "desc": "하나님이 아브라함의 믿음을 시험하고자 백세에 얻은 외아들 이삭을 바치라 하실 때, 칼을 들어 드리려 하자 야훼 이레로 수양을 준비하신 사건.",
+      "refs": [
+        "창세기 22:10",
+        "창세기 22:13"
+      ],
+      "relatedLocations": [
+        "loc-moriah"
+      ],
+      "relatedPeople": [
+        "abraham",
+        "isaac"
+      ],
+      "x": 15923,
+      "y": 3492
+    },
+    {
+      "id": "ev-1784792508036",
+      "name": "바벨탑 건설과 언어의 혼잡",
+      "desc": "인류가 하늘에 닿는 탑을 쌓아 자기 이름을 내고 흩어짐을 면하려 하자, 하나님이 언어를 혼잡하게 하사 온 지면에 흩으신 심판.",
+      "refs": [
+        "창세기 11:4",
+        "창세기 11:9"
+      ],
+      "relatedLocations": [
+        "loc-shinar"
+      ],
+      "relatedPeople": [],
+      "x": 15917,
+      "y": 2563
+    },
+    {
+      "id": "ev-1784792646273",
+      "name": "아브라함의 갈대아 우르 및 하란 소명",
+      "desc": "본토 친척 아비 집을 떠나 보여줄 땅으로 가라는 하나님의 명령에 순종하여 75세에 아브라함이 믿음의 여정을 시작한 사건.",
+      "refs": [
+        "창세기 12:1",
+        "창세기 12:4"
+      ],
+      "relatedLocations": [
+        "loc-haran"
+      ],
+      "relatedPeople": [
+        "terah",
+        "abraham",
+        "sarah"
+      ],
+      "x": 15855,
+      "y": 3409
+    }
+  ],
   "locations": [
     {
       "id": "loc-1784790667582",
@@ -20731,6 +21655,621 @@
       ],
       "x": 9777,
       "y": 4545
+    },
+    {
+      "id": "loc-1785923858234",
+      "name": "전쟁",
+      "desc": "",
+      "refs": [],
+      "relatedEvents": [],
+      "relatedPeople": [],
+      "x": 16922,
+      "y": 7186
+    },
+    {
+      "id": "loc-1785923869402",
+      "name": "전쟁",
+      "desc": "",
+      "refs": [],
+      "relatedEvents": [],
+      "relatedPeople": [],
+      "x": 16940,
+      "y": 7569
+    },
+    {
+      "id": "loc-eden",
+      "name": "에덴동산 (Eden)",
+      "desc": "인류 최초의 거처이자 생명나무와 선악을 알게 하는 나무가 있던 낙원.",
+      "refs": [
+        "창세기 2:8",
+        "창세기 2:15"
+      ],
+      "relatedPeople": [
+        "adam",
+        "eve"
+      ],
+      "relatedEvents": [
+        "ev-eden_sin"
+      ],
+      "x": 150,
+      "y": 150
+    },
+    {
+      "id": "loc-east_eden",
+      "name": "에덴 동쪽 놋 땅 (Land of Nod)",
+      "desc": "가인이 아벨을 죽인 후 쫓겨나 유리하며 거주하게 된 에덴 동편의 땅.",
+      "refs": [
+        "창세기 4:16"
+      ],
+      "relatedPeople": [
+        "cain",
+        "abel"
+      ],
+      "relatedEvents": [
+        "ev-cain_abel"
+      ],
+      "x": -400,
+      "y": 330
+    },
+    {
+      "id": "loc-ararat",
+      "name": "아라랏산 (Mount Ararat)",
+      "desc": "노아의 방주가 대홍수 심판이 끝난 후 머무른 산.",
+      "refs": [
+        "창세기 8:4"
+      ],
+      "relatedPeople": [
+        "noah",
+        "shem",
+        "ham",
+        "japheth"
+      ],
+      "relatedEvents": [
+        "ev-noah_flood"
+      ],
+      "x": 150,
+      "y": 1770
+    },
+    {
+      "id": "loc-shinar",
+      "name": "시날 평지 (Plain of Shinar)",
+      "desc": "노아의 후손들이 모여 바벨탑을 쌓으며 하나님께 대적했던 평원.",
+      "refs": [
+        "창세기 11:2"
+      ],
+      "relatedPeople": [
+        "noah"
+      ],
+      "relatedEvents": [
+        "ev-babel_tower"
+      ],
+      "x": 280,
+      "y": 2130
+    },
+    {
+      "id": "loc-haran",
+      "name": "하란 (Haran)",
+      "desc": "아브라함의 아버지 데라가 머물다 죽은 곳이자 아브라함이 소명을 받고 떠난 땅.",
+      "refs": [
+        "창세기 11:31",
+        "창세기 12:4"
+      ],
+      "relatedPeople": [
+        "terah",
+        "abraham",
+        "sarah"
+      ],
+      "relatedEvents": [
+        "ev-abraham_haran"
+      ],
+      "x": 100,
+      "y": 3480
+    },
+    {
+      "id": "loc-shechem",
+      "name": "세겜 (Shechem)",
+      "desc": "아브라함이 가나안 땅에 들어와 최초로 제단을 쌓고 하나님의 약속을 받은 장소.",
+      "refs": [
+        "창세기 12:6",
+        "창세기 12:7"
+      ],
+      "relatedPeople": [
+        "abraham"
+      ],
+      "relatedEvents": [
+        "ev-abraham_shechem"
+      ],
+      "x": 150,
+      "y": 3570
+    },
+    {
+      "id": "loc-sodom",
+      "name": "소돔과 고모라 (Sodom & Gomorrah)",
+      "desc": "도덕적 타락으로 인해 유황과 불의 심판을 받아 멸망한 요단 평지의 성읍들.",
+      "refs": [
+        "창세기 19:24",
+        "창세기 19:25"
+      ],
+      "relatedPeople": [
+        "lot",
+        "abraham"
+      ],
+      "relatedEvents": [
+        "ev-sodom_destruction"
+      ],
+      "x": -200,
+      "y": 3540
+    },
+    {
+      "id": "loc-moriah",
+      "name": "모리아산 (Mount Moriah)",
+      "desc": "아브라함이 독자 이삭을 번제로 바치려 했던 산이자 훗날 솔로몬 성전이 건축된 장소.",
+      "refs": [
+        "창세기 22:2"
+      ],
+      "relatedPeople": [
+        "abraham",
+        "isaac"
+      ],
+      "relatedEvents": [
+        "ev-isaac_offering"
+      ],
+      "x": 150,
+      "y": 3660
+    },
+    {
+      "id": "loc-beersheba",
+      "name": "브엘세바 (Beersheba)",
+      "desc": "맹세의 우물이라는 뜻으로, 아브라함และ 이삭이 그랄 왕 아비멜렉과 평화 언약을 맺은 곳.",
+      "refs": [
+        "창세기 21:31",
+        "창세기 26:33"
+      ],
+      "relatedPeople": [
+        "abraham",
+        "isaac"
+      ],
+      "relatedEvents": [
+        "ev-isaac_covenant"
+      ],
+      "x": 150,
+      "y": 3750
+    },
+    {
+      "id": "loc-bethel",
+      "name": "벧엘 (Bethel)",
+      "desc": "하나님의 집이라는 뜻으로, 야곱이 형 에서를 피해 도망치던 중 돌베개를 베고 자다 하늘 사다리 환상을 본 곳.",
+      "refs": [
+        "창세기 28:19"
+      ],
+      "relatedPeople": [
+        "jacob"
+      ],
+      "relatedEvents": [
+        "ev-jacob_bethel"
+      ],
+      "x": 150,
+      "y": 3930
+    },
+    {
+      "id": "loc-peniel",
+      "name": "브니엘 (Peniel)",
+      "desc": "하나님의 얼굴이라는 뜻으로, 야곱이 얍복 나루에서 하나님의 사자와 밤새 씨름하여 '이스라엘'이라는 이름을 얻은 곳.",
+      "refs": [
+        "창세기 32:30"
+      ],
+      "relatedPeople": [
+        "jacob"
+      ],
+      "relatedEvents": [
+        "ev-jacob_peniel"
+      ],
+      "x": 150,
+      "y": 3990
+    },
+    {
+      "id": "loc-hebron",
+      "name": "헤브론 막벨라 굴 (Cave of Machpelah)",
+      "desc": "아브라함이 사라를 장사하기 위해 매입한 굴로, 아브라함, 사라, 이삭, 리브가, 야곱, 레아가 묻힌 족장들의 묘실.",
+      "refs": [
+        "창세기 23:19",
+        "창세기 49:30"
+      ],
+      "relatedPeople": [
+        "abraham",
+        "sarah",
+        "isaac",
+        "jacob"
+      ],
+      "relatedEvents": [
+        "ev-machpelah_buy"
+      ],
+      "x": 120,
+      "y": 3610
+    },
+    {
+      "id": "loc-goshen",
+      "name": "애굽 고센 땅 (Goshen in Egypt)",
+      "desc": "가나안 기근 때 요셉의 초청으로 입성한 야곱의 가족들이 정착하여 번성한 비옥한 목초지.",
+      "refs": [
+        "창세기 47:6"
+      ],
+      "relatedPeople": [
+        "jacob",
+        "joseph"
+      ],
+      "relatedEvents": [
+        "ev-goshen_migration"
+      ],
+      "x": 350,
+      "y": 4080
+    },
+    {
+      "id": "loc-nile",
+      "name": "나일강 (Nile River)",
+      "desc": "바로의 히브리 유아 학살 명령 속에서 모세가 갈대 상자에 담겨 떠내려가다 바로의 딸에게 구출된 강.",
+      "refs": [
+        "출애굽기 2:3",
+        "출애굽기 2:5"
+      ],
+      "relatedPeople": [
+        "moses",
+        "jochebed"
+      ],
+      "relatedEvents": [
+        "ev-moses_rescue"
+      ],
+      "x": -5900,
+      "y": 4560
+    },
+    {
+      "id": "loc-midian",
+      "name": "미디안 광야 (Midian Wilderness)",
+      "desc": "모세가 애굽 사람을 죽인 후 도망하여 40년간 목자로 살았던 땅이자 호렙산 떨기나무에서 하나님의 부르심을 받은 곳.",
+      "refs": [
+        "출애굽기 2:15",
+        "출애굽기 3:1"
+      ],
+      "relatedPeople": [
+        "moses",
+        "zipporah"
+      ],
+      "relatedEvents": [
+        "ev-burning_bush"
+      ],
+      "x": -6100,
+      "y": 4620
+    },
+    {
+      "id": "loc-pharaoh_palace",
+      "name": "애굽 바로의 궁전 (Pharaoh's Palace)",
+      "desc": "모세와 아론이 이스라엘 백성의 해방을 요구하며 바로와 대치하고 열 가지 재앙을 선포했던 궁전.",
+      "refs": [
+        "출애굽기 5:1",
+        "출애굽기 7:10"
+      ],
+      "relatedPeople": [
+        "moses",
+        "aaron"
+      ],
+      "relatedEvents": [
+        "ev-ten_plagues"
+      ],
+      "x": -5600,
+      "y": 4560
+    },
+    {
+      "id": "loc-red_sea",
+      "name": "홍해 (Red Sea)",
+      "desc": "뒤쫓아오는 애굽 군대 앞에서 모세가 지팡이를 내밀어 밤새 동풍으로 바다를 가르고 마른 땅처럼 건넌 기적의 바다.",
+      "refs": [
+        "출애굽기 14:21",
+        "출애굽기 14:22"
+      ],
+      "relatedPeople": [
+        "moses",
+        "aaron"
+      ],
+      "relatedEvents": [
+        "ev-crossing_red_sea"
+      ],
+      "x": -5900,
+      "y": 4740
+    },
+    {
+      "id": "loc-sinai",
+      "name": "시내산 (Mount Sinai)",
+      "desc": "출애굽한 이스라엘 백성들이 당도하여 하나님과 언약을 맺고 모세가 십계명과 성막 설계도를 받은 성산.",
+      "refs": [
+        "출애굽기 19:11",
+        "출애굽기 20:1"
+      ],
+      "relatedPeople": [
+        "moses"
+      ],
+      "relatedEvents": [
+        "ev-ten_commandments"
+      ],
+      "x": -5900,
+      "y": 4860
+    },
+    {
+      "id": "loc-kadesh",
+      "name": "가데스 바네아 (Kadesh Barnea)",
+      "desc": "가나안 접경 지역으로, 각 지파별로 12명의 정탐꾼을 보내 가나안 땅을 탐지하고 보고를 들었던 역사적 광야 기지.",
+      "refs": [
+        "민수기 13:26",
+        "신명기 1:19"
+      ],
+      "relatedPeople": [
+        "moses",
+        "joshua_eph",
+        "caleb_jephunneh"
+      ],
+      "relatedEvents": [
+        "ev-kadesh_spies"
+      ],
+      "x": -5900,
+      "y": 4980
+    },
+    {
+      "id": "loc-nebo",
+      "name": "느보산 비스가산대 (Mount Nebo)",
+      "desc": "모세가 약속의 땅 가나안을 멀리 바라본 후, 들어가지 못하고 120세로 생을 마감한 모압 땅의 산.",
+      "refs": [
+        "신명기 34:1",
+        "신명기 34:5"
+      ],
+      "relatedPeople": [
+        "moses"
+      ],
+      "relatedEvents": [
+        "ev-moses_death"
+      ],
+      "x": -5700,
+      "y": 4900
+    },
+    {
+      "id": "loc-jordan",
+      "name": "요단강 (Jordan River)",
+      "desc": "여호수아의 인도 하에 제사장들이 언약궤를 메고 물에 발을 딛자 흐르던 강물이 멈추어 마른 땅으로 건넌 약속의 땅 관문.",
+      "refs": [
+        "여호수아 3:15",
+        "여호수아 3:17"
+      ],
+      "relatedPeople": [
+        "joshua_eph"
+      ],
+      "relatedEvents": [
+        "ev-crossing_jordan"
+      ],
+      "x": -200,
+      "y": 5160
+    },
+    {
+      "id": "loc-jericho",
+      "name": "여리고 (Jericho)",
+      "desc": "가나안 첫 성읍으로, 정탐꾼을 숨긴 라합의 집이 있던 곳이며 언약궤를 메고 성을 7일간 돌아 무너뜨린 기적의 성.",
+      "refs": [
+        "여호수아 2:1",
+        "여호수아 6:20"
+      ],
+      "relatedPeople": [
+        "joshua_eph",
+        "rahab"
+      ],
+      "relatedEvents": [
+        "ev-fall_of_jericho"
+      ],
+      "x": -200,
+      "y": 5220
+    },
+    {
+      "id": "loc-shiloh",
+      "name": "실로 (Shiloh)",
+      "desc": "사사 시대 성막과 언약궤가 오랫동안 위치했던 영적 중심지이자 어린 사무엘이 하나님의 음성을 듣고 소명을 받은 곳.",
+      "refs": [
+        "여호수아 18:1",
+        "사무엘상 3:21"
+      ],
+      "relatedPeople": [
+        "david"
+      ],
+      "relatedEvents": [
+        "ev-samuel_call"
+      ],
+      "x": 100,
+      "y": 5580
+    },
+    {
+      "id": "loc-bethlehem",
+      "name": "베들레헴 (Bethlehem)",
+      "desc": "룻과 보아스의 만남이 성취된 곳이자 다윗 왕의 고향이며, 선지자 사무엘이 이새의 아들 다윗에게 기름을 부어 왕으로 세운 떡집의 땅.",
+      "refs": [
+        "룻기 1:22",
+        "사무엘상 16:1"
+      ],
+      "relatedPeople": [
+        "david"
+      ],
+      "relatedEvents": [
+        "ev-david_anointed"
+      ],
+      "x": 120,
+      "y": 5820
+    },
+    {
+      "id": "loc-elah",
+      "name": "엘라 골짜기 (Valley of Elah)",
+      "desc": "블레셋 군대와 이스라엘 군대가 대치하던 중, 소년 다윗이 물맷돌 5개와 만군의 여호와의 이름으로 거인 골리앗을 쓰러뜨린 전쟁터.",
+      "refs": [
+        "사무엘상 17:2",
+        "사무엘상 17:49"
+      ],
+      "relatedPeople": [
+        "david"
+      ],
+      "relatedEvents": [
+        "ev-david_goliath"
+      ],
+      "x": 50,
+      "y": 5940
+    },
+    {
+      "id": "loc-jerusalem",
+      "name": "예루살렘 성전산 (Mount Moriah Temple)",
+      "desc": "다윗이 오르난의 타작마당을 매입해 예배한 터로, 솔로몬 왕이 이스라엘 영광의 상징인 제1성전을 건축하여 헌당한 장소.",
+      "refs": [
+        "역대하 3:1",
+        "열왕기상 8:1"
+      ],
+      "relatedPeople": [
+        "david",
+        "solomon"
+      ],
+      "relatedEvents": [
+        "ev-temple_building"
+      ],
+      "x": 120,
+      "y": 6060
+    },
+    {
+      "id": "loc-carmel",
+      "name": "갈멜산 (Mount Carmel)",
+      "desc": "선지자 엘리야가 바알과 아세라 선지자 850명과 대결하여 여호와의 제단에 불이 내리게 함으로써 참 신이 누구인지 입증한 산.",
+      "refs": [
+        "열왕기상 18:19",
+        "열왕기상 18:38"
+      ],
+      "relatedPeople": [
+        "david"
+      ],
+      "relatedEvents": [
+        "ev-elijah_fire"
+      ],
+      "x": -450,
+      "y": 6960
+    },
+    {
+      "id": "loc-babylon",
+      "name": "바벨론 강가 (Rivers of Babylon)",
+      "desc": "예루살렘 멸망 이후 유다 백성들이 포로로 잡혀가 눈물로 시온을 기억하며 수금을 나무에 걸었던 슬픔과 탄식의 유배지.",
+      "refs": [
+        "시편 137:1",
+        "열왕기하 25:11"
+      ],
+      "relatedPeople": [
+        "jeconiah"
+      ],
+      "relatedEvents": [
+        "ev-babylon_captivity"
+      ],
+      "x": 400,
+      "y": 8220
+    },
+    {
+      "id": "loc-second_temple",
+      "name": "예루살렘 제2성전 터 (Second Temple Ruins)",
+      "desc": "바벨론 포로에서 귀환한 유다 백성들이 총독 스룹바벨의 주도 하에 눈물과 기쁨 속에 재건한 하나님의 성전.",
+      "refs": [
+        "에스라 3:8",
+        "에스라 6:15"
+      ],
+      "relatedPeople": [
+        "zerubbabel"
+      ],
+      "relatedEvents": [
+        "ev-temple_rebuild"
+      ],
+      "x": 120,
+      "y": 9444
+    },
+    {
+      "id": "loc-jerusalem_walls",
+      "name": "예루살렘 성벽 (Jerusalem Walls)",
+      "desc": "느헤미야 총독의 헌신과 이스라엘 백성들의 일치단결로 방해자들의 위협 속에서도 52일 만에 중건한 예루살렘 성벽 성곽.",
+      "refs": [
+        "느헤미야 2:17",
+        "느헤미야 6:15"
+      ],
+      "relatedPeople": [
+        "zerubbabel"
+      ],
+      "relatedEvents": [
+        "ev-walls_rebuild"
+      ],
+      "x": 120,
+      "y": 9550
+    },
+    {
+      "id": "loc-1784790981421",
+      "name": "에덴동산",
+      "desc": "인류 최초의 거처이자 생명나무와 선악을 알게 하는 나무가 있던 낙원.",
+      "refs": [
+        "창세기 2:8",
+        "창세기 2:15"
+      ],
+      "relatedEvents": [
+        "ev-eden_sin"
+      ],
+      "relatedPeople": [
+        "adam",
+        "eve"
+      ],
+      "x": 15458,
+      "y": 63
+    },
+    {
+      "id": "loc-1784792563461",
+      "name": "시날 평지",
+      "desc": "노아의 후손들이 모여 바벨탑을 쌓으며 하나님께 대적했던 평원.",
+      "refs": [
+        "창세기 11:2"
+      ],
+      "relatedEvents": [
+        "ev-babel_tower"
+      ],
+      "relatedPeople": [
+        "noah"
+      ],
+      "x": 15918,
+      "y": 2650
+    },
+    {
+      "id": "loc-1784792669341",
+      "name": "하란",
+      "desc": "아브라함의 아버지 데라가 머물다 죽은 곳이자 아브라함이 소명을 받고 떠난 땅.",
+      "refs": [
+        "창세기 11:31",
+        "창세기 12:4"
+      ],
+      "relatedEvents": [
+        "ev-abraham_haran"
+      ],
+      "relatedPeople": [
+        "terah",
+        "abraham",
+        "sarah"
+      ],
+      "x": 15642,
+      "y": 3360
+    },
+    {
+      "id": "loc-1784793488527",
+      "name": "모리아산",
+      "desc": "아브라함이 독자 이삭을 번제로 바치려 했던 산이자 훗날 솔로몬 성전이 건축된 장소.",
+      "refs": [
+        "창세기 22:2"
+      ],
+      "relatedEvents": [
+        "ev-isaac_offering"
+      ],
+      "relatedPeople": [
+        "abraham",
+        "isaac"
+      ],
+      "x": 15879,
+      "y": 3583
     }
   ]
 }
