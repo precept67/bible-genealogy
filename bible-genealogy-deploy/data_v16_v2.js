@@ -4,7 +4,7 @@
  */
 const LAYOUT_VERSION = "15.0";
 
-const BIBLE_CHARACTERS = [[
+const BIBLE_CHARACTERS = [
   {
     "id": "adam",
     "name": "아담",
