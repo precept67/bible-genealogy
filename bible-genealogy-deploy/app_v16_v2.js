@@ -77,7 +77,9 @@ const UI_TEXTS = {
     admin_mode_locked: "🔒 화면 편집이 잠겨있습니다.",
     admin_mode_unlocked: "🔓 화면 편집이 열려있습니다 (인물/선/장소/사건 조작 가능).",
     admin_mode_prompt: "비밀번호를 입력하세요:",
-    admin_mode_wrong: "비밀번호가 올바르지 않습니다."
+    admin_mode_wrong: "비밀번호가 올바르지 않습니다.",
+    app_title: "열린족보이야기",
+    layer_panel_title: "레이어 표시 설정"
   },
   en: {
     search_placeholder: "Search (People, Events, Locations)...",
@@ -115,7 +117,9 @@ const UI_TEXTS = {
     admin_mode_locked: "🔒 Screen editing is locked.",
     admin_mode_unlocked: "🔓 Screen editing is unlocked (You can move cards/lines/locations/events).",
     admin_mode_prompt: "Enter password:",
-    admin_mode_wrong: "Incorrect password."
+    admin_mode_wrong: "Incorrect password.",
+    app_title: "Open Genealogy Story",
+    layer_panel_title: "Layer Settings"
   }
 };
 
@@ -3233,7 +3237,24 @@ function renderAnnotations() {
     const textDiv = document.createElement('div');
     textDiv.className = 'annotation-text';
     textDiv.contentEditable = 'false';
-    textDiv.innerText = annot.text || '';
+    let textVal = annot.text || '';
+    if (currentLang === 'en') {
+      const trimmed = textVal.trim();
+      if (trimmed === '성경 인물 족보 보드\n(마우스 드래그로 이동, 휠로 확대/축소)') {
+        textVal = 'Bible Genealogy Board\n(Drag to pan, Scroll to zoom)';
+      } else if (trimmed === '마태복음족보의 첫번째 14대' || trimmed === '마태복음 족보의 첫번째 14대') {
+        textVal = "First 14 Generations of Matthew's Genealogy";
+      } else if (trimmed === '마태복음 족보의  두번째 14대' || trimmed === '마태복음 족보의 두번째 14대' || trimmed === '마태복음족보의 두번째 14대') {
+        textVal = "Second 14 Generations of Matthew's Genealogy";
+      } else if (trimmed === '마태복음 족보의 세번째 14대' || trimmed === '마태복음족보의 세번째 14대') {
+        textVal = "Third 14 Generations of Matthew's Genealogy";
+      } else if (trimmed === '동명이인') {
+        textVal = 'Homonyms';
+      } else if (trimmed === '다른 시대 우두머리된 자') {
+        textVal = 'Chiefs in Another Era';
+      }
+    }
+    textDiv.innerText = textVal;
     
     textDiv.style.fontSize = `${annot.fontSize || 14}px`;
     textDiv.style.fontWeight = annot.bold ? 'bold' : 'normal';
@@ -10234,7 +10255,11 @@ function updateStats() {
   const maleCount = db.filter(c => c.gender === 'M').length;
   const femaleCount = db.filter(c => c.gender === 'F').length;
   
-  statsSpan.textContent = `전체 인물: ${db.length}명 (남: ${maleCount}, 여: ${femaleCount})`;
+  if (currentLang === 'en') {
+    statsSpan.textContent = `Total: ${db.length} (Male: ${maleCount}, Female: ${femaleCount})`;
+  } else {
+    statsSpan.textContent = `전체 인물: ${db.length}명 (남: ${maleCount}, 여: ${femaleCount})`;
+  }
 }
 
 // ==========================================
@@ -14497,7 +14522,8 @@ function applyLocalization() {
   }
 
   const texts = UI_TEXTS[currentLang];
-  
+  document.title = texts.app_title || "열린족보이야기";
+
   const elementsToTranslate = {
     'searchInput': { attr: 'placeholder', key: 'search_placeholder' },
     'zoom-in': { attr: 'title', key: 'zoom_in_title' },
@@ -14516,6 +14542,10 @@ function applyLocalization() {
     'resource-url': { attr: 'placeholder', key: 'resource_url_placeholder' },
     'resource-add-btn': { attr: 'textContent', key: 'resource_add_btn' },
     'notes-panel-title': { attr: 'textContent', key: 'notes_title' },
+    'landing-title': { attr: 'textContent', key: 'app_title' },
+    'auth-title': { attr: 'textContent', key: 'app_title' },
+    'app-main-title': { attr: 'textContent', key: 'app_title' },
+    'layer-panel-title': { attr: 'textContent', key: 'layer_panel_title' },
   };
 
   for (const [id, config] of Object.entries(elementsToTranslate)) {
@@ -14527,6 +14557,11 @@ function applyLocalization() {
         el.setAttribute(config.attr, texts[config.key]);
       }
     }
+  }
+
+  // Update statistics dynamically to refresh text on language toggle
+  if (typeof updateStats === 'function') {
+    updateStats();
   }
 }
 
