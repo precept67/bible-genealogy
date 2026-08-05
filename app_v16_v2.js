@@ -37,6 +37,125 @@ if (typeof document !== 'undefined') {
 }
 
 // Configuration Constants
+// Localization Settings (i18n)
+let currentLang = localStorage.getItem('bible_genealogy_lang') || 'ko';
+
+const UI_TEXTS = {
+  ko: {
+    search_placeholder: "검색 (인물, 사건, 장소)...",
+    filter_panel_title: "계보 필터 설정",
+    theme_toggle_title: "테마 변경",
+    zoom_in_title: "확대",
+    zoom_out_title: "축소",
+    zoom_reset_title: "원본 크기",
+    prophets_toggle_title: "선지자 레이어 표시 토글",
+    help_guide_title: "도움말 및 사용 가이드",
+    backup_title: "전체 메모 백업 (개인 폴더로 자동 저장)",
+    restore_title: "자동저장된 메모 복원 (또는 백업 파일 불러오기)",
+    admin_lock_title: "관리자 편집 모드 토글",
+    logout_title: "로그아웃",
+    study_panel_title_annotation: "성경 족보 텍스트 상자",
+    study_panel_title_polygon: "사용자 정의 영역 정보",
+    study_panel_title_event: "성경 속 사건 정보",
+    study_panel_title_location: "성경 속 장소 정보",
+    label_annotation: "📝 텍스트 상자",
+    label_polygon: "📐 영역",
+    label_event: "📜 사건",
+    label_location: "📍 장소",
+    desc_annotation: "텍스트 상자 메모입니다. 아래에서 개인 연구 메모를 작성하고 참고 링크를 등록할 수 있습니다.",
+    desc_polygon: "사용자 정의 다각형 영역입니다. 아래에서 영역에 대한 연구 메모를 작성하고 참고 링크를 등록할 수 있습니다.",
+    desc_no_detail: "상세 설명이 없습니다.",
+    related_verses: "📖 관련 성구:",
+    notes_placeholder: "이 인물에 대한 메모나 생각들을 여기에 기록하세요. (자동 저장)",
+    notes_title: "📖 연구 메모 및 링크",
+    resource_desc_placeholder: "자료 설명 (예: 구절, 기사 제목)",
+    resource_url_placeholder: "링크 URL (http...)",
+    resource_add_btn: "추가",
+    gender_m: "남",
+    gender_f: "여",
+    search_no_results: "검색 결과가 없습니다.",
+    admin_mode_locked: "🔒 화면 편집이 잠겨있습니다.",
+    admin_mode_unlocked: "🔓 화면 편집이 열려있습니다 (인물/선/장소/사건 조작 가능).",
+    admin_mode_prompt: "비밀번호를 입력하세요:",
+    admin_mode_wrong: "비밀번호가 올바르지 않습니다."
+  },
+  en: {
+    search_placeholder: "Search (People, Events, Locations)...",
+    filter_panel_title: "Genealogy Filter Settings",
+    theme_toggle_title: "Change Theme",
+    zoom_in_title: "Zoom In",
+    zoom_out_title: "Zoom Out",
+    zoom_reset_title: "Reset Zoom",
+    prophets_toggle_title: "Toggle Prophets Layer",
+    help_guide_title: "Help & Guide",
+    backup_title: "Backup All Notes (Auto-saved to personal folder)",
+    restore_title: "Restore Auto-saved Notes (or Load Backup File)",
+    admin_lock_title: "Toggle Admin Edit Mode",
+    logout_title: "Log Out",
+    study_panel_title_annotation: "Bible Genealogy Text Box",
+    study_panel_title_polygon: "Custom Region Details",
+    study_panel_title_event: "Biblical Event Details",
+    study_panel_title_location: "Biblical Location Details",
+    label_annotation: "📝 Text Box",
+    label_polygon: "📐 Region",
+    label_event: "📜 Event",
+    label_location: "📍 Location",
+    desc_annotation: "This is a text box note. You can write your personal study notes and register reference links below.",
+    desc_polygon: "This is a custom polygonal region. You can write study notes and register reference links for this region below.",
+    desc_no_detail: "No detailed description available.",
+    related_verses: "📖 Related Scriptures:",
+    notes_placeholder: "Write your study notes or thoughts here. (Auto-saved)",
+    notes_title: "📖 Study Notes & Links",
+    resource_desc_placeholder: "Resource description (e.g. verse reference, article title)",
+    resource_url_placeholder: "Link URL (http...)",
+    resource_add_btn: "Add",
+    gender_m: "Male",
+    gender_f: "Female",
+    search_no_results: "No results found.",
+    admin_mode_locked: "🔒 Screen editing is locked.",
+    admin_mode_unlocked: "🔓 Screen editing is unlocked (You can move cards/lines/locations/events).",
+    admin_mode_prompt: "Enter password:",
+    admin_mode_wrong: "Incorrect password."
+  }
+};
+
+// Data Localization Helpers
+function getCharName(c) {
+  if (!c) return '';
+  return currentLang === 'en' ? (c.engName || c.name) : c.name;
+}
+
+function getCharDesc(c) {
+  if (!c) return '';
+  return currentLang === 'en' ? (c.engDesc || c.desc || '') : (c.desc || '');
+}
+
+function getEventName(e) {
+  if (!e) return '';
+  return currentLang === 'en' ? (e.engName || e.name) : e.name;
+}
+
+function getEventDesc(e) {
+  if (!e) return '';
+  return currentLang === 'en' ? (e.engDesc || e.desc || '') : (e.desc || '');
+}
+
+function getLocationName(l) {
+  if (!l) return '';
+  return currentLang === 'en' ? (l.engName || l.name) : l.name;
+}
+
+function getLocationDesc(l) {
+  if (!l) return '';
+  return currentLang === 'en' ? (l.engDesc || l.desc || '') : (l.desc || '');
+}
+
+function getPolygonLabel(p) {
+  if (!p) return '';
+  return currentLang === 'en' ? (p.label_en || p.label) : p.label;
+}
+
+// Configuration Constants
 const CARD_WIDTH = 152;
 const CARD_HEIGHT = 62;
 const GEN_HEIGHT = 180;
@@ -5664,9 +5783,12 @@ function renderTree() {
     const hasNote = userNotes && userNotes[char.id];
     const noteBadgeHTML = hasNote ? `<div class="card-note-badge" title="메모 있음">📝</div>` : '';
     
-    // Render Inner HTML: Centered name, no gender icons, combined English & Description line
-    const descText = char.desc ? ` · <span class="card-desc">${char.desc}</span>` : '';
-    const subtitle = `${char.engName}${descText}`;
+    // Render Inner HTML: Localized name, English/Korean name swap, localized description
+    const localizedName = getCharName(char);
+    const localizedDesc = getCharDesc(char);
+    const secondaryName = currentLang === 'en' ? char.name : char.engName;
+    const descText = localizedDesc ? ` · <span class="card-desc">${localizedDesc}</span>` : '';
+    const subtitle = `${secondaryName}${descText}`;
     
     const editOverlayHTML = isAdminMode ? `
       <div class="card-edit-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); border-radius: 10px; display: flex; align-items: center; justify-content: center; padding: 6px; box-sizing: border-box; transform: translateZ(0); will-change: transform; pointer-events: none; opacity: 0; transition: opacity 0.2s ease; z-index: 15;">
@@ -5676,9 +5798,9 @@ function renderTree() {
 
     card.innerHTML = `
       <div class="card-name-row">
-        <span class="card-title">${char.name}</span>
+        <span class="card-title">${localizedName}</span>
       </div>
-      <span class="card-eng" title="${char.engName}${char.desc ? ': ' + char.desc : ''}">${subtitle}</span>
+      <span class="card-eng" title="${secondaryName}${localizedDesc ? ': ' + localizedDesc : ''}">${subtitle}</span>
       ${noteBadgeHTML}
       ${editOverlayHTML}
     `;
@@ -7380,7 +7502,7 @@ function renderCustomPolygons() {
     label.style.top = `${(labelPt.y - 12 + offY) * currentScale}px`;
     label.style.color = poly.color;
     label.style.borderColor = poly.color + '40'; // add opacity to border
-    label.textContent = poly.label;
+    label.textContent = getPolygonLabel(poly);
     label.style.display = isLayerVisible ? '' : 'none';
     
     if (isAdminMode) {
@@ -9731,18 +9853,24 @@ function setupSearch() {
     ];
     
     // Find the best match, prioritizing exact match -> starts-with match -> contains match
-    let partialMatch = combinedData.find(item => item.name.toLowerCase() === query);
+    let partialMatch = combinedData.find(item => {
+      const name = (item.dataType === 'person') ? getCharName(item) : ((item.dataType === 'event') ? getEventName(item) : getLocationName(item));
+      const eng = item.engName || '';
+      return name.toLowerCase() === query || eng.toLowerCase() === query;
+    });
     if (!partialMatch) {
-      partialMatch = combinedData.find(item => item.engName && item.engName.toLowerCase() === query);
+      partialMatch = combinedData.find(item => {
+        const name = (item.dataType === 'person') ? getCharName(item) : ((item.dataType === 'event') ? getEventName(item) : getLocationName(item));
+        const eng = item.engName || '';
+        return name.toLowerCase().startsWith(query) || eng.toLowerCase().startsWith(query);
+      });
     }
     if (!partialMatch) {
-      partialMatch = combinedData.find(item => item.name.toLowerCase().startsWith(query));
-    }
-    if (!partialMatch) {
-      partialMatch = combinedData.find(item => 
-        item.name.toLowerCase().includes(query) || 
-        (item.engName && item.engName.toLowerCase().includes(query))
-      );
+      partialMatch = combinedData.find(item => {
+        const name = (item.dataType === 'person') ? getCharName(item) : ((item.dataType === 'event') ? getEventName(item) : getLocationName(item));
+        const eng = item.engName || '';
+        return name.toLowerCase().includes(query) || eng.toLowerCase().includes(query);
+      });
     }
     
     if (partialMatch) {
@@ -9762,7 +9890,11 @@ function setupSearch() {
     }
 
     // Next, check for EXACT namesakes to populate the dropdown
-    const exactMatches = combinedData.filter(item => item.name === query);
+    const exactMatches = combinedData.filter(item => {
+      const name = (item.dataType === 'person') ? getCharName(item) : ((item.dataType === 'event') ? getEventName(item) : getLocationName(item));
+      const eng = item.engName || '';
+      return name.toLowerCase() === query || eng.toLowerCase() === query;
+    });
     
     // Only show dropdown if they typed a full name that has multiple identical matches
     if (exactMatches.length > 1 && searchResults) {
@@ -9776,19 +9908,24 @@ function setupSearch() {
           const parentId = matched.parents[0];
           const parent = db.find(p => p.id === parentId);
           if (parent) {
-            parentInfo = `<span class="parent-info">(${parent.name}의 자녀)</span>`;
+            const parentName = getCharName(parent);
+            const textChild = currentLang === 'en' ? `Child of ${parentName}` : `${parentName}의 자녀`;
+            parentInfo = `<span class="parent-info">(${textChild})</span>`;
           }
         } else if (matched.dataType === 'event') {
-          parentInfo = `<span class="parent-info">(📜 사건)</span>`;
+          const textEvent = currentLang === 'en' ? 'Event' : '사건';
+          parentInfo = `<span class="parent-info">(📜 ${textEvent})</span>`;
         } else if (matched.dataType === 'location') {
-          parentInfo = `<span class="parent-info">(📍 장소)</span>`;
+          const textLoc = currentLang === 'en' ? 'Location' : '장소';
+          parentInfo = `<span class="parent-info">(📍 ${textLoc})</span>`;
         }
         
-        const displayName = matched.dataType === 'person' ? matched.name : cleanLayerName(matched.name);
+        const displayName = matched.dataType === 'person' ? getCharName(matched) : cleanLayerName(matched.dataType === 'event' ? getEventName(matched) : getLocationName(matched));
         li.innerHTML = `<strong>${displayName}</strong> ${parentInfo}`;
         
         li.addEventListener('click', () => {
-          searchInput.value = matched.name;
+          const selectName = matched.dataType === 'person' ? getCharName(matched) : (matched.dataType === 'event' ? getEventName(matched) : getLocationName(matched));
+          searchInput.value = selectName;
           searchResults.style.display = 'none';
           
           document.querySelectorAll('.person-card.highlight, .layer-marker.highlight').forEach(el => {
@@ -10114,7 +10251,7 @@ function setupAdminMode() {
         cachedAdminPassword = 'admin'; 
         enterAdminMode();
       } else {
-        const pw = prompt("관리자 비밀번호를 입력하세요:", "");
+        const pw = prompt(UI_TEXTS[currentLang].admin_mode_prompt, "");
         if (pw === null) return;
         
         try {
@@ -10129,7 +10266,7 @@ function setupAdminMode() {
             enterAdminMode();
           } else {
             const data = await res.json();
-            alert(data.error || "비밀번호가 올바르지 않습니다.");
+            alert(data.error || UI_TEXTS[currentLang].admin_mode_wrong);
           }
         } catch (e) {
           alert("서버 연결 실패. 네트워크 상태를 확인하세요.");
@@ -11014,7 +11151,7 @@ function removeTempPolygonPreview() {
 function enterAdminMode() {
   isAdminMode = true;
   adminLockBtn.textContent = '🔓';
-  adminLockBtn.title = '관리자 편집 모드 잠금';
+  adminLockBtn.title = UI_TEXTS[currentLang].admin_lock_title;
   adminActionsBar.style.display = 'flex';
   styleEditorToggle.style.display = 'flex';
   
@@ -11040,7 +11177,7 @@ function enterAdminMode() {
 function exitAdminMode() {
   isAdminMode = false;
   adminLockBtn.textContent = '🔒';
-  adminLockBtn.title = '관리자 편집 모드 해제';
+  adminLockBtn.title = UI_TEXTS[currentLang].admin_lock_title;
   adminActionsBar.style.display = 'none';
   styleEditorToggle.style.display = 'none';
   
@@ -13121,7 +13258,7 @@ function renderEvents() {
     
     el.innerHTML = `
       <div class="marker-icon">📜</div>
-      <div class="marker-label">${cleanLayerName(ev.name)}</div>
+      <div class="marker-label">${cleanLayerName(getEventName(ev))}</div>
     `;
     
     makeLayerDraggable(el, ev, 'event');
@@ -13164,7 +13301,7 @@ function renderLocations() {
     
     el.innerHTML = `
       <div class="marker-icon">📍</div>
-      <div class="marker-label">${cleanLayerName(loc.name)}</div>
+      <div class="marker-label">${cleanLayerName(getLocationName(loc))}</div>
     `;
     
     makeLayerDraggable(el, loc, 'location');
@@ -13257,26 +13394,33 @@ function openLayerDetails(data, type) {
   const engEl = document.getElementById('panel-eng');
   const descEl = document.getElementById('panel-desc');
   
+  const texts = UI_TEXTS[currentLang];
+  
   if (type === 'annotation') {
-    if (infoTitleEl) infoTitleEl.textContent = '성경 족보 텍스트 상자';
-    if (titleEl) titleEl.innerHTML = `<span style="font-size: 0.8em; color: #888;">📝 텍스트 상자</span><br>${data.text || '내용 없음'}`;
+    if (infoTitleEl) infoTitleEl.textContent = texts.study_panel_title_annotation;
+    if (titleEl) titleEl.innerHTML = `<span style="font-size: 0.8em; color: #888;">${texts.label_annotation}</span><br>${data.text || ''}`;
     if (engEl) engEl.textContent = 'Text Box';
-    if (descEl) descEl.innerHTML = '텍스트 상자 메모입니다. 아래에서 개인 연구 메모를 작성하고 참고 링크를 등록할 수 있습니다.';
+    if (descEl) descEl.innerHTML = texts.desc_annotation;
   } else if (type === 'polygon') {
-    if (infoTitleEl) infoTitleEl.textContent = '사용자 정의 영역 정보';
-    if (titleEl) titleEl.innerHTML = `<span style="font-size: 0.8em; color: #888;">📐 영역</span><br>${data.label || '이름 없는 영역'}`;
+    if (infoTitleEl) infoTitleEl.textContent = texts.study_panel_title_polygon;
+    if (titleEl) titleEl.innerHTML = `<span style="font-size: 0.8em; color: #888;">${texts.label_polygon}</span><br>${getPolygonLabel(data) || ''}`;
     if (engEl) engEl.textContent = 'Custom Area';
-    if (descEl) descEl.innerHTML = '사용자 정의 다각형 영역입니다. 아래에서 영역에 대한 연구 메모를 작성하고 참고 링크를 등록할 수 있습니다.';
+    if (descEl) descEl.innerHTML = texts.desc_polygon;
   } else {
+    const isEvent = (type === 'event');
     if (infoTitleEl) {
-      infoTitleEl.textContent = type === 'event' ? '성경 속 사건 정보' : '성경 속 장소 정보';
+      infoTitleEl.textContent = isEvent ? texts.study_panel_title_event : texts.study_panel_title_location;
     }
-    if (titleEl) titleEl.innerHTML = `<span style="font-size: 0.8em; color: #888;">${type === 'event' ? '📜 사건' : '📍 장소'}</span><br>${cleanLayerName(data.name)}`;
-    if (engEl) engEl.textContent = type === 'event' ? 'Event' : 'Location';
+    const localizedName = isEvent ? getEventName(data) : getLocationName(data);
+    const secondaryName = currentLang === 'en' ? data.name : (data.engName || '');
     
-    let descHtml = (data.desc || "상세 설명이 없습니다.").replace(/\n/g, '<br>');
+    if (titleEl) titleEl.innerHTML = `<span style="font-size: 0.8em; color: #888;">${isEvent ? texts.label_event : texts.label_location}</span><br>${cleanLayerName(localizedName)}`;
+    if (engEl) engEl.textContent = secondaryName || (isEvent ? 'Event' : 'Location');
+    
+    const localizedDesc = isEvent ? getEventDesc(data) : getLocationDesc(data);
+    let descHtml = (localizedDesc || texts.desc_no_detail).replace(/\n/g, '<br>');
     if (data.refs && data.refs.length > 0) {
-      descHtml += `<br><br><strong>📖 관련 성구:</strong><ul>`;
+      descHtml += `<br><br><strong>${texts.related_verses}</strong><ul>`;
       data.refs.forEach(r => descHtml += `<li>${r}</li>`);
       descHtml += `</ul>`;
     }
@@ -14345,9 +14489,59 @@ window.deleteLicenseKey = async function(licenseKey) {
   }
 };
 
+function applyLocalization() {
+  const langToggleText = document.getElementById('lang-toggle-text');
+  if (langToggleText) {
+    langToggleText.textContent = currentLang.toUpperCase();
+  }
+
+  const texts = UI_TEXTS[currentLang];
+  
+  const elementsToTranslate = {
+    'searchInput': { attr: 'placeholder', key: 'search_placeholder' },
+    'zoom-in': { attr: 'title', key: 'zoom_in_title' },
+    'zoom-out': { attr: 'title', key: 'zoom_out_title' },
+    'zoom-reset': { attr: 'title', key: 'zoom_reset_title' },
+    'theme-toggle': { attr: 'title', key: 'theme_toggle_title' },
+    'filter-panel-toggle': { attr: 'title', key: 'filter_panel_title' },
+    'prophets-layer-toggle': { attr: 'title', key: 'prophets_toggle_title' },
+    'help-guide-btn': { attr: 'title', key: 'help_guide_title' },
+    'bottom-backup-btn': { attr: 'title', key: 'backup_title' },
+    'bottom-restore-btn': { attr: 'title', key: 'restore_title' },
+    'admin-lock-btn': { attr: 'title', key: 'admin_lock_title' },
+    'user-logout-btn': { attr: 'title', key: 'logout_title' },
+    'note-text': { attr: 'placeholder', key: 'notes_placeholder' },
+    'resource-title': { attr: 'placeholder', key: 'resource_desc_placeholder' },
+    'resource-url': { attr: 'placeholder', key: 'resource_url_placeholder' },
+    'resource-add-btn': { attr: 'textContent', key: 'resource_add_btn' },
+    'notes-panel-title': { attr: 'textContent', key: 'notes_title' },
+  };
+
+  for (const [id, config] of Object.entries(elementsToTranslate)) {
+    const el = document.getElementById(id);
+    if (el && texts[config.key]) {
+      if (config.attr === 'textContent') {
+        el.textContent = texts[config.key];
+      } else {
+        el.setAttribute(config.attr, texts[config.key]);
+      }
+    }
+  }
+}
+
 window.addEventListener('DOMContentLoaded', async () => {
   const isLicensed = await checkLicenseAndInit();
   if (!isLicensed) return;
+
+  applyLocalization();
+
+  const langToggleBtn = document.getElementById('lang-toggle');
+  langToggleBtn?.addEventListener('click', () => {
+    currentLang = currentLang === 'ko' ? 'en' : 'ko';
+    localStorage.setItem('bible_genealogy_lang', currentLang);
+    applyLocalization();
+    renderTree(); // Redraw the SVG tree with localized names/labels
+  });
 
   const isCapacitor = !!window.Capacitor || window.location.protocol.startsWith('capacitor');
   const isDesktop = window.location.protocol.startsWith('tauri') || 
