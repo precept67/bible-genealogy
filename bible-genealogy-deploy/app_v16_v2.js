@@ -7372,8 +7372,9 @@ function renderCustomPolygons() {
     const baseGroup = poly.id.replace('poly-', '');
     let filterClass = "";
     if (isFilterModeActive()) {
-      if (activeFilters['prophets'] === true && isLayerVisible) {
-        // Do not fade out polygons if the prophets filter is active but polygons layer is checked
+      const hasOtherActiveFilters = Object.keys(activeFilters).some(key => key !== 'prophets' && activeFilters[key] === true);
+      if (activeFilters['prophets'] === true && !hasOtherActiveFilters && isLayerVisible) {
+        // Do not fade out polygons if ONLY the prophets filter is active but polygons layer is checked
       } else if (activeFilters[baseGroup] !== true) {
         filterClass = "filter-inactive";
       }
@@ -7407,7 +7408,11 @@ function renderCustomPolygons() {
     
     // Custom class for selection styling
     polyEl.setAttribute('class', `family-group-panel-poly ${isSelected ? 'poly-selected' : ''} ${filterClass}`);
-    polyEl.style.pointerEvents = 'visiblePainted'; // Always intercept pointer events so user can click to highlight
+    if (isAdminMode) {
+      polyEl.style.pointerEvents = 'visiblePainted'; // Admins can drag/select the polygon
+    } else {
+      polyEl.style.pointerEvents = 'none'; // Clicks pass through in user mode to prevent blocking other elements
+    }
     polyGroup.appendChild(polyEl);
     
     // Admin Drag entire polygon or Click to select / Edit boundary
@@ -7497,13 +7502,8 @@ function renderCustomPolygons() {
         window.addEventListener('mouseup', onMouseUp);
       });
     } else {
-      // User mode click listener on the polygon SVG element itself to open study panel and highlight
-      polyEl.addEventListener('click', (e) => {
-        e.stopPropagation();
-        openLayerDetails(poly, 'polygon');
-        highlightRelatedElements(poly.id, 'polygon');
-      });
-      polyEl.style.cursor = 'pointer';
+      // Clicks pass through in user mode, so no click listener on the polygon shape itself.
+      polyEl.style.cursor = 'default';
     }
     
     // Find top-left-most point for placing the HTML label
