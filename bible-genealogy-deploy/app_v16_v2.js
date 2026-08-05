@@ -176,7 +176,7 @@ function getLocalizedAnnotationText(text) {
   } else if (trimmed === '다른 시대 우두머리된 자') {
     return 'Chiefs in Another Era';
   } else if (trimmed === '북왕국 이스라엘의 왕들') {
-    return 'Kings of the Northern Kingdom';
+    return 'Kings of Northern Israel';
   }
   return text;
 }
@@ -9406,6 +9406,7 @@ function highlightRelatedElementsForAnnotation(annot) {
   const isNorthernKingdomKings = 
     annot.id === 'annotation_1785465647957_2j351uc9h' ||
     text === '북왕국 이스라엘의 왕들' ||
+    text === 'Kings of Northern Israel' ||
     text === 'Kings of the Northern Kingdom' ||
     text === 'Kings of the Northern Kingdom of Israel';
 
@@ -9785,9 +9786,15 @@ function highlightRelatedElements(itemId, itemType) {
             }
           }
           if (isTribeMatch) {
-            highlightedIds.add(char.id);
-            const card = document.getElementById(`card-${char.id}`);
-            if (card) card.classList.add('highlight');
+            const isJudahRegion = targetItem.id === 'poly-custom-1785472410768';
+            const isProphet = char.isProphet === true || (typeof prophetIds !== 'undefined' && prophetIds.has(char.id)) || char.id.startsWith('prophet_') || char.id === 'samuel';
+            if (isJudahRegion && isProphet) {
+              // Exclude prophets from highlighting when Judah region is active
+            } else {
+              highlightedIds.add(char.id);
+              const card = document.getElementById(`card-${char.id}`);
+              if (card) card.classList.add('highlight');
+            }
           }
         }
       });
