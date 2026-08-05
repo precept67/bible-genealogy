@@ -159,6 +159,28 @@ function getPolygonLabel(p) {
   return currentLang === 'en' ? (p.label_en || p.label) : p.label;
 }
 
+function getLocalizedAnnotationText(text) {
+  if (!text) return '';
+  if (currentLang !== 'en') return text;
+  const trimmed = text.trim();
+  if (trimmed === '성경 인물 족보 보드\n(마우스 드래그로 이동, 휠로 확대/축소)') {
+    return 'Bible Genealogy Board\n(Drag to pan, Scroll to zoom)';
+  } else if (trimmed === '마태복음족보의 첫번째 14대' || trimmed === '마태복음 족보의 첫번째 14대') {
+    return "First 14 Generations of Matthew's Genealogy";
+  } else if (trimmed === '마태복음 족보의  두번째 14대' || trimmed === '마태복음 족보의 두번째 14대' || trimmed === '마태복음족보의 두번째 14대') {
+    return "Second 14 Generations of Matthew's Genealogy";
+  } else if (trimmed === '마태복음 족보의 세번째 14대' || trimmed === '마태복음족보의 세번째 14대') {
+    return "Third 14 Generations of Matthew's Genealogy";
+  } else if (trimmed === '동명이인') {
+    return 'Homonyms';
+  } else if (trimmed === '다른 시대 우두머리된 자') {
+    return 'Chiefs in Another Era';
+  } else if (trimmed === '북왕국 이스라엘의 왕들') {
+    return 'Kings of the Northern Kingdom';
+  }
+  return text;
+}
+
 // Configuration Constants
 const CARD_WIDTH = 152;
 const CARD_HEIGHT = 62;
@@ -3237,25 +3259,7 @@ function renderAnnotations() {
     const textDiv = document.createElement('div');
     textDiv.className = 'annotation-text';
     textDiv.contentEditable = 'false';
-    let textVal = annot.text || '';
-    if (currentLang === 'en') {
-      const trimmed = textVal.trim();
-      if (trimmed === '성경 인물 족보 보드\n(마우스 드래그로 이동, 휠로 확대/축소)') {
-        textVal = 'Bible Genealogy Board\n(Drag to pan, Scroll to zoom)';
-      } else if (trimmed === '마태복음족보의 첫번째 14대' || trimmed === '마태복음 족보의 첫번째 14대') {
-        textVal = "First 14 Generations of Matthew's Genealogy";
-      } else if (trimmed === '마태복음 족보의  두번째 14대' || trimmed === '마태복음 족보의 두번째 14대' || trimmed === '마태복음족보의 두번째 14대') {
-        textVal = "Second 14 Generations of Matthew's Genealogy";
-      } else if (trimmed === '마태복음 족보의 세번째 14대' || trimmed === '마태복음족보의 세번째 14대') {
-        textVal = "Third 14 Generations of Matthew's Genealogy";
-      } else if (trimmed === '동명이인') {
-        textVal = 'Homonyms';
-      } else if (trimmed === '다른 시대 우두머리된 자') {
-        textVal = 'Chiefs in Another Era';
-      } else if (trimmed === '북왕국 이스라엘의 왕들' || trimmed === '북왕국 이스라엘의 왕들') {
-        textVal = 'Kings of the Northern Kingdom of Israel';
-      }
-    }
+    let textVal = getLocalizedAnnotationText(annot.text);
     textDiv.innerText = textVal;
     
     textDiv.style.fontSize = `${annot.fontSize || 14}px`;
@@ -9398,7 +9402,34 @@ function highlightRelatedElementsForAnnotation(annot) {
     return cleanText.includes(cleanName) || cleanName.includes(cleanText);
   };
   
-  // 2. Text-based Matching: Highlight people, events, and locations containing or contained by annotation text
+  // 2. Custom Northern Kingdom Kings highlights
+  const isNorthernKingdomKings = 
+    annot.id === 'annotation_1785465647957_2j351uc9h' ||
+    text === '북왕국 이스라엘의 왕들' ||
+    text === 'Kings of the Northern Kingdom' ||
+    text === 'Kings of the Northern Kingdom of Israel';
+
+  if (isNorthernKingdomKings) {
+    const northernKingdomKingIds = [
+      'jeroboam1', 'nadab_jeroboam', 'baasha', 'elah_baasha', 'zimri', 
+      'omri', 'ahab', 'ahaziah_ahab', 'jehoram_ahab', 'jehu', 
+      'jehoahaz_jehu', 'jehoash_jehoahaz', 'jeroboam2', 'zechariah_jeroboam2', 
+      'shallum', 'menahem', 'pekahiah', 'pekah', 'hoshea'
+    ];
+    const highlightedIds = new Set(northernKingdomKingIds);
+    northernKingdomKingIds.forEach(id => {
+      const el = document.getElementById(`card-${id}`);
+      if (el) el.classList.add('highlight');
+    });
+    document.querySelectorAll('.connector-line').forEach(path => {
+      const childId = path.getAttribute('data-child-id');
+      if (childId && highlightedIds.has(childId)) {
+        path.classList.add('line-highlight');
+      }
+    });
+  }
+
+  // 3. Text-based Matching: Highlight people, events, and locations containing or contained by annotation text
   if (text) {
     db.forEach(person => {
       if (safeContains(text, person.name)) {
@@ -13426,7 +13457,8 @@ function openLayerDetails(data, type) {
   
   if (type === 'annotation') {
     if (infoTitleEl) infoTitleEl.textContent = texts.study_panel_title_annotation;
-    if (titleEl) titleEl.innerHTML = `<span style="font-size: 0.8em; color: #888;">${texts.label_annotation}</span><br>${data.text || ''}`;
+    const localizedText = getLocalizedAnnotationText(data.text);
+    if (titleEl) titleEl.innerHTML = `<span style="font-size: 0.8em; color: #888;">${texts.label_annotation}</span><br>${localizedText}`;
     if (engEl) engEl.textContent = 'Text Box';
     if (descEl) descEl.innerHTML = texts.desc_annotation;
   } else if (type === 'polygon') {
