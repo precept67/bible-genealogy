@@ -13709,7 +13709,7 @@
       "name": "아비야",
       "engName": "Abijah",
       "gender": "M",
-      "generation": 34.47,
+      "generation": 34.97,
       "column": -4.296,
       "parents": [
         "jeroboam1"
@@ -19484,8 +19484,8 @@
       "name": "예후",
       "engName": "jehu",
       "gender": "M",
-      "generation": 35.06,
-      "column": -4.129,
+      "generation": 35.07,
+      "column": -3.483,
       "parents": [],
       "spouses": [],
       "teachers": [],
@@ -20287,12 +20287,6 @@
         "y": 7560
       }
     ],
-    "rel-jeroboam1->abijah_jeroboam": [
-      {
-        "x": 15240,
-        "y": 6290
-      }
-    ],
     "rel-nebat+zeruah_nebat->jeroboam1": [
       {
         "x": 15190,
@@ -20802,10 +20796,10 @@
     {
       "id": "annotation_1785465647957_2j351uc9h",
       "text": "북왕국 이스라엘의 왕들",
-      "x": 14996.029501909059,
-      "y": 5981.328507915665,
-      "width": 274,
-      "height": 42,
+      "x": 15052.029501909059,
+      "y": 5980.328507915665,
+      "width": 314,
+      "height": 44,
       "fontSize": 20,
       "bold": false,
       "italic": false,
@@ -21622,6 +21616,14 @@
         },
         {
           "x": 15410,
+          "y": 6380
+        },
+        {
+          "x": 15570,
+          "y": 6380
+        },
+        {
+          "x": 15570,
           "y": 6470
         },
         {
@@ -21817,16 +21819,8 @@
           "y": 6490
         },
         {
-          "x": 15230,
-          "y": 6490
-        },
-        {
-          "x": 15230,
-          "y": 6380
-        },
-        {
           "x": 15380,
-          "y": 6380
+          "y": 6490
         },
         {
           "x": 15380,
