@@ -3252,6 +3252,8 @@ function renderAnnotations() {
         textVal = 'Homonyms';
       } else if (trimmed === '다른 시대 우두머리된 자') {
         textVal = 'Chiefs in Another Era';
+      } else if (trimmed === '북왕국 이스라엘의 왕들' || trimmed === '북왕국 이스라엘의 왕들') {
+        textVal = 'Kings of the Northern Kingdom of Israel';
       }
     }
     textDiv.innerText = textVal;
