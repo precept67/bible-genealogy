@@ -12971,6 +12971,87 @@ const adminLogoutBtn = document.getElementById('admin-logout-btn');
 if (userLogoutBtn) userLogoutBtn.addEventListener('click', handleLogout);
 if (adminLogoutBtn) adminLogoutBtn.addEventListener('click', handleLogout);
 
+// Security Enhancements
+document.addEventListener('contextmenu', e => {
+  const targetEl = e.target && e.target.nodeType === 3 ? e.target.parentElement : e.target;
+  if (targetEl && (targetEl.tagName === 'INPUT' || targetEl.tagName === 'TEXTAREA' || targetEl.isContentEditable || (typeof targetEl.closest === 'function' && targetEl.closest('[contenteditable="true"]')))) return;
+  e.preventDefault();
+});
+document.addEventListener('selectstart', e => {
+  const targetEl = e.target && e.target.nodeType === 3 ? e.target.parentElement : e.target;
+  if (targetEl && (targetEl.tagName === 'INPUT' || targetEl.tagName === 'TEXTAREA' || targetEl.isContentEditable || (typeof targetEl.closest === 'function' && targetEl.closest('[contenteditable="true"]')))) return;
+  e.preventDefault();
+});
+document.addEventListener('dragstart', e => {
+  const targetEl = e.target && e.target.nodeType === 3 ? e.target.parentElement : e.target;
+  if (targetEl && (targetEl.tagName === 'INPUT' || targetEl.tagName === 'TEXTAREA' || targetEl.isContentEditable || (typeof targetEl.closest === 'function' && targetEl.closest('[contenteditable="true"]')))) return;
+  e.preventDefault();
+});
+document.addEventListener('keydown', e => {
+  if (e.keyCode === 123 || // F12
+      (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) || // Ctrl+Shift+I or J
+      (e.ctrlKey && e.keyCode === 85) || // Ctrl+U
+      (e.metaKey && e.altKey && (e.keyCode === 73 || e.keyCode === 74)) || // Cmd+Option+I or J (Mac)
+      (e.metaKey && e.keyCode === 85)) { // Cmd+U (Mac)
+    e.preventDefault();
+  }
+});
+if (adminDashboardCloseBtn) {
+  adminDashboardCloseBtn.addEventListener('click', () => {
+    adminDashboardModal.style.display = 'none';
+  });
+}
+
+function renderAdminDashboard(users) {
+  adminUserList.innerHTML = '';
+  if (users.length === 0) {
+    adminUserList.innerHTML = '<p>가입한 사용자가 없습니다.</p>';
+    return;
+  }
+  users.forEach(u => {
+    const div = document.createElement('div');
+    div.style.padding = '12px 10px';
+    div.style.borderBottom = '1px solid #eee';
+    div.style.display = 'flex';
+    div.style.justifyContent = 'space-between';
+    div.style.alignItems = 'center';
+    div.style.gap = '15px';
+    
+    let buttons = '';
+    if (u.status === 'pending') {
+      buttons += `<button onclick="approveUser('${u.username}')" style="background:#27ae60; color:white; border:none; padding:5px 10px; cursor:pointer; font-weight:bold; border-radius:4px;">승인</button>`;
+    }
+    // Password reset button is available for all accounts
+    buttons += `<button onclick="resetPasswordUser('${u.username}')" style="background:#8e44ad; color:white; border:none; padding:5px 10px; cursor:pointer; font-weight:bold; border-radius:4px;">비번 변경</button>`;
+    
+    if (u.status !== 'admin') {
+      buttons += `<button onclick="deleteUser('${u.username}')" style="background:#e74c3c; color:white; border:none; padding:5px 10px; cursor:pointer; font-weight:bold; border-radius:4px;">삭제</button>`;
+    }
+
+    let expiryHtml = '';
+    if (u.status !== 'admin') {
+      const expiryVal = u.expiryDate || '';
+      expiryHtml = `
+        <div style="display:flex; align-items:center; gap:5px; font-size:12px;">
+          <label style="color:#666; font-weight:bold;">만료일:</label>
+          <input type="date" id="expiry-date-${u.username}" value="${expiryVal}" style="padding:4px; border:1px solid #ccc; border-radius:3px; outline:none;">
+          <button onclick="setExpiryUser('${u.username}')" style="background:#f39c12; color:white; border:none; padding:4px 8px; cursor:pointer; border-radius:3px; font-weight:bold;">설정</button>
+        </div>
+      `;
+    }
+
+    div.innerHTML = `
+      <div style="flex:1; display:flex; flex-direction:column; gap:3px;">
+        <div style="font-size:14px;"><strong>${u.username}</strong> <span style="color:#888; font-size:11px; padding:2px 6px; background:#f1f5f9; border-radius:12px; margin-left:5px;">${u.status}</span></div>
+        <div style="color:#64748b; font-size:12px;">작성한 노트: <span style="color:#0f172a; font-weight:bold;">${u.noteCount || 0}</span>개</div>
+      </div>
+      ${expiryHtml}
+      <div style="display:flex; gap:5px;">${buttons}</div>
+    `;
+    adminUserList.appendChild(div);
+  });
+}
+
 window.openAdminDashboard = async () => {
     try {
       const res = await fetch(getApiUrl('/api/admin/users'), { headers: { 'Authorization': 'Bearer ' + userToken } });
