@@ -12931,9 +12931,11 @@ async function handleRegister() {
       return;
     }
     if (data.status === 'admin') {
-      authMessage.innerText = '최고 관리자로 가입되었습니다! 로그인해주세요.';
+      authMessage.innerText = '최고 관리자로 가입되었습니다! 로그인 중...';
+      setTimeout(() => { handleLogin(); }, 1500);
     } else {
-      authMessage.innerText = '가입 신청 완료! 최고 관리자의 승인을 기다려주세요.';
+      authMessage.innerText = '가입이 완료되었습니다! 로그인 중...';
+      setTimeout(() => { handleLogin(); }, 1500);
     }
   } catch (e) {
     authMessage.innerText = '서버 연결 실패';
