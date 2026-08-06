@@ -11588,7 +11588,7 @@
         "eliud"
       ],
       "spouses": [],
-      "desc": "�����리��의 아들.",
+      "desc": "�������리��의 아들.",
       "isMain": true,
       "isManual": true,
       "teachers": [],
@@ -19113,7 +19113,7 @@
       "parents": [],
       "spouses": [],
       "teachers": [],
-      "desc": "단 지파 소라 땅 출신의 인물로, 여호와의 사자에게 나실인의 출생 고지를 받은 사사 삼손의 아버지(tkt 13:2-24)",
+      "desc": "단 지파 소라 땅 출신의 인물로, 여호와의 사자에게 나실인의 출생 고지를 받은 사사 ���손의 아버지(tkt 13:2-24)",
       "isMain": false,
       "isManual": true,
       "prophets": [],
@@ -21031,7 +21031,9 @@
           "y": 2880
         }
       ],
-      "label_en": "Descendants of Joktan (Arabian tribal confederation)"
+      "label_en": "Descendants of Joktan (Arabian tribal confederation)",
+      "labelOffsetX": 1733,
+      "labelOffsetY": -1
     },
     {
       "id": "poly-keturah",
@@ -21056,7 +21058,9 @@
           "y": 3500
         }
       ],
-      "label_en": "Descendants of Keturah (Arabian tribes such as Midian)"
+      "label_en": "Descendants of Keturah (Arabian tribes such as Midian)",
+      "labelOffsetX": 998,
+      "labelOffsetY": -3
     },
     {
       "id": "poly-ishmael",
@@ -21081,7 +21085,9 @@
           "y": 3800
         }
       ],
-      "label_en": "Descendants of the 12 princes of Ishmael (Arab people)"
+      "label_en": "Descendants of the 12 princes of Ishmael (Arab people)",
+      "labelOffsetX": 1875,
+      "labelOffsetY": -1
     },
     {
       "id": "poly-mary",
@@ -21183,8 +21189,8 @@
           "y": 3957.001514118072
         }
       ],
-      "labelOffsetX": -206,
-      "labelOffsetY": 3,
+      "labelOffsetX": -291,
+      "labelOffsetY": -4,
       "label_en": "Horite chieftains (Genesis 36:20-30)"
     },
     {
@@ -22174,6 +22180,26 @@
       "y": 7696,
       "engName": "Nehemiah's Rebuilding and Completion of the Jerusalem Walls",
       "engDesc": "Nehemiah, the cupbearer who wept and prayed upon hearing that the walls of Jerusalem were broken and its gates burned, returned as governor and successfully completed the reconstruction of the walls in 52 days under constant threat, with workers holding weapons in one hand."
+    },
+    {
+      "id": "ev-1786031894789",
+      "name": "홍해 바다의 갈라짐과 애굽 군대 몰살",
+      "desc": "진퇴양난의 홍해 앞에서 모세가 지팡이로 바다를 갈라 밤새 마른 땅으로 이스라엘 백성을 건너게 하시고, 뒤쫓던 애굽 마병들을 수장시키신 해방의 기적.",
+      "refs": [
+        "출애굽기 14:21",
+        "출애굽기 14:28"
+      ],
+      "relatedLocations": [
+        "loc-red_sea"
+      ],
+      "relatedPeople": [
+        "moses",
+        "aaron"
+      ],
+      "x": 10404,
+      "y": 4483,
+      "engName": "Parting of the Red Sea and Annihilation of the Egyptian Army",
+      "engDesc": "The miracle of liberation where Moses parted the Red Sea with his staff, allowing the Israelites to cross on dry ground, and drowned the pursuing Egyptian horsemen and chariots in the sea."
     }
   ],
   "locations": [
@@ -22192,8 +22218,8 @@
         "moses",
         "aaron"
       ],
-      "x": 9777,
-      "y": 4545,
+      "x": 10401,
+      "y": 4554,
       "engName": "red sea",
       "engDesc": "In front of the pursuing Egyptian army, Moses held out his staff and parted the sea with an east wind all night long, crossing it like dry land."
     },
