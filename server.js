@@ -329,7 +329,8 @@ function handlePost(req, res, data, method, rawBody) {
     const licenses = readJson(LICENSES_FILE);
     const generateKey = () => {
       const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-      let key = 'KEY';
+      // Start with KEY + 1 random character to make the first block exactly 4 characters
+      let key = 'KEY' + chars.charAt(Math.floor(Math.random() * chars.length));
       for (let i = 0; i < 3; i++) {
         key += '-';
         for (let j = 0; j < 4; j++) {
