@@ -12819,6 +12819,7 @@ const authModal = document.getElementById('auth-modal');
 const authUsername = document.getElementById('auth-username');
 const authPassword = document.getElementById('auth-password');
 const authLoginBtn = document.getElementById('auth-login-btn');
+const authRegisterBtn = document.getElementById('auth-register-btn');
 const authMessage = document.getElementById('auth-message');
 
 const adminDashboardModal = document.getElementById('admin-dashboard-modal');
@@ -12937,6 +12938,7 @@ async function handleRegister() {
 }
 
 if (authLoginBtn) authLoginBtn.addEventListener('click', handleLogin);
+if (authRegisterBtn) authRegisterBtn.addEventListener('click', handleRegister);
 
 const handleAuthEnter = (e) => {
   if (e.key === 'Enter') {
@@ -14654,24 +14656,13 @@ window.addEventListener('DOMContentLoaded', async () => {
     renderTree(); // Redraw the SVG tree with localized names/labels
   });
 
-  const isCapacitor = !!window.Capacitor || window.location.protocol.startsWith('capacitor');
-  const isDesktop = window.location.protocol.startsWith('tauri') || 
-                    window.location.protocol.startsWith('asset') || 
-                    window.location.protocol.startsWith('file') || 
-                    isCapacitor ||
-                    (window.API_BASE_URL && window.API_BASE_URL.length > 0);
   const landing = document.getElementById('landing-page');
-  if (isDesktop) {
-    hideAuthModal();
+  if (userToken) {
     if (landing) landing.style.display = 'none';
+    validateSession();
   } else {
-    if (userToken) {
-      if (landing) landing.style.display = 'none';
-      validateSession();
-    } else {
-      if (landing) landing.style.display = 'flex';
-      if (authModal) authModal.style.display = 'none';
-    }
+    if (landing) landing.style.display = 'none';
+    showAuthModal();
   }
   
   // Make left panels draggable
