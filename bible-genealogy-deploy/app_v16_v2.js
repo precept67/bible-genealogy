@@ -5092,7 +5092,7 @@ function getElementFilterClass(id) {
 }
 
 const PROPHET_BASE_IDS = new Set([
-  'moses', 'aaron', 'miriam', 'deborah_eph', 'john_baptist', 'John_the_Baptist'
+  'deborah_eph', 'john_baptist', 'John_the_Baptist'
 ]);
 
 let prophetIds = new Set();
@@ -5109,6 +5109,9 @@ function precomputeProphets() {
     
     // If the character is in the Messiah lineage (isMain: true), they are never a prophet
     if (char.isMain === true) {
+      checkIsProphet = false;
+    } else if (['moses', 'aaron', 'miriam', 'eli_priest'].includes(char.id)) {
+      // Explicitly exclude Moses, Aaron, Miriam, and Eli from being prophets
       checkIsProphet = false;
     } else if (char.isProphet !== undefined) {
       checkIsProphet = char.isProphet;
