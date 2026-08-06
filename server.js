@@ -174,6 +174,11 @@ async function handlePost(req, res, data, method, rawBody) {
     const notes = readJson(NOTES_FILE);
     notes[user.username] = data.notes; // Save the entire notes object for this user
     writeJson(NOTES_FILE, notes);
+    try {
+      exportNotesToMarkdown(data.notes);
+    } catch (e) {
+      console.error("Markdown export failed:", e);
+    }
     return sendJson(res, 200, { success: true });
   }
 
@@ -606,8 +611,151 @@ async function translateDatabase(payload) {
     }
   }
 }
+
+const os = require('os');
+const homeDir = os.homedir();
+let NOTES_DIR = path.join(homeDir, 'Documents', 'bible_genealogy_notes');
+if (!fs.existsSync(path.join(homeDir, 'Documents'))) {
+  NOTES_DIR = path.join(__dirname, 'bible_genealogy_notes');
+}
+
+function exportNotesToMarkdown(notesData) {
+  if (!notesData) return;
+  let dbData = { db: [], events: [], locations: [], customPolygons: [] };
+  try {
+    if (fs.existsSync(DB_FILE)) {
+      dbData = JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
+    }
+  } catch (e) {
+    console.error("Failed to read database.json for notes classification:", e);
+  }
+
+  const charMap = {};
+  if (dbData.db) {
+    dbData.db.forEach(c => {
+      charMap[c.id] = c;
+    });
+  }
+
+  const eventMap = {};
+  if (dbData.events) {
+    dbData.events.forEach(e => {
+      eventMap[e.id] = e;
+    });
+  }
+
+  const locMap = {};
+  if (dbData.locations) {
+    dbData.locations.forEach(l => {
+      locMap[l.id] = l;
+    });
+  }
+
+  const polyMap = {};
+  if (dbData.customPolygons) {
+    dbData.customPolygons.forEach(p => {
+      polyMap[p.id] = p;
+    });
+  }
+
+  const FOLDER_PEOPLE = path.join(NOTES_DIR, '인물');
+  const FOLDER_EVENTS = path.join(NOTES_DIR, '사건');
+  const FOLDER_LOCATIONS = path.join(NOTES_DIR, '장소');
+  const FOLDER_AREAS = path.join(NOTES_DIR, '영역');
+  const FOLDER_PROPHETS = path.join(NOTES_DIR, '선지자');
+  const FOLDER_TEXTBOX = path.join(NOTES_DIR, '텍스트상자');
+
+  [FOLDER_PEOPLE, FOLDER_EVENTS, FOLDER_LOCATIONS, FOLDER_AREAS, FOLDER_PROPHETS, FOLDER_TEXTBOX].forEach(dir => {
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+  });
+
+  for (let key in notesData) {
+    const content = notesData[key];
+    let folder = FOLDER_TEXTBOX;
+    let fileName = key;
+
+    const char = charMap[key];
+    const event = eventMap[key];
+    const loc = locMap[key];
+    const poly = polyMap[key];
+
+    if (char) {
+      if (char.isProphet) {
+        folder = FOLDER_PROPHETS;
+      } else {
+        folder = FOLDER_PEOPLE;
+      }
+      fileName = char.name;
+    } else if (event) {
+      folder = FOLDER_EVENTS;
+      fileName = event.name;
+    } else if (loc) {
+      folder = FOLDER_LOCATIONS;
+      fileName = loc.name;
+    } else if (poly) {
+      folder = FOLDER_AREAS;
+      fileName = poly.label || poly.id;
+    }
+
+    const safeFileName = fileName.replace(/[\/\\:\*\?"<>\|]/g, '_').trim();
+    const filePath = path.join(folder, `${safeFileName}.md`);
+
+    if (!content || content.trim().length === 0) {
+      if (fs.existsSync(filePath)) {
+        try {
+          fs.unlinkSync(filePath);
+        } catch (e) {}
+      }
+    } else {
+      let title = safeFileName;
+      if (char) title = `${char.name} (${char.engName || ''})`;
+      else if (event) title = `${event.name}`;
+      else if (loc) title = `${loc.name}`;
+      else if (poly) title = `${poly.label || poly.id}`;
+
+      const typeLabel = folder.split(path.sep).pop();
+      let mdText = `---
+title: "${title}"
+id: "${key}"
+type: "${typeLabel}"
+tags:
+  - 성경족보메모
+  - ${typeLabel}
+---
+
+# ${title}
+
+${content}
+`;
+      try {
+        fs.writeFileSync(filePath, mdText, 'utf8');
+      } catch (e) {
+        console.error("Failed to write md file:", filePath, e);
+      }
+    }
+  }
+}
+
+function exportAllUsersNotesOnStartup() {
+  try {
+    if (fs.existsSync(NOTES_FILE)) {
+      const notes = JSON.parse(fs.readFileSync(NOTES_FILE, 'utf8'));
+      for (let user in notes) {
+        if (notes[user]) {
+          exportNotesToMarkdown(notes[user]);
+        }
+      }
+    }
+  } catch (e) {
+    console.error("Startup notes export failed:", e);
+  }
+}
+
 server.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}/`);
   console.log(`- Users DB: ${USERS_FILE}`);
   console.log(`- Notes DB: ${NOTES_FILE}`);
+  exportAllUsersNotesOnStartup();
 });
