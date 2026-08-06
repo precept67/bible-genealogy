@@ -11588,7 +11588,7 @@
         "eliud"
       ],
       "spouses": [],
-      "desc": "���리��의 아들.",
+      "desc": "�����리��의 아들.",
       "isMain": true,
       "isManual": true,
       "teachers": [],
@@ -19895,15 +19895,93 @@
       "name": "에스라",
       "engName": "Ezra",
       "gender": "M",
-      "generation": 49.15,
-      "column": -27.033,
-      "parents": [],
+      "generation": 50.54,
+      "column": -26.114,
+      "parents": [
+        "seraiah_priest"
+      ],
       "spouses": [],
       "teachers": [],
       "prophets": [],
       "relatedPeople": [],
       "desc": "B.C. 458년(바사 왕 아닥사스다 1세 재위 7년)에 제2차 포로 귀환(에스라 7:1)",
-      "engDesc": "Led the second return of captives in 458 B.C. (7th year of Artaxerxes I, king of Persia) (Ezra 7:1)",
+      "isMain": false,
+      "isProphet": false,
+      "isManual": true
+    },
+    {
+      "id": "Hacaliah",
+      "name": "하가랴",
+      "engName": "Hacaliah",
+      "gender": "M",
+      "generation": 41.4,
+      "column": 21.981,
+      "parents": [],
+      "spouses": [],
+      "teachers": [],
+      "prophets": [],
+      "relatedPeople": [],
+      "desc": "느헤미야 부친(느헤미야 1:1)",
+      "engDesc": "Father of Nehemiah (Nehemiah 1:1)",
+      "isMain": false,
+      "isProphet": false,
+      "isManual": true
+    },
+    {
+      "id": "hanani",
+      "name": "하나니",
+      "engName": "hanani",
+      "gender": "M",
+      "generation": 42.54,
+      "column": 21.98,
+      "parents": [
+        "Hacaliah"
+      ],
+      "spouses": [],
+      "teachers": [],
+      "prophets": [],
+      "relatedPeople": [],
+      "desc": "예루살렘의 황폐한 상황을 느헤미야에게 알려 성벽 재건의 계기를 마련해 준 형제입니다. 이후 예루살렘을 관리하는 책임(느헤미야 1:2; 7:2)",
+      "engDesc": "A brother who informed Nehemiah of the desolation of Jerusalem, prompting the rebuild of the wall. Later appointed to govern Jerusalem (Nehemiah 1:2; 7:2)",
+      "isMain": false,
+      "isProphet": false,
+      "isManual": true
+    },
+    {
+      "id": "Brother_of_Nehemiah",
+      "name": "다른 형제들",
+      "engName": "Brother of Nehemiah",
+      "gender": "M",
+      "generation": 42.54,
+      "column": 21.239,
+      "parents": [
+        "Hacaliah"
+      ],
+      "spouses": [],
+      "teachers": [],
+      "prophets": [],
+      "relatedPeople": [],
+      "desc": "",
+      "isMain": false,
+      "isProphet": false,
+      "isManual": true
+    },
+    {
+      "id": "nehemiah",
+      "name": "느헤미야",
+      "engName": "Nehemiah",
+      "gender": "M",
+      "generation": 42.54,
+      "column": 22.721,
+      "parents": [
+        "Hacaliah"
+      ],
+      "spouses": [],
+      "teachers": [],
+      "prophets": [],
+      "relatedPeople": [],
+      "desc": "예루살렘 성벽이 파괴된 채 방치되어 있다는 소식을 듣고 왕의 허락을 받아 유다 총독으로 부임했습니다. 대적들의 방해와 위협 속에서도 52일 만에 성벽 재건을 완공",
+      "engDesc": "Appointed governor of Judah by the Persian king after hearing of the broken walls of Jerusalem. Successfully rebuilt the wall in 52 days despite threats (Nehemiah 1-6)",
       "isMain": false,
       "isProphet": false,
       "isManual": true
@@ -21210,8 +21288,8 @@
           "y": 9420
         },
         {
-          "x": 9440,
-          "y": 9430
+          "x": 9460,
+          "y": 9420
         },
         {
           "x": 9460,
