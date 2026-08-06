@@ -8456,7 +8456,26 @@ function setupZoomPan() {
            target.closest('#help-guide-modal') ||
            target.closest('#install-guide-modal') ||
            target.closest('#desktop-license-modal') ||
-           target.closest('#admin-dashboard-modal');
+           target.closest('#admin-dashboard-modal') ||
+           target.closest('#bottom-spawner-panel');
+  }
+
+  function shouldIgnoreDrag(target) {
+    if (!target) return false;
+    return !!(
+      target.closest('.person-card') ||
+      target.closest('header') ||
+      target.closest('#control-panel') ||
+      target.closest('#search-panel') ||
+      target.closest('#admin-actions-bar') ||
+      target.closest('.modal-content') ||
+      target.closest('#style-editor-panel') ||
+      target.closest('.canvas-annotation') ||
+      target.closest('.layer-marker') ||
+      target.closest('#bottom-spawner-panel') ||
+      target.closest('#spawner-panel-toggle-btn') ||
+      target.closest('.layer-control-panel')
+    );
   }
 
   // Intercept wheel events globally on window (ignoring scrollable panels) to prevent dead-zones
@@ -8564,7 +8583,7 @@ function setupZoomPan() {
   let startClickX = 0;
   let startClickY = 0;
   viewerContainer.addEventListener('mousedown', (e) => {
-    if (e.target.closest('.person-card') || e.target.closest('header') || e.target.closest('#control-panel') || e.target.closest('#search-panel') || e.target.closest('#admin-actions-bar') || e.target.closest('.modal-content') || e.target.closest('#style-editor-panel') || e.target.closest('.canvas-annotation') || e.target.closest('.layer-marker')) return;
+    if (shouldIgnoreDrag(e.target)) return;
     
     // Prevent native selection/drag on background
     e.preventDefault();
@@ -8815,6 +8834,7 @@ function setupZoomPan() {
   };
   
   viewerContainer.addEventListener('touchstart', (e) => {
+    if (shouldIgnoreDrag(e.target)) return;
     stopInertia();
     isZoomAnimating = false; // Stop any ongoing zoom animation when touch starts
     if (viewerContainer) {
