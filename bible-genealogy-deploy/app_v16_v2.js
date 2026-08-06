@@ -13230,9 +13230,59 @@ async function triggerAutoBackup() {
   if (isTauri && window.__TAURI__ && window.__TAURI__.fs && window.__TAURI__.path) {
     try {
       const docDir = await window.__TAURI__.path.documentDir();
+      
+      // 1. Save the main JSON backup
       const backupPath = await window.__TAURI__.path.join(docDir, 'bible_genealogy_notes_autobackup.json');
       await window.__TAURI__.fs.writeTextFile(backupPath, JSON.stringify(userNotes, null, 2));
-      console.log("Auto-backup successfully saved to:", backupPath);
+      console.log("Auto-backup JSON successfully saved to:", backupPath);
+
+      // 2. Export individual Markdown files inside folders (Obsidian-friendly)
+      const backupFolder = await window.__TAURI__.path.join(docDir, 'bible_genealogy_notes');
+      await window.__TAURI__.fs.createDir(backupFolder, { recursive: true });
+      
+      const folders = ['인물', '사건', '장소', '기타'];
+      for (const f of folders) {
+        const subPath = await window.__TAURI__.path.join(backupFolder, f);
+        await window.__TAURI__.fs.createDir(subPath, { recursive: true });
+      }
+
+      for (const key of Object.keys(userNotes)) {
+        const content = userNotes[key];
+        
+        let name = key;
+        let type = '기타';
+        
+        const person = db.find(p => p.id === key);
+        if (person) {
+          name = person.name;
+          type = '인물';
+        } else {
+          const ev = events.find(e => e.id === key);
+          if (ev) {
+            name = ev.name;
+            type = '사건';
+          } else {
+            const loc = locations.find(l => l.id === key);
+            if (loc) {
+              name = loc.name;
+              type = '장소';
+            }
+          }
+        }
+        
+        const cleanName = name.replace(/[\/\\:\*\?"<>\|]/g, '_');
+        const mdFilePath = await window.__TAURI__.path.join(backupFolder, type, cleanName + '.md');
+        
+        if (!content || !content.trim()) {
+          try {
+            await window.__TAURI__.fs.removeFile(mdFilePath);
+          } catch (err) {}
+        } else {
+          // Write note content to .md file
+          await window.__TAURI__.fs.writeTextFile(mdFilePath, content);
+        }
+      }
+      console.log("Auto-backup Markdown files successfully exported to:", backupFolder);
     } catch (err) {
       console.error("Auto-backup failed:", err);
     }
