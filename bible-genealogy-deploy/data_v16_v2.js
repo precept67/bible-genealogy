@@ -8733,6 +8733,27 @@ const BIBLE_CHARACTERS = [
     "engDesc": "Moses' first son. It means ‘I have become a guest in a foreign room.’"
   },
   {
+    "id": "salmon",
+    "name": "살몬",
+    "engName": "Salmon",
+    "gender": "M",
+    "generation": 26,
+    "column": 0.018,
+    "parents": [
+      "nahshon"
+    ],
+    "spouses": [
+      "rahab"
+    ],
+    "desc": "가나안 정복의 지도자 중 하나. 여리고 기생 라합과 결혼함.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "One of the leaders of the conquest of Canaan. Married to Jericho gisaeng Rahab."
+  },
+  {
     "id": "eliezer_moses",
     "name": "엘리에셀",
     "engName": "Eliezer",
@@ -9316,13 +9337,13 @@ const BIBLE_CHARACTERS = [
     "spouses": [
       "rahab"
     ],
-    "desc": "가나안 정복의 지도자 중 하나. 여리고 기생 ���������합과 결혼함.",
+    "desc": "가나안 정복의 지도자 중 하나. 여리고 기생 라합과 결혼함.",
     "isMain": true,
     "isManual": true,
     "teachers": [],
     "prophets": [],
     "relatedPeople": [],
-    "engDesc": "One of the leaders of the conquest of Canaan. Married to Jericho gisaeng ���������Hap."
+    "engDesc": "One of the leaders of the conquest of Canaan. Married to Jericho gisaeng Rahab."
   },
   {
     "id": "rahab",
@@ -10496,7 +10517,7 @@ const BIBLE_CHARACTERS = [
       "maacah"
     ],
     "spouses": [],
-    "desc": "르호보암의 아들. 북이스라엘 여로보암과의 ��쟁에서 여호와를 의지해 승리함.",
+    "desc": "르호보암의 아들. 북이스라엘 여로보암과의 전쟁에서 여호와를 의지해 승리함.",
     "isMain": true,
     "isManual": true,
     "teachers": [],
@@ -13769,7 +13790,7 @@ const BIBLE_CHARACTERS = [
   },
   {
     "id": "zimri",
-    "name": "시므��",
+    "name": "시므리",
     "engName": "Zimri",
     "gender": "M",
     "generation": 37.944,
@@ -18308,13 +18329,13 @@ const BIBLE_CHARACTERS = [
       "ahaz_saul"
     ],
     "spouses": [],
-    "desc": "아하스의 ���� (대상 8:36 '여호앗다', 9:42 '야라').",
+    "desc": "아하스의 아들 (대상 8:36 '여호앗다', 9:42 '야라').",
     "isMain": false,
     "isManual": true,
     "teachers": [],
     "prophets": [],
     "relatedPeople": [],
-    "engDesc": "Ahaz's ���� (1 Chronicles 8:36 'Jehoaddah', 9:42 'Jara')."
+    "engDesc": "Ahaz's son (1 Chronicles 8:36 'Jehoaddah', 9:42 'Jara')."
   },
   {
     "id": "alemeth_saul",

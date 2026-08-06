@@ -13709,7 +13709,7 @@
       "name": "아비야",
       "engName": "Abijah",
       "gender": "M",
-      "generation": 34.47,
+      "generation": 34.97,
       "column": -4.296,
       "parents": [
         "jeroboam1"
@@ -19484,8 +19484,8 @@
       "name": "예후",
       "engName": "jehu",
       "gender": "M",
-      "generation": 35.06,
-      "column": -4.129,
+      "generation": 35.07,
+      "column": -3.483,
       "parents": [],
       "spouses": [],
       "teachers": [],
@@ -20287,12 +20287,6 @@
         "y": 7560
       }
     ],
-    "rel-jeroboam1->abijah_jeroboam": [
-      {
-        "x": 15240,
-        "y": 6290
-      }
-    ],
     "rel-nebat+zeruah_nebat->jeroboam1": [
       {
         "x": 15190,
@@ -20359,10 +20353,10 @@
     {
       "id": "note-1784793168468",
       "text": "마태복음족보의 첫번째 14대",
-      "x": 16028.366666666665,
-      "y": 3454.8333333333335,
+      "x": 16023.517429320618,
+      "y": 3432.2035590517808,
       "width": 253,
-      "height": 40,
+      "height": 64,
       "fontSize": 20,
       "bold": false,
       "color": "#ffffff",
@@ -20392,10 +20386,10 @@
     {
       "id": "note-1784796431452",
       "text": "마태복음 족보의  두번째 14대",
-      "x": 16010.866666666665,
-      "y": 5802.333333333333,
+      "x": 15960.757880757512,
+      "y": 5710.19782375844,
       "width": 266,
-      "height": 38,
+      "height": 69,
       "fontSize": 20,
       "bold": false,
       "color": "#ffffff",
@@ -20424,8 +20418,8 @@
       "text": "마태복음 족보의 세번째 14대",
       "x": 15908.033333333333,
       "y": 9088.5,
-      "width": 266,
-      "height": 40,
+      "width": 269,
+      "height": 63,
       "fontSize": 20,
       "bold": false,
       "color": "#f7f7f8",
@@ -20477,10 +20471,10 @@
     {
       "id": "note-1785291855597",
       "text": "동명이인",
-      "x": 13828,
-      "y": 3596,
-      "width": 82,
-      "height": 30,
+      "x": 13816.598659087793,
+      "y": 3595.122973775984,
+      "width": 96,
+      "height": 35,
       "fontSize": 12,
       "bold": false,
       "color": "#1e293b",
@@ -20777,10 +20771,10 @@
     {
       "id": "annotation_1785464733167_cos0kd8cc",
       "text": "동명이인",
-      "x": 16215,
-      "y": 1605,
-      "width": 82,
-      "height": 30,
+      "x": 16201,
+      "y": 1601,
+      "width": 96,
+      "height": 38,
       "fontSize": 12,
       "bold": false,
       "italic": false,
@@ -20801,11 +20795,11 @@
     },
     {
       "id": "annotation_1785465647957_2j351uc9h",
-      "text": "북왕국 이스라엘의 왕들",
-      "x": 15066.866666666665,
-      "y": 5983.333333333333,
-      "width": 219,
-      "height": 40,
+      "text": "북이스라엘의 왕들",
+      "x": 15052.029501909059,
+      "y": 5980.328507915665,
+      "width": 314,
+      "height": 44,
       "fontSize": 20,
       "bold": false,
       "italic": false,
@@ -20816,7 +20810,13 @@
       "color": "#ffffff",
       "bgColor": "#8e44fd",
       "borderColor": "#cbd5e1",
-      "auraEnabled": true
+      "auraEnabled": true,
+      "relatedPeople": [
+        "jeroboam1",
+        "jeroboam2"
+      ],
+      "relatedEvents": [],
+      "relatedLocations": []
     },
     {
       "id": "annotation_1785470291928_ecqjxrpbl",
@@ -21622,6 +21622,14 @@
         },
         {
           "x": 15410,
+          "y": 6380
+        },
+        {
+          "x": 15570,
+          "y": 6380
+        },
+        {
+          "x": 15570,
           "y": 6470
         },
         {
@@ -21817,16 +21825,8 @@
           "y": 6490
         },
         {
-          "x": 15230,
-          "y": 6490
-        },
-        {
-          "x": 15230,
-          "y": 6380
-        },
-        {
           "x": 15380,
-          "y": 6380
+          "y": 6490
         },
         {
           "x": 15380,
@@ -21920,7 +21920,7 @@
         "abraham",
         "isaac"
       ],
-      "x": 16553,
+      "x": 16600,
       "y": 3632,
       "engName": "Reader Isaac’s Burnt Offering on Mount Moriah",
       "engDesc": "When God asked Abraham to sacrifice his only son Isaac, whom he had at the age of 100, to test his faith, when he was about to raise his sword to offer him up, Yahweh prepared a ram for him."
@@ -21944,22 +21944,22 @@
     },
     {
       "id": "ev-1784792646273",
-      "name": "아브라함의 갈대아 우르 및 하란 소명",
+      "name": "아브라함의 갈대아 우르 와 하란 소명",
       "desc": "본토 친척 아비 집을 떠나 보여줄 땅으로 가라는 하나님의 명령에 순종하여 75세에 아브라함이 믿음의 여정을 시작한 사건.",
       "refs": [
         "창세기 12:1",
         "창세기 12:4"
       ],
       "relatedLocations": [
-        "loc-haran"
+        "loc-1785964008527-61"
       ],
       "relatedPeople": [
         "terah",
-        "abraham",
-        "sarah"
+        "sarah",
+        "abraham"
       ],
-      "x": 16518,
-      "y": 3408,
+      "x": 16499,
+      "y": 3407,
       "engName": "Abraham's Calling to Ur and Haran of Chaldea",
       "engDesc": "An incident in which Abraham began his journey of faith at the age of 75 by obeying God's command to leave his native country, his relatives, and his father's house and go to the land he would show him."
     },
@@ -22143,8 +22143,8 @@
         "abraham",
         "sarah"
       ],
-      "x": 16644,
-      "y": 3407,
+      "x": 16664,
+      "y": 3406,
       "engName": "Haran",
       "engDesc": "This is the place where Abraham's father Terah stayed and died, and the land where Abraham left after receiving his calling."
     },
@@ -22166,6 +22166,15 @@
       "y": 3680,
       "engName": "Mount Moriah",
       "engDesc": "This is the mountain where Abraham attempted to sacrifice his only son Isaac as a burnt offering, and the place where Solomon's temple was later built."
+    },
+    {
+      "id": "loc-1785964008527-61",
+      "name": "loc-haran",
+      "desc": "자동 생성된 장소",
+      "refs": [],
+      "relatedPeople": [],
+      "x": 5000,
+      "y": 5000
     }
   ]
 }

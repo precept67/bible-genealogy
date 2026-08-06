@@ -6582,7 +6582,7 @@
       "engName": "Maaz",
       "gender": "M",
       "generation": 27,
-      "column": -3.574,
+      "column": -3.874,
       "parents": [
         "ram_jerahmeel"
       ],
@@ -6601,7 +6601,7 @@
       "engName": "Jamin",
       "gender": "M",
       "generation": 27,
-      "column": -2.903,
+      "column": -3.203,
       "parents": [
         "ram_jerahmeel"
       ],
@@ -6620,7 +6620,7 @@
       "engName": "Eker",
       "gender": "M",
       "generation": 27,
-      "column": -2.234,
+      "column": -2.534,
       "parents": [
         "ram_jerahmeel"
       ],
@@ -8729,6 +8729,27 @@
       "engDesc": "Moses' first son. It means ‘I have become a guest in a foreign room.’"
     },
     {
+      "id": "salmon",
+      "name": "살몬",
+      "engName": "Salmon",
+      "gender": "M",
+      "generation": 28,
+      "column": 0.018,
+      "parents": [
+        "nahshon"
+      ],
+      "spouses": [
+        "rahab"
+      ],
+      "desc": "가나안 정복의 지도자 중 하나. 여리고 기생 라합과 결혼함.",
+      "isMain": true,
+      "isManual": true,
+      "teachers": [],
+      "prophets": [],
+      "relatedPeople": [],
+      "engDesc": "One of the leaders of the conquest of Canaan. Married to Jericho gisaeng Rahab."
+    },
+    {
       "id": "eliezer_moses",
       "name": "엘리에셀",
       "engName": "Eliezer",
@@ -9312,13 +9333,13 @@
       "spouses": [
         "rahab"
       ],
-      "desc": "가나안 정복의 지도자 중 하나. 여리고 기생 ���������합과 결혼함.",
+      "desc": "가나안 정복의 지도자 중 하나. 여리고 기생 라합과 결혼함.",
       "isMain": true,
       "isManual": true,
       "teachers": [],
       "prophets": [],
       "relatedPeople": [],
-      "engDesc": "One of the leaders of the conquest of Canaan. Married to Jericho gisaeng ���������Hap."
+      "engDesc": "One of the leaders of the conquest of Canaan. Married to Jericho gisaeng Rahab."
     },
     {
       "id": "rahab",
@@ -10492,7 +10513,7 @@
         "maacah"
       ],
       "spouses": [],
-      "desc": "르호보암의 아들. 북이스라엘 여로보암과의 ��쟁에서 여호와를 의지해 승리함.",
+      "desc": "르호보암의 아들. 북이스라엘 여로보암과의 전쟁에서 여호와를 의지해 승리함.",
       "isMain": true,
       "isManual": true,
       "teachers": [],
@@ -13630,8 +13651,8 @@
       "name": "느밧",
       "engName": "Nebat",
       "gender": "M",
-      "generation": 33,
-      "column": -4.996,
+      "generation": 33.01,
+      "column": -5.084,
       "parents": [],
       "spouses": [
         "zeruah_nebat"
@@ -13649,8 +13670,8 @@
       "name": "스루아",
       "engName": "Zeruah",
       "gender": "F",
-      "generation": 33,
-      "column": -3.996,
+      "generation": 33.01,
+      "column": -4.083,
       "parents": [],
       "spouses": [
         "nebat"
@@ -13668,8 +13689,8 @@
       "name": "여로보암 1세",
       "engName": "Jeroboam I",
       "gender": "M",
-      "generation": 33.989,
-      "column": -4.996,
+      "generation": 34,
+      "column": -5.084,
       "parents": [
         "nebat",
         "zeruah_nebat"
@@ -13690,8 +13711,8 @@
       "name": "나답",
       "engName": "Nadab",
       "gender": "M",
-      "generation": 34.978,
-      "column": -4.996,
+      "generation": 34.99,
+      "column": -5.084,
       "parents": [
         "jeroboam1"
       ],
@@ -13709,8 +13730,8 @@
       "name": "아비야",
       "engName": "Abijah",
       "gender": "M",
-      "generation": 34.97,
-      "column": -4.296,
+      "generation": 34.98,
+      "column": -4.383,
       "parents": [
         "jeroboam1"
       ],
@@ -13728,8 +13749,8 @@
       "name": "바아사",
       "engName": "Baasha",
       "gender": "M",
-      "generation": 35.967,
-      "column": -4.996,
+      "generation": 35.98,
+      "column": -5.084,
       "parents": [
         "nadab_jeroboam"
       ],
@@ -13749,8 +13770,8 @@
       "name": "엘라",
       "engName": "Elah",
       "gender": "M",
-      "generation": 36.956,
-      "column": -4.996,
+      "generation": 36.97,
+      "column": -5.084,
       "parents": [
         "baasha"
       ],
@@ -13765,11 +13786,11 @@
     },
     {
       "id": "zimri",
-      "name": "시므��",
+      "name": "시므리",
       "engName": "Zimri",
       "gender": "M",
-      "generation": 37.944,
-      "column": -4.996,
+      "generation": 37.96,
+      "column": -5.084,
       "parents": [
         "elah_baasha"
       ],
@@ -13787,8 +13808,8 @@
       "name": "오므리",
       "engName": "Omri",
       "gender": "M",
-      "generation": 38.933,
-      "column": -4.996,
+      "generation": 38.94,
+      "column": -5.084,
       "parents": [
         "zimri"
       ],
@@ -13806,8 +13827,8 @@
       "name": "아합",
       "engName": "Ahab",
       "gender": "M",
-      "generation": 39.922,
-      "column": -4.996,
+      "generation": 39.93,
+      "column": -5.084,
       "parents": [
         "omri"
       ],
@@ -13829,8 +13850,8 @@
       "name": "이세벨",
       "engName": "Jezebel",
       "gender": "F",
-      "generation": 39.92,
-      "column": -3.996,
+      "generation": 39.93,
+      "column": -4.083,
       "parents": [],
       "spouses": [
         "ahab"
@@ -13850,8 +13871,8 @@
       "name": "아하시야",
       "engName": "Ahaziah",
       "gender": "M",
-      "generation": 40.89,
-      "column": -5.226,
+      "generation": 40.9,
+      "column": -5.313,
       "parents": [
         "ahab",
         "jezebel"
@@ -13870,8 +13891,8 @@
       "name": "여호람(요람)",
       "engName": "Jehoram",
       "gender": "M",
-      "generation": 40.89,
-      "column": -4.516,
+      "generation": 40.9,
+      "column": -4.604,
       "parents": [
         "ahab",
         "jezebel"
@@ -13892,8 +13913,8 @@
       "name": "예후",
       "engName": "Jehu",
       "gender": "M",
-      "generation": 41.9,
-      "column": -4.996,
+      "generation": 41.91,
+      "column": -5.084,
       "parents": [
         "jehoram_ahab"
       ],
@@ -13913,8 +13934,8 @@
       "name": "여호아하스",
       "engName": "Jehoahaz",
       "gender": "M",
-      "generation": 42.889,
-      "column": -4.996,
+      "generation": 42.9,
+      "column": -5.084,
       "parents": [
         "jehu"
       ],
@@ -13934,8 +13955,8 @@
       "name": "요아스",
       "engName": "Joash",
       "gender": "M",
-      "generation": 43.878,
-      "column": -4.996,
+      "generation": 43.89,
+      "column": -5.084,
       "parents": [
         "jehoahaz_jehu"
       ],
@@ -13955,8 +13976,8 @@
       "name": "여로보암 2세",
       "engName": "Jeroboam II",
       "gender": "M",
-      "generation": 44.867,
-      "column": -4.996,
+      "generation": 44.88,
+      "column": -5.084,
       "parents": [
         "jehoash_jehoahaz"
       ],
@@ -13978,8 +13999,8 @@
       "name": "스가랴",
       "engName": "Zechariah",
       "gender": "M",
-      "generation": 45.856,
-      "column": -4.996,
+      "generation": 45.87,
+      "column": -5.084,
       "parents": [
         "jeroboam2"
       ],
@@ -13997,8 +14018,8 @@
       "name": "살룸",
       "engName": "Shallum",
       "gender": "M",
-      "generation": 46.844,
-      "column": -4.996,
+      "generation": 46.86,
+      "column": -5.084,
       "parents": [
         "zechariah_jeroboam2"
       ],
@@ -14016,8 +14037,8 @@
       "name": "므나헴",
       "engName": "Menahem",
       "gender": "M",
-      "generation": 47.833,
-      "column": -4.996,
+      "generation": 47.84,
+      "column": -5.084,
       "parents": [
         "shallum"
       ],
@@ -14035,8 +14056,8 @@
       "name": "브가히야",
       "engName": "Pekahiah",
       "gender": "M",
-      "generation": 48.822,
-      "column": -4.996,
+      "generation": 48.83,
+      "column": -5.084,
       "parents": [
         "menahem"
       ],
@@ -14054,8 +14075,8 @@
       "name": "베가",
       "engName": "Pekah",
       "gender": "M",
-      "generation": 49.811,
-      "column": -4.996,
+      "generation": 49.82,
+      "column": -5.084,
       "parents": [
         "pekahiah"
       ],
@@ -14073,8 +14094,8 @@
       "name": "호세아(왕)",
       "engName": "Hoshea",
       "gender": "M",
-      "generation": 50.8,
-      "column": -4.996,
+      "generation": 50.81,
+      "column": -5.084,
       "parents": [
         "pekah"
       ],
@@ -17421,7 +17442,7 @@
       "engName": "Peter",
       "gender": "M",
       "generation": 64.29,
-      "column": -8.9,
+      "column": -8.354,
       "parents": [],
       "spouses": [],
       "teachers": [
@@ -17729,8 +17750,8 @@
       "name": "고넬료",
       "engName": "cornelius",
       "gender": "M",
-      "generation": 65.18,
-      "column": -8.9,
+      "generation": 65.47,
+      "column": -7.979,
       "parents": [],
       "spouses": [],
       "teachers": [
@@ -17748,7 +17769,7 @@
       "engName": "A man lame from birth",
       "gender": "M",
       "generation": 65.46,
-      "column": -9.979,
+      "column": -9.058,
       "parents": [],
       "spouses": [],
       "teachers": [
@@ -18304,13 +18325,13 @@
         "ahaz_saul"
       ],
       "spouses": [],
-      "desc": "아하스의 ���� (대상 8:36 '여호앗다', 9:42 '야라').",
+      "desc": "아하스의 아들 (대상 8:36 '여호앗다', 9:42 '야라').",
       "isMain": false,
       "isManual": true,
       "teachers": [],
       "prophets": [],
       "relatedPeople": [],
-      "engDesc": "Ahaz's ���� (1 Chronicles 8:36 'Jehoaddah', 9:42 'Jara')."
+      "engDesc": "Ahaz's son (1 Chronicles 8:36 'Jehoaddah', 9:42 'Jara')."
     },
     {
       "id": "alemeth_saul",
@@ -19115,7 +19136,7 @@
       ],
       "spouses": [],
       "teachers": [],
-      "desc": "아비하일의 딸이자 모르드개의 사촌 동생으로, 페르시아 아하수에로 왕의 왕후가 되어 \"죽으면 죽으리이다\"라는 결단으로 민족을 구한 인물(에스더 2:7 2:15-17, 에스더 7-8장)",
+      "desc": "아비하일의 딸���자 ���르드개의 사촌 동생으로, 페르시아 아하수에로 왕의 왕후가 되어 \"죽으면 죽으리이다\"라는 결단으로 민족을 구한 인물(에스더 2:7 2:15-17, 에스더 7-8장)",
       "isMain": false,
       "isManual": true,
       "prophets": [],
@@ -19894,8 +19915,8 @@
       "name": "아달랴",
       "engName": "Athaliah",
       "gender": "F",
-      "generation": 40.89,
-      "column": -3.799,
+      "generation": 40.9,
+      "column": -3.887,
       "parents": [
         "ahab",
         "jezebel"
@@ -20416,8 +20437,8 @@
     {
       "id": "note-1784797119640",
       "text": "마태복음 족보의 세번째 14대",
-      "x": 15908.033333333333,
-      "y": 9088.5,
+      "x": 15898.093986335522,
+      "y": 9079.803071376915,
       "width": 269,
       "height": 63,
       "fontSize": 20,
@@ -20798,8 +20819,8 @@
       "text": "북이스라엘의 왕들",
       "x": 15052.029501909059,
       "y": 5980.328507915665,
-      "width": 314,
-      "height": 44,
+      "width": 258,
+      "height": 36,
       "fontSize": 20,
       "bold": false,
       "italic": false,
@@ -20810,7 +20831,19 @@
       "color": "#ffffff",
       "bgColor": "#8e44fd",
       "borderColor": "#cbd5e1",
-      "auraEnabled": true
+      "auraEnabled": true,
+      "relatedPeople": [
+        "nadab_jeroboam",
+        "nebat",
+        "baasha",
+        "zeruah_nebat",
+        "abijah_jeroboam",
+        "elah_baasha",
+        "jeroboam1",
+        "jeroboam2"
+      ],
+      "relatedEvents": [],
+      "relatedLocations": []
     },
     {
       "id": "annotation_1785470291928_ecqjxrpbl",
@@ -21244,8 +21277,8 @@
       "fillOpacity": 0.03,
       "points": [
         {
-          "x": 13366.109375,
-          "y": 4019
+          "x": 13410,
+          "y": 4020
         },
         {
           "x": 20613.114963517233,
@@ -21324,15 +21357,17 @@
           "y": 4730
         },
         {
-          "x": 13557.22886785975,
-          "y": 4493.964950537242
+          "x": 13560,
+          "y": 4490
         },
         {
-          "x": 13365.73521106578,
-          "y": 4493.964950537242
+          "x": 13410,
+          "y": 4490
         }
       ],
-      "label_en": "Tribe of Judah (Gen. 46, Chron. 2)"
+      "label_en": "Tribe of Judah (Gen. 46, Chron. 2)",
+      "labelOffsetX": -7149,
+      "labelOffsetY": 1
     },
     {
       "id": "poly-custom-1785472524528",

@@ -175,7 +175,7 @@ function getLocalizedAnnotationText(text) {
     return 'Homonyms';
   } else if (trimmed === '다른 시대 우두머리된 자') {
     return 'Chiefs in Another Era';
-  } else if (trimmed === '북왕국 이스라엘의 왕들') {
+  } else if (trimmed === '북왕국 이스라엘의 왕들' || trimmed === '북이스라엘의 왕들' || trimmed === '북이스라엘 왕들') {
     return 'Kings of Northern Israel';
   }
   return text;
@@ -2317,6 +2317,69 @@ function initDatabase() {
       });
       if (customChangedToMigrate) {
         localStorage.setItem('bible_tree_custom_characters', JSON.stringify(customCharactersToMigrate));
+      }
+
+      // 6. Clean up any corrupted legacy character edits and custom characters in localStorage
+      let editsChangedToClean = false;
+      const editsToClean = JSON.parse(localStorage.getItem('bible_tree_character_edits') || '{}');
+      
+      const cleanCharacterData = (c) => {
+        let changed = false;
+        if (c.id === 'salmon') {
+          if (c.desc && (c.desc.includes('합과') || c.desc.includes('합') || c.desc.includes('') || c.desc.includes('합과'))) {
+            c.desc = "가나안 정복의 지도자 중 하나. 여리고 기생 라합과 결혼함.";
+            changed = true;
+          }
+          if (c.engDesc && (c.engDesc.includes('Hap') || c.engDesc.includes(''))) {
+            c.engDesc = "One of the leaders of the conquest of Canaan. Married to Jericho gisaeng Rahab.";
+            changed = true;
+          }
+        }
+        if (c.id === 'abijah') {
+          if (c.desc && (c.desc.includes('쟁에서') || c.desc.includes('쟁') || c.desc.includes(''))) {
+            c.desc = "르호보암의 아들. 북이스라엘 여로보암과의 전쟁에서 여호와를 의지해 승리함.";
+            changed = true;
+          }
+        }
+        if (c.id === 'zimri') {
+          if (c.name && (c.name === '시므' || c.name.includes('') || c.name.startsWith('시므') && c.name.length < 4)) {
+            c.name = "시므리";
+            changed = true;
+          }
+        }
+        if (c.id === 'jehoaddah') {
+          if (c.desc && (c.desc.includes('아하스의') || c.desc.includes('') || c.desc.includes('아하스의 '))) {
+            c.desc = "아하스의 아들 (대상 8:36 '여호앗다', 9:42 '야라').";
+            changed = true;
+          }
+          if (c.engDesc && (c.engDesc.includes('Ahaz\'s') || c.engDesc.includes('') || c.engDesc.includes('Ahaz\'s '))) {
+            c.engDesc = "Ahaz's son (1 Chronicles 8:36 'Jehoaddah', 9:42 'Jara').";
+            changed = true;
+          }
+        }
+        return changed;
+      };
+
+      Object.keys(editsToClean).forEach(id => {
+        const edit = editsToClean[id];
+        edit.id = id;
+        if (cleanCharacterData(edit)) {
+          editsChangedToClean = true;
+        }
+      });
+      if (editsChangedToClean) {
+        localStorage.setItem('bible_tree_character_edits', JSON.stringify(editsToClean));
+      }
+
+      let customChangedToClean = false;
+      const customToClean = JSON.parse(localStorage.getItem('bible_tree_custom_characters') || '[]');
+      customToClean.forEach(c => {
+        if (cleanCharacterData(c)) {
+          customChangedToClean = true;
+        }
+      });
+      if (customChangedToClean) {
+        localStorage.setItem('bible_tree_custom_characters', JSON.stringify(customToClean));
       }
     } catch (err) {
       console.error("Master migration error:", err);
@@ -6561,7 +6624,7 @@ function drawConnections() {
       const filterClass = getChildLineFilterClass(childId, parentIds);
       childPath.setAttribute("d", pathD);
       childPath.setAttribute("class", `connector-line ${isChildMain ? 'main-line' : ''} ${selectedLineKey === key ? 'line-highlight' : ''} ${filterClass}`);
-      childPath.setAttribute("data-parent-key", parentKey);
+      childPath.setAttribute("data-parent-key", parentIds.join(','));
       childPath.setAttribute("data-child-id", childId);
       childPath.style.pointerEvents = 'none'; // Visible path doesn't capture clicks
       
@@ -6631,7 +6694,7 @@ function drawConnections() {
         childPath.setAttribute("d", pathD);
         const isSelected = selectedLineKey === childRelationKey;
         childPath.setAttribute("class", `connector-line ${isChildMain ? 'main-line' : ''} ${isSelected ? 'line-highlight' : ''} ${filterClass}`);
-        childPath.setAttribute("data-parent-key", parentKey);
+        childPath.setAttribute("data-parent-key", parentIds.join(','));
         childPath.setAttribute("data-child-id", childId);
         childPath.style.pointerEvents = 'none'; // Visible path doesn't capture clicks
         
@@ -9406,26 +9469,72 @@ function highlightRelatedElementsForAnnotation(annot) {
   const isNorthernKingdomKings = 
     annot.id === 'annotation_1785465647957_2j351uc9h' ||
     text === '북왕국 이스라엘의 왕들' ||
+    text === '북이스라엘의 왕들' ||
+    text === '북이스라엘 왕들' ||
     text === 'Kings of Northern Israel' ||
     text === 'Kings of the Northern Kingdom' ||
     text === 'Kings of the Northern Kingdom of Israel';
 
   if (isNorthernKingdomKings) {
     const northernKingdomKingIds = [
+      'nebat', 'zeruah_nebat',
       'jeroboam1', 'nadab_jeroboam', 'baasha', 'elah_baasha', 'zimri', 
       'omri', 'ahab', 'ahaziah_ahab', 'jehoram_ahab', 'jehu', 
       'jehoahaz_jehu', 'jehoash_jehoahaz', 'jeroboam2', 'zechariah_jeroboam2', 
       'shallum', 'menahem', 'pekahiah', 'pekah', 'hoshea'
     ];
     const highlightedIds = new Set(northernKingdomKingIds);
-    northernKingdomKingIds.forEach(id => {
+
+    // Expand highlightedIds to include all parents, spouses, and children of these kings
+    northernKingdomKingIds.forEach(kingId => {
+      const char = db.find(c => c.id === kingId);
+      if (char) {
+        if (char.parents) char.parents.forEach(pId => highlightedIds.add(pId));
+        if (char.spouses) char.spouses.forEach(sId => highlightedIds.add(sId));
+        
+        // Find children
+        db.forEach(child => {
+          if (child.parents && child.parents.includes(kingId)) {
+            highlightedIds.add(child.id);
+          }
+        });
+      }
+    });
+
+    highlightedIds.forEach(id => {
       const el = document.getElementById(`card-${id}`);
       if (el) el.classList.add('highlight');
     });
+
     document.querySelectorAll('.connector-line').forEach(path => {
       const childId = path.getAttribute('data-child-id');
+      const parentKey = path.getAttribute('data-parent-key');
       if (childId && highlightedIds.has(childId)) {
-        path.classList.add('line-highlight');
+        const parentIds = parentKey ? parentKey.split(',') : [];
+        const hasHighlightedParent = parentIds.some(pId => highlightedIds.has(pId));
+        if (hasHighlightedParent) {
+          path.classList.add('line-highlight');
+        }
+      }
+    });
+
+    document.querySelectorAll('.spouse-connector').forEach(path => {
+      const spouseIdsAttr = path.getAttribute('data-spouse-ids');
+      if (spouseIdsAttr) {
+        const ids = spouseIdsAttr.split(',');
+        if (ids.every(id => highlightedIds.has(id))) {
+          path.classList.add('line-highlight');
+        }
+      }
+    });
+
+    document.querySelectorAll('.spouse-node-circle').forEach(circle => {
+      const spouseIdsAttr = circle.getAttribute('data-spouse-ids');
+      if (spouseIdsAttr) {
+        const ids = spouseIdsAttr.split(',');
+        if (ids.every(id => highlightedIds.has(id))) {
+          circle.classList.add('line-highlight');
+        }
       }
     });
   }
