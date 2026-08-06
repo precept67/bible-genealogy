@@ -11587,7 +11587,7 @@
         "eliud"
       ],
       "spouses": [],
-      "desc": "엘리웃의 아들.",
+      "desc": "엘리��의 아들.",
       "isMain": true,
       "isManual": true,
       "teachers": [],
@@ -13711,7 +13711,7 @@
       "name": "나답",
       "engName": "Nadab",
       "gender": "M",
-      "generation": 34.99,
+      "generation": 35.01,
       "column": -5.084,
       "parents": [
         "jeroboam1"
@@ -13730,7 +13730,7 @@
       "name": "아비야",
       "engName": "Abijah",
       "gender": "M",
-      "generation": 34.98,
+      "generation": 35.01,
       "column": -4.383,
       "parents": [
         "jeroboam1"
@@ -13749,7 +13749,7 @@
       "name": "바아사",
       "engName": "Baasha",
       "gender": "M",
-      "generation": 35.98,
+      "generation": 36.01,
       "column": -5.084,
       "parents": [
         "nadab_jeroboam"
@@ -13770,7 +13770,7 @@
       "name": "엘라",
       "engName": "Elah",
       "gender": "M",
-      "generation": 36.97,
+      "generation": 37,
       "column": -5.084,
       "parents": [
         "baasha"
@@ -13789,7 +13789,7 @@
       "name": "시므리",
       "engName": "Zimri",
       "gender": "M",
-      "generation": 37.96,
+      "generation": 37.99,
       "column": -5.084,
       "parents": [
         "elah_baasha"
@@ -13808,7 +13808,7 @@
       "name": "오므리",
       "engName": "Omri",
       "gender": "M",
-      "generation": 38.94,
+      "generation": 38.97,
       "column": -5.084,
       "parents": [
         "zimri"
@@ -13827,7 +13827,7 @@
       "name": "아합",
       "engName": "Ahab",
       "gender": "M",
-      "generation": 39.93,
+      "generation": 39.96,
       "column": -5.084,
       "parents": [
         "omri"
@@ -13850,7 +13850,7 @@
       "name": "이세벨",
       "engName": "Jezebel",
       "gender": "F",
-      "generation": 39.93,
+      "generation": 39.96,
       "column": -4.083,
       "parents": [],
       "spouses": [
@@ -13871,8 +13871,8 @@
       "name": "아하시야",
       "engName": "Ahaziah",
       "gender": "M",
-      "generation": 40.9,
-      "column": -5.313,
+      "generation": 40.93,
+      "column": -5.288,
       "parents": [
         "ahab",
         "jezebel"
@@ -13891,7 +13891,7 @@
       "name": "여호람(요람)",
       "engName": "Jehoram",
       "gender": "M",
-      "generation": 40.9,
+      "generation": 40.93,
       "column": -4.604,
       "parents": [
         "ahab",
@@ -13913,7 +13913,7 @@
       "name": "예후",
       "engName": "Jehu",
       "gender": "M",
-      "generation": 41.91,
+      "generation": 41.94,
       "column": -5.084,
       "parents": [
         "jehoram_ahab"
@@ -13934,7 +13934,7 @@
       "name": "여호아하스",
       "engName": "Jehoahaz",
       "gender": "M",
-      "generation": 42.9,
+      "generation": 42.93,
       "column": -5.084,
       "parents": [
         "jehu"
@@ -13955,7 +13955,7 @@
       "name": "요아스",
       "engName": "Joash",
       "gender": "M",
-      "generation": 43.89,
+      "generation": 43.92,
       "column": -5.084,
       "parents": [
         "jehoahaz_jehu"
@@ -13976,7 +13976,7 @@
       "name": "여로보암 2세",
       "engName": "Jeroboam II",
       "gender": "M",
-      "generation": 44.88,
+      "generation": 44.91,
       "column": -5.084,
       "parents": [
         "jehoash_jehoahaz"
@@ -13999,7 +13999,7 @@
       "name": "스가랴",
       "engName": "Zechariah",
       "gender": "M",
-      "generation": 45.87,
+      "generation": 45.9,
       "column": -5.084,
       "parents": [
         "jeroboam2"
@@ -14018,7 +14018,7 @@
       "name": "살룸",
       "engName": "Shallum",
       "gender": "M",
-      "generation": 46.86,
+      "generation": 46.89,
       "column": -5.084,
       "parents": [
         "zechariah_jeroboam2"
@@ -14037,7 +14037,7 @@
       "name": "므나헴",
       "engName": "Menahem",
       "gender": "M",
-      "generation": 47.84,
+      "generation": 47.87,
       "column": -5.084,
       "parents": [
         "shallum"
@@ -14056,7 +14056,7 @@
       "name": "브가히야",
       "engName": "Pekahiah",
       "gender": "M",
-      "generation": 48.83,
+      "generation": 48.86,
       "column": -5.084,
       "parents": [
         "menahem"
@@ -14075,7 +14075,7 @@
       "name": "베가",
       "engName": "Pekah",
       "gender": "M",
-      "generation": 49.82,
+      "generation": 49.85,
       "column": -5.084,
       "parents": [
         "pekahiah"
@@ -14094,7 +14094,7 @@
       "name": "호세아(왕)",
       "engName": "Hoshea",
       "gender": "M",
-      "generation": 50.81,
+      "generation": 50.84,
       "column": -5.084,
       "parents": [
         "pekah"
@@ -19915,8 +19915,8 @@
       "name": "아달랴",
       "engName": "Athaliah",
       "gender": "F",
-      "generation": 40.9,
-      "column": -3.887,
+      "generation": 40.93,
+      "column": -3.92,
       "parents": [
         "ahab",
         "jezebel"
@@ -21874,7 +21874,9 @@
           "y": 6136.034323412799
         }
       ],
-      "label_en": "prophets"
+      "label_en": "prophets",
+      "labelOffsetX": 15,
+      "labelOffsetY": 2
     }
   ],
   "events": [
@@ -22004,8 +22006,8 @@
         "rehoboam",
         "jeroboam1"
       ],
-      "x": 15589,
-      "y": 6294,
+      "x": 15559,
+      "y": 6276,
       "engName": "Rehoboam VS Jeroboam always war",
       "engDesc": "Immediately after the split, the two countries continued to be at war."
     },
@@ -22021,8 +22023,8 @@
         "abijah",
         "jeroboam1"
       ],
-      "x": 15585,
-      "y": 6405,
+      "x": 15627,
+      "y": 6348,
       "engName": "Abijah VS Jeroboam War"
     },
     {

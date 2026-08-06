@@ -12209,7 +12209,7 @@ async function syncToServer() {
   };
 
   try {
-    const response = await fetch('/api/save', {
+    const response = await fetch(getApiUrl('/api/save'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -12255,7 +12255,7 @@ async function autoSaveToServer() {
   };
 
   try {
-    const response = await fetch('/api/save', {
+    const response = await fetch(getApiUrl('/api/save'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -12799,6 +12799,14 @@ function closeStyleEditorPanel() {
   styleEditorPanel.classList.remove('active');
 }
 
+function getApiUrl(path) {
+  const baseUrl = window.API_BASE_URL || '';
+  if (baseUrl) {
+    return baseUrl.replace(/\/$/, '') + '/' + path.replace(/^\//, '');
+  }
+  return path;
+}
+
 // ==========================================
 // Authentication & User Notes Logic
 // ==========================================
@@ -12841,7 +12849,7 @@ async function validateSession() {
     return showAuthModal();
   }
   try {
-    const res = await fetch('/api/me', { headers: { 'Authorization': 'Bearer ' + userToken } });
+    const res = await fetch(getApiUrl('/api/me'), { headers: { 'Authorization': 'Bearer ' + userToken } });
     if (!res.ok) throw new Error('Invalid token');
     currentUser = await res.json();
     await fetchUserNotes();
@@ -12883,7 +12891,7 @@ async function handleLogin() {
   
   authMessage.innerText = '로그인 중...';
   try {
-    const res = await fetch('/api/login', {
+    const res = await fetch(getApiUrl('/api/login'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password })
@@ -12908,7 +12916,7 @@ async function handleRegister() {
   
   authMessage.innerText = '가입 중...';
   try {
-    const res = await fetch('/api/register', {
+    const res = await fetch(getApiUrl('/api/register'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password })
@@ -12960,6 +12968,98 @@ const userLogoutBtn = document.getElementById('user-logout-btn');
 const adminLogoutBtn = document.getElementById('admin-logout-btn');
 if (userLogoutBtn) userLogoutBtn.addEventListener('click', handleLogout);
 if (adminLogoutBtn) adminLogoutBtn.addEventListener('click', handleLogout);
+
+window.openAdminDashboard = async () => {
+    try {
+      const res = await fetch(getApiUrl('/api/admin/users'), { headers: { 'Authorization': 'Bearer ' + userToken } });
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.error || '권한이 없습니다.');
+        if (res.status === 401 || res.status === 403) {
+          userToken = null;
+          sessionStorage.removeItem('bible_tree_token');
+          currentUser = null;
+          hideAdminLockControls();
+          showAuthModal();
+        }
+        return;
+      }
+      
+      renderAdminDashboard(data.users);
+      adminDashboardModal.style.display = 'flex';
+    } catch (e) {
+      alert('서버 오류');
+    }
+  };
+
+window.resetPasswordUser = async function(username) {
+  const newPassword = prompt(`'${username}' 사용자의 새 비밀번호를 입력하세요:`, "");
+  if (newPassword === null) return;
+  if (newPassword.trim() === "") return alert("비밀번호를 입력해야 합니다.");
+
+  try {
+    const res = await fetch(getApiUrl('/api/admin/users/reset-password'), {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + userToken
+      },
+      body: JSON.stringify({ username, password: newPassword.trim() })
+    });
+    const data = await res.json();
+    if (!res.ok) return alert(data.error || '비밀번호 재설정 실패');
+    alert('비밀번호가 성공적으로 재설정되었습니다.');
+  } catch (e) {
+    alert('서버 오류');
+  }
+};
+
+window.setExpiryUser = async function(username) {
+  const dateInput = document.getElementById(`expiry-date-${username}`);
+  if (!dateInput) return;
+  const expiryDate = dateInput.value;
+
+  try {
+    const res = await fetch(getApiUrl('/api/admin/users/expiry'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + userToken },
+      body: JSON.stringify({ username, expiryDate })
+    });
+    const data = await res.json();
+    if (!res.ok) return alert(data.error || '오류가 발생했습니다.');
+    alert('기간 설정이 완료되었습니다.');
+  } catch (e) {
+    alert('서버 오류');
+  }
+}
+window.approveUser = async function(username) {
+  try {
+    const res = await fetch(getApiUrl('/api/admin/approve'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + userToken },
+      body: JSON.stringify({ username })
+    });
+    if (res.ok) {
+      alert('승인되었습니다.');
+      window.openAdminDashboard(); // refresh list
+    }
+  } catch(e) {}
+};
+
+window.deleteUser = async function(username) {
+  if (!confirm(`정말로 '${username}' 사용자의 가입을 취소하고 계정을 삭제하시겠습니까? (작성된 메모도 모두 삭제됩니다)`)) return;
+  try {
+    const res = await fetch(getApiUrl('/api/admin/users'), {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + userToken },
+      body: JSON.stringify({ username })
+    });
+    if (res.ok) {
+      alert('삭제되었습니다.');
+      window.openAdminDashboard();
+    }
+  } catch(e) {}
+};
 
 // Update all cards and annotations with note badge indicators based on current userNotes
 function updateAllNoteBadges() {
@@ -13022,7 +13122,7 @@ async function fetchUserNotes() {
   }
   try {
     const authHeader = userToken ? ('Bearer ' + userToken) : ('License ' + licenseKey);
-    const res = await fetch('/api/notes', { headers: { 'Authorization': authHeader } });
+    const res = await fetch(getApiUrl('/api/notes'), { headers: { 'Authorization': authHeader } });
     if (res.ok) {
       const data = await res.json();
       userNotes = data.notes || {};
@@ -13068,7 +13168,7 @@ async function saveUserNotes() {
   if (!userToken && !licenseKey) return;
   try {
     const authHeader = userToken ? ('Bearer ' + userToken) : ('License ' + licenseKey);
-    await fetch('/api/notes', {
+    await fetch(getApiUrl('/api/notes'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': authHeader },
       body: JSON.stringify({ notes: userNotes })
@@ -13235,185 +13335,10 @@ if (bottomRestoreBtn && userNotesFileInput) {
 // User Dashboard
 const adminUsersBtn = document.getElementById('admin-users-btn');
 if (adminUsersBtn) {
-  adminUsersBtn.addEventListener('click', async () => {
-    if (!userToken) return alert('로그인이 필요합니다.');
-
-    try {
-      const res = await fetch('/api/admin/users', { headers: { 'Authorization': 'Bearer ' + userToken } });
-      const data = await res.json();
-      if (!res.ok) {
-        alert(data.error || '권한이 없습니다.');
-        if (res.status === 401 || res.status === 403) {
-          userToken = null;
-          sessionStorage.removeItem('bible_tree_token');
-          currentUser = null;
-          exitAdminMode();
-          hideAdminLockControls();
-          showAuthModal();
-        }
-        return;
-      }
-      
-      renderAdminDashboard(data.users);
-      adminDashboardModal.style.display = 'flex';
-    } catch (e) {
-      alert('서버 오류');
-    }
+  adminUsersBtn.addEventListener('click', () => {
+    window.openAdminDashboard();
   });
 }
-
-// Security Enhancements
-document.addEventListener('contextmenu', e => {
-  const targetEl = e.target && e.target.nodeType === 3 ? e.target.parentElement : e.target;
-  if (targetEl && (targetEl.tagName === 'INPUT' || targetEl.tagName === 'TEXTAREA' || targetEl.isContentEditable || (typeof targetEl.closest === 'function' && targetEl.closest('[contenteditable="true"]')))) return;
-  e.preventDefault();
-});
-document.addEventListener('selectstart', e => {
-  const targetEl = e.target && e.target.nodeType === 3 ? e.target.parentElement : e.target;
-  if (targetEl && (targetEl.tagName === 'INPUT' || targetEl.tagName === 'TEXTAREA' || targetEl.isContentEditable || (typeof targetEl.closest === 'function' && targetEl.closest('[contenteditable="true"]')))) return;
-  e.preventDefault();
-});
-document.addEventListener('dragstart', e => {
-  const targetEl = e.target && e.target.nodeType === 3 ? e.target.parentElement : e.target;
-  if (targetEl && (targetEl.tagName === 'INPUT' || targetEl.tagName === 'TEXTAREA' || targetEl.isContentEditable || (typeof targetEl.closest === 'function' && targetEl.closest('[contenteditable="true"]')))) return;
-  e.preventDefault();
-});
-document.addEventListener('keydown', e => {
-  if (e.keyCode === 123 || // F12
-      (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) || // Ctrl+Shift+I or J
-      (e.ctrlKey && e.keyCode === 85) || // Ctrl+U
-      (e.metaKey && e.altKey && (e.keyCode === 73 || e.keyCode === 74)) || // Cmd+Option+I or J (Mac)
-      (e.metaKey && e.keyCode === 85)) { // Cmd+U (Mac)
-    e.preventDefault();
-  }
-});
-if (adminDashboardCloseBtn) {
-  adminDashboardCloseBtn.addEventListener('click', () => {
-    adminDashboardModal.style.display = 'none';
-  });
-}
-
-function renderAdminDashboard(users) {
-  adminUserList.innerHTML = '';
-  if (users.length === 0) {
-    adminUserList.innerHTML = '<p>가입한 사용자가 없습니다.</p>';
-    return;
-  }
-  users.forEach(u => {
-    const div = document.createElement('div');
-    div.style.padding = '12px 10px';
-    div.style.borderBottom = '1px solid #eee';
-    div.style.display = 'flex';
-    div.style.justifyContent = 'space-between';
-    div.style.alignItems = 'center';
-    div.style.gap = '15px';
-    
-    let buttons = '';
-    if (u.status === 'pending') {
-      buttons += `<button onclick="approveUser('${u.username}')" style="background:#27ae60; color:white; border:none; padding:5px 10px; cursor:pointer; font-weight:bold; border-radius:4px;">승인</button>`;
-    }
-    // Password reset button is available for all accounts
-    buttons += `<button onclick="resetPasswordUser('${u.username}')" style="background:#8e44ad; color:white; border:none; padding:5px 10px; cursor:pointer; font-weight:bold; border-radius:4px;">비번 변경</button>`;
-    
-    if (u.status !== 'admin') {
-      buttons += `<button onclick="deleteUser('${u.username}')" style="background:#e74c3c; color:white; border:none; padding:5px 10px; cursor:pointer; font-weight:bold; border-radius:4px;">삭제</button>`;
-    }
-
-    let expiryHtml = '';
-    if (u.status !== 'admin') {
-      const expiryVal = u.expiryDate || '';
-      expiryHtml = `
-        <div style="display:flex; align-items:center; gap:5px; font-size:12px;">
-          <label style="color:#666; font-weight:bold;">만료일:</label>
-          <input type="date" id="expiry-date-${u.username}" value="${expiryVal}" style="padding:4px; border:1px solid #ccc; border-radius:3px; outline:none;">
-          <button onclick="setExpiryUser('${u.username}')" style="background:#f39c12; color:white; border:none; padding:4px 8px; cursor:pointer; border-radius:3px; font-weight:bold;">설정</button>
-        </div>
-      `;
-    }
-
-    div.innerHTML = `
-      <div style="flex:1; display:flex; flex-direction:column; gap:3px;">
-        <div style="font-size:14px;"><strong>${u.username}</strong> <span style="color:#888; font-size:11px; padding:2px 6px; background:#f1f5f9; border-radius:12px; margin-left:5px;">${u.status}</span></div>
-        <div style="color:#64748b; font-size:12px;">작성한 노트: <span style="color:#0f172a; font-weight:bold;">${u.noteCount || 0}</span>개</div>
-      </div>
-      ${expiryHtml}
-      <div style="display:flex; gap:5px;">${buttons}</div>
-    `;
-    adminUserList.appendChild(div);
-  });
-}
-
-window.resetPasswordUser = async function(username) {
-  const newPassword = prompt(`'${username}' 사용자의 새 비밀번호를 입력하세요:`, "");
-  if (newPassword === null) return;
-  if (newPassword.trim() === "") return alert("비밀번호를 입력해야 합니다.");
-
-  try {
-    const res = await fetch('/api/admin/users/reset-password', {
-      method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + userToken
-      },
-      body: JSON.stringify({ username, password: newPassword.trim() })
-    });
-    const data = await res.json();
-    if (!res.ok) return alert(data.error || '비밀번호 재설정 실패');
-    alert('비밀번호가 성공적으로 재설정되었습니다.');
-  } catch (e) {
-    alert('서버 오류');
-  }
-};
-
-window.setExpiryUser = async function(username) {
-  const dateInput = document.getElementById(`expiry-date-${username}`);
-  if (!dateInput) return;
-  const expiryDate = dateInput.value;
-
-  try {
-    const res = await fetch('/api/admin/users/expiry', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + userToken },
-      body: JSON.stringify({ username, expiryDate })
-    });
-    const data = await res.json();
-    if (!res.ok) return alert(data.error || '오류가 발생했습니다.');
-    alert('기간 설정이 완료되었습니다.');
-  } catch (e) {
-    alert('서버 오류');
-  }
-}
-window.approveUser = async function(username) {
-  try {
-    const res = await fetch('/api/admin/approve', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + userToken },
-      body: JSON.stringify({ username })
-    });
-    if (res.ok) {
-      alert('승인되었습니다.');
-      adminUsersBtn.click(); // refresh list
-    }
-  } catch(e) {}
-};
-
-window.deleteUser = async function(username) {
-  if (!confirm(`정말로 '${username}' 사용자의 가입을 취소하고 계정을 삭제하시겠습니까? (작성된 메모도 모두 삭제됩니다)`)) return;
-  try {
-    const res = await fetch('/api/admin/users', {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + userToken },
-      body: JSON.stringify({ username })
-    });
-    if (res.ok) {
-      alert('삭제되었습니다.');
-      adminUsersBtn.click(); // refresh list
-    } else {
-      const data = await res.json();
-      alert(data.error || '삭제 실패');
-    }
-  } catch(e) {}
-};
 
 // --- Layer Functions ---
 function renderEvents() {
@@ -15281,9 +15206,45 @@ window.demoFeature = function(type) {
   }
 };
 
+function startPeriodicSync() {
+  setInterval(async () => {
+    const licenseKey = localStorage.getItem('bible_genealogy_license_key');
+    if (!userToken && !licenseKey) return;
+    
+    try {
+      const authHeader = userToken ? ('Bearer ' + userToken) : ('License ' + licenseKey);
+      const res = await fetch(getApiUrl('/api/notes'), { headers: { 'Authorization': authHeader } });
+      if (res.ok) {
+        const data = await res.json();
+        const serverNotes = data.notes || {};
+        
+        const serverNotesStr = JSON.stringify(serverNotes);
+        const localNotesStr = JSON.stringify(userNotes);
+        
+        if (serverNotesStr !== localNotesStr) {
+          const noteTextarea = document.getElementById('note-text');
+          const isTextareaFocused = noteTextarea && (document.activeElement === noteTextarea);
+          
+          userNotes = serverNotes;
+          localStorage.setItem('bible_tree_user_notes', JSON.stringify(userNotes));
+          updateAllNoteBadges();
+          
+          if (noteTextarea && activePersonId && !isTextareaFocused) {
+            noteTextarea.value = userNotes[activePersonId] || '';
+          }
+        }
+      }
+    } catch (e) {
+      console.log("Periodic notes sync failed:", e);
+    }
+  }, 10000);
+}
+
 // Android Back Button Navigation for Capacitor
 if (typeof window !== 'undefined') {
   window.addEventListener('DOMContentLoaded', () => {
+    startPeriodicSync();
+    
     const App = window.Capacitor?.Plugins?.App;
     if (App) {
       App.addListener('backButton', () => {
