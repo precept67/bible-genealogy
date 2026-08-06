@@ -12869,7 +12869,7 @@ function getApiUrl(path) {
 // ==========================================
 
 let currentUser = null;
-let userToken = sessionStorage.getItem('bible_tree_token') || null;
+let userToken = localStorage.getItem('bible_tree_token') || null;
 let userNotes = {}; // { characterId: "text" }
 
 const authModal = document.getElementById('auth-modal');
@@ -12917,7 +12917,7 @@ async function validateSession() {
     if (landing) landing.style.display = 'none';
   } catch (e) {
     userToken = null;
-    sessionStorage.removeItem('bible_tree_token');
+    localStorage.removeItem('bible_tree_token');
     hideAdminLockControls();
     showAuthModal();
   }
@@ -12960,7 +12960,7 @@ async function handleLogin() {
       return;
     }
     userToken = data.token;
-    sessionStorage.setItem('bible_tree_token', userToken);
+    localStorage.setItem('bible_tree_token', userToken);
     await validateSession();
   } catch (e) {
     authMessage.innerText = '서버 연결 실패';
@@ -13020,7 +13020,7 @@ if (authModal) {
 
 function handleLogout() {
   if (confirm("로그아웃 하시겠습니까?")) {
-    sessionStorage.removeItem('bible_tree_token');
+    localStorage.removeItem('bible_tree_token');
     window.location.reload();
   }
 }
@@ -13119,7 +13119,7 @@ window.openAdminDashboard = async () => {
         alert(data.error || '권한이 없습니다.');
         if (res.status === 401 || res.status === 403) {
           userToken = null;
-          sessionStorage.removeItem('bible_tree_token');
+          localStorage.removeItem('bible_tree_token');
           currentUser = null;
           hideAdminLockControls();
           showAuthModal();
