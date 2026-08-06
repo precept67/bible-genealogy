@@ -17201,7 +17201,7 @@
     },
     {
       "id": "shelah-1",
-      "name": "셀라",
+      "name": "셀���",
       "engName": "Shelah",
       "gender": "M",
       "generation": 22.1,
@@ -22155,6 +22155,25 @@
       "y": 7814,
       "engName": "Joash VS Amaziah War",
       "engDesc": "After Jehu's revolution, the alliance broke down, leading to a show of pride and conflict between the North and South.\nAmaziah of southern Judah, who defeated Edom, provoked war against Joash of northern Israel, but was defeated. Joash demolished the walls of Jerusalem and plundered the temple treasures."
+    },
+    {
+      "id": "ev-1786029213751",
+      "name": "느헤미야의 예루살렘 성벽 성곽 중건 완공",
+      "desc": "예루살렘 성벽이 허물어지고 성문이 소화되었다는 소식을 듣고 눈물로 기도한 술관원 느헤미야가, 총독으로 부임해 대적들의 방해 속에 한 손엔 병기를 들고 52일 만에 성벽을 완성한 중건.",
+      "refs": [
+        "느헤미야 4:17",
+        "느헤미야 6:15"
+      ],
+      "relatedLocations": [
+        "loc-jerusalem_walls"
+      ],
+      "relatedPeople": [
+        "zerubbabel"
+      ],
+      "x": 22079,
+      "y": 7696,
+      "engName": "Nehemiah's Rebuilding and Completion of the Jerusalem Walls",
+      "engDesc": "Nehemiah, the cupbearer who wept and prayed upon hearing that the walls of Jerusalem were broken and its gates burned, returned as governor and successfully completed the reconstruction of the walls in 52 days under constant threat, with workers holding weapons in one hand."
     }
   ],
   "locations": [
@@ -22264,6 +22283,25 @@
       "relatedPeople": [],
       "x": 5000,
       "y": 5000
+    },
+    {
+      "id": "loc-1786029363695",
+      "name": "예루살렘 성벽",
+      "desc": "느헤미야 총독의 헌신과 이스라엘 백성들의 일치단결로 방해자들의 위협 속에서도 52일 만에 중건한 예루살렘 성벽 성곽.",
+      "refs": [
+        "느헤미야 2:17",
+        "느헤미야 6:15"
+      ],
+      "relatedEvents": [
+        "ev-walls_rebuild"
+      ],
+      "relatedPeople": [
+        "zerubbabel"
+      ],
+      "x": 22077,
+      "y": 7772,
+      "engName": "Jerusalem Walls",
+      "engDesc": "The walls and ramparts of Jerusalem rebuilt in 52 days under governor Nehemiah's leadership and the unified dedication of the Israelites despite threats from adversaries."
     }
   ]
 }
