@@ -2375,7 +2375,7 @@
       "engName": "Reuben",
       "gender": "M",
       "generation": 22,
-      "column": -39.583,
+      "column": -39.769,
       "parents": [
         "jacob",
         "leah"
@@ -2395,7 +2395,7 @@
       "engName": "Hanoch",
       "gender": "M",
       "generation": 23,
-      "column": -40.522,
+      "column": -40.708,
       "parents": [
         "reuben"
       ],
@@ -2414,7 +2414,7 @@
       "engName": "Pallu",
       "gender": "M",
       "generation": 23,
-      "column": -39.859,
+      "column": -40.045,
       "parents": [
         "reuben"
       ],
@@ -2433,7 +2433,7 @@
       "engName": "Hezron",
       "gender": "M",
       "generation": 23,
-      "column": -39.197,
+      "column": -39.383,
       "parents": [
         "reuben"
       ],
@@ -2444,7 +2444,8 @@
       "teachers": [],
       "prophets": [],
       "relatedPeople": [],
-      "engDesc": "Reuben's third son. The ancestor of the Hezron race."
+      "engDesc": "Reuben's third son. The ancestor of the Hezron race.",
+      "isProphet": false
     },
     {
       "id": "carmi_reuben",
@@ -2452,7 +2453,7 @@
       "engName": "Carmi",
       "gender": "M",
       "generation": 23,
-      "column": -38.533,
+      "column": -38.719,
       "parents": [
         "reuben"
       ],
@@ -2471,7 +2472,7 @@
       "engName": "Hanochites",
       "gender": "M",
       "generation": 24,
-      "column": -40.522,
+      "column": -40.708,
       "parents": [
         "hanoch_reuben"
       ],
@@ -2490,7 +2491,7 @@
       "engName": "Palluites",
       "gender": "M",
       "generation": 24,
-      "column": -39.859,
+      "column": -40.045,
       "parents": [
         "pallu_reuben"
       ],
@@ -2509,7 +2510,7 @@
       "engName": "Hezronites",
       "gender": "M",
       "generation": 24,
-      "column": -39.197,
+      "column": -39.383,
       "parents": [
         "hezron_reuben"
       ],
@@ -2528,7 +2529,7 @@
       "engName": "Carmites",
       "gender": "M",
       "generation": 24,
-      "column": -38.533,
+      "column": -38.719,
       "parents": [
         "carmi_reuben"
       ],
@@ -2547,7 +2548,7 @@
       "engName": "Eliab",
       "gender": "M",
       "generation": 25,
-      "column": -39.859,
+      "column": -40.045,
       "parents": [
         "palluites"
       ],
@@ -2566,7 +2567,7 @@
       "engName": "Nemuel",
       "gender": "M",
       "generation": 26,
-      "column": -40.522,
+      "column": -40.708,
       "parents": [
         "eliab_reuben"
       ],
@@ -2585,7 +2586,7 @@
       "engName": "Dathan",
       "gender": "M",
       "generation": 26,
-      "column": -39.859,
+      "column": -40.045,
       "parents": [
         "eliab_reuben"
       ],
@@ -2604,7 +2605,7 @@
       "engName": "Abiram",
       "gender": "M",
       "generation": 26,
-      "column": -39.197,
+      "column": -39.383,
       "parents": [
         "eliab_reuben"
       ],
@@ -3370,7 +3371,7 @@
       "engName": "Dan",
       "gender": "M",
       "generation": 22.09,
-      "column": 78.052,
+      "column": 78.11,
       "parents": [
         "jacob",
         "bilhah"
@@ -3459,7 +3460,8 @@
       "teachers": [],
       "prophets": [],
       "relatedPeople": [],
-      "engDesc": "Naphtali's third son."
+      "engDesc": "Naphtali's third son.",
+      "isProphet": false
     },
     {
       "id": "shillem",
@@ -3478,7 +3480,7 @@
       "teachers": [],
       "prophets": [],
       "relatedPeople": [],
-      "engDesc": "납달리의 넷째 아들."
+      "engDesc": "Naphtali's fourth son."
     },
     {
       "id": "gad",
@@ -3517,7 +3519,8 @@
       "teachers": [],
       "prophets": [],
       "relatedPeople": [],
-      "engDesc": "The first son of Gad."
+      "engDesc": "The first son of Gad.",
+      "isProphet": false
     },
     {
       "id": "haggi_gad",
@@ -3636,7 +3639,7 @@
     {
       "id": "asher",
       "name": "아셀",
-      "engName": "Aser",
+      "engName": "Asher",
       "gender": "M",
       "generation": 22,
       "column": 32.797,
@@ -3651,7 +3654,8 @@
       "teachers": [],
       "prophets": [],
       "relatedPeople": [],
-      "engDesc": "Ancestor of the tribe of Asher. 기름진 음식을 낼 자."
+      "engDesc": "Ancestor of the tribe of Asher. 기름진 음식을 낼 자.",
+      "isProphet": false
     },
     {
       "id": "imnah_asher",
@@ -3765,7 +3769,8 @@
       "teachers": [],
       "prophets": [],
       "relatedPeople": [],
-      "engDesc": "Son of Bria."
+      "engDesc": "Son of Bria.",
+      "isProphet": false
     },
     {
       "id": "malchiel_beriah",
@@ -3822,7 +3827,7 @@
       "teachers": [],
       "prophets": [],
       "relatedPeople": [],
-      "engDesc": "헤벨의 아들 (세멜)."
+      "engDesc": "Son of Heber (Semer)."
     },
     {
       "id": "hotham_heber",
@@ -3841,7 +3846,7 @@
       "teachers": [],
       "prophets": [],
       "relatedPeople": [],
-      "engDesc": "헤벨의 아들 (헬렘)."
+      "engDesc": "Son of Heber (Helem)."
     },
     {
       "id": "shua_heber",
@@ -4936,7 +4941,7 @@
     {
       "id": "ard",
       "name": "아릇",
-      "engName": "Ard",
+      "engName": "Arah",
       "gender": "M",
       "generation": 23.03,
       "column": 76.16,
@@ -4950,7 +4955,8 @@
       "teachers": [],
       "prophets": [],
       "relatedPeople": [],
-      "engDesc": "Son of Benjamin."
+      "engDesc": "Son of Benjamin.",
+      "isProphet": false
     },
     {
       "id": "addar",
@@ -6304,8 +6310,8 @@
       "name": "헤스론",
       "engName": "Hezron",
       "gender": "M",
-      "generation": 24,
-      "column": 0.021,
+      "generation": 24.01,
+      "column": 0.024,
       "parents": [
         "perez"
       ],
@@ -6319,7 +6325,8 @@
       "teachers": [],
       "prophets": [],
       "relatedPeople": [],
-      "engDesc": "Son of Perez."
+      "engDesc": "Son of Perez.",
+      "isProphet": false
     },
     {
       "id": "machir_daughter",
@@ -8615,7 +8622,7 @@
       "engName": "Ram",
       "gender": "M",
       "generation": 25,
-      "column": 0.018,
+      "column": 0.024,
       "parents": [
         "hezron"
       ],
@@ -9287,8 +9294,8 @@
       "name": "암미나답",
       "engName": "Amminadab",
       "gender": "M",
-      "generation": 26,
-      "column": 0.018,
+      "generation": 25.98,
+      "column": 0.023,
       "parents": [
         "ram"
       ],
@@ -9307,7 +9314,7 @@
       "engName": "Nahshon",
       "gender": "M",
       "generation": 27,
-      "column": 0.018,
+      "column": 0.021,
       "parents": [
         "amminadab"
       ],
@@ -9347,7 +9354,7 @@
       "engName": "Rahab",
       "gender": "F",
       "generation": 28,
-      "column": -1.062,
+      "column": -1.059,
       "parents": [],
       "spouses": [
         "salmon"
@@ -9366,7 +9373,7 @@
       "engName": "Boaz",
       "gender": "M",
       "generation": 29,
-      "column": 0.018,
+      "column": 0.021,
       "parents": [
         "salmon",
         "rahab"
@@ -9388,7 +9395,7 @@
       "engName": "Ruth",
       "gender": "F",
       "generation": 29,
-      "column": 1.067,
+      "column": 1.07,
       "parents": [],
       "spouses": [
         "boaz",
@@ -9408,7 +9415,7 @@
       "engName": "Obed",
       "gender": "M",
       "generation": 30,
-      "column": 0.018,
+      "column": 0.021,
       "parents": [
         "boaz",
         "ruth"
@@ -9448,7 +9455,7 @@
       "engName": "Jesse",
       "gender": "M",
       "generation": 31,
-      "column": 0.018,
+      "column": 0.021,
       "parents": [
         "obed"
       ],
@@ -9491,7 +9498,7 @@
       "engName": "Eliab",
       "gender": "M",
       "generation": 32,
-      "column": -8.146,
+      "column": -8.143,
       "parents": [
         "jesse"
       ],
@@ -9510,7 +9517,7 @@
       "engName": "Abinadab",
       "gender": "M",
       "generation": 32,
-      "column": -7.229,
+      "column": -7.226,
       "parents": [
         "jesse"
       ],
@@ -9529,7 +9536,7 @@
       "engName": "Shimea",
       "gender": "M",
       "generation": 32,
-      "column": -6.338,
+      "column": -6.335,
       "parents": [
         "jesse"
       ],
@@ -9548,7 +9555,7 @@
       "engName": "Nethaneel",
       "gender": "M",
       "generation": 32,
-      "column": -5.458,
+      "column": -5.455,
       "parents": [
         "jesse"
       ],
@@ -9567,7 +9574,7 @@
       "engName": "Raddai",
       "gender": "M",
       "generation": 32,
-      "column": -4.583,
+      "column": -4.58,
       "parents": [
         "jesse"
       ],
@@ -9586,7 +9593,7 @@
       "engName": "Ozem",
       "gender": "M",
       "generation": 32,
-      "column": -3.716,
+      "column": -3.713,
       "parents": [
         "jesse"
       ],
@@ -9605,7 +9612,7 @@
       "engName": "David",
       "gender": "M",
       "generation": 32,
-      "column": 0.014,
+      "column": 0.017,
       "parents": [
         "jesse"
       ],
@@ -9638,7 +9645,7 @@
       "engName": "Zeruiah",
       "gender": "F",
       "generation": 32,
-      "column": 11.476,
+      "column": 11.479,
       "parents": [
         "jesse"
       ],
@@ -9657,7 +9664,7 @@
       "engName": "Abigail",
       "gender": "F",
       "generation": 32,
-      "column": 10.716,
+      "column": 10.719,
       "parents": [
         "jesse"
       ],
@@ -9676,7 +9683,7 @@
       "engName": "Abihail",
       "gender": "F",
       "generation": 33,
-      "column": -8.454,
+      "column": -8.451,
       "parents": [
         "eliab_jesse"
       ],
@@ -9695,7 +9702,7 @@
       "engName": "Bathsheba",
       "gender": "F",
       "generation": 32,
-      "column": 1.114,
+      "column": 1.117,
       "parents": [],
       "spouses": [
         "david"
@@ -9714,7 +9721,7 @@
       "engName": "Michal",
       "gender": "F",
       "generation": 32,
-      "column": -1.105,
+      "column": -1.102,
       "parents": [],
       "spouses": [
         "david"
@@ -9733,7 +9740,7 @@
       "engName": "Ahinoam",
       "gender": "F",
       "generation": 32,
-      "column": 2.1,
+      "column": 2.103,
       "parents": [],
       "spouses": [
         "david"
@@ -9752,7 +9759,7 @@
       "engName": "Abigail",
       "gender": "F",
       "generation": 32,
-      "column": 3.113,
+      "column": 3.116,
       "parents": [],
       "spouses": [
         "david"
@@ -9771,7 +9778,7 @@
       "engName": "Maacah",
       "gender": "F",
       "generation": 32,
-      "column": 4.15,
+      "column": 4.153,
       "parents": [],
       "spouses": [
         "david"
@@ -9790,7 +9797,7 @@
       "engName": "Haggith",
       "gender": "F",
       "generation": 32,
-      "column": 5.342,
+      "column": 5.345,
       "parents": [],
       "spouses": [
         "david"
@@ -9809,7 +9816,7 @@
       "engName": "Abital",
       "gender": "F",
       "generation": 32,
-      "column": 6.558,
+      "column": 6.561,
       "parents": [],
       "spouses": [
         "david"
@@ -9828,7 +9835,7 @@
       "engName": "Eglah",
       "gender": "F",
       "generation": 32,
-      "column": 7.984,
+      "column": 7.987,
       "parents": [],
       "spouses": [
         "david"
@@ -9847,7 +9854,7 @@
       "engName": "Other Wives",
       "gender": "F",
       "generation": 32,
-      "column": 9.859,
+      "column": 9.862,
       "parents": [],
       "spouses": [
         "david"
@@ -9927,7 +9934,7 @@
       "engName": "Shimea",
       "gender": "M",
       "generation": 33,
-      "column": -7.696,
+      "column": -7.693,
       "parents": [
         "david",
         "bathsheba"
@@ -9948,7 +9955,7 @@
       "engName": "Shobab",
       "gender": "M",
       "generation": 33,
-      "column": -6.971,
+      "column": -6.968,
       "parents": [
         "david",
         "bathsheba"
@@ -9969,7 +9976,7 @@
       "engName": "Amnon",
       "gender": "M",
       "generation": 33,
-      "column": 2.021,
+      "column": 2.024,
       "parents": [
         "david",
         "ahinoam_david"
@@ -9990,7 +9997,7 @@
       "engName": "Daniel",
       "gender": "M",
       "generation": 33,
-      "column": 2.838,
+      "column": 2.841,
       "parents": [
         "david",
         "abigail_david"
@@ -10011,7 +10018,7 @@
       "engName": "Absalom",
       "gender": "M",
       "generation": 33,
-      "column": 3.654,
+      "column": 3.657,
       "parents": [
         "david",
         "maachah_david"
@@ -10032,7 +10039,7 @@
       "engName": "Tamar",
       "gender": "F",
       "generation": 33,
-      "column": 4.471,
+      "column": 4.474,
       "parents": [
         "david",
         "maachah_david"
@@ -10053,7 +10060,7 @@
       "engName": "Maacah",
       "gender": "F",
       "generation": 34,
-      "column": 3.654,
+      "column": 3.657,
       "parents": [
         "absalom_david"
       ],
@@ -10072,7 +10079,7 @@
       "engName": "Adonijah",
       "gender": "M",
       "generation": 33.01,
-      "column": 5.575,
+      "column": 5.578,
       "parents": [
         "david",
         "haggith_david"
@@ -10093,7 +10100,7 @@
       "engName": "Shephatiah",
       "gender": "M",
       "generation": 33,
-      "column": 6.383,
+      "column": 6.386,
       "parents": [
         "david",
         "abital_david"
@@ -10114,7 +10121,7 @@
       "engName": "Ithream",
       "gender": "M",
       "generation": 33,
-      "column": 7.192,
+      "column": 7.195,
       "parents": [
         "david",
         "eglah_david"
@@ -10135,7 +10142,7 @@
       "engName": "Ibhar",
       "gender": "M",
       "generation": 33,
-      "column": 8.067,
+      "column": 8.07,
       "parents": [
         "david",
         "other_wives_david"
@@ -10156,7 +10163,7 @@
       "engName": "Elishua",
       "gender": "M",
       "generation": 33,
-      "column": 8.75,
+      "column": 8.753,
       "parents": [
         "david",
         "other_wives_david"
@@ -10177,7 +10184,7 @@
       "engName": "Eliphelet",
       "gender": "M",
       "generation": 33,
-      "column": 9.429,
+      "column": 9.432,
       "parents": [
         "david",
         "other_wives_david"
@@ -10198,7 +10205,7 @@
       "engName": "Nogah",
       "gender": "M",
       "generation": 33.01,
-      "column": 10.112,
+      "column": 10.115,
       "parents": [
         "david",
         "other_wives_david"
@@ -10219,7 +10226,7 @@
       "engName": "Nepheg",
       "gender": "M",
       "generation": 33,
-      "column": 10.8,
+      "column": 10.803,
       "parents": [
         "david",
         "other_wives_david"
@@ -10240,7 +10247,7 @@
       "engName": "Japhia",
       "gender": "M",
       "generation": 33,
-      "column": 11.475,
+      "column": 11.478,
       "parents": [
         "david",
         "other_wives_david"
@@ -10261,7 +10268,7 @@
       "engName": "Elishama",
       "gender": "M",
       "generation": 33,
-      "column": 12.154,
+      "column": 12.157,
       "parents": [
         "david",
         "other_wives_david"
@@ -10282,7 +10289,7 @@
       "engName": "Eliada",
       "gender": "M",
       "generation": 33,
-      "column": 12.829,
+      "column": 12.832,
       "parents": [
         "david",
         "other_wives_david"
@@ -10303,7 +10310,7 @@
       "engName": "Eliphelet",
       "gender": "M",
       "generation": 33,
-      "column": 13.5,
+      "column": 13.503,
       "parents": [
         "david",
         "other_wives_david"
@@ -10324,7 +10331,7 @@
       "engName": "Solomon",
       "gender": "M",
       "generation": 33,
-      "column": 0,
+      "column": 0.003,
       "parents": [
         "david",
         "bathsheba"
@@ -10349,7 +10356,7 @@
       "engName": "Naamah",
       "gender": "F",
       "generation": 33,
-      "column": 1.18,
+      "column": 1.183,
       "parents": [],
       "spouses": [
         "solomon"
@@ -10368,7 +10375,7 @@
       "engName": "Nathan",
       "gender": "M",
       "generation": 33,
-      "column": -6.129,
+      "column": -6.126,
       "parents": [
         "david",
         "bathsheba"
@@ -10409,7 +10416,7 @@
       "engName": "Rehoboam",
       "gender": "M",
       "generation": 34,
-      "column": 0.014,
+      "column": 0.017,
       "parents": [
         "solomon",
         "naamah_ammon"
@@ -10432,7 +10439,7 @@
       "engName": "Maacah",
       "gender": "F",
       "generation": 34,
-      "column": 1.173,
+      "column": 1.176,
       "parents": [],
       "spouses": [
         "rehoboam"
@@ -10451,7 +10458,7 @@
       "engName": "Mahalath",
       "gender": "F",
       "generation": 34,
-      "column": -0.9,
+      "column": -0.897,
       "parents": [],
       "spouses": [
         "rehoboam"
@@ -10470,7 +10477,7 @@
       "engName": "Taphath",
       "gender": "F",
       "generation": 34,
-      "column": -1.658,
+      "column": -1.655,
       "parents": [
         "solomon"
       ],
@@ -10489,7 +10496,7 @@
       "engName": "Basemath",
       "gender": "F",
       "generation": 34,
-      "column": -2.361,
+      "column": -2.358,
       "parents": [
         "solomon"
       ],
@@ -10508,7 +10515,7 @@
       "engName": "Abijah",
       "gender": "M",
       "generation": 35,
-      "column": 0.014,
+      "column": 0.017,
       "parents": [
         "rehoboam",
         "maacah"
@@ -10528,7 +10535,7 @@
       "engName": "Jeush",
       "gender": "M",
       "generation": 35,
-      "column": -2.204,
+      "column": -2.201,
       "parents": [
         "rehoboam",
         "mahalath_rehoboam"
@@ -10548,7 +10555,7 @@
       "engName": "Shemariah",
       "gender": "M",
       "generation": 35,
-      "column": -1.504,
+      "column": -1.501,
       "parents": [
         "rehoboam",
         "mahalath_rehoboam"
@@ -10568,7 +10575,7 @@
       "engName": "Zaham",
       "gender": "M",
       "generation": 35,
-      "column": -0.804,
+      "column": -0.801,
       "parents": [
         "rehoboam",
         "mahalath_rehoboam"
@@ -10588,7 +10595,7 @@
       "engName": "Attai",
       "gender": "M",
       "generation": 35,
-      "column": 1.596,
+      "column": 1.599,
       "parents": [
         "rehoboam",
         "maacah"
@@ -10608,7 +10615,7 @@
       "engName": "Ziza",
       "gender": "M",
       "generation": 35,
-      "column": 2.296,
+      "column": 2.299,
       "parents": [
         "rehoboam",
         "maacah"
@@ -10628,7 +10635,7 @@
       "engName": "Shelomith",
       "gender": "M",
       "generation": 35,
-      "column": 2.996,
+      "column": 2.999,
       "parents": [
         "rehoboam",
         "maacah"
@@ -10648,7 +10655,7 @@
       "engName": "Asa",
       "gender": "M",
       "generation": 36,
-      "column": 0.014,
+      "column": 0.017,
       "parents": [
         "abijah"
       ],
@@ -10672,7 +10679,7 @@
       "engName": "Azubah",
       "gender": "F",
       "generation": 36,
-      "column": 1.171,
+      "column": 1.174,
       "parents": [],
       "spouses": [
         "asa"
@@ -10691,7 +10698,7 @@
       "engName": "Jehoshaphat",
       "gender": "M",
       "generation": 37,
-      "column": 0.014,
+      "column": 0.017,
       "parents": [
         "asa",
         "azubah_asa"
@@ -10715,7 +10722,7 @@
       "engName": "Jehoram",
       "gender": "M",
       "generation": 38,
-      "column": 0.014,
+      "column": 0.017,
       "parents": [
         "jehoshaphat"
       ],
@@ -10736,7 +10743,7 @@
       "engName": "Athaliah",
       "gender": "F",
       "generation": 38,
-      "column": 1.196,
+      "column": 1.199,
       "parents": [],
       "spouses": [
         "jehoram"
@@ -10755,7 +10762,7 @@
       "engName": "Azariah",
       "gender": "M",
       "generation": 38,
-      "column": 2.096,
+      "column": 2.099,
       "parents": [
         "jehoshaphat"
       ],
@@ -10774,7 +10781,7 @@
       "engName": "Jehiel",
       "gender": "M",
       "generation": 38,
-      "column": 3.496,
+      "column": 3.499,
       "parents": [
         "jehoshaphat"
       ],
@@ -10793,7 +10800,7 @@
       "engName": "Zechariah",
       "gender": "M",
       "generation": 38,
-      "column": 2.796,
+      "column": 2.799,
       "parents": [
         "jehoshaphat"
       ],
@@ -10812,7 +10819,7 @@
       "engName": "Azariah",
       "gender": "M",
       "generation": 38,
-      "column": 4.196,
+      "column": 4.199,
       "parents": [
         "jehoshaphat"
       ],
@@ -10831,7 +10838,7 @@
       "engName": "Michael",
       "gender": "M",
       "generation": 38,
-      "column": 4.896,
+      "column": 4.899,
       "parents": [
         "jehoshaphat"
       ],
@@ -10850,7 +10857,7 @@
       "engName": "Shephatiah",
       "gender": "M",
       "generation": 38,
-      "column": 5.596,
+      "column": 5.599,
       "parents": [
         "jehoshaphat"
       ],
@@ -10869,7 +10876,7 @@
       "engName": "Ahaziah",
       "gender": "M",
       "generation": 39,
-      "column": 0.014,
+      "column": 0.017,
       "parents": [
         "jehoram",
         "athaliah"
@@ -10891,7 +10898,7 @@
       "engName": "Zibiah",
       "gender": "F",
       "generation": 39,
-      "column": 1.2,
+      "column": 1.203,
       "parents": [],
       "spouses": [
         "ahaziah"
@@ -10910,7 +10917,7 @@
       "engName": "Jehosheba",
       "gender": "F",
       "generation": 39,
-      "column": -0.804,
+      "column": -0.801,
       "parents": [],
       "spouses": [
         "jehoiada"
@@ -10929,7 +10936,7 @@
       "engName": "Jehoiada",
       "gender": "M",
       "generation": 39,
-      "column": -1.704,
+      "column": -1.701,
       "parents": [
         "jehoram",
         "athaliah"
@@ -10950,8 +10957,8 @@
       "name": "요아스 왕",
       "engName": "Joash",
       "gender": "M",
-      "generation": 39.912,
-      "column": 0.014,
+      "generation": 39.91,
+      "column": 0.017,
       "parents": [
         "ahaziah",
         "zibiah"
@@ -10973,7 +10980,7 @@
       "engName": "Jehoaddan",
       "gender": "F",
       "generation": 39.91,
-      "column": 1.196,
+      "column": 1.199,
       "parents": [],
       "spouses": [
         "joash"
@@ -10991,8 +10998,8 @@
       "name": "아마샤 왕",
       "engName": "Amaziah",
       "gender": "M",
-      "generation": 40.824,
-      "column": 0.014,
+      "generation": 40.82,
+      "column": 0.017,
       "parents": [
         "joash",
         "jehoaddan"
@@ -11014,7 +11021,7 @@
       "engName": "Jecholiah",
       "gender": "F",
       "generation": 40.82,
-      "column": 1.195,
+      "column": 1.198,
       "parents": [],
       "spouses": [
         "amaziah"
@@ -11032,8 +11039,8 @@
       "name": "웃시야 왕",
       "engName": "Uzziah",
       "gender": "M",
-      "generation": 41.736,
-      "column": 0.014,
+      "generation": 41.74,
+      "column": 0.017,
       "parents": [
         "amaziah",
         "jecholiah"
@@ -11055,7 +11062,7 @@
       "engName": "Jerusha",
       "gender": "F",
       "generation": 41.74,
-      "column": 1.193,
+      "column": 1.196,
       "parents": [],
       "spouses": [
         "uzziah"
@@ -11073,8 +11080,8 @@
       "name": "요담 왕",
       "engName": "Jotham",
       "gender": "M",
-      "generation": 42.648,
-      "column": 0.014,
+      "generation": 42.65,
+      "column": 0.017,
       "parents": [
         "uzziah",
         "jerusha"
@@ -11094,7 +11101,7 @@
       "engName": "Ahaz",
       "gender": "M",
       "generation": 43.56,
-      "column": 0.014,
+      "column": 0.017,
       "parents": [
         "jotham"
       ],
@@ -11115,7 +11122,7 @@
       "engName": "Abijah",
       "gender": "F",
       "generation": 43.56,
-      "column": 1.196,
+      "column": 1.199,
       "parents": [],
       "spouses": [
         "ahaz"
@@ -11133,8 +11140,8 @@
       "name": "히스기야 왕",
       "engName": "Hezekiah",
       "gender": "M",
-      "generation": 44.472,
-      "column": 0.014,
+      "generation": 44.47,
+      "column": 0.017,
       "parents": [
         "ahaz",
         "abijah_queen"
@@ -11156,7 +11163,7 @@
       "engName": "Hephzibah",
       "gender": "F",
       "generation": 44.47,
-      "column": 1.188,
+      "column": 1.191,
       "parents": [],
       "spouses": [
         "hezekiah"
@@ -11174,8 +11181,8 @@
       "name": "므낫세 왕",
       "engName": "Manasseh",
       "gender": "M",
-      "generation": 45.384,
-      "column": 0.022,
+      "generation": 45.38,
+      "column": 0.025,
       "parents": [
         "hezekiah",
         "hephzibah"
@@ -11197,7 +11204,7 @@
       "engName": "Meshullemeth",
       "gender": "F",
       "generation": 45.39,
-      "column": 1.181,
+      "column": 1.184,
       "parents": [],
       "spouses": [
         "manasseh_king"
@@ -11215,8 +11222,8 @@
       "name": "아몬 왕",
       "engName": "Amon",
       "gender": "M",
-      "generation": 46.296,
-      "column": 0.014,
+      "generation": 46.3,
+      "column": 0.017,
       "parents": [
         "manasseh_king",
         "meshullemeth"
@@ -11238,7 +11245,7 @@
       "engName": "Jedidah",
       "gender": "F",
       "generation": 46.29,
-      "column": 1.193,
+      "column": 1.196,
       "parents": [],
       "spouses": [
         "amon"
@@ -11257,7 +11264,7 @@
       "engName": "Josiah",
       "gender": "M",
       "generation": 47.22,
-      "column": 0.014,
+      "column": 0.017,
       "parents": [
         "amon",
         "jedidah"
@@ -11284,7 +11291,7 @@
       "engName": "Hamutal",
       "gender": "F",
       "generation": 47.22,
-      "column": -1.079,
+      "column": -1.076,
       "parents": [],
       "spouses": [
         "josiah"
@@ -11303,7 +11310,7 @@
       "engName": "Zebidah",
       "gender": "F",
       "generation": 47.22,
-      "column": 1.214,
+      "column": 1.217,
       "parents": [],
       "spouses": [
         "josiah"
@@ -11322,7 +11329,7 @@
       "engName": "Jehoahaz",
       "gender": "M",
       "generation": 48.12,
-      "column": 0.017,
+      "column": 0.02,
       "parents": [
         "josiah",
         "hamutal"
@@ -11344,7 +11351,7 @@
       "engName": "Jehoiakim",
       "gender": "M",
       "generation": 49.03,
-      "column": 0.014,
+      "column": 0.017,
       "parents": [
         "josiah",
         "zebidah"
@@ -11368,7 +11375,7 @@
       "engName": "Nehushta",
       "gender": "F",
       "generation": 49.03,
-      "column": 1.214,
+      "column": 1.217,
       "parents": [],
       "spouses": [
         "jehoiakim"
@@ -11386,8 +11393,8 @@
       "name": "시드기야 왕",
       "engName": "Zedekiah",
       "gender": "M",
-      "generation": 50.856,
-      "column": 0.023,
+      "generation": 50.86,
+      "column": 0.026,
       "parents": [
         "josiah",
         "hamutal"
@@ -11408,8 +11415,8 @@
       "name": "여고냐(여호야긴)",
       "engName": "Jeconiah",
       "gender": "M",
-      "generation": 49.944,
-      "column": 0.014,
+      "generation": 49.94,
+      "column": 0.017,
       "parents": [
         "jehoiakim",
         "nehushta"
@@ -11430,8 +11437,8 @@
       "name": "스알디엘",
       "engName": "Shealtiel",
       "gender": "M",
-      "generation": 51.768,
-      "column": 0.019,
+      "generation": 51.77,
+      "column": 0.022,
       "parents": [
         "jeconiah"
       ],
@@ -11450,7 +11457,7 @@
       "engName": "Zerubbabel",
       "gender": "M",
       "generation": 52.68,
-      "column": 0.017,
+      "column": 0.02,
       "parents": [
         "shealtiel"
       ],
@@ -11468,8 +11475,8 @@
       "name": "아비훗",
       "engName": "Abiud",
       "gender": "M",
-      "generation": 53.592,
-      "column": 0.014,
+      "generation": 53.59,
+      "column": 0.017,
       "parents": [
         "zerubbabel"
       ],
@@ -11487,8 +11494,8 @@
       "name": "엘리아김",
       "engName": "Eliakim",
       "gender": "M",
-      "generation": 54.504,
-      "column": 0.014,
+      "generation": 54.5,
+      "column": 0.017,
       "parents": [
         "abiud"
       ],
@@ -11506,8 +11513,8 @@
       "name": "아소르",
       "engName": "Azor",
       "gender": "M",
-      "generation": 55.416,
-      "column": 0.014,
+      "generation": 55.42,
+      "column": 0.017,
       "parents": [
         "eliakim"
       ],
@@ -11525,8 +11532,8 @@
       "name": "사독",
       "engName": "Zadok",
       "gender": "M",
-      "generation": 56.328,
-      "column": 0.017,
+      "generation": 56.33,
+      "column": 0.02,
       "parents": [
         "azor"
       ],
@@ -11545,7 +11552,7 @@
       "engName": "Achim",
       "gender": "M",
       "generation": 57.24,
-      "column": 0.014,
+      "column": 0.017,
       "parents": [
         "zadok_gen56"
       ],
@@ -11563,8 +11570,8 @@
       "name": "엘리웃",
       "engName": "Eliud",
       "gender": "M",
-      "generation": 58.152,
-      "column": 0.014,
+      "generation": 58.15,
+      "column": 0.017,
       "parents": [
         "achim"
       ],
@@ -11582,8 +11589,8 @@
       "name": "엘르아살",
       "engName": "Eleazar",
       "gender": "M",
-      "generation": 59.064,
-      "column": 0.013,
+      "generation": 59.06,
+      "column": 0.016,
       "parents": [
         "eliud"
       ],
@@ -11601,8 +11608,8 @@
       "name": "맛단",
       "engName": "Matthan",
       "gender": "M",
-      "generation": 59.976,
-      "column": 0.014,
+      "generation": 59.98,
+      "column": 0.017,
       "parents": [
         "eleazar"
       ],
@@ -11620,8 +11627,8 @@
       "name": "야곱",
       "engName": "Jacob",
       "gender": "M",
-      "generation": 60.888,
-      "column": 0.017,
+      "generation": 60.89,
+      "column": 0.02,
       "parents": [
         "matthan"
       ],
@@ -11640,7 +11647,7 @@
       "engName": "Heli",
       "gender": "M",
       "generation": 61.08,
-      "column": -6.133,
+      "column": -6.13,
       "parents": [
         "matthat_luke2"
       ],
@@ -11659,7 +11666,7 @@
       "engName": "Joseph",
       "gender": "M",
       "generation": 61.8,
-      "column": 0.018,
+      "column": 0.021,
       "parents": [
         "jacob_joseph"
       ],
@@ -11680,7 +11687,7 @@
       "engName": "Mary",
       "gender": "F",
       "generation": 61.8,
-      "column": -6.133,
+      "column": -6.13,
       "parents": [
         "heli"
       ],
@@ -11701,7 +11708,7 @@
       "engName": "Jesus Christ",
       "gender": "M",
       "generation": 62.8,
-      "column": -3.055,
+      "column": -3.052,
       "parents": [
         "joseph_mary",
         "mary"
@@ -11721,7 +11728,7 @@
       "engName": "Mattatha",
       "gender": "M",
       "generation": 33.72,
-      "column": -6.133,
+      "column": -6.13,
       "parents": [
         "nathan"
       ],
@@ -11740,7 +11747,7 @@
       "engName": "Menna",
       "gender": "M",
       "generation": 34.44,
-      "column": -6.133,
+      "column": -6.13,
       "parents": [
         "mattatha"
       ],
@@ -11759,7 +11766,7 @@
       "engName": "Melea",
       "gender": "M",
       "generation": 35.16,
-      "column": -6.133,
+      "column": -6.13,
       "parents": [
         "menna"
       ],
@@ -11778,7 +11785,7 @@
       "engName": "Eliakim",
       "gender": "M",
       "generation": 35.88,
-      "column": -6.133,
+      "column": -6.13,
       "parents": [
         "melea"
       ],
@@ -11797,7 +11804,7 @@
       "engName": "Jonam",
       "gender": "M",
       "generation": 36.6,
-      "column": -6.133,
+      "column": -6.13,
       "parents": [
         "eliakim_luke"
       ],
@@ -11816,7 +11823,7 @@
       "engName": "Joseph",
       "gender": "M",
       "generation": 37.32,
-      "column": -6.133,
+      "column": -6.13,
       "parents": [
         "jonam"
       ],
@@ -11835,7 +11842,7 @@
       "engName": "Judah",
       "gender": "M",
       "generation": 38.04,
-      "column": -6.133,
+      "column": -6.13,
       "parents": [
         "joseph_luke1"
       ],
@@ -11854,7 +11861,7 @@
       "engName": "Simeon",
       "gender": "M",
       "generation": 38.76,
-      "column": -6.133,
+      "column": -6.13,
       "parents": [
         "judah_luke1"
       ],
@@ -11873,7 +11880,7 @@
       "engName": "Levi",
       "gender": "M",
       "generation": 39.48,
-      "column": -6.133,
+      "column": -6.13,
       "parents": [
         "simeon_luke"
       ],
@@ -11892,7 +11899,7 @@
       "engName": "Matthat",
       "gender": "M",
       "generation": 40.2,
-      "column": -6.133,
+      "column": -6.13,
       "parents": [
         "levi_luke1"
       ],
@@ -11911,7 +11918,7 @@
       "engName": "Jorim",
       "gender": "M",
       "generation": 40.92,
-      "column": -6.133,
+      "column": -6.13,
       "parents": [
         "matthat_luke1"
       ],
@@ -11930,7 +11937,7 @@
       "engName": "Eliezer",
       "gender": "M",
       "generation": 41.64,
-      "column": -6.133,
+      "column": -6.13,
       "parents": [
         "jorim"
       ],
@@ -11949,7 +11956,7 @@
       "engName": "Jesus",
       "gender": "M",
       "generation": 42.36,
-      "column": -6.133,
+      "column": -6.13,
       "parents": [
         "eliezer_luke"
       ],
@@ -11968,7 +11975,7 @@
       "engName": "Er",
       "gender": "M",
       "generation": 43.08,
-      "column": -6.133,
+      "column": -6.13,
       "parents": [
         "joshua_luke"
       ],
@@ -11987,7 +11994,7 @@
       "engName": "Elmadam",
       "gender": "M",
       "generation": 43.8,
-      "column": -6.133,
+      "column": -6.13,
       "parents": [
         "er_luke"
       ],
@@ -12006,7 +12013,7 @@
       "engName": "Cosam",
       "gender": "M",
       "generation": 44.52,
-      "column": -6.133,
+      "column": -6.13,
       "parents": [
         "elmadam"
       ],
@@ -12025,7 +12032,7 @@
       "engName": "Addi",
       "gender": "M",
       "generation": 45.24,
-      "column": -6.133,
+      "column": -6.13,
       "parents": [
         "cosam"
       ],
@@ -12044,7 +12051,7 @@
       "engName": "Melchi",
       "gender": "M",
       "generation": 45.96,
-      "column": -6.133,
+      "column": -6.13,
       "parents": [
         "addi"
       ],
@@ -12063,7 +12070,7 @@
       "engName": "Neri",
       "gender": "M",
       "generation": 46.68,
-      "column": -6.133,
+      "column": -6.13,
       "parents": [
         "melchi_luke1"
       ],
@@ -12082,7 +12089,7 @@
       "engName": "Shealtiel",
       "gender": "M",
       "generation": 47.4,
-      "column": -6.134,
+      "column": -6.131,
       "parents": [
         "neri"
       ],
@@ -12101,7 +12108,7 @@
       "engName": "Zerubbabel",
       "gender": "M",
       "generation": 48.12,
-      "column": -6.134,
+      "column": -6.131,
       "parents": [
         "shealtiel_luke"
       ],
@@ -12120,7 +12127,7 @@
       "engName": "Rhesa",
       "gender": "M",
       "generation": 48.84,
-      "column": -6.137,
+      "column": -6.134,
       "parents": [
         "zerubbabel_luke"
       ],
@@ -12139,7 +12146,7 @@
       "engName": "Joanan",
       "gender": "M",
       "generation": 49.56,
-      "column": -6.133,
+      "column": -6.13,
       "parents": [
         "rhesa"
       ],
@@ -12158,7 +12165,7 @@
       "engName": "Joda",
       "gender": "M",
       "generation": 50.28,
-      "column": -6.133,
+      "column": -6.13,
       "parents": [
         "joanan"
       ],
@@ -12177,7 +12184,7 @@
       "engName": "Josech",
       "gender": "M",
       "generation": 51,
-      "column": -6.133,
+      "column": -6.13,
       "parents": [
         "joda"
       ],
@@ -12196,7 +12203,7 @@
       "engName": "Semein",
       "gender": "M",
       "generation": 51.72,
-      "column": -6.133,
+      "column": -6.13,
       "parents": [
         "josech"
       ],
@@ -12215,7 +12222,7 @@
       "engName": "Mattathias",
       "gender": "M",
       "generation": 52.44,
-      "column": -6.133,
+      "column": -6.13,
       "parents": [
         "semein"
       ],
@@ -12234,7 +12241,7 @@
       "engName": "Maath",
       "gender": "M",
       "generation": 53.16,
-      "column": -6.133,
+      "column": -6.13,
       "parents": [
         "mattathias_luke1"
       ],
@@ -12253,7 +12260,7 @@
       "engName": "Naggai",
       "gender": "M",
       "generation": 53.88,
-      "column": -6.133,
+      "column": -6.13,
       "parents": [
         "maath"
       ],
@@ -12272,7 +12279,7 @@
       "engName": "Esli",
       "gender": "M",
       "generation": 54.6,
-      "column": -6.133,
+      "column": -6.13,
       "parents": [
         "naggai"
       ],
@@ -12291,7 +12298,7 @@
       "engName": "Nahum",
       "gender": "M",
       "generation": 55.32,
-      "column": -6.133,
+      "column": -6.13,
       "parents": [
         "esli"
       ],
@@ -12310,7 +12317,7 @@
       "engName": "Amos",
       "gender": "M",
       "generation": 56.04,
-      "column": -6.133,
+      "column": -6.13,
       "parents": [
         "nahum"
       ],
@@ -12329,7 +12336,7 @@
       "engName": "Mattathias",
       "gender": "M",
       "generation": 56.76,
-      "column": -6.133,
+      "column": -6.13,
       "parents": [
         "amos"
       ],
@@ -12348,7 +12355,7 @@
       "engName": "Joseph",
       "gender": "M",
       "generation": 57.48,
-      "column": -6.133,
+      "column": -6.13,
       "parents": [
         "mattathias_luke2"
       ],
@@ -12367,7 +12374,7 @@
       "engName": "Jannai",
       "gender": "M",
       "generation": 58.2,
-      "column": -6.133,
+      "column": -6.13,
       "parents": [
         "joseph_luke2"
       ],
@@ -12386,7 +12393,7 @@
       "engName": "Melchi",
       "gender": "M",
       "generation": 58.92,
-      "column": -6.133,
+      "column": -6.13,
       "parents": [
         "jannai"
       ],
@@ -12405,7 +12412,7 @@
       "engName": "Levi",
       "gender": "M",
       "generation": 59.64,
-      "column": -6.133,
+      "column": -6.13,
       "parents": [
         "melchi_luke2"
       ],
@@ -12424,7 +12431,7 @@
       "engName": "Matthat",
       "gender": "M",
       "generation": 60.36,
-      "column": -6.133,
+      "column": -6.13,
       "parents": [
         "levi_luke2"
       ],
@@ -15380,7 +15387,7 @@
     },
     {
       "id": "jeshebeab_div",
-      "name": "예세브압",
+      "name": "예세브���",
       "engName": "Jeshebeab",
       "gender": "M",
       "generation": 45.84,
@@ -17072,7 +17079,7 @@
       "engName": "mahion",
       "gender": "M",
       "generation": 29,
-      "column": 2.1,
+      "column": 2.103,
       "parents": [
         "Elimelech",
         "naomi"
@@ -17201,7 +17208,7 @@
     },
     {
       "id": "shelah-1",
-      "name": "셀���",
+      "name": "셀라",
       "engName": "Shelah",
       "gender": "M",
       "generation": 22.1,
@@ -17216,7 +17223,9 @@
       "isManual": true,
       "teachers": [],
       "prophets": [],
-      "relatedPeople": []
+      "relatedPeople": [],
+      "engDesc": "",
+      "isProphet": false
     },
     {
       "id": "er-1",
@@ -19108,8 +19117,8 @@
       "name": "마노아",
       "engName": "manoah",
       "gender": "M",
-      "generation": 23.08,
-      "column": 78.055,
+      "generation": 24.16,
+      "column": 78.078,
       "parents": [],
       "spouses": [],
       "teachers": [],
@@ -19125,8 +19134,8 @@
       "name": "삼손",
       "engName": "Samson",
       "gender": "M",
-      "generation": 24.01,
-      "column": 78.053,
+      "generation": 25.09,
+      "column": 78.076,
       "parents": [
         "manoah-dan"
       ],
@@ -19147,8 +19156,8 @@
       "name": "들릴라",
       "engName": "deiilah",
       "gender": "F",
-      "generation": 24.01,
-      "column": 79.032,
+      "generation": 25.09,
+      "column": 79.055,
       "parents": [],
       "spouses": [
         "samson-dan"
@@ -19166,8 +19175,8 @@
       "name": "삼손의 부인",
       "engName": "Samson",
       "gender": "F",
-      "generation": 24.01,
-      "column": 77.074,
+      "generation": 25.09,
+      "column": 77.097,
       "parents": [],
       "spouses": [
         "samson-dan"
@@ -19907,7 +19916,8 @@
       "desc": "B.C. 458년(바사 왕 아닥사스다 1세 재위 7년)에 제2차 포로 귀환(에스라 7:1)",
       "isMain": false,
       "isProphet": false,
-      "isManual": true
+      "isManual": true,
+      "engDesc": "B.C. Second return from captivity in 458 (7th year of reign of King Artaxerxes I of Persia) (Ezra 7:1)"
     },
     {
       "id": "Hacaliah",
@@ -19982,6 +19992,26 @@
       "relatedPeople": [],
       "desc": "예루살렘 성벽이 파괴된 채 방치되어 있다는 소식을 듣고 왕의 허락을 받아 유다 총독으로 부임했습니다. 대적들의 방해와 위협 속에서도 52일 만에 성벽 재건을 완공",
       "engDesc": "Appointed governor of Judah by the Persian king after hearing of the broken walls of Jerusalem. Successfully rebuilt the wall in 52 days despite threats (Nehemiah 1-6)",
+      "isMain": false,
+      "isProphet": false,
+      "isManual": true
+    },
+    {
+      "id": "hushim_1",
+      "name": "후심",
+      "engName": "Hushim",
+      "gender": "M",
+      "generation": 23.04,
+      "column": 78.111,
+      "parents": [
+        "dan"
+      ],
+      "spouses": [],
+      "teachers": [],
+      "prophets": [],
+      "relatedPeople": [],
+      "desc": "단 지파의 아들 (창세기 46:23, 민수기 26:42에서는 '슈함/Shuham'으로도 불림)",
+      "engDesc": "Son of the tribe of Dan (also called 'Shuham' in Genesis 46:23 and Numbers 26:42)",
       "isMain": false,
       "isProphet": false,
       "isManual": true
@@ -20776,8 +20806,8 @@
     {
       "id": "annotation_1785294842193_ncx8hriqj",
       "text": "12대 사사 , 20년 \n(삿 13-16장)\n",
-      "x": 34960.75143779742,
-      "y": 4511.517754443042,
+      "x": 34974.73322403357,
+      "y": 4725.439083856107,
       "width": 166,
       "height": 75,
       "fontSize": 20,
@@ -20956,7 +20986,9 @@
           "y": 1440
         }
       ],
-      "label_en": "Cain descendants line"
+      "label_en": "Cain descendants line",
+      "labelOffsetX": 32.53226240007701,
+      "labelOffsetY": -14.14446191307696
     },
     {
       "id": "poly-japheth",
@@ -20981,7 +21013,9 @@
           "y": 2340
         }
       ],
-      "label_en": "Descendants of Japheth (European/Northern people)"
+      "label_en": "Descendants of Japheth (European/Northern people)",
+      "labelOffsetX": 32.532262400077016,
+      "labelOffsetY": -9.901123339153873
     },
     {
       "id": "poly-ham",
@@ -21032,8 +21066,8 @@
         }
       ],
       "label_en": "Descendants of Joktan (Arabian tribal confederation)",
-      "labelOffsetX": 1733,
-      "labelOffsetY": -1
+      "labelOffsetX": 1549.1219951299995,
+      "labelOffsetY": -9.486677147846176
     },
     {
       "id": "poly-keturah",
@@ -21059,8 +21093,8 @@
         }
       ],
       "label_en": "Descendants of Keturah (Arabian tribes such as Midian)",
-      "labelOffsetX": 998,
-      "labelOffsetY": -3
+      "labelOffsetX": 839.5820265735381,
+      "labelOffsetY": -8.657784765230783
     },
     {
       "id": "poly-ishmael",
@@ -21086,8 +21120,8 @@
         }
       ],
       "label_en": "Descendants of the 12 princes of Ishmael (Arab people)",
-      "labelOffsetX": 1875,
-      "labelOffsetY": -1
+      "labelOffsetX": 1693.9508875126148,
+      "labelOffsetY": -10.901123339153873
     },
     {
       "id": "poly-mary",
@@ -21112,7 +21146,9 @@
           "y": 11310
         }
       ],
-      "label_en": "Mary's Genealogy (Luke 3 Lineage)"
+      "label_en": "Mary's Genealogy (Luke 3 Lineage)",
+      "labelOffsetX": -28.288923826153923,
+      "labelOffsetY": -4.243338573923088
     },
     {
       "id": "poly-custom-1785266075158",
@@ -21137,7 +21173,9 @@
           "y": 4998.0145519272855
         }
       ],
-      "label_en": "Tribe of Issachar (Genesis 46:13; Numbers 26:23,24; 1 Chronicles 7:1-4)"
+      "label_en": "Tribe of Issachar (Genesis 46:13; Numbers 26:23,24; 1 Chronicles 7:1-4)",
+      "labelOffsetX": 12.730015721769265,
+      "labelOffsetY": -12.730015721769265
     },
     {
       "id": "poly-custom-1785292170590",
@@ -21162,8 +21200,8 @@
           "y": 3949.122033404291
         }
       ],
-      "labelOffsetX": 38,
-      "labelOffsetY": 1,
+      "labelOffsetX": 36.5855538086923,
+      "labelOffsetY": -11.730015721769265,
       "label_en": "Esau's genealogy (Genesis 11:27-32, Genesis 36:1-5, Genesis 36:9-30, Genesis 36:40-43, 1 Chronicles 1:34-32, 1 Chronicles 1:521-54)"
     },
     {
@@ -21189,8 +21227,8 @@
           "y": 3957.001514118072
         }
       ],
-      "labelOffsetX": -291,
-      "labelOffsetY": -4,
+      "labelOffsetX": -307.97335429569233,
+      "labelOffsetY": -11.07223095653848,
       "label_en": "Horite chieftains (Genesis 36:20-30)"
     },
     {
@@ -21200,7 +21238,7 @@
       "fillOpacity": 0.03,
       "points": [
         {
-          "x": 6330,
+          "x": 6320,
           "y": 4020
         },
         {
@@ -21428,8 +21466,8 @@
         }
       ],
       "label_en": "Tribe of Judah (Gen. 46, Chron. 2)",
-      "labelOffsetX": -7149,
-      "labelOffsetY": 1
+      "labelOffsetX": -7158.901123339154,
+      "labelOffsetY": -7.486677147846177
     },
     {
       "id": "poly-custom-1785472524528",
@@ -21454,8 +21492,8 @@
           "y": 5005.19947749838
         }
       ],
-      "labelOffsetX": -523,
-      "labelOffsetY": 1,
+      "labelOffsetX": -506.02664570430767,
+      "labelOffsetY": -11.730015721769265,
       "label_en": "Tribe of Zebulun (Genesis 46:14, 1 Chronicles 26:26)"
     },
     {
@@ -21648,12 +21686,12 @@
           "y": 4038
         },
         {
-          "x": 35383.47559795476,
-          "y": 4639.001552880824
+          "x": 35390,
+          "y": 4870
         },
         {
-          "x": 34707.09755637339,
-          "y": 4639.001552880824
+          "x": 34710,
+          "y": 4870
         }
       ],
       "label_en": "Tribe of Dan (Genesis 46:23, Numbers 26:42-43)"
@@ -21939,8 +21977,8 @@
         }
       ],
       "label_en": "prophets",
-      "labelOffsetX": 15,
-      "labelOffsetY": 2
+      "labelOffsetX": 17.828892382615393,
+      "labelOffsetY": -9.31556953046157
     }
   ],
   "events": [
@@ -22015,8 +22053,8 @@
         "abraham",
         "isaac"
       ],
-      "x": 16600,
-      "y": 3632,
+      "x": 16625,
+      "y": 3641,
       "engName": "Reader Isaac’s Burnt Offering on Mount Moriah",
       "engDesc": "When God asked Abraham to sacrifice his only son Isaac, whom he had at the age of 100, to test his faith, when he was about to raise his sword to offer him up, Yahweh prepared a ram for him."
     },
@@ -22032,8 +22070,8 @@
         "loc-shinar"
       ],
       "relatedPeople": [],
-      "x": 16480,
-      "y": 2599,
+      "x": 16562,
+      "y": 2591,
       "engName": "Construction of the Tower of Babel and language confusion",
       "engDesc": "When mankind tried to make a name for themselves and avoid being scattered by building a tower that reached the sky, God confused their language and scattered them all over the earth."
     },
@@ -22200,6 +22238,114 @@
       "y": 4483,
       "engName": "Parting of the Red Sea and Annihilation of the Egyptian Army",
       "engDesc": "The miracle of liberation where Moses parted the Red Sea with his staff, allowing the Israelites to cross on dry ground, and drowned the pursuing Egyptian horsemen and chariots in the sea."
+    },
+    {
+      "id": "ev-1786032977555",
+      "name": "야곱 온 가족의 고센 땅 애굽 이주",
+      "desc": "전례 없는 기근 속에서 요셉의 통치권 하에 있던 애굽으로 70명의 야곱 권속이 수레를 타고 정착하여 거대한 민족의 기틀을 마련한 사건.",
+      "refs": [
+        "창세기 46:27",
+        "창세기 47:1"
+      ],
+      "relatedLocations": [
+        "loc-1786036569158-55"
+      ],
+      "relatedPeople": [
+        "carmi_reuben",
+        "gad",
+        "gera_benjamin",
+        "gershon_levi",
+        "kohath",
+        "guni",
+        "naaman_benjamin",
+        "naphtali",
+        "dan",
+        "tola_issachar",
+        "dinah",
+        "levi",
+        "rosh",
+        "reuben",
+        "malchiel_beriah",
+        "muppim",
+        "manasseh",
+        "merari_levi",
+        "pallu_reuben",
+        "becher",
+        "benjamin",
+        "perez",
+        "bela",
+        "puah_issachar",
+        "beriah_asher",
+        "shaul_simeon",
+        "serah_asher",
+        "zerah",
+        "sered_zebulun",
+        "shelah-1",
+        "shuni_gad",
+        "zebulun",
+        "zohar_simeon",
+        "shimron_issachar",
+        "simeon",
+        "ziphion_gad",
+        "shillem",
+        "areli_gad",
+        "arodi_gad",
+        "ard",
+        "asher",
+        "ashbel",
+        "jacob",
+        "jachin_simeon",
+        "jamin_simeon",
+        "jahzeel",
+        "jahleel_zebulun",
+        "eri_gad",
+        "ephraim",
+        "ezbon_gad",
+        "ehi",
+        "elon_zebulun",
+        "jemuel_simeon",
+        "jezer",
+        "ohad_simeon",
+        "joseph",
+        "jashub_issachar",
+        "judah",
+        "ishvah_asher",
+        "ishvi_asher",
+        "imnah_asher",
+        "issachar",
+        "hanoch_reuben",
+        "hamul",
+        "haggi_gad",
+        "heber_beriah",
+        "hezron_reuben",
+        "hezron",
+        "hushim_1",
+        "huppim"
+      ],
+      "x": 16580,
+      "y": 3849,
+      "engName": "Jacob's entire family migrates from Egypt to the land of Goshen",
+      "engDesc": "An incident in which 70 members of Jacob's family settled by wagon in Egypt, under Joseph's rule, during an unprecedented famine, laying the foundation for a great nation."
+    },
+    {
+      "id": "ev-1786037573263",
+      "name": "선악과 사건과 인류의 타락",
+      "desc": "뱀의 유혹으로 하와와 아담이 선악과를 먹고 하나님의 명령을 어겨 에덴동산에서 추방당하고 인류에 죄가 들어온 사건.",
+      "refs": [
+        "창세기 3:6",
+        "창세기 3:23"
+      ],
+      "relatedLocations": [
+        "loc-eden"
+      ],
+      "relatedPeople": [
+        "adam",
+        "eve"
+      ],
+      "x": 16025,
+      "y": 165,
+      "engName": "The Forbidden Fruit and the Fall of Mankind",
+      "engDesc": "The incident where Adam and Eve, tempted by the serpent, ate the forbidden fruit and disobeyed God's command, resulting in their expulsion from the Garden of Eden and the entry of sin into the world."
     }
   ],
   "locations": [
@@ -22256,8 +22402,8 @@
       "relatedPeople": [
         "noah"
       ],
-      "x": 16480,
-      "y": 2671,
+      "x": 16568,
+      "y": 2661,
       "engName": "Plain of Shinar",
       "engDesc": "A plain where Noah's descendants gathered to build the Tower of Babel and oppose God."
     },
@@ -22302,15 +22448,6 @@
       "engDesc": "This is the mountain where Abraham attempted to sacrifice his only son Isaac as a burnt offering, and the place where Solomon's temple was later built."
     },
     {
-      "id": "loc-1785964008527-61",
-      "name": "loc-haran",
-      "desc": "자동 생성된 장소",
-      "refs": [],
-      "relatedPeople": [],
-      "x": 5000,
-      "y": 5000
-    },
-    {
       "id": "loc-1786029363695",
       "name": "예루살렘 성벽",
       "desc": "느헤미야 총독의 헌신과 이스라엘 백성들의 일치단결로 방해자들의 위협 속에서도 52일 만에 중건한 예루살렘 성벽 성곽.",
@@ -22328,6 +22465,25 @@
       "y": 7772,
       "engName": "Jerusalem Walls",
       "engDesc": "The walls and ramparts of Jerusalem rebuilt in 52 days under governor Nehemiah's leadership and the unified dedication of the Israelites despite threats from adversaries."
+    },
+    {
+      "id": "loc-1786033012492",
+      "name": "애굽 고센 땅",
+      "desc": "가나안 기근 때 요셉의 초청으로 입성한 야곱의 가족들이 정착하여 번성한 비옥한 목초지.",
+      "refs": [
+        "창세기 47:6"
+      ],
+      "relatedEvents": [
+        "ev-goshen_migration"
+      ],
+      "relatedPeople": [
+        "jacob",
+        "joseph"
+      ],
+      "x": 16580,
+      "y": 3940,
+      "engName": "land of Goshen, Egypt",
+      "engDesc": "A fertile pasture where Jacob's family, who entered the country at the invitation of Joseph during the Canaan famine, settled and prospered."
     }
   ]
 }
