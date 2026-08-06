@@ -5886,7 +5886,7 @@ function renderTree() {
     // Render Inner HTML: Localized name, English/Korean name swap, localized description
     const localizedName = getCharName(char);
     // In English mode, exclude Korean description from the namebox card
-    const localizedDesc = currentLang === 'en' ? (char.engDesc || '') : (char.desc || '');
+    const localizedDesc = currentLang === 'en' ? (char.engDesc || char.desc || '') : (char.desc || '');
     const secondaryName = currentLang === 'en' ? char.name : char.engName;
     const descText = localizedDesc ? ` · <span class="card-desc">${localizedDesc}</span>` : '';
     const subtitle = `${secondaryName}${descText}`;
@@ -10323,11 +10323,19 @@ function openStudyPanel(personId) {
   if (!char) return;
   
   const infoTitleEl = document.getElementById('panel-info-title');
-  if (infoTitleEl) infoTitleEl.textContent = '성경 속 인물 정보';
+  if (infoTitleEl) {
+    infoTitleEl.textContent = currentLang === 'en' ? 'Biblical Character Info' : '성경 속 인물 정보';
+  }
   
-  document.getElementById('panel-name').textContent = char.name;
-  document.getElementById('panel-eng').textContent = `${char.engName} (${char.gender === 'M' ? '남성' : '여성'})`;
-  document.getElementById('panel-desc').textContent = char.desc || '정보가 없습니다.';
+  if (currentLang === 'en') {
+    document.getElementById('panel-name').textContent = char.engName;
+    document.getElementById('panel-eng').textContent = `${char.name} (${char.gender === 'M' ? 'Male' : 'Female'})`;
+    document.getElementById('panel-desc').textContent = char.engDesc || char.desc || 'No description available.';
+  } else {
+    document.getElementById('panel-name').textContent = char.name;
+    document.getElementById('panel-eng').textContent = `${char.engName} (${char.gender === 'M' ? '남성' : '여성'})`;
+    document.getElementById('panel-desc').textContent = char.desc || '정보가 없습니다.';
+  }
   
   const noteTextarea = document.getElementById('note-text');
   const savedNote = userNotes[personId] || '';
