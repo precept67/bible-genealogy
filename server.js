@@ -128,7 +128,7 @@ function handlePost(req, res, data, method, rawBody) {
     
     users[username] = {
       passwordHash: hashPassword(password),
-      status: isFirstUser ? 'admin' : 'pending' // pending, approved, admin
+      status: isFirstUser ? 'admin' : 'approved' // pending, approved, admin
     };
     writeJson(USERS_FILE, users);
     return sendJson(res, 200, { success: true, status: users[username].status });
