@@ -2025,18 +2025,25 @@ window.addEventListener('DOMContentLoaded', () => {
     
     if (selectedPersonIds.size === 0) return;
     
+    let amount = 0.1;
+    if (e.altKey) {
+      amount = 0.01;      // Alt (Option) key for fine micro-adjustments
+    } else if (e.ctrlKey || e.metaKey) {
+      amount = 0.001;     // Ctrl / Cmd key for ultra-fine adjustments
+    }
+
     if (e.key === 'ArrowLeft') {
       e.preventDefault();
-      nudgeSelectedPerson(-0.1, false, e.shiftKey);
+      nudgeSelectedPerson(-amount, false, e.shiftKey);
     } else if (e.key === 'ArrowRight') {
       e.preventDefault();
-      nudgeSelectedPerson(0.1, false, e.shiftKey);
+      nudgeSelectedPerson(amount, false, e.shiftKey);
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
-      nudgeSelectedPerson(-0.1, true, e.shiftKey);
+      nudgeSelectedPerson(-amount, true, e.shiftKey);
     } else if (e.key === 'ArrowDown') {
       e.preventDefault();
-      nudgeSelectedPerson(0.1, true, e.shiftKey);
+      nudgeSelectedPerson(amount, true, e.shiftKey);
     } else if (e.key === 'Escape') {
       e.preventDefault();
       selectedPersonIds.clear();
