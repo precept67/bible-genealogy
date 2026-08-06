@@ -9902,7 +9902,7 @@
     },
     {
       "id": "michal_daughter",
-      "name": "미갈(사울딸)",
+      "name": "미갈",
       "engName": "Michal",
       "gender": "F",
       "generation": 29.95,
@@ -9918,7 +9918,8 @@
       "teachers": [],
       "prophets": [],
       "relatedPeople": [],
-      "engDesc": "King Saul's daughter. Becomes King David's first wife."
+      "engDesc": "King Saul's daughter. Becomes King David's first wife.",
+      "isProphet": false
     },
     {
       "id": "shimea_bathsheba",
@@ -11587,7 +11588,7 @@
         "eliud"
       ],
       "spouses": [],
-      "desc": "엘리웃의 아들.",
+      "desc": "���리��의 아들.",
       "isMain": true,
       "isManual": true,
       "teachers": [],
@@ -15591,8 +15592,8 @@
       "name": "사가랴",
       "engName": "Zechariah",
       "gender": "M",
-      "generation": 46.14,
-      "column": -30.355,
+      "generation": 61.79,
+      "column": -30.232,
       "parents": [
         "abijah_div"
       ],
@@ -15612,8 +15613,8 @@
       "name": "엘리사벳",
       "engName": "Elizabeth",
       "gender": "F",
-      "generation": 46.14,
-      "column": -29.155,
+      "generation": 61.79,
+      "column": -29.032,
       "parents": [],
       "spouses": [
         "zechariah_priest_div"
@@ -15631,8 +15632,8 @@
       "name": "세례 요한",
       "engName": "John the Baptist",
       "gender": "M",
-      "generation": 47.14,
-      "column": -30.355,
+      "generation": 62.81,
+      "column": -29.633,
       "parents": [
         "zechariah_priest_div",
         "elizabeth_priest_div"
@@ -15644,7 +15645,8 @@
       "teachers": [],
       "prophets": [],
       "relatedPeople": [],
-      "engDesc": "Son of Zechariah and Elizabeth. One who prepares the way for the Lord."
+      "engDesc": "Son of Zechariah and Elizabeth. One who prepares the way for the Lord.",
+      "isProphet": true
     },
     {
       "id": "abinadab_ark",
@@ -16468,7 +16470,7 @@
     },
     {
       "id": "shemaiah_joel",
-      "name": "스마야(요엘아들)",
+      "name": "스마야",
       "engName": "Shemaiah",
       "gender": "M",
       "generation": 28.03,
@@ -16483,7 +16485,8 @@
       "teachers": [],
       "prophets": [],
       "relatedPeople": [],
-      "engDesc": "Son of Joel."
+      "engDesc": "Son of Joel.",
+      "isProphet": false
     },
     {
       "id": "gog_shemaiah",
@@ -16506,7 +16509,7 @@
     },
     {
       "id": "shimei_gog",
-      "name": "시므이(곡아들)",
+      "name": "시므이",
       "engName": "Shimei",
       "gender": "M",
       "generation": 30.03,
@@ -16521,11 +16524,12 @@
       "teachers": [],
       "prophets": [],
       "relatedPeople": [],
-      "engDesc": "Son of Gog."
+      "engDesc": "Son of Gog.",
+      "isProphet": false
     },
     {
       "id": "micah_shimei",
-      "name": "미가(시므이아들)",
+      "name": "미가",
       "engName": "Micah",
       "gender": "M",
       "generation": 31.03,
@@ -16540,11 +16544,12 @@
       "teachers": [],
       "prophets": [],
       "relatedPeople": [],
-      "engDesc": "Son of Shimei."
+      "engDesc": "Son of Shimei.",
+      "isProphet": false
     },
     {
       "id": "reaiah_micah",
-      "name": "르아야(미가아들)",
+      "name": "르아야",
       "engName": "Reaiah",
       "gender": "M",
       "generation": 32.03,
@@ -16559,7 +16564,8 @@
       "teachers": [],
       "prophets": [],
       "relatedPeople": [],
-      "engDesc": "Son of Micah."
+      "engDesc": "Son of Micah.",
+      "isProphet": false
     },
     {
       "id": "baal_reaiah",
@@ -16637,7 +16643,7 @@
     },
     {
       "id": "amashiah_jamlech",
-      "name": "아마시야(시므온)",
+      "name": "아마시야",
       "engName": "Joshah's Father",
       "gender": "M",
       "generation": 26.84,
@@ -16652,7 +16658,8 @@
       "teachers": [],
       "prophets": [],
       "relatedPeople": [],
-      "engDesc": "Losa's father."
+      "engDesc": "Losa's father.",
+      "isProphet": false
     },
     {
       "id": "joshah_amashiah",
@@ -16675,7 +16682,7 @@
     },
     {
       "id": "joel_joshah",
-      "name": "요엘(요사아들)",
+      "name": "요엘",
       "engName": "Joel",
       "gender": "M",
       "generation": 28.84,
@@ -16690,7 +16697,8 @@
       "teachers": [],
       "prophets": [],
       "relatedPeople": [],
-      "engDesc": "Son of Josa."
+      "engDesc": "Son of Josa.",
+      "isProphet": false
     },
     {
       "id": "asiel_joel",
@@ -16713,7 +16721,7 @@
     },
     {
       "id": "seraiah_asiel",
-      "name": "스라야(아시엘아들)",
+      "name": "스라야",
       "engName": "Seraiah",
       "gender": "M",
       "generation": 30.84,
@@ -16728,7 +16736,8 @@
       "teachers": [],
       "prophets": [],
       "relatedPeople": [],
-      "engDesc": "Son of Asiel. Josibiah's father."
+      "engDesc": "Son of Asiel. Josibiah's father.",
+      "isProphet": false
     },
     {
       "id": "joshibiah_seraiah",
@@ -16751,7 +16760,7 @@
     },
     {
       "id": "jehu_joshibiah",
-      "name": "예후(시므온)",
+      "name": "예후",
       "engName": "Jehu",
       "gender": "M",
       "generation": 32.84,
@@ -16766,7 +16775,8 @@
       "teachers": [],
       "prophets": [],
       "relatedPeople": [],
-      "engDesc": "Son of Josibiah. Simeon tribe leader."
+      "engDesc": "Son of Josibiah. Simeon tribe leader.",
+      "isProphet": false
     },
     {
       "id": "elioenai_jehu",
@@ -16827,7 +16837,7 @@
     },
     {
       "id": "asaiah_jeshohaiah",
-      "name": "아사야(시므온)",
+      "name": "아사야",
       "engName": "Asaiah",
       "gender": "M",
       "generation": 36.84,
@@ -16842,7 +16852,8 @@
       "teachers": [],
       "prophets": [],
       "relatedPeople": [],
-      "engDesc": "Son of Ye Sohaya."
+      "engDesc": "Son of Ye Sohaya.",
+      "isProphet": false
     },
     {
       "id": "adiel_asaiah",
@@ -16884,7 +16895,7 @@
     },
     {
       "id": "benaiah_jesimiel",
-      "name": "브나야(시므온)",
+      "name": "브나야",
       "engName": "Benaiah",
       "gender": "M",
       "generation": 39.84,
@@ -16899,11 +16910,12 @@
       "teachers": [],
       "prophets": [],
       "relatedPeople": [],
-      "engDesc": "Son of Jeshmiel. Shemaiah's father."
+      "engDesc": "Son of Jeshmiel. Shemaiah's father.",
+      "isProphet": false
     },
     {
       "id": "shemaiah_benaiah",
-      "name": "스마야(브나야아들)",
+      "name": "스마야",
       "engName": "Shemaiah",
       "gender": "M",
       "generation": 40.84,
@@ -16918,7 +16930,8 @@
       "teachers": [],
       "prophets": [],
       "relatedPeople": [],
-      "engDesc": "Son of Benaiah."
+      "engDesc": "Son of Benaiah.",
+      "isProphet": false
     },
     {
       "id": "shimri_shemaiah",
@@ -16941,7 +16954,7 @@
     },
     {
       "id": "jedaiah_shimri",
-      "name": "여다야(시므리아들)",
+      "name": "여다야",
       "engName": "Jedaiah",
       "gender": "M",
       "generation": 42.84,
@@ -16956,7 +16969,8 @@
       "teachers": [],
       "prophets": [],
       "relatedPeople": [],
-      "engDesc": "Son of Zimri."
+      "engDesc": "Son of Zimri.",
+      "isProphet": false
     },
     {
       "id": "allon_jedaiah",
@@ -17451,61 +17465,6 @@
       "desc": "",
       "isMain": false,
       "isManual": true,
-      "prophets": [],
-      "relatedPeople": []
-    },
-    {
-      "id": "John_the_Baptist",
-      "name": "세례요한",
-      "engName": "John the Baptist",
-      "gender": "M",
-      "generation": 62.8,
-      "column": -31.483,
-      "parents": [
-        "Zechariah",
-        "Elizabeth"
-      ],
-      "spouses": [],
-      "desc": "",
-      "isMain": false,
-      "isManual": true,
-      "teachers": [],
-      "prophets": [],
-      "relatedPeople": []
-    },
-    {
-      "id": "Zechariah",
-      "name": "사가랴",
-      "engName": "Zechariah",
-      "gender": "M",
-      "generation": 61.81,
-      "column": -31.933,
-      "parents": [],
-      "spouses": [
-        "Elizabeth"
-      ],
-      "desc": "",
-      "isMain": false,
-      "isManual": true,
-      "teachers": [],
-      "prophets": [],
-      "relatedPeople": []
-    },
-    {
-      "id": "Elizabeth",
-      "name": "엘리사벳",
-      "engName": "Elizabeth",
-      "gender": "F",
-      "generation": 61.81,
-      "column": -31.033,
-      "parents": [],
-      "spouses": [
-        "Zechariah"
-      ],
-      "desc": "",
-      "isMain": false,
-      "isManual": true,
-      "teachers": [],
       "prophets": [],
       "relatedPeople": []
     },
@@ -19136,12 +19095,13 @@
       ],
       "spouses": [],
       "teachers": [],
-      "desc": "아비하일의 딸���자 ���르드개의 사촌 동생으로, 페르시아 아하수에로 왕의 왕후가 되어 \"죽으면 죽으리이다\"라는 결단으로 민족을 구한 인물(에스더 2:7 2:15-17, 에스더 7-8장)",
+      "desc": "아비하일의 딸이자 모르드개의 사촌 동생으로, 페르시아 아하수에로 왕의 왕후가 되어 \"죽으면 죽으리이다\"라는 결단으로 민족을 구한 인물(에스더 2:7 2:15-17, 에스더 7-8장)",
       "isMain": false,
       "isManual": true,
       "prophets": [],
       "relatedPeople": [],
-      "engDesc": "Abihail's daughter and Mordecai's younger cousin, she became queen of King Ahasuerus of Persia and saved her people with the decision, \"If I die, I will die\" (Esther 2:7 2:15-17, Esther 7-8)"
+      "engDesc": "Abihail's daughter and Mordecai's younger cousin, she became queen of King Ahasuerus of Persia and saved her people with the decision, \"If I die, I will die\" (Esther 2:7 2:15-17, Esther 7-8)",
+      "isProphet": false
     },
     {
       "id": "manoah-dan",
@@ -19149,7 +19109,7 @@
       "engName": "manoah",
       "gender": "M",
       "generation": 23.08,
-      "column": 78.087,
+      "column": 78.055,
       "parents": [],
       "spouses": [],
       "teachers": [],
@@ -19166,7 +19126,7 @@
       "engName": "Samson",
       "gender": "M",
       "generation": 24.01,
-      "column": 78.085,
+      "column": 78.053,
       "parents": [
         "manoah-dan"
       ],
@@ -19188,7 +19148,7 @@
       "engName": "deiilah",
       "gender": "F",
       "generation": 24.01,
-      "column": 79.064,
+      "column": 79.032,
       "parents": [],
       "spouses": [
         "samson-dan"
@@ -19207,7 +19167,7 @@
       "engName": "Samson",
       "gender": "F",
       "generation": 24.01,
-      "column": 77.106,
+      "column": 77.074,
       "parents": [],
       "spouses": [
         "samson-dan"
@@ -19926,6 +19886,24 @@
       "prophets": [],
       "relatedPeople": [],
       "desc": "",
+      "isMain": false,
+      "isProphet": false,
+      "isManual": true
+    },
+    {
+      "id": "ezra",
+      "name": "에스라",
+      "engName": "Ezra",
+      "gender": "M",
+      "generation": 49.15,
+      "column": -27.033,
+      "parents": [],
+      "spouses": [],
+      "teachers": [],
+      "prophets": [],
+      "relatedPeople": [],
+      "desc": "B.C. 458년(바사 왕 아닥사스다 1세 재위 7년)에 제2차 포로 귀환(에스라 7:1)",
+      "engDesc": "Led the second return of captives in 458 B.C. (7th year of Artaxerxes I, king of Persia) (Ezra 7:1)",
       "isMain": false,
       "isProphet": false,
       "isManual": true
@@ -20720,8 +20698,8 @@
     {
       "id": "annotation_1785294842193_ncx8hriqj",
       "text": "12대 사사 , 20년 \n(삿 13-16장)\n",
-      "x": 34970.666666666664,
-      "y": 4510.809523809524,
+      "x": 34960.75143779742,
+      "y": 4511.517754443042,
       "width": 166,
       "height": 75,
       "fontSize": 20,
@@ -21085,23 +21063,23 @@
       "points": [
         {
           "x": 11625.109375,
-          "y": 3464
+          "y": 3454
         },
         {
           "x": 13926.11719767249,
-          "y": 3464
+          "y": 3454
         },
         {
           "x": 13926.11719767249,
-          "y": 3959.1220334042905
+          "y": 3949.1220334042905
         },
         {
           "x": 11626.109371762588,
-          "y": 3959.122033404291
+          "y": 3949.122033404291
         }
       ],
-      "labelOffsetX": 0,
-      "labelOffsetY": -8,
+      "labelOffsetX": 38,
+      "labelOffsetY": 1,
       "label_en": "Esau's genealogy (Genesis 11:27-32, Genesis 36:1-5, Genesis 36:9-30, Genesis 36:40-43, 1 Chronicles 1:34-32, 1 Chronicles 1:521-54)"
     },
     {
@@ -21127,8 +21105,8 @@
           "y": 3957.001514118072
         }
       ],
-      "labelOffsetX": -205,
-      "labelOffsetY": -9,
+      "labelOffsetX": -206,
+      "labelOffsetY": 3,
       "label_en": "Horite chieftains (Genesis 36:20-30)"
     },
     {
@@ -21228,20 +21206,20 @@
           "y": 4940
         },
         {
-          "x": 10497.104687511444,
-          "y": 8764.513512454476
+          "x": 10500,
+          "y": 9420
         },
         {
-          "x": 8968.058390614848,
-          "y": 8764.513512454476
+          "x": 9440,
+          "y": 9430
         },
         {
-          "x": 8970,
-          "y": 11610
+          "x": 9460,
+          "y": 11570
         },
         {
           "x": 8530,
-          "y": 11610
+          "y": 11570
         },
         {
           "x": 8534.898008555294,
@@ -21444,20 +21422,20 @@
           "y": 5061.774489080552
         },
         {
-          "x": 23093.103469230948,
-          "y": 4523.417278186515
+          "x": 23100,
+          "y": 4510
         },
         {
-          "x": 23586.241560808096,
-          "y": 4523.417278186515
+          "x": 23590,
+          "y": 4510
         },
         {
-          "x": 23586.241560808096,
-          "y": 4333.999953876737
+          "x": 23590,
+          "y": 4340
         },
         {
-          "x": 23730.234437416064,
-          "y": 4333.999953876737
+          "x": 23730,
+          "y": 4340
         }
       ],
       "label_en": "Tribe of Asher (Genesis 46:17, Numbers 26:44-46, 1 Chronicles 7:30-39)"
@@ -21519,8 +21497,8 @@
       "fillOpacity": 0.03,
       "points": [
         {
-          "x": 28878.109375,
-          "y": 4032
+          "x": 28880,
+          "y": 4030
         },
         {
           "x": 34686.619769240504,
@@ -21567,7 +21545,9 @@
           "y": 4551.416390021452
         }
       ],
-      "label_en": "Tribe of Benjamin (Genesis 46:21, Numbers 26:38-40, 1 Chronicles 7:6-12, 1 Chronicles 8:1-40, 1 Chronicles 9:35-44, Esther 2:5-7, 15)"
+      "label_en": "Tribe of Benjamin (Genesis 46:21, Numbers 26:38-40, 1 Chronicles 7:6-12, 1 Chronicles 8:1-40, 1 Chronicles 9:35-44, Esther 2:5-7, 15)",
+      "labelOffsetX": 20,
+      "labelOffsetY": 0
     },
     {
       "id": "poly-custom-1785473541654",
@@ -21601,19 +21581,19 @@
       "fillOpacity": 0.03,
       "points": [
         {
-          "x": 35399.109375,
+          "x": 35419.109375,
           "y": 4037
         },
         {
-          "x": 36118.11007040996,
+          "x": 36138.11007040996,
           "y": 4037
         },
         {
-          "x": 36118.11007040996,
+          "x": 36138.11007040996,
           "y": 4463.792732086433
         },
         {
-          "x": 35402.099329817174,
+          "x": 35422.099329817174,
           "y": 4463.792732086433
         }
       ],
