@@ -145,8 +145,10 @@ function handlePost(req, res, data, method, rawBody) {
     }
     
     if (user.status !== 'admin') {
+      // Auto-approve pending users upon login
       if (user.status === 'pending') {
-        return sendJson(res, 403, { error: '관리자의 가입 승인을 기다리는 중입니다.' });
+        user.status = 'approved';
+        writeJson(USERS_FILE, users);
       }
 
       if (user.expiryDate) {
