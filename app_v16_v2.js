@@ -79,7 +79,12 @@ const UI_TEXTS = {
     admin_mode_prompt: "비밀번호를 입력하세요:",
     admin_mode_wrong: "비밀번호가 올바르지 않습니다.",
     app_title: "열린족보이야기",
-    layer_panel_title: "레이어 표시 설정"
+    layer_panel_title: "레이어 표시 설정",
+    layer_people: "인물 족보 (Genealogy)",
+    layer_events: "주요 사건 (Events)",
+    layer_locations: "장소/지명 (Locations)",
+    layer_polygons: "영역 (Areas)",
+    layer_prophets: "선지자 (Prophets)"
   },
   en: {
     search_placeholder: "Search (People, Events, Locations)...",
@@ -119,7 +124,12 @@ const UI_TEXTS = {
     admin_mode_prompt: "Enter password:",
     admin_mode_wrong: "Incorrect password.",
     app_title: "Open Genealogy Story",
-    layer_panel_title: "Layer Settings"
+    layer_panel_title: "Layer Settings",
+    layer_people: "Genealogy",
+    layer_events: "Events",
+    layer_locations: "Locations",
+    layer_polygons: "Areas",
+    layer_prophets: "Prophets"
   }
 };
 
@@ -14803,6 +14813,11 @@ function applyLocalization() {
     'auth-title': { attr: 'textContent', key: 'app_title' },
     'app-main-title': { attr: 'textContent', key: 'app_title' },
     'layer-panel-title': { attr: 'textContent', key: 'layer_panel_title' },
+    'text-layer-people': { attr: 'textContent', key: 'layer_people' },
+    'text-layer-events': { attr: 'textContent', key: 'layer_events' },
+    'text-layer-locations': { attr: 'textContent', key: 'layer_locations' },
+    'text-layer-polygons': { attr: 'textContent', key: 'layer_polygons' },
+    'text-layer-prophets': { attr: 'textContent', key: 'layer_prophets' },
   };
 
   for (const [id, config] of Object.entries(elementsToTranslate)) {
