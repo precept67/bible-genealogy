@@ -14790,13 +14790,31 @@ window.addEventListener('DOMContentLoaded', async () => {
     renderTree(); // Redraw the SVG tree with localized names/labels
   });
 
+  const isCapacitor = !!window.Capacitor || window.location.protocol.startsWith('capacitor');
+  const isDesktop = window.location.protocol.startsWith('tauri') || 
+                    window.location.protocol.startsWith('asset') || 
+                    window.location.protocol.startsWith('file') || 
+                    isCapacitor ||
+                    (window.API_BASE_URL && window.API_BASE_URL.length > 0);
+
   const landing = document.getElementById('landing-page');
-  if (userToken) {
+  if (isDesktop) {
     if (landing) landing.style.display = 'none';
-    validateSession();
+    if (userToken) {
+      validateSession();
+    } else {
+      showAuthModal();
+    }
   } else {
-    if (landing) landing.style.display = 'none';
-    showAuthModal();
+    // Web version: show landing page, hide auth modal
+    if (landing) landing.style.display = 'flex';
+    if (authModal) authModal.style.display = 'none';
+    
+    // If they already have a userToken (logged in on web), they can bypass the landing page
+    if (userToken) {
+      if (landing) landing.style.display = 'none';
+      validateSession();
+    }
   }
   
   // Make left panels draggable

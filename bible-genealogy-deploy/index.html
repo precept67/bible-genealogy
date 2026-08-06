@@ -51,7 +51,7 @@
 <body>
 
   <!-- Premium Landing Page Overlay -->
-  <div id="landing-page" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); z-index: 9999; justify-content: center; align-items: center; font-family: 'Inter', sans-serif; color: white; box-sizing: border-box; padding: 20px; overflow-y: auto;">
+  <div id="landing-page" style="display: flex; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); z-index: 9999; justify-content: center; align-items: center; font-family: 'Inter', sans-serif; color: white; box-sizing: border-box; padding: 20px; overflow-y: auto;">
     <div style="max-width: 800px; width: 100%; text-align: center; margin: auto; padding: 40px 20px;">
       
       <!-- Top Bar (No button here anymore) -->
@@ -125,7 +125,7 @@
   </div>
 
   <!-- Auth Modal -->
-  <div id="auth-modal" style="display: flex; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 10000; justify-content: center; align-items: center;">
+  <div id="auth-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 10000; justify-content: center; align-items: center;">
     <div style="background: white; padding: 40px; border-radius: 12px; width: 360px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); text-align: center; position: relative;">
       <span id="auth-close-btn" style="position: absolute; top: 15px; right: 20px; font-size: 28px; color: #999; cursor: pointer; font-weight: 300; line-height: 1;" onmouseover="this.style.color='#333'" onmouseout="this.style.color='#999'">&times;</span>
       <img src="/app_logo.png" alt="로고" style="height: 60px; width: 60px; border-radius: 12px; margin: 0 auto 15px auto; display: block; object-fit: cover;">
