@@ -11521,6 +11521,8 @@ function openAdminForm(personId) {
       if (prophetsInput) prophetsInput.value = char.prophets ? char.prophets.join(', ') : '';
       const descInput = document.getElementById('form-desc');
       if (descInput) descInput.value = char.desc || '';
+      const engDescInput = document.getElementById('form-eng-desc');
+      if (engDescInput) engDescInput.value = char.engDesc || '';
       const mainCheckbox = document.getElementById('form-main');
       if (mainCheckbox) mainCheckbox.checked = !!char.isMain;
       const prophetCheckbox = document.getElementById('form-prophet');
@@ -11554,6 +11556,10 @@ function openAdminForm(personId) {
     if (teachersInput) teachersInput.value = '';
     const prophetsInput = document.getElementById('form-prophets');
     if (prophetsInput) prophetsInput.value = '';
+    const descInput = document.getElementById('form-desc');
+    if (descInput) descInput.value = '';
+    const engDescInput = document.getElementById('form-eng-desc');
+    if (engDescInput) engDescInput.value = '';
     
     tempRelatedPeople = [];
   }
@@ -11608,6 +11614,7 @@ function saveAdminForm() {
   const parentsInput = document.getElementById('form-parents').value.trim();
   const spousesInput = document.getElementById('form-spouses').value.trim();
   const desc = document.getElementById('form-desc').value.trim();
+  const engDesc = document.getElementById('form-eng-desc').value.trim();
   const isMain = document.getElementById('form-main').checked;
   const isProphetVal = document.getElementById('form-prophet').checked;
   const column = (isMain && gender === 'M') ? 0.0 : rawColumn;
@@ -11740,6 +11747,7 @@ function saveAdminForm() {
         prophets,
         relatedPeople: tempRelatedPeople,
         desc,
+        engDesc,
         isMain,
         isProphet: isProphetVal,
         isManual: true
@@ -11802,6 +11810,7 @@ function saveAdminForm() {
       prophets,
       relatedPeople: tempRelatedPeople,
       desc,
+      engDesc,
       isMain,
       isProphet: isProphetVal,
       isManual: true
@@ -15404,6 +15413,7 @@ function startPeriodicSync() {
 if (typeof window !== 'undefined') {
   window.addEventListener('DOMContentLoaded', () => {
     startPeriodicSync();
+    setupAutoTranslationListeners();
     
     const App = window.Capacitor?.Plugins?.App;
     if (App) {
@@ -15428,6 +15438,48 @@ if (typeof window !== 'undefined') {
     // Enable immediate :active pseudo-classes on iOS Safari/WKWebView
     document.addEventListener('touchstart', () => {}, { passive: true });
   });
+}
+
+async function translateKoToEnClient(text) {
+  if (!text) return "";
+  try {
+    const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=ko&tl=en&dt=t&q=${encodeURIComponent(text)}`);
+    const data = await res.json();
+    if (data && data[0]) {
+      return data[0].map(item => item[0]).join('').trim();
+    }
+  } catch (e) {
+    console.error("Auto-translate error:", e);
+  }
+  return "";
+}
+
+function setupAutoTranslationListeners() {
+  const formName = document.getElementById('form-name');
+  const formEng = document.getElementById('form-eng');
+  if (formName && formEng) {
+    formName.addEventListener('blur', async () => {
+      const val = formName.value.trim();
+      const engVal = formEng.value.trim();
+      if (val && !engVal) {
+        const translated = await translateKoToEnClient(val);
+        if (translated) formEng.value = translated;
+      }
+    });
+  }
+
+  const formDesc = document.getElementById('form-desc');
+  const formEngDesc = document.getElementById('form-eng-desc');
+  if (formDesc && formEngDesc) {
+    formDesc.addEventListener('blur', async () => {
+      const val = formDesc.value.trim();
+      const engVal = formEngDesc.value.trim();
+      if (val && !engVal) {
+        const translated = await translateKoToEnClient(val);
+        if (translated) formEngDesc.value = translated;
+      }
+    });
+  }
 }
 
 

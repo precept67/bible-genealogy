@@ -112,7 +112,7 @@ function verifyLemonSqueezySignature(req, rawBody) {
   }
 }
 
-function handlePost(req, res, data, method, rawBody) {
+async function handlePost(req, res, data, method, rawBody) {
   const url = req.url.split('?')[0];
 
   // 1. Register
@@ -211,6 +211,7 @@ function handlePost(req, res, data, method, rawBody) {
     }
     
     const payload = data.payload || data;
+    await translateDatabase(payload);
     fs.writeFileSync(DB_FILE, JSON.stringify(payload, null, 2), 'utf8');
     return sendJson(res, 200, { success: true });
   }
@@ -520,7 +521,91 @@ function handleGet(req, res) {
     }
   });
 }
+const https = require('https');
 
+function translateKoToEn(text) {
+  return new Promise((resolve) => {
+    if (!text || typeof text !== 'string') return resolve("");
+    const hasKorean = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(text);
+    if (!hasKorean) {
+      return resolve(text);
+    }
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=ko&tl=en&dt=t&q=${encodeURIComponent(text)}`;
+    const req = https.get(url, (res) => {
+      let data = '';
+      res.on('data', (chunk) => { data += chunk; });
+      res.on('end', () => {
+        try {
+          const parsed = JSON.parse(data);
+          if (parsed && parsed[0]) {
+            const translated = parsed[0].map(item => item[0]).join('').trim();
+            resolve(translated);
+          } else {
+            resolve("");
+          }
+        } catch (e) {
+          console.error("Translation parse error:", e);
+          resolve("");
+        }
+      });
+    });
+    req.on('error', (e) => {
+      console.error("Translation request error:", e);
+      resolve("");
+    });
+    req.setTimeout(5000, () => {
+      req.destroy();
+      resolve("");
+    });
+  });
+}
+
+async function translateDatabase(payload) {
+  if (payload.db && Array.isArray(payload.db)) {
+    for (let char of payload.db) {
+      if (char.name && (!char.engName || char.engName === char.name)) {
+        const tr = await translateKoToEn(char.name);
+        if (tr) char.engName = tr;
+      }
+      if (char.desc && (!char.engDesc || char.engDesc === char.desc)) {
+        const tr = await translateKoToEn(char.desc);
+        if (tr) char.engDesc = tr;
+      }
+    }
+  }
+  if (payload.events && Array.isArray(payload.events)) {
+    for (let ev of payload.events) {
+      if (ev.name && (!ev.engName || ev.engName === ev.name)) {
+        const tr = await translateKoToEn(ev.name);
+        if (tr) ev.engName = tr;
+      }
+      if (ev.desc && (!ev.engDesc || ev.engDesc === ev.desc)) {
+        const tr = await translateKoToEn(ev.desc);
+        if (tr) ev.engDesc = tr;
+      }
+    }
+  }
+  if (payload.locations && Array.isArray(payload.locations)) {
+    for (let loc of payload.locations) {
+      if (loc.name && (!loc.engName || loc.engName === loc.name)) {
+        const tr = await translateKoToEn(loc.name);
+        if (tr) loc.engName = tr;
+      }
+      if (loc.desc && (!loc.engDesc || loc.engDesc === loc.desc)) {
+        const tr = await translateKoToEn(loc.desc);
+        if (tr) loc.engDesc = tr;
+      }
+    }
+  }
+  if (payload.customPolygons && Array.isArray(payload.customPolygons)) {
+    for (let poly of payload.customPolygons) {
+      if (poly.label && (!poly.label_en || poly.label_en === poly.label)) {
+        const tr = await translateKoToEn(poly.label);
+        if (tr) poly.label_en = tr;
+      }
+    }
+  }
+}
 server.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}/`);
   console.log(`- Users DB: ${USERS_FILE}`);
