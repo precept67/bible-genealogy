@@ -13278,24 +13278,25 @@ async function fetchUserNotes() {
       try {
         const docDir = await window.__TAURI__.path.documentDir();
         const backupPath = await window.__TAURI__.path.join(docDir, 'bible_genealogy_notes_autobackup.json');
-        const fileExists = await window.__TAURI__.fs.exists(backupPath);
-        if (fileExists) {
-          const backupJsonText = await window.__TAURI__.fs.readTextFile(backupPath);
-          const backupNotes = JSON.parse(backupJsonText);
-          if (backupNotes && Object.keys(backupNotes).length > 0) {
-            const localNotes = localStorage.getItem('bible_tree_user_notes');
-            const localObj = localNotes ? JSON.parse(localNotes) : {};
-            
-            // Merge backup notes (backup notes are the source of truth if local is wiped)
-            if (Object.keys(backupNotes).length > Object.keys(localObj).length) {
-              userNotes = backupNotes;
-              localStorage.setItem('bible_tree_user_notes', JSON.stringify(userNotes));
-              console.log("[복구] 백업 JSON 파일로부터 메모를 완벽히 복구했습니다!");
-            }
+        
+        // Attempt to read directly. If the file exists, it will succeed. If not, it will catch.
+        const backupJsonText = await window.__TAURI__.fs.readTextFile(backupPath);
+        const backupNotes = JSON.parse(backupJsonText);
+        
+        if (backupNotes && Object.keys(backupNotes).length > 0) {
+          const localNotes = localStorage.getItem('bible_tree_user_notes');
+          const localObj = localNotes ? JSON.parse(localNotes) : {};
+          
+          // Merge backup notes (backup notes are the source of truth if local is wiped or empty)
+          if (Object.keys(backupNotes).length > Object.keys(localObj).length || Object.keys(localObj).length === 0) {
+            userNotes = backupNotes;
+            localStorage.setItem('bible_tree_user_notes', JSON.stringify(userNotes));
+            console.log("[복구 성공] 백업 JSON 파일로부터 메모를 완벽히 복구했습니다!");
           }
         }
       } catch (err) {
-        console.error("Failed to restore from backup JSON:", err);
+        // Safe to ignore if backup file doesn't exist yet
+        console.log("No backup JSON file found or readable (first run or permission). Skipping auto-restore.");
       }
     }
 
