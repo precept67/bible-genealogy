@@ -20577,7 +20577,7 @@
     },
     {
       "id": "note-1785291855597",
-      "text": "동명이인",
+      "text": "동일인",
       "x": 13816.598659087793,
       "y": 3595.122973775984,
       "width": 96,
@@ -20585,13 +20585,14 @@
       "fontSize": 12,
       "bold": false,
       "color": "#1e293b",
-      "bgColor": "#c3adf5",
+      "bgColor": "#8bfb5b",
       "relatedPeople": [
         "mahalath",
         "Mahalath-wife"
       ],
       "relatedEvents": [],
-      "relatedLocations": []
+      "relatedLocations": [],
+      "borderStyle": "none"
     },
     {
       "id": "note-1785292430353",
@@ -20974,6 +20975,56 @@
       ],
       "relatedEvents": [],
       "relatedLocations": []
+    },
+    {
+      "id": "annotation_1786089563807_13lwr6672",
+      "text": "동일인",
+      "x": 16642.817863922064,
+      "y": 3768.9061356719512,
+      "width": 96,
+      "height": 38,
+      "fontSize": 12,
+      "bold": false,
+      "italic": false,
+      "underline": false,
+      "align": "center",
+      "borderStyle": "dashed",
+      "borderWidth": 1,
+      "color": "#1e293b",
+      "bgColor": "#abf75f",
+      "borderColor": "#cbd5e1",
+      "auraEnabled": true,
+      "relatedPeople": [
+        "rebekah",
+        "rebekah_daughter"
+      ],
+      "relatedEvents": [],
+      "relatedLocations": []
+    },
+    {
+      "id": "annotation_1786089693693_m9wwg8a49",
+      "text": "동일인",
+      "x": 17215.668684546603,
+      "y": 3422.555838977626,
+      "width": 96,
+      "height": 38,
+      "fontSize": 12,
+      "bold": false,
+      "italic": false,
+      "underline": false,
+      "align": "center",
+      "borderStyle": "dashed",
+      "borderWidth": 1,
+      "color": "#1e293b",
+      "bgColor": "#abf75f",
+      "borderColor": "#cbd5e1",
+      "auraEnabled": true,
+      "relatedPeople": [
+        "milcah",
+        "milcah_daughter"
+      ],
+      "relatedEvents": [],
+      "relatedLocations": []
     }
   ],
   "styleSettings": {
@@ -20995,7 +21046,7 @@
       "fillOpacity": 0.03,
       "points": [
         {
-          "x": 15064.48,
+          "x": 15080,
           "y": 240
         },
         {
@@ -21007,7 +21058,7 @@
           "y": 1440
         },
         {
-          "x": 15074.48,
+          "x": 15080,
           "y": 1440
         }
       ],
@@ -21532,6 +21583,10 @@
           "y": 4020
         },
         {
+          "x": 23257.47043761548,
+          "y": 4023.0373038435346
+        },
+        {
           "x": 23710.46179570396,
           "y": 4024
         },
@@ -21619,8 +21674,8 @@
       "fillOpacity": 0.03,
       "points": [
         {
-          "x": 27913.109375,
-          "y": 4202
+          "x": 27940,
+          "y": 4200
         },
         {
           "x": 28846.222980087827,
@@ -21631,8 +21686,8 @@
           "y": 5999.570041380666
         },
         {
-          "x": 27913.105835720253,
-          "y": 5999.570041380666
+          "x": 27940,
+          "y": 6000
         }
       ],
       "label_en": "Tribe of Ephraim (Numbers 26:35-37, 1 Chronicles 7:20-29)"
@@ -21853,11 +21908,11 @@
           "y": 8420
         },
         {
-          "x": 15700,
+          "x": 15660,
           "y": 8420
         },
         {
-          "x": 15700,
+          "x": 15660,
           "y": 8570
         },
         {
@@ -22427,7 +22482,7 @@
       "relatedPeople": [
         "noah"
       ],
-      "x": 16568,
+      "x": 16558,
       "y": 2661,
       "engName": "Plain of Shinar",
       "engDesc": "A plain where Noah's descendants gathered to build the Tower of Babel and oppose God."
