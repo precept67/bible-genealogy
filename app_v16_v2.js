@@ -13548,22 +13548,23 @@ async function runBackupActual() {
       for (const folderName of folders) {
         try {
           const folderPath = await window.__TAURI__.path.join(backupFolder, folderName);
-        const entries = await window.__TAURI__.fs.readDir(folderPath);
-        for (const entry of entries) {
-          if (entry.name && entry.name.endsWith('.md')) {
-            const entryFullPath = entry.path;
-            if (!expectedFiles.has(entryFullPath)) {
-              console.log("Cleanup obsolete/duplicate file:", entryFullPath);
-              try {
-                await window.__TAURI__.fs.removeFile(entryFullPath);
-              } catch (e) {
-                console.error("Cleanup failed for:", entryFullPath, e);
+          const entries = await window.__TAURI__.fs.readDir(folderPath);
+          for (const entry of entries) {
+            if (entry.name && entry.name.endsWith('.md')) {
+              const entryFullPath = entry.path;
+              if (!expectedFiles.has(entryFullPath)) {
+                console.log("Cleanup obsolete/duplicate file:", entryFullPath);
+                try {
+                  await window.__TAURI__.fs.removeFile(entryFullPath);
+                } catch (e) {
+                  console.error("Cleanup failed for:", entryFullPath, e);
+                }
               }
             }
           }
+        } catch (err) {
+          console.error(`Folder cleanup failed for ${folderName}:`, err);
         }
-      } catch (err) {
-        console.error(`Folder cleanup failed for ${folderName}:`, err);
       }
     }
 
