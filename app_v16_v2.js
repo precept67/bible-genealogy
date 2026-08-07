@@ -13305,27 +13305,24 @@ let backupTimeout = null;
 let isBackupRunning = false;
 let backupPending = false;
 
-// Trigger automatic background backup in the Documents folder when running inside Tauri (with 1-second debounce)
-async function triggerAutoBackup() {
-  const isTauri = window.location.protocol.startsWith('tauri') || 
-                  window.location.hostname === 'tauri.localhost' || 
-                  window.location.protocol.startsWith('file') ||
-                  window.location.protocol.startsWith('asset') ||
-                  (window.__TAURI__ && window.__TAURI__.fs);
-  
-  if (!isTauri) return;
+// Trigger automatic background backup in the Documents folder when running inside Tauri (with 800ms debounce)
+function triggerAutoBackup() {
+  // Only run inside real Tauri environment (must have __TAURI__ API)
+  if (!window.__TAURI__ || !window.__TAURI__.fs || !window.__TAURI__.path) return;
 
   if (backupTimeout) {
     clearTimeout(backupTimeout);
   }
 
-  backupTimeout = setTimeout(async () => {
+  backupTimeout = setTimeout(() => {
     backupTimeout = null;
-    await runBackupActual();
-  }, 1000); // 1-second debounce to prevent multiple concurrent writes during typing
+    runBackupActual();
+  }, 800); // 800ms debounce - responsive but avoids write conflicts
 }
 
 async function runBackupActual() {
+  if (!window.__TAURI__ || !window.__TAURI__.fs || !window.__TAURI__.path) return;
+
   if (isBackupRunning) {
     backupPending = true;
     return;
@@ -13334,100 +13331,87 @@ async function runBackupActual() {
   isBackupRunning = true;
   backupPending = false;
 
-  if (window.__TAURI__ && window.__TAURI__.fs && window.__TAURI__.path) {
-    try {
-      const docDir = await window.__TAURI__.path.documentDir();
-      
-      // 1. Save the main JSON backup
-      const backupPath = await window.__TAURI__.path.join(docDir, 'bible_genealogy_notes_autobackup.json');
-      await window.__TAURI__.fs.writeTextFile(backupPath, JSON.stringify(userNotes, null, 2));
-      console.log("Auto-backup JSON successfully saved to:", backupPath);
+  try {
+    const docDir = await window.__TAURI__.path.documentDir();
+    
+    // 1. Save the main JSON backup
+    const backupPath = await window.__TAURI__.path.join(docDir, 'bible_genealogy_notes_autobackup.json');
+    await window.__TAURI__.fs.writeTextFile(backupPath, JSON.stringify(userNotes, null, 2));
+    console.log("Auto-backup JSON saved:", backupPath);
 
-      // 2. Export individual Markdown files inside folders (Obsidian-friendly)
-      const backupFolder = await window.__TAURI__.path.join(docDir, 'bible_genealogy_notes');
-      await window.__TAURI__.fs.createDir(backupFolder, { recursive: true });
-      
-      const folders = ['인물', '선지자', '사건', '장소', '영역', '텍스트상자', '기타'];
-      for (const f of folders) {
-        const subPath = await window.__TAURI__.path.join(backupFolder, f);
-        await window.__TAURI__.fs.createDir(subPath, { recursive: true });
-      }
+    // 2. Export individual Markdown files into sub-folders (Obsidian-friendly)
+    const backupFolder = await window.__TAURI__.path.join(docDir, 'bible_genealogy_notes');
+    await window.__TAURI__.fs.createDir(backupFolder, { recursive: true });
+    
+    const folders = ['인물', '선지자', '사건', '장소', '영역', '텍스트상자', '기타'];
+    for (const f of folders) {
+      const subPath = await window.__TAURI__.path.join(backupFolder, f);
+      await window.__TAURI__.fs.createDir(subPath, { recursive: true });
+    }
 
-      for (const key of Object.keys(userNotes)) {
-        const content = userNotes[key];
-        
-        let name = key;
-        let type = '기타';
-        
-        const person = db.find(p => p.id === key);
-        if (person) {
-          name = person.name;
-          const isProphetChar = person.isProphet === true || 
-                                (typeof prophetIds !== 'undefined' && prophetIds.has(person.id)) || 
-                                person.id.startsWith('prophet_') || 
-                                person.id === 'samuel';
-          type = isProphetChar ? '선지자' : '인물';
+    for (const key of Object.keys(userNotes)) {
+      const content = userNotes[key];
+      
+      let name = key;
+      let type = '기타';
+      let person = null, ev = null, loc = null, poly = null;
+      
+      person = db.find(p => p.id === key);
+      if (person) {
+        name = person.name;
+        const isProphetChar = person.isProphet === true || 
+                              (typeof prophetIds !== 'undefined' && prophetIds.has(person.id)) || 
+                              person.id.startsWith('prophet_') || 
+                              person.id === 'samuel';
+        type = isProphetChar ? '선지자' : '인물';
+      } else {
+        ev = (typeof events !== 'undefined') ? events.find(e => e.id === key) : null;
+        if (ev) {
+          name = ev.name;
+          type = '사건';
         } else {
-          const ev = events.find(e => e.id === key);
-          if (ev) {
-            name = ev.name;
-            type = '사건';
+          loc = (typeof locations !== 'undefined') ? locations.find(l => l.id === key) : null;
+          if (loc) {
+            name = loc.name;
+            type = '장소';
           } else {
-            const loc = locations.find(l => l.id === key);
-            if (loc) {
-              name = loc.name;
-              type = '장소';
-            } else {
-              const poly = customPolygons.find(p => p.id === key);
-              if (poly) {
-                name = poly.label || poly.id;
-                type = '영역';
-              } else if (key.startsWith('note-') || key.startsWith('annotation_')) {
-                name = key;
-                type = '텍스트상자';
-              }
+            poly = (typeof customPolygons !== 'undefined') ? customPolygons.find(p => p.id === key) : null;
+            if (poly) {
+              name = poly.label || poly.id;
+              type = '영역';
+            } else if (key.startsWith('note-') || key.startsWith('annotation_')) {
+              name = key;
+              type = '텍스트상자';
             }
           }
         }
-        
-        const cleanName = name.replace(/[\/\\:\*\?"<>\|]/g, '_').trim();
-        const mdFilePath = await window.__TAURI__.path.join(backupFolder, type, cleanName + '.md');
-        
-        if (!content || !content.trim()) {
-          try {
-            await window.__TAURI__.fs.removeFile(mdFilePath);
-          } catch (err) {}
-        } else {
-          let title = cleanName;
-          if (person) title = `${person.name} (${person.engName || ''})`;
-          else if (ev) title = `${ev.name}`;
-          else if (loc) title = `${loc.name}`;
-          else if (poly) title = `${poly.label || poly.id}`;
-
-          const mdText = `---
-title: "${title}"
-id: "${key}"
-type: "${type}"
-tags:
-  - 성경족보메모
-  - ${type}
----
-
-# ${title}
-
-${content}
-`;
-          await window.__TAURI__.fs.writeTextFile(mdFilePath, mdText);
-        }
       }
-      console.log("Auto-backup Markdown files successfully exported to:", backupFolder);
-    } catch (err) {
-      console.error("Auto-backup failed:", err);
-    } finally {
-      isBackupRunning = false;
-      if (backupPending) {
-        setTimeout(runBackupActual, 300);
+      
+      const cleanName = name.replace(/[\/\\:\*\?"<>\|]/g, '_').trim();
+      const mdFilePath = await window.__TAURI__.path.join(backupFolder, type, cleanName + '.md');
+      
+      if (!content || !content.trim()) {
+        try { await window.__TAURI__.fs.removeFile(mdFilePath); } catch (_) {}
+      } else {
+        let title = cleanName;
+        if (person) title = `${person.name}${person.engName ? ' (' + person.engName + ')' : ''}`;
+        else if (ev) title = ev.name;
+        else if (loc) title = loc.name;
+        else if (poly) title = poly.label || poly.id;
+
+        const mdText = `---\ntitle: "${title}"\nid: "${key}"\ntype: "${type}"\ntags:\n  - 성경족보메모\n  - ${type}\n---\n\n# ${title}\n\n${content}\n`;
+        await window.__TAURI__.fs.writeTextFile(mdFilePath, mdText);
+        console.log(`MD 생성: ${type}/${cleanName}.md`);
       }
+    }
+    console.log("Auto-backup MD 파일 내보내기 완료:", backupFolder);
+  } catch (err) {
+    console.error("Auto-backup 실패:", err);
+  } finally {
+    isBackupRunning = false;
+    if (backupPending) {
+      backupPending = false;
+      setTimeout(runBackupActual, 300);
     }
   }
 }
