@@ -13271,9 +13271,35 @@ function updateAllNoteBadges() {
 }
 
 // Load user notes
-// Load user notes
 async function fetchUserNotes() {
   try {
+    // 1. Force restore from local JSON backup if localStorage is empty or missing notes
+    if (window.__TAURI__ && window.__TAURI__.fs && window.__TAURI__.path) {
+      try {
+        const docDir = await window.__TAURI__.path.documentDir();
+        const backupPath = await window.__TAURI__.path.join(docDir, 'bible_genealogy_notes_autobackup.json');
+        const fileExists = await window.__TAURI__.fs.exists(backupPath);
+        if (fileExists) {
+          const backupJsonText = await window.__TAURI__.fs.readTextFile(backupPath);
+          const backupNotes = JSON.parse(backupJsonText);
+          if (backupNotes && Object.keys(backupNotes).length > 0) {
+            const localNotes = localStorage.getItem('bible_tree_user_notes');
+            const localObj = localNotes ? JSON.parse(localNotes) : {};
+            
+            // Merge backup notes (backup notes are the source of truth if local is wiped)
+            if (Object.keys(backupNotes).length > Object.keys(localObj).length) {
+              userNotes = backupNotes;
+              localStorage.setItem('bible_tree_user_notes', JSON.stringify(userNotes));
+              console.log("[복구] 백업 JSON 파일로부터 메모를 완벽히 복구했습니다!");
+            }
+          }
+        }
+      } catch (err) {
+        console.error("Failed to restore from backup JSON:", err);
+      }
+    }
+
+    // Load from localStorage
     const localNotes = localStorage.getItem('bible_tree_user_notes');
     if (localNotes) {
       userNotes = JSON.parse(localNotes) || {};
@@ -13298,9 +13324,23 @@ async function fetchUserNotes() {
     const res = await fetch(getApiUrl('/api/notes'), { headers: { 'Authorization': authHeader } });
     if (res.ok) {
       const data = await res.json();
-      userNotes = data.notes || {};
-      localStorage.setItem('bible_tree_user_notes', JSON.stringify(userNotes));
-      updateAllNoteBadges();
+      const serverNotes = data.notes || {};
+      
+      // Safeguard: Never overwrite local notes if server notes are empty or have fewer items
+      const localKeys = Object.keys(userNotes).length;
+      const serverKeys = Object.keys(serverNotes).length;
+      
+      if (serverKeys >= localKeys && serverKeys > 0) {
+        userNotes = serverNotes;
+        localStorage.setItem('bible_tree_user_notes', JSON.stringify(userNotes));
+        updateAllNoteBadges();
+        console.log("[동기화] 서버 데이터를 다운로드하여 덮어썼습니다.");
+      } else {
+        console.log("[동기화] 로컬 데이터가 더 최신이거나 서버가 비어있어 덮어쓰지 않았습니다.");
+        // Upload local notes to server since local is newer/more complete
+        saveUserNotes();
+      }
+
       // Import any changes from Obsidian MD files (bidirectional sync)
       setTimeout(async () => {
         await importNotesFromMdFiles();
@@ -13503,9 +13543,11 @@ async function runBackupActual() {
     }
 
     // Method 1: Scan folders and delete unexpected/conflicting/obsolete .md files (e.g. "압살롬 2.md" or old duplicates)
-    for (const folderName of folders) {
-      try {
-        const folderPath = await window.__TAURI__.path.join(backupFolder, folderName);
+    // Safety guard: Only clean up if we actually have some valid loaded userNotes (avoids deletion during race conditions)
+    if (expectedFiles.size > 0) {
+      for (const folderName of folders) {
+        try {
+          const folderPath = await window.__TAURI__.path.join(backupFolder, folderName);
         const entries = await window.__TAURI__.fs.readDir(folderPath);
         for (const entry of entries) {
           if (entry.name && entry.name.endsWith('.md')) {
