@@ -13362,6 +13362,13 @@ async function fetchUserNotes() {
 // Bidirectional sync: Scan folders and import updated markdown files back into userNotes
 async function importNotesFromMdFiles() {
   if (!window.__TAURI__ || !window.__TAURI__.fs || !window.__TAURI__.path) return;
+  
+  // Check if MD Sync is disabled by settings
+  const isMdSyncEnabled = localStorage.getItem('bible_tree_md_sync') !== 'false';
+  if (!isMdSyncEnabled) {
+    console.log("Obsidian MD Sync is disabled. Skipping MD file import.");
+    return;
+  }
   try {
     const docDir = await window.__TAURI__.path.documentDir();
     const backupFolder = await window.__TAURI__.path.join(docDir, 'bible_genealogy_notes');
@@ -13516,6 +13523,13 @@ async function runBackupActual() {
     await window.__TAURI__.fs.writeTextFile(backupPath, JSON.stringify(userNotes, null, 2));
     console.log("Auto-backup JSON saved:", backupPath);
 
+    // Check if MD Sync is disabled by settings
+    const isMdSyncEnabled = localStorage.getItem('bible_tree_md_sync') !== 'false';
+    if (!isMdSyncEnabled) {
+      console.log("Obsidian MD Sync is disabled. Skipping MD file exports.");
+      return;
+    }
+
     // 2. Export individual Markdown files into sub-folders (Obsidian-friendly)
     const backupFolder = await window.__TAURI__.path.join(docDir, 'bible_genealogy_notes');
     await window.__TAURI__.fs.createDir(backupFolder, { recursive: true });
@@ -13608,6 +13622,8 @@ async function saveUserNotes() {
 // Write a single note's MD file immediately (called right after save button click)
 async function writeSingleNoteMd(key, content) {
   if (!window.__TAURI__ || !window.__TAURI__.fs || !window.__TAURI__.path) return;
+  const isMdSyncEnabled = localStorage.getItem('bible_tree_md_sync') !== 'false';
+  if (!isMdSyncEnabled) return;
   try {
     const docDir = await window.__TAURI__.path.documentDir();
     const backupFolder = await window.__TAURI__.path.join(docDir, 'bible_genealogy_notes');
@@ -15710,6 +15726,7 @@ if (typeof window !== 'undefined') {
   window.addEventListener('DOMContentLoaded', () => {
     startPeriodicSync();
     setupAutoTranslationListeners();
+    setupSettingsListeners();
     
     const App = window.Capacitor?.Plugins?.App;
     if (App) {
@@ -15778,4 +15795,42 @@ function setupAutoTranslationListeners() {
   }
 }
 
+function setupSettingsListeners() {
+  const bottomSettingsBtn = document.getElementById('bottom-settings-btn');
+  const settingsModal = document.getElementById('settings-modal');
+  const settingsCloseBtn = document.getElementById('settings-close-btn');
+  const settingMdSync = document.getElementById('setting-md-sync');
 
+  if (bottomSettingsBtn && settingsModal && settingsCloseBtn && settingMdSync) {
+    // Load initial setting
+    const isMdSyncEnabled = localStorage.getItem('bible_tree_md_sync') !== 'false';
+    settingMdSync.checked = isMdSyncEnabled;
+
+    bottomSettingsBtn.addEventListener('click', () => {
+      // Refresh state on open
+      settingMdSync.checked = localStorage.getItem('bible_tree_md_sync') !== 'false';
+      settingsModal.style.display = 'flex';
+    });
+
+    settingsCloseBtn.addEventListener('click', () => {
+      settingsModal.style.display = 'none';
+    });
+
+    settingsModal.addEventListener('click', (e) => {
+      if (e.target === settingsModal) {
+        settingsModal.style.display = 'none';
+      }
+    });
+
+    settingMdSync.addEventListener('change', () => {
+      const isChecked = settingMdSync.checked;
+      localStorage.setItem('bible_tree_md_sync', isChecked ? 'true' : 'false');
+      console.log("[환경설정] 마크다운 연동 변경됨:", isChecked);
+
+      if (isChecked) {
+        // Export notes immediately if switched back on
+        triggerAutoBackup();
+      }
+    });
+  }
+}
