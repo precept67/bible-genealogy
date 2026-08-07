@@ -422,13 +422,6 @@
       </button>
       <button id="help-guide-btn" class="control-btn" title="도움말 및 사용 가이드">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M 13 10.5 L 11 16.5"></path><path d="M 11.8 11 L 13 10.5"></path><path d="M 10 17 L 11.5 16.5 C 12.5 16.5 13 16 13.5 15.5"></path><circle cx="13.8" cy="7.2" r="0.8" fill="currentColor"></circle></svg>
-      </button>
-      <button id="bottom-backup-btn" class="control-btn" title="전체 메모 백업 (개인 폴더로 자동 저장)">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
-      </button>
-      <button id="bottom-restore-btn" class="control-btn" title="자동저장된 메모 복원 (또는 백업 파일 불러오기)">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-      </button>
       <button id="bottom-settings-btn" class="control-btn" title="환경 설정">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
       </button>
@@ -764,6 +757,34 @@
                   <input type="checkbox" id="setting-md-sync" checked>
                   <span class="slider-round"></span>
                 </label>
+              </div>
+            </div>
+          </div>
+          
+          <div class="settings-group">
+            <h3>백업 및 복원 (Backup & Restore)</h3>
+            <div class="settings-item">
+              <div class="settings-info">
+                <label>전체 메모 백업 (JSON 내보내기)</label>
+                <p class="settings-desc">현재 작성된 전체 메모 데이터를 안전한 JSON 백업 파일로 컴퓨터에 다운로드합니다.</p>
+              </div>
+              <div class="settings-action">
+                <button id="bottom-backup-btn" class="settings-btn primary-outline" style="font-size: 11px; padding: 6px 12px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 600;">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                  백업 파일 생성
+                </button>
+              </div>
+            </div>
+            <div class="settings-item">
+              <div class="settings-info">
+                <label>백업 파일 불러오기 (JSON 복원)</label>
+                <p class="settings-desc">이전에 다운로드했던 JSON 백업 파일을 불러와 현재 성경 족보 메모를 복원합니다.</p>
+              </div>
+              <div class="settings-action">
+                <button id="bottom-restore-btn" class="settings-btn primary-outline" style="font-size: 11px; padding: 6px 12px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 600;">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                  백업 파일 선택
+                </button>
               </div>
             </div>
           </div>
