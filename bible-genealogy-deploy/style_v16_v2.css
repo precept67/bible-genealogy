@@ -2995,3 +2995,35 @@ svg path.prophets-aura {
 .switch-toggle input:checked + .slider-round:before {
   transform: translateX(20px);
 }
+
+/* Settings Modal Button Styles */
+.settings-btn {
+  background: transparent;
+  border: 1px solid var(--border-panel);
+  color: var(--text-primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.settings-btn svg {
+  stroke: currentColor;
+}
+
+.settings-btn.primary-outline {
+  border-color: #3b82f6;
+  color: #3b82f6;
+}
+
+.settings-btn.primary-outline:hover {
+  background: rgba(59, 130, 246, 0.08);
+  border-color: #2563eb;
+  color: #2563eb;
+}
+
