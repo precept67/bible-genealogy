@@ -5035,7 +5035,7 @@ function getCharacterGroup(char) {
 }
 
 function isFilterModeActive() {
-  return Object.keys(activeFilters).some(key => key !== 'prophets' && activeFilters[key] === true);
+  return Object.keys(activeFilters).some(key => activeFilters[key] === true);
 }
 
 function isPointInPolygon(point, vs) {
@@ -5188,6 +5188,21 @@ function isProphetRelated(charId) {
   return prophetRelatedIds.has(charId);
 }
 
+function isProphetInsideProphetsArea(charId) {
+  const char = db.find(c => c.id === charId);
+  const isSamuel = charId === 'samuel' || (char && char.name && (char.name === '사무엘' || char.name.includes('사무엘')));
+  const isProphetChar = isSamuel || isProphet(charId);
+  if (!isProphetChar) return false;
+
+  const prophetsPoly = customPolygons.find(p => p.label === '선지자들' || p.id === 'poly-custom-1785777570404');
+  if (!prophetsPoly || !prophetsPoly.points) return false;
+
+  const coords = coordinates[charId];
+  if (!coords) return false;
+
+  return isPointInPolygon(coords, prophetsPoly.points);
+}
+
 function getCharacterFilterClass(charId) {
   if (!isFilterModeActive()) return "";
   
@@ -5199,13 +5214,8 @@ function getCharacterFilterClass(charId) {
   // 1. Check if character matches the Prophets filter
   let matchesProphetFilter = false;
   if (activeFilters['prophets'] === true) {
-    if (showPeople) {
+    if (isProphetInsideProphetsArea(charId)) {
       matchesProphetFilter = true;
-    } else {
-      const isSamuel = charId === 'samuel' || (char.name && (char.name === '사무엘' || char.name.includes('사무엘')));
-      if (isSamuel || isProphet(charId)) {
-        matchesProphetFilter = true;
-      }
     }
   }
   
@@ -5298,10 +5308,10 @@ function getSpouseFilterClass(charId1, charId2) {
     return "";
   }
   
-  // If prophets filter is active and it didn't match any other active filter, hide it
+  // If prophets filter is active and it didn't match any other active filter, fade it out (and hide it if people layer is unchecked)
   if (activeFilters['prophets'] === true) {
     if (showPeople) {
-      return "";
+      return "filter-inactive";
     }
     return "filter-inactive prophets-hide";
   }
@@ -5341,10 +5351,10 @@ function getChildLineFilterClass(childId, parentIds) {
     return "";
   }
   
-  // If prophets filter is active and it didn't match any other active filter, hide it
+  // If prophets filter is active and it didn't match any other active filter, fade it out (and hide it if people layer is unchecked)
   if (activeFilters['prophets'] === true) {
     if (showPeople) {
-      return "";
+      return "filter-inactive";
     }
     return "filter-inactive prophets-hide";
   }
@@ -5648,18 +5658,9 @@ function applyFilters() {
     }
   }
 
-  const prophetsToggleBtn = document.getElementById('prophets-layer-toggle');
-  if (prophetsToggleBtn) {
-    if (activeFilters['prophets'] === true) {
-      prophetsToggleBtn.classList.add('active');
-    } else {
-      prophetsToggleBtn.classList.remove('active');
-    }
-  }
-
   const toggleLayerProphets = document.getElementById('toggle-layer-prophets');
-  if (toggleLayerProphets) {
-    toggleLayerProphets.checked = (activeFilters['prophets'] === true);
+  if (toggleLayerProphets && activeFilters['prophets'] === true) {
+    toggleLayerProphets.checked = true;
   }
 
   updateLayersVisibility();
@@ -5669,18 +5670,7 @@ function setupFilters() {
   const filterPanel = document.getElementById('filter-panel');
   const toggleBtn = document.getElementById('filter-panel-toggle');
   const closeBtn = document.getElementById('filter-panel-close');
-  const prophetsToggleBtn = document.getElementById('prophets-layer-toggle');
-  
-  if (prophetsToggleBtn) {
-    prophetsToggleBtn.addEventListener('click', () => {
-      activeFilters['prophets'] = !activeFilters['prophets'];
-      localStorage.setItem('bible_tree_filters', JSON.stringify(activeFilters));
-      applyFilters();
-      if (filterPanel.classList.contains('active')) {
-        renderFilterItems();
-      }
-    });
-  }
+
 
   // Toggle panel
   toggleBtn.addEventListener('click', () => {
@@ -5743,6 +5733,9 @@ function setupFilters() {
 
     // Add custom polygons dynamically
     customPolygons.forEach(poly => {
+      if (poly.label === '선지자들' || poly.id === 'poly-custom-1785777570404' || poly.id === 'custom-1785777570404') {
+        return;
+      }
       const baseGroup = poly.id.replace('poly-', '');
       if (!builtInGroups.some(g => g.id === baseGroup)) {
         allFilters.push({
@@ -5873,7 +5866,9 @@ function renderTree() {
     }
     const filterClass = getCharacterFilterClass(char.id);
     if (filterClass) {
-      card.classList.add(filterClass);
+      filterClass.split(' ').forEach(cls => {
+        if (cls) card.classList.add(cls);
+      });
     }
     if (char.isMain) {
       card.classList.add('main-line');
@@ -7461,11 +7456,21 @@ function renderCustomPolygons() {
     const baseGroup = poly.id.replace('poly-', '');
     let filterClass = "";
     if (isFilterModeActive()) {
-      const hasOtherActiveFilters = Object.keys(activeFilters).some(key => key !== 'prophets' && activeFilters[key] === true);
-      if (activeFilters['prophets'] === true && !hasOtherActiveFilters && isLayerVisible) {
-        // Do not fade out polygons if ONLY the prophets filter is active but polygons layer is checked
-      } else if (activeFilters[baseGroup] !== true) {
-        filterClass = "filter-inactive";
+      const isProphetsFilterActive = activeFilters['prophets'] === true;
+      const isThisProphetsPoly = poly.label === '선지자들' || poly.id === 'poly-custom-1785777570404';
+      
+      if (isProphetsFilterActive) {
+        if (isThisProphetsPoly) {
+          filterClass = "";
+        } else if (activeFilters[baseGroup] === true) {
+          filterClass = "";
+        } else {
+          filterClass = "filter-inactive";
+        }
+      } else {
+        if (activeFilters[baseGroup] !== true) {
+          filterClass = "filter-inactive";
+        }
       }
     }
     
@@ -13268,6 +13273,7 @@ async function fetchUserNotes() {
     if (localNotes) {
       userNotes = JSON.parse(localNotes) || {};
       updateAllNoteBadges();
+      triggerAutoBackup();
     }
   } catch (e) {
     console.error("Failed to parse local notes:", e);
@@ -13286,6 +13292,7 @@ async function fetchUserNotes() {
       userNotes = data.notes || {};
       localStorage.setItem('bible_tree_user_notes', JSON.stringify(userNotes));
       updateAllNoteBadges();
+      triggerAutoBackup();
     } else {
       updateAllNoteBadges();
     }
@@ -13294,7 +13301,11 @@ async function fetchUserNotes() {
   }
 }
 
-// Trigger automatic background backup in the Documents folder when running inside Tauri
+let backupTimeout = null;
+let isBackupRunning = false;
+let backupPending = false;
+
+// Trigger automatic background backup in the Documents folder when running inside Tauri (with 1-second debounce)
 async function triggerAutoBackup() {
   const isTauri = window.location.protocol.startsWith('tauri') || 
                   window.location.hostname === 'tauri.localhost' || 
@@ -13302,7 +13313,28 @@ async function triggerAutoBackup() {
                   window.location.protocol.startsWith('asset') ||
                   (window.__TAURI__ && window.__TAURI__.fs);
   
-  if (isTauri && window.__TAURI__ && window.__TAURI__.fs && window.__TAURI__.path) {
+  if (!isTauri) return;
+
+  if (backupTimeout) {
+    clearTimeout(backupTimeout);
+  }
+
+  backupTimeout = setTimeout(async () => {
+    backupTimeout = null;
+    await runBackupActual();
+  }, 1000); // 1-second debounce to prevent multiple concurrent writes during typing
+}
+
+async function runBackupActual() {
+  if (isBackupRunning) {
+    backupPending = true;
+    return;
+  }
+
+  isBackupRunning = true;
+  backupPending = false;
+
+  if (window.__TAURI__ && window.__TAURI__.fs && window.__TAURI__.path) {
     try {
       const docDir = await window.__TAURI__.path.documentDir();
       
@@ -13315,7 +13347,7 @@ async function triggerAutoBackup() {
       const backupFolder = await window.__TAURI__.path.join(docDir, 'bible_genealogy_notes');
       await window.__TAURI__.fs.createDir(backupFolder, { recursive: true });
       
-      const folders = ['인물', '사건', '장소', '기타'];
+      const folders = ['인물', '선지자', '사건', '장소', '영역', '텍스트상자', '기타'];
       for (const f of folders) {
         const subPath = await window.__TAURI__.path.join(backupFolder, f);
         await window.__TAURI__.fs.createDir(subPath, { recursive: true });
@@ -13330,7 +13362,11 @@ async function triggerAutoBackup() {
         const person = db.find(p => p.id === key);
         if (person) {
           name = person.name;
-          type = '인물';
+          const isProphetChar = person.isProphet === true || 
+                                (typeof prophetIds !== 'undefined' && prophetIds.has(person.id)) || 
+                                person.id.startsWith('prophet_') || 
+                                person.id === 'samuel';
+          type = isProphetChar ? '선지자' : '인물';
         } else {
           const ev = events.find(e => e.id === key);
           if (ev) {
@@ -13341,11 +13377,20 @@ async function triggerAutoBackup() {
             if (loc) {
               name = loc.name;
               type = '장소';
+            } else {
+              const poly = customPolygons.find(p => p.id === key);
+              if (poly) {
+                name = poly.label || poly.id;
+                type = '영역';
+              } else if (key.startsWith('note-') || key.startsWith('annotation_')) {
+                name = key;
+                type = '텍스트상자';
+              }
             }
           }
         }
         
-        const cleanName = name.replace(/[\/\\:\*\?"<>\|]/g, '_');
+        const cleanName = name.replace(/[\/\\:\*\?"<>\|]/g, '_').trim();
         const mdFilePath = await window.__TAURI__.path.join(backupFolder, type, cleanName + '.md');
         
         if (!content || !content.trim()) {
@@ -13353,13 +13398,36 @@ async function triggerAutoBackup() {
             await window.__TAURI__.fs.removeFile(mdFilePath);
           } catch (err) {}
         } else {
-          // Write note content to .md file
-          await window.__TAURI__.fs.writeTextFile(mdFilePath, content);
+          let title = cleanName;
+          if (person) title = `${person.name} (${person.engName || ''})`;
+          else if (ev) title = `${ev.name}`;
+          else if (loc) title = `${loc.name}`;
+          else if (poly) title = `${poly.label || poly.id}`;
+
+          const mdText = `---
+title: "${title}"
+id: "${key}"
+type: "${type}"
+tags:
+  - 성경족보메모
+  - ${type}
+---
+
+# ${title}
+
+${content}
+`;
+          await window.__TAURI__.fs.writeTextFile(mdFilePath, mdText);
         }
       }
       console.log("Auto-backup Markdown files successfully exported to:", backupFolder);
     } catch (err) {
       console.error("Auto-backup failed:", err);
+    } finally {
+      isBackupRunning = false;
+      if (backupPending) {
+        setTimeout(runBackupActual, 300);
+      }
     }
   }
 }
@@ -14494,15 +14562,8 @@ document.getElementById('toggle-layer-polygons')?.addEventListener('change', () 
   applyFilters();
 });
 
-document.getElementById('toggle-layer-prophets')?.addEventListener('change', (e) => {
-  activeFilters['prophets'] = e.target.checked;
-  localStorage.setItem('bible_tree_filters', JSON.stringify(activeFilters));
+document.getElementById('toggle-layer-prophets')?.addEventListener('change', () => {
   applyFilters();
-  
-  const filterPanel = document.getElementById('filter-panel');
-  if (filterPanel && filterPanel.classList.contains('active')) {
-    renderFilterItems();
-  }
 });
 
 document.getElementById('toggle-relationship-highlight')?.addEventListener('change', (e) => {
@@ -14814,7 +14875,6 @@ function applyLocalization() {
     'zoom-reset': { attr: 'title', key: 'zoom_reset_title' },
     'theme-toggle': { attr: 'title', key: 'theme_toggle_title' },
     'filter-panel-toggle': { attr: 'title', key: 'filter_panel_title' },
-    'prophets-layer-toggle': { attr: 'title', key: 'prophets_toggle_title' },
     'help-guide-btn': { attr: 'title', key: 'help_guide_title' },
     'bottom-backup-btn': { attr: 'title', key: 'backup_title' },
     'bottom-restore-btn': { attr: 'title', key: 'restore_title' },
@@ -15448,6 +15508,7 @@ function startPeriodicSync() {
           userNotes = serverNotes;
           localStorage.setItem('bible_tree_user_notes', JSON.stringify(userNotes));
           updateAllNoteBadges();
+          triggerAutoBackup();
           
           if (noteTextarea && activePersonId && !isTextareaFocused) {
             noteTextarea.value = userNotes[activePersonId] || '';

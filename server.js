@@ -664,8 +664,9 @@ function exportNotesToMarkdown(notesData) {
   const FOLDER_AREAS = path.join(NOTES_DIR, '영역');
   const FOLDER_PROPHETS = path.join(NOTES_DIR, '선지자');
   const FOLDER_TEXTBOX = path.join(NOTES_DIR, '텍스트상자');
+  const FOLDER_OTHER = path.join(NOTES_DIR, '기타');
 
-  [FOLDER_PEOPLE, FOLDER_EVENTS, FOLDER_LOCATIONS, FOLDER_AREAS, FOLDER_PROPHETS, FOLDER_TEXTBOX].forEach(dir => {
+  [FOLDER_PEOPLE, FOLDER_EVENTS, FOLDER_LOCATIONS, FOLDER_AREAS, FOLDER_PROPHETS, FOLDER_TEXTBOX, FOLDER_OTHER].forEach(dir => {
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
@@ -673,8 +674,9 @@ function exportNotesToMarkdown(notesData) {
 
   for (let key in notesData) {
     const content = notesData[key];
-    let folder = FOLDER_TEXTBOX;
+    let folder = FOLDER_OTHER;
     let fileName = key;
+    let typeLabel = '기타';
 
     const char = charMap[key];
     const event = eventMap[key];
@@ -682,21 +684,33 @@ function exportNotesToMarkdown(notesData) {
     const poly = polyMap[key];
 
     if (char) {
-      if (char.isProphet) {
+      const isProphetChar = char.isProphet === true || 
+                            char.id.startsWith('prophet_') || 
+                            char.id === 'samuel';
+      if (isProphetChar) {
         folder = FOLDER_PROPHETS;
+        typeLabel = '선지자';
       } else {
         folder = FOLDER_PEOPLE;
+        typeLabel = '인물';
       }
       fileName = char.name;
     } else if (event) {
       folder = FOLDER_EVENTS;
+      typeLabel = '사건';
       fileName = event.name;
     } else if (loc) {
       folder = FOLDER_LOCATIONS;
+      typeLabel = '장소';
       fileName = loc.name;
     } else if (poly) {
       folder = FOLDER_AREAS;
+      typeLabel = '영역';
       fileName = poly.label || poly.id;
+    } else if (key.startsWith('note-') || key.startsWith('annotation_')) {
+      folder = FOLDER_TEXTBOX;
+      typeLabel = '텍스트상자';
+      fileName = key;
     }
 
     const safeFileName = fileName.replace(/[\/\\:\*\?"<>\|]/g, '_').trim();
@@ -715,7 +729,6 @@ function exportNotesToMarkdown(notesData) {
       else if (loc) title = `${loc.name}`;
       else if (poly) title = `${poly.label || poly.id}`;
 
-      const typeLabel = folder.split(path.sep).pop();
       let mdText = `---
 title: "${title}"
 id: "${key}"

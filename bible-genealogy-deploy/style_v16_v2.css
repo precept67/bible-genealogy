@@ -431,6 +431,29 @@ header .subtitle {
 .person-card.main-line:hover {
   box-shadow: 0 0 25px rgba(245, 158, 11, 0.45);
 }
+
+/* Prophet Card General Styles (always purple background) */
+.person-card.prophet {
+  background: var(--bg-card-prophet) !important;
+  border: 1.5px solid var(--border-card-prophet) !important;
+}
+.person-card.prophet .card-title {
+  color: #4a044e !important;
+}
+.person-card.prophet .card-eng {
+  color: #701a75 !important;
+}
+[data-theme="dark"] .person-card.prophet {
+  background: var(--bg-card-prophet) !important;
+  border: 1.5px solid var(--border-card-prophet) !important;
+}
+[data-theme="dark"] .person-card.prophet .card-title {
+  color: #fdf4ff !important;
+}
+[data-theme="dark"] .person-card.prophet .card-eng {
+  color: #e9d5ff !important;
+}
+
 /* Card Inner Content */
 .card-name-row {
   display: flex;
@@ -2578,6 +2601,15 @@ header .subtitle {
   opacity: 0.28 !important;
   stroke-width: 4px !important;
 }
+/* Ensure the Prophets area box fades out when relationship highlight is active */
+.relationship-highlight-active #svg-poly-poly-custom-1785777570404:not(.highlight):not(.poly-selected),
+.relationship-highlight-active #svg-poly-custom-1785777570404:not(.highlight):not(.poly-selected) {
+  opacity: 0.05 !important;
+}
+.relationship-highlight-active #label-poly-poly-custom-1785777570404:not(.highlight),
+.relationship-highlight-active #label-poly-custom-1785777570404:not(.highlight) {
+  opacity: 0.09 !important;
+}
 .relationship-highlight-active .family-group-label {
   opacity: 0.09 !important;
   transition: opacity 0.3s ease;
@@ -2598,6 +2630,15 @@ header .subtitle {
 .tree-highlight-active .family-group-panel-poly {
   opacity: 0.05 !important;
   transition: opacity 0.3s ease;
+}
+/* Ensure the Prophets area box fades out when tree highlight is active */
+.tree-highlight-active #svg-poly-poly-custom-1785777570404:not(.highlight):not(.poly-selected),
+.tree-highlight-active #svg-poly-custom-1785777570404:not(.highlight):not(.poly-selected) {
+  opacity: 0.05 !important;
+}
+.tree-highlight-active #label-poly-poly-custom-1785777570404:not(.highlight),
+.tree-highlight-active #label-poly-custom-1785777570404:not(.highlight) {
+  opacity: 0.09 !important;
 }
 .tree-highlight-active .family-group-label {
   opacity: 0.09 !important;
@@ -2783,6 +2824,81 @@ header .subtitle {
   font-size: 11px;
   color: var(--text-muted);
   margin-left: auto;
+}
+
+/* Prophets Aura Glow Effect */
+.person-card.prophets-aura {
+  animation: prophets-aura-glow 2s infinite alternate !important;
+  border-width: 2.5px !important;
+  box-shadow: 0 0 15px rgba(236, 72, 153, 0.6), inset 0 0 10px rgba(236, 72, 153, 0.3) !important;
+}
+
+[data-theme="dark"] .person-card.prophets-aura {
+  animation: prophets-aura-glow-dark 2s infinite alternate !important;
+  box-shadow: 0 0 20px rgba(236, 72, 153, 0.8), inset 0 0 12px rgba(236, 72, 153, 0.4) !important;
+}
+
+@keyframes prophets-aura-glow {
+  0% {
+    border-color: rgba(236, 72, 153, 0.8) !important;
+    box-shadow: 0 0 15px rgba(236, 72, 153, 0.6), inset 0 0 8px rgba(236, 72, 153, 0.3) !important;
+  }
+  100% {
+    border-color: rgba(168, 85, 247, 0.9) !important;
+    box-shadow: 0 0 25px rgba(168, 85, 247, 0.9), inset 0 0 15px rgba(168, 85, 247, 0.5) !important;
+  }
+}
+
+@keyframes prophets-aura-glow-dark {
+  0% {
+    border-color: rgba(236, 72, 153, 0.9) !important;
+    box-shadow: 0 0 20px rgba(236, 72, 153, 0.7), inset 0 0 10px rgba(236, 72, 153, 0.4) !important;
+  }
+  100% {
+    border-color: rgba(192, 132, 252, 1) !important;
+    box-shadow: 0 0 35px rgba(192, 132, 252, 1), inset 0 0 20px rgba(192, 132, 252, 0.6) !important;
+  }
+}
+
+/* SVG Polygon Glow Animation */
+svg path.prophets-aura {
+  animation: svg-poly-glow 3s infinite alternate !important;
+  stroke: #db2777 !important;
+  stroke-width: 4px !important;
+  fill-opacity: 0.12 !important;
+  stroke-dasharray: none !important;
+}
+
+@keyframes svg-poly-glow {
+  0% {
+    stroke: #db2777 !important;
+    fill: rgba(219, 39, 119, 0.12) !important;
+    filter: drop-shadow(0 0 5px rgba(219, 39, 119, 0.5));
+  }
+  100% {
+    stroke: #9333ea !important;
+    fill: rgba(147, 51, 234, 0.18) !important;
+    filter: drop-shadow(0 0 15px rgba(147, 51, 234, 0.8));
+  }
+}
+
+/* Label / Name Box Prophets Aura Glow Style */
+.family-group-label.prophets-aura {
+  animation: prophets-label-aura-glow 2s infinite alternate !important;
+  border-width: 2px !important;
+  font-weight: 800 !important;
+  box-shadow: 0 0 15px rgba(236, 72, 153, 0.6), 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+}
+
+@keyframes prophets-label-aura-glow {
+  0% {
+    border-color: rgba(236, 72, 153, 0.8) !important;
+    box-shadow: 0 0 12px rgba(236, 72, 153, 0.6) !important;
+  }
+  100% {
+    border-color: rgba(168, 85, 247, 0.9) !important;
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.9) !important;
+  }
 }
 
 

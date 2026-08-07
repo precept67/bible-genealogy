@@ -20949,6 +20949,31 @@
       "bgColor": "transparent",
       "borderColor": "#cbd5e1",
       "auraEnabled": true
+    },
+    {
+      "id": "annotation_1786037834044_s9u87t0re",
+      "text": "동명이인",
+      "x": 16200,
+      "y": 1244,
+      "width": 96,
+      "height": 38,
+      "fontSize": 12,
+      "bold": false,
+      "italic": false,
+      "underline": false,
+      "align": "center",
+      "borderStyle": "dashed",
+      "borderWidth": 1,
+      "color": "#1e293b",
+      "bgColor": "#c3adf5",
+      "borderColor": "#cbd5e1",
+      "auraEnabled": true,
+      "relatedPeople": [
+        "enoch_cain",
+        "enoch"
+      ],
+      "relatedEvents": [],
+      "relatedLocations": []
     }
   ],
   "styleSettings": {
