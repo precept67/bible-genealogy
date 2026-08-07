@@ -13585,8 +13585,6 @@ async function writeSingleNoteMd(key, content) {
     console.log(`[MD 즉시 저장] ${type}/${cleanName}.md`);
   } catch (err) {
     console.error('[MD 즉시 저장 실패]', key, err);
-    // Alert the user if there is a security or write error so we can diagnose it immediately
-    alert("메모 파일 쓰기 실패 (iCloud 권한 또는 파일 시스템 에러):\n" + err);
   }
 }
 
