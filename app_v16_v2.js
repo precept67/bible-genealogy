@@ -10230,6 +10230,8 @@ function setupStudyPanel() {
       delete userNotes[activePersonId];
     }
     saveUserNotes();
+    // Immediately write single MD file on save button click
+    writeSingleNoteMd(activePersonId, noteContent);
     
     const card = document.getElementById(`card-${activePersonId}`);
     if (card) {
@@ -10286,6 +10288,8 @@ function setupStudyPanel() {
       delete userNotes[activePersonId];
     }
     saveUserNotes();
+    // Also write MD immediately on every input (debounce handled inside triggerAutoBackup)
+    writeSingleNoteMd(activePersonId, noteContent);
     
     // Update badge on card or annotation
     const card = document.getElementById(`card-${activePersonId}`);
@@ -13273,7 +13277,8 @@ async function fetchUserNotes() {
     if (localNotes) {
       userNotes = JSON.parse(localNotes) || {};
       updateAllNoteBadges();
-      triggerAutoBackup();
+      // Delay backup until DB and other variables are fully initialized
+      setTimeout(() => triggerAutoBackup(), 2000);
     }
   } catch (e) {
     console.error("Failed to parse local notes:", e);
@@ -13292,7 +13297,8 @@ async function fetchUserNotes() {
       userNotes = data.notes || {};
       localStorage.setItem('bible_tree_user_notes', JSON.stringify(userNotes));
       updateAllNoteBadges();
-      triggerAutoBackup();
+      // Delay backup until DB and other variables are fully initialized
+      setTimeout(() => triggerAutoBackup(), 2000);
     } else {
       updateAllNoteBadges();
     }
@@ -13434,6 +13440,61 @@ async function saveUserNotes() {
       body: JSON.stringify({ notes: userNotes })
     });
   } catch(e) {}
+}
+
+// Write a single note's MD file immediately (called right after save button click)
+async function writeSingleNoteMd(key, content) {
+  if (!window.__TAURI__ || !window.__TAURI__.fs || !window.__TAURI__.path) return;
+  try {
+    const docDir = await window.__TAURI__.path.documentDir();
+    const backupFolder = await window.__TAURI__.path.join(docDir, 'bible_genealogy_notes');
+
+    let name = key, type = '기타';
+    let person = null, ev = null, loc = null, poly = null;
+
+    person = (typeof db !== 'undefined') ? db.find(p => p.id === key) : null;
+    if (person) {
+      name = person.name;
+      const isProphetChar = person.isProphet === true ||
+                            (typeof prophetIds !== 'undefined' && prophetIds.has(person.id)) ||
+                            person.id.startsWith('prophet_') || person.id === 'samuel';
+      type = isProphetChar ? '선지자' : '인물';
+    } else {
+      ev = (typeof events !== 'undefined') ? events.find(e => e.id === key) : null;
+      if (ev) { name = ev.name; type = '사건'; }
+      else {
+        loc = (typeof locations !== 'undefined') ? locations.find(l => l.id === key) : null;
+        if (loc) { name = loc.name; type = '장소'; }
+        else {
+          poly = (typeof customPolygons !== 'undefined') ? customPolygons.find(p => p.id === key) : null;
+          if (poly) { name = poly.label || poly.id; type = '영역'; }
+          else if (key.startsWith('note-') || key.startsWith('annotation_')) { type = '텍스트상자'; }
+        }
+      }
+    }
+
+    const cleanName = name.replace(/[\/\\:\*\?"<>\|]/g, '_').trim();
+    const folderPath = await window.__TAURI__.path.join(backupFolder, type);
+    await window.__TAURI__.fs.createDir(folderPath, { recursive: true });
+    const mdFilePath = await window.__TAURI__.path.join(folderPath, cleanName + '.md');
+
+    if (!content || !content.trim()) {
+      try { await window.__TAURI__.fs.removeFile(mdFilePath); } catch (_) {}
+      return;
+    }
+
+    let title = cleanName;
+    if (person) title = `${person.name}${person.engName ? ' (' + person.engName + ')' : ''}`;
+    else if (ev) title = ev.name;
+    else if (loc) title = loc.name;
+    else if (poly) title = poly.label || poly.id;
+
+    const mdText = `---\ntitle: "${title}"\nid: "${key}"\ntype: "${type}"\ntags:\n  - 성경족보메모\n  - ${type}\n---\n\n# ${title}\n\n${content}\n`;
+    await window.__TAURI__.fs.writeTextFile(mdFilePath, mdText);
+    console.log(`[MD 즉시 저장] ${type}/${cleanName}.md`);
+  } catch (err) {
+    console.error('[MD 즉시 저장 실패]', key, err);
+  }
 }
 
 // Bottom Control Panel Notes Export & Import handlers
