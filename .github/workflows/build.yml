@@ -8,15 +8,11 @@ on:
   workflow_dispatch: # Allows manual run in GitHub Actions tab
 
 jobs:
-  build-tauri:
+  build-windows:
     permissions:
       contents: write
-    strategy:
-      fail-fast: false
-      matrix:
-        platform: [windows-latest]
+    runs-on: windows-latest
 
-    runs-on: ${{ matrix.platform }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -25,10 +21,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: './src-tauri -> target'
 
       - name: Install dependencies
         run: npm install
@@ -46,7 +46,7 @@ jobs:
           mkdir -p dist
           cp index.html style_v16_v2.css app_v16_v2.js data_v16_v2.js database.json app_logo.png dist/
 
-      - name: Disable updater temporarily to bypass signing error
+      - name: Disable updater and set msi target
         shell: bash
         run: |
           node -e "
@@ -56,17 +56,20 @@ jobs:
             if (data.tauri && data.tauri.updater) {
               data.tauri.updater.active = false;
             }
+            if (data.tauri && data.tauri.bundle) {
+              data.tauri.bundle.targets = ['msi'];
+            }
             fs.writeFileSync(path, JSON.stringify(data, null, 2), 'utf8');
+            console.log('tauri.conf.json patched: updater disabled, target set to msi');
           "
 
-      - name: Build Desktop App via Tauri Action
-        uses: tauri-apps/tauri-action@v0
+      - name: Build Tauri Windows app
+        uses: tauri-apps/tauri-action@v0.5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tagName: v${{ steps.get_version.outputs.version }}-${{ github.run_number }}
-          releaseName: "App Release v${{ steps.get_version.outputs.version }} (Build ${{ github.run_number }})"
-          releaseBody: "Automated draft release containing Windows (.msi) and macOS (.dmg) installers."
+          releaseName: "Bible Genealogy v${{ steps.get_version.outputs.version }} (Build ${{ github.run_number }})"
+          releaseBody: "Windows MSI installer auto-built from main branch."
           releaseDraft: true
           prerelease: false
-          args: ""
