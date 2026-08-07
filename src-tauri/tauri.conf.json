@@ -17,7 +17,11 @@
       },
       "fs": {
         "all": true,
-        "scope": ["$DOCUMENT/**"]
+        "scope": [
+          "$DOCUMENT/**",
+          "$HOME/Library/Mobile Documents/iCloud~md~obsidian/Documents/**",
+          "/Users/sanghyunkim/Library/Mobile Documents/iCloud~md~obsidian/Documents/**"
+        ]
       },
       "path": {
         "all": true
