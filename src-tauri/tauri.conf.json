@@ -17,7 +17,7 @@
       },
       "fs": {
         "all": true,
-        "scope": ["$DOCUMENT/*"]
+        "scope": ["$DOCUMENT/**"]
       },
       "path": {
         "all": true
