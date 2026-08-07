@@ -12908,7 +12908,15 @@ async function validateSession() {
   }
   try {
     const res = await fetch(getApiUrl('/api/me'), { headers: { 'Authorization': 'Bearer ' + userToken } });
-    if (!res.ok) throw new Error('Invalid token');
+    if (!res.ok) {
+      if (res.status === 401 || res.status === 403) {
+        userToken = null;
+        localStorage.removeItem('bible_tree_token');
+        hideAdminLockControls();
+        showAuthModal();
+      }
+      return;
+    }
     currentUser = await res.json();
     await fetchUserNotes();
     hideAuthModal();
@@ -12916,10 +12924,18 @@ async function validateSession() {
     const landing = document.getElementById('landing-page');
     if (landing) landing.style.display = 'none';
   } catch (e) {
-    userToken = null;
-    localStorage.removeItem('bible_tree_token');
-    hideAdminLockControls();
-    showAuthModal();
+    console.warn("Connection to auth server failed, using local offline session:", e);
+    try {
+      const decoded = atob(userToken);
+      const username = decoded.split(':')[0];
+      currentUser = { username: username || 'offline_user', status: 'approved' };
+    } catch (err) {
+      currentUser = { username: 'offline_user', status: 'approved' };
+    }
+    hideAuthModal();
+    updateAdminLockVisibility();
+    const landing = document.getElementById('landing-page');
+    if (landing) landing.style.display = 'none';
   }
 }
 
