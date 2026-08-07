@@ -13273,85 +13273,89 @@ function updateAllNoteBadges() {
 // Load user notes
 async function fetchUserNotes() {
   try {
-    // 1. Force restore from local JSON backup if localStorage is empty or missing notes
+    // 1. Load from Local Storage first
+    const localNotes = localStorage.getItem('bible_tree_user_notes');
+    if (localNotes) {
+      userNotes = JSON.parse(localNotes) || {};
+    }
+
+    // 2. Load and merge from local Backup JSON (in case local storage was cleared)
     if (window.__TAURI__ && window.__TAURI__.fs && window.__TAURI__.path) {
       try {
         const docDir = await window.__TAURI__.path.documentDir();
         const backupPath = await window.__TAURI__.path.join(docDir, 'bible_genealogy_notes_autobackup.json');
         
-        // Attempt to read directly. If the file exists, it will succeed. If not, it will catch.
         const backupJsonText = await window.__TAURI__.fs.readTextFile(backupPath);
         const backupNotes = JSON.parse(backupJsonText);
-        
-        if (backupNotes && Object.keys(backupNotes).length > 0) {
-          const localNotes = localStorage.getItem('bible_tree_user_notes');
-          const localObj = localNotes ? JSON.parse(localNotes) : {};
-          
-          // Merge backup notes (backup notes are the source of truth if local is wiped or empty)
-          if (Object.keys(backupNotes).length > Object.keys(localObj).length || Object.keys(localObj).length === 0) {
-            userNotes = backupNotes;
-            localStorage.setItem('bible_tree_user_notes', JSON.stringify(userNotes));
-            console.log("[복구 성공] 백업 JSON 파일로부터 메모를 완벽히 복구했습니다!");
+        if (backupNotes) {
+          // Merge backup notes into userNotes safely
+          for (const id of Object.keys(backupNotes)) {
+            if (!userNotes[id] || userNotes[id].trim() === '') {
+              userNotes[id] = backupNotes[id];
+            }
           }
+          console.log("[동기화] 로컬 백업 JSON 데이터를 병합했습니다.");
         }
       } catch (err) {
-        // Safe to ignore if backup file doesn't exist yet
-        console.log("No backup JSON file found or readable (first run or permission). Skipping auto-restore.");
+        console.log("No backup JSON found or skipped: ", err);
       }
     }
 
-    // Load from localStorage
-    const localNotes = localStorage.getItem('bible_tree_user_notes');
-    if (localNotes) {
-      userNotes = JSON.parse(localNotes) || {};
-      updateAllNoteBadges();
-      // Import any changes from Obsidian MD files (bidirectional sync)
-      setTimeout(async () => {
-        await importNotesFromMdFiles();
-        triggerAutoBackup();
-      }, 2000);
+    updateAllNoteBadges();
+
+    // 3. Sync with Server (if license key exists)
+    const licenseKey = localStorage.getItem('bible_genealogy_license_key');
+    if (userToken || licenseKey) {
+      try {
+        const authHeader = userToken ? ('Bearer ' + userToken) : ('License ' + licenseKey);
+        const res = await fetch(getApiUrl('/api/notes'), { headers: { 'Authorization': authHeader } });
+        if (res.ok) {
+          const data = await res.json();
+          const serverNotes = data.notes || {};
+          
+          // Merge server notes safely (never overwrite local notes that have content)
+          let mergedCount = 0;
+          for (const id of Object.keys(serverNotes)) {
+            if (!userNotes[id] || userNotes[id].trim() === '') {
+              userNotes[id] = serverNotes[id];
+              mergedCount++;
+            }
+          }
+          if (mergedCount > 0) {
+            localStorage.setItem('bible_tree_user_notes', JSON.stringify(userNotes));
+            updateAllNoteBadges();
+            console.log(`[서버 동기화] ${mergedCount}개의 새로운 메모를 서버에서 가져왔습니다.`);
+          }
+        }
+      } catch (e) {
+        console.error("Server sync failed: ", e);
+      }
     }
+
+    // 4. Import from Obsidian Markdown files (Obsidian edits win)
+    setTimeout(async () => {
+      await importNotesFromMdFiles();
+      
+      // 5. Save the final merged notes and trigger backup
+      localStorage.setItem('bible_tree_user_notes', JSON.stringify(userNotes));
+      triggerAutoBackup();
+      
+      // Upload the final merged notes to the server
+      if (userToken || licenseKey) {
+        try {
+          const authHeader = userToken ? ('Bearer ' + userToken) : ('License ' + licenseKey);
+          await fetch(getApiUrl('/api/notes'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': authHeader },
+            body: JSON.stringify({ notes: userNotes })
+          });
+          console.log("[동기화] 최종 병합된 메모를 서버에 업로드했습니다.");
+        } catch (e) {}
+      }
+    }, 1000);
+
   } catch (e) {
-    console.error("Failed to parse local notes:", e);
-  }
-
-  const licenseKey = localStorage.getItem('bible_genealogy_license_key');
-  if (!userToken && !licenseKey) {
-    updateAllNoteBadges();
-    return;
-  }
-  try {
-    const authHeader = userToken ? ('Bearer ' + userToken) : ('License ' + licenseKey);
-    const res = await fetch(getApiUrl('/api/notes'), { headers: { 'Authorization': authHeader } });
-    if (res.ok) {
-      const data = await res.json();
-      const serverNotes = data.notes || {};
-      
-      // Safeguard: Never overwrite local notes if server notes are empty or have fewer items
-      const localKeys = Object.keys(userNotes).length;
-      const serverKeys = Object.keys(serverNotes).length;
-      
-      if (serverKeys >= localKeys && serverKeys > 0) {
-        userNotes = serverNotes;
-        localStorage.setItem('bible_tree_user_notes', JSON.stringify(userNotes));
-        updateAllNoteBadges();
-        console.log("[동기화] 서버 데이터를 다운로드하여 덮어썼습니다.");
-      } else {
-        console.log("[동기화] 로컬 데이터가 더 최신이거나 서버가 비어있어 덮어쓰지 않았습니다.");
-        // Upload local notes to server since local is newer/more complete
-        saveUserNotes();
-      }
-
-      // Import any changes from Obsidian MD files (bidirectional sync)
-      setTimeout(async () => {
-        await importNotesFromMdFiles();
-        triggerAutoBackup();
-      }, 2000);
-    } else {
-      updateAllNoteBadges();
-    }
-  } catch(e) {
-    updateAllNoteBadges();
+    console.error("Failed in fetchUserNotes: ", e);
   }
 }
 
