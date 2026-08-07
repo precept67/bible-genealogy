@@ -1356,7 +1356,7 @@
     },
     {
       "id": "nahor",
-      "name": "나홀(형제)",
+      "name": "나홀",
       "engName": "Nahor",
       "gender": "M",
       "generation": 18.05,
@@ -1373,7 +1373,8 @@
       "teachers": [],
       "prophets": [],
       "relatedPeople": [],
-      "engDesc": "Abraham's brother. Remained in Haran."
+      "engDesc": "Abraham's brother. Remained in Haran.",
+      "isProphet": false
     },
     {
       "id": "milcah",
@@ -11586,7 +11587,7 @@
     },
     {
       "id": "eleazar",
-      "name": "엘르아살",
+      "name": "��르아살",
       "engName": "Eleazar",
       "gender": "M",
       "generation": 59.06,
@@ -21116,7 +21117,9 @@
           "y": 2340
         }
       ],
-      "label_en": "Descendants of Ham (Canaanite/African people)"
+      "label_en": "Descendants of Ham (Canaanite/African people)",
+      "labelOffsetX": 23.46201806727417,
+      "labelOffsetY": -11.040949678717256
     },
     {
       "id": "poly-joktan",
