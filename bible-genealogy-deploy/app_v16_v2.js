@@ -13271,14 +13271,18 @@ function updateAllNoteBadges() {
 }
 
 // Load user notes
+// Load user notes
 async function fetchUserNotes() {
   try {
     const localNotes = localStorage.getItem('bible_tree_user_notes');
     if (localNotes) {
       userNotes = JSON.parse(localNotes) || {};
       updateAllNoteBadges();
-      // Delay backup until DB and other variables are fully initialized
-      setTimeout(() => triggerAutoBackup(), 2000);
+      // Import any changes from Obsidian MD files (bidirectional sync)
+      setTimeout(async () => {
+        await importNotesFromMdFiles();
+        triggerAutoBackup();
+      }, 2000);
     }
   } catch (e) {
     console.error("Failed to parse local notes:", e);
@@ -13297,13 +13301,76 @@ async function fetchUserNotes() {
       userNotes = data.notes || {};
       localStorage.setItem('bible_tree_user_notes', JSON.stringify(userNotes));
       updateAllNoteBadges();
-      // Delay backup until DB and other variables are fully initialized
-      setTimeout(() => triggerAutoBackup(), 2000);
+      // Import any changes from Obsidian MD files (bidirectional sync)
+      setTimeout(async () => {
+        await importNotesFromMdFiles();
+        triggerAutoBackup();
+      }, 2000);
     } else {
       updateAllNoteBadges();
     }
   } catch(e) {
     updateAllNoteBadges();
+  }
+}
+
+// Bidirectional sync: Scan folders and import updated markdown files back into userNotes
+async function importNotesFromMdFiles() {
+  if (!window.__TAURI__ || !window.__TAURI__.fs || !window.__TAURI__.path) return;
+  try {
+    const docDir = await window.__TAURI__.path.documentDir();
+    const backupFolder = await window.__TAURI__.path.join(docDir, 'bible_genealogy_notes');
+    
+    const folders = ['인물', '선지자', '사건', '장소', '영역', '텍스트상자', '기타'];
+    let hasChanges = false;
+    
+    for (const folderName of folders) {
+      try {
+        const folderPath = await window.__TAURI__.path.join(backupFolder, folderName);
+        const entries = await window.__TAURI__.fs.readDir(folderPath);
+        for (const entry of entries) {
+          if (entry.name && entry.name.endsWith('.md')) {
+            const fileText = await window.__TAURI__.fs.readTextFile(entry.path);
+            
+            // Parse Obsidian Frontmatter
+            const parts = fileText.split('---');
+            if (parts.length >= 3) {
+              const yaml = parts[1];
+              const idMatch = yaml.match(/id:\s*"([^"]+)"/) || yaml.match(/id:\s*([^\n]+)/);
+              if (idMatch) {
+                const id = idMatch[1].trim();
+                let body = parts.slice(2).join('---').trim();
+                
+                // Strip the header "# Title" at the start of the body
+                const titleMatch = yaml.match(/title:\s*"([^"]+)"/) || yaml.match(/title:\s*([^\n]+)/);
+                if (titleMatch) {
+                  const titleVal = titleMatch[1].replace(/"/g, '').trim();
+                  const escapedTitle = titleVal.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+                  const headerRegex = new RegExp('^#\\s+' + escapedTitle + '\\s*\\r?\\n?');
+                  body = body.replace(headerRegex, '').trim();
+                }
+                
+                // If it differs, Obsidian is the source of truth for the change
+                if (userNotes[id] !== body) {
+                  userNotes[id] = body;
+                  hasChanges = true;
+                  console.log(`[MD 가져오기 성공] 업데이트된 키: ${id}`);
+                }
+              }
+            }
+          }
+        }
+      } catch (err) {
+        // Folder doesn't exist yet or permission error, proceed
+      }
+    }
+    
+    if (hasChanges) {
+      localStorage.setItem('bible_tree_user_notes', JSON.stringify(userNotes));
+      updateAllNoteBadges();
+    }
+  } catch (e) {
+    console.error("Failed to run bidirectional sync from MD files:", e);
   }
 }
 
