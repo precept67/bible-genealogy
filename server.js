@@ -521,7 +521,13 @@ function handleGet(req, res) {
         res.writeHead(500); res.end(`Server Error: ${error.code}`);
       }
     } else {
-      res.writeHead(200, { 'Content-Type': contentType });
+      const headers = { 'Content-Type': contentType };
+      if (extname === '.html') {
+        headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, proxy-revalidate';
+        headers['Pragma'] = 'no-cache';
+        headers['Expires'] = '0';
+      }
+      res.writeHead(200, headers);
       res.end(content, 'utf-8');
     }
   });
