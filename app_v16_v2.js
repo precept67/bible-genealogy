@@ -8476,7 +8476,8 @@ function setupZoomPan() {
   // Helper to determine if wheel/gesture target is inside a scrollable modal/panel
   function isScrollableOverlay(target) {
     if (!target) return false;
-    return target.closest('#study-panel') || 
+    return target.closest('#landing-page') ||
+           target.closest('#study-panel') || 
            target.closest('.layer-control-panel') || 
            target.closest('#search-panel') || 
            target.closest('.modal-content') || 
