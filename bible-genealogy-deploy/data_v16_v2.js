@@ -17459,61 +17459,6 @@ const BIBLE_CHARACTERS = [
     "relatedPeople": []
   },
   {
-    "id": "John_the_Baptist",
-    "name": "세례요한",
-    "engName": "John the Baptist",
-    "gender": "M",
-    "generation": 62.8,
-    "column": -31.483,
-    "parents": [
-      "Zechariah",
-      "Elizabeth"
-    ],
-    "spouses": [],
-    "desc": "",
-    "isMain": false,
-    "isManual": true,
-    "teachers": [],
-    "prophets": [],
-    "relatedPeople": []
-  },
-  {
-    "id": "Zechariah",
-    "name": "사가랴",
-    "engName": "Zechariah",
-    "gender": "M",
-    "generation": 61.81,
-    "column": -31.933,
-    "parents": [],
-    "spouses": [
-      "Elizabeth"
-    ],
-    "desc": "",
-    "isMain": false,
-    "isManual": true,
-    "teachers": [],
-    "prophets": [],
-    "relatedPeople": []
-  },
-  {
-    "id": "Elizabeth",
-    "name": "엘리사벳",
-    "engName": "Elizabeth",
-    "gender": "F",
-    "generation": 61.81,
-    "column": -31.033,
-    "parents": [],
-    "spouses": [
-      "Zechariah"
-    ],
-    "desc": "",
-    "isMain": false,
-    "isManual": true,
-    "teachers": [],
-    "prophets": [],
-    "relatedPeople": []
-  },
-  {
     "id": "Andrew",
     "name": "안드레",
     "engName": "Andrew",
