@@ -2238,13 +2238,54 @@ function deletePersonDirect(personId) {
   deletePerson(personId);
 }
 
-// Load Database from LocalStorage or data.js
 function initDatabase() {
   stableBoardWidth = null;
   stableBoardHeight = null;
   stableCenterX = null;
   
   try {
+    // 0. Clean up legacy duplicate New Testament IDs (Zechariah, Elizabeth, John_the_Baptist) from local storage
+    try {
+      let edits = JSON.parse(localStorage.getItem('bible_tree_character_edits') || '{}');
+      let custom = JSON.parse(localStorage.getItem('bible_tree_custom_characters') || '[]');
+      let deleted = JSON.parse(localStorage.getItem('bible_tree_deleted_ids') || '[]');
+      
+      let changed = false;
+      const targetIds = ['Zechariah', 'Elizabeth', 'John_the_Baptist'];
+      
+      targetIds.forEach(id => {
+        if (edits[id]) {
+          delete edits[id];
+          changed = true;
+        }
+      });
+      
+      if (Array.isArray(custom)) {
+        const initialLen = custom.length;
+        custom = custom.filter(c => !targetIds.includes(c.id));
+        if (custom.length !== initialLen) {
+          changed = true;
+        }
+      }
+      
+      if (Array.isArray(deleted)) {
+        const initialLen = deleted.length;
+        deleted = deleted.filter(id => !targetIds.includes(id));
+        if (deleted.length !== initialLen) {
+          changed = true;
+        }
+      }
+      
+      if (changed) {
+        localStorage.setItem('bible_tree_character_edits', JSON.stringify(edits));
+        localStorage.setItem('bible_tree_custom_characters', JSON.stringify(custom));
+        localStorage.setItem('bible_tree_deleted_ids', JSON.stringify(deleted));
+        console.log("Cleaned up legacy duplicate New Testament IDs from local storage.");
+      }
+    } catch (e) {
+      console.error("Failed to run duplicate New Testament IDs cleanup:", e);
+    }
+
     // Master migration for legacy 'manasseh' ID (King Manasseh, generation 46) to 'manasseh_king'
     try {
       // 1. Migrate character edits
@@ -5109,7 +5150,7 @@ function getElementFilterClass(id) {
 }
 
 const PROPHET_BASE_IDS = new Set([
-  'deborah_eph', 'john_baptist', 'John_the_Baptist'
+  'deborah_eph', 'john_baptist'
 ]);
 
 let prophetIds = new Set();
