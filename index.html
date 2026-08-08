@@ -153,10 +153,6 @@
 
       </div>
 
-      <!-- Security / Warning link -->
-      <div style="font-size: 13px; margin-bottom: 10px;">
-        <a href="javascript:void(0)" id="landing-install-guide-link" style="color: #f97316; text-decoration: underline; font-weight: 600;">⚠️ 첫 설치 시 보안 차단 경고 해결 방법 (필독!)</a>
-      </div>
 
     </div>
 
@@ -1309,7 +1305,6 @@
 
     // Landing Page Event Listeners
     var landingLoginBtn = document.getElementById('landing-login-btn');
-    var landingInstallGuideLink = document.getElementById('landing-install-guide-link');
     if (landingLoginBtn) {
       landingLoginBtn.addEventListener('click', function() {
         if (typeof showAuthModal === 'function') {
@@ -1317,15 +1312,6 @@
         } else {
           var modal = document.getElementById('auth-modal');
           if (modal) modal.style.display = 'flex';
-        }
-      });
-    }
-    if (landingInstallGuideLink) {
-      landingInstallGuideLink.addEventListener('click', function(e) {
-        e.preventDefault();
-        var target = document.getElementById('install-guide-inline-anchor');
-        if (target) {
-          target.scrollIntoView({ behavior: 'smooth' });
         }
       });
     }
