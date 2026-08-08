@@ -5188,13 +5188,30 @@ function isProphetRelated(charId) {
   return prophetRelatedIds.has(charId);
 }
 
+function isProphetsPolygon(poly) {
+  if (!poly) return false;
+  const id = poly.id || '';
+  const label = (poly.label || '').toLowerCase();
+  const labelEn = (poly.label_en || '').toLowerCase();
+  
+  return id === 'poly-custom-1785777570404' || 
+         id === 'custom-1785777570404' || 
+         id.includes('prophet') ||
+         label === '선지자들' || 
+         label === '선지자' || 
+         label === 'prophets' || 
+         label === 'prophet' ||
+         labelEn === 'prophets' || 
+         labelEn === 'prophet';
+}
+
 function isProphetInsideProphetsArea(charId) {
   const char = db.find(c => c.id === charId);
   const isSamuel = charId === 'samuel' || (char && char.name && (char.name === '사무엘' || char.name.includes('사무엘')));
   const isProphetChar = isSamuel || isProphet(charId);
   if (!isProphetChar) return false;
 
-  const prophetsPoly = customPolygons.find(p => p.label === '선지자들' || p.id === 'poly-custom-1785777570404');
+  const prophetsPoly = customPolygons.find(isProphetsPolygon);
   if (!prophetsPoly || !prophetsPoly.points) return false;
 
   const coords = coordinates[charId];
@@ -5611,9 +5628,7 @@ function updateLayersVisibility() {
     const polyEl = document.getElementById(`svg-poly-${poly.id}`);
     const labelEl = document.getElementById(`label-poly-${poly.id}`);
     
-    const isProphetPoly = poly.id === 'poly-custom-1785777570404' || 
-                          (poly.label && (poly.label.includes('선지자') || poly.label.includes('예언자'))) ||
-                          poly.id.includes('prophet');
+    const isProphetPoly = isProphetsPolygon(poly);
                           
     let visible = showPolygons;
     if (isProphetPoly) {
@@ -5629,9 +5644,7 @@ function updateLayersVisibility() {
     const polyId = handle.dataset.polyId;
     const poly = customPolygons.find(p => p.id === polyId);
     if (poly) {
-      const isProphetPoly = poly.id === 'poly-custom-1785777570404' || 
-                            (poly.label && (poly.label.includes('선지자') || poly.label.includes('예언자'))) ||
-                            poly.id.includes('prophet');
+      const isProphetPoly = isProphetsPolygon(poly);
       let visible = showPolygons;
       if (isProphetPoly) {
         visible = showPolygons && showProphets;
@@ -5733,7 +5746,7 @@ function setupFilters() {
 
     // Add custom polygons dynamically
     customPolygons.forEach(poly => {
-      if (poly.label === '선지자들' || poly.id === 'poly-custom-1785777570404' || poly.id === 'custom-1785777570404') {
+      if (isProphetsPolygon(poly)) {
         return;
       }
       const baseGroup = poly.id.replace('poly-', '');
@@ -7457,7 +7470,7 @@ function renderCustomPolygons() {
     let filterClass = "";
     if (isFilterModeActive()) {
       const isProphetsFilterActive = activeFilters['prophets'] === true;
-      const isThisProphetsPoly = poly.label === '선지자들' || poly.id === 'poly-custom-1785777570404';
+      const isThisProphetsPoly = isProphetsPolygon(poly);
       
       if (isProphetsFilterActive) {
         if (isThisProphetsPoly) {
