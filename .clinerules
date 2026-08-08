@@ -1,0 +1,14 @@
+# Bible Genealogy Project Rules & Guidelines
+
+## 🚨 Build & Release Rules (CRITICAL)
+
+- **NEVER build or package the application (e.g. `tauri build`, `npm run build`, macOS `.dmg` packaging, or syncing mobile assets) without explicit instructions from the user.**
+- Do **NOT** assume that because code has changed, a build should automatically occur.
+- You must always ask for permission or wait until the user explicitly commands: *"Build the Mac version"* or *"Build the Windows version"*.
+- Pushing to Git to trigger GitHub Actions (Windows build) should also only be done when the user has approved the push or requested a release build.
+
+## i18n & Spelling Standards
+
+- All character English names must be aligned with the **New American Standard Bible (NASB)** standard.
+- Do not let corrupted characters (e.g. replacement characters `\uFFFD`) enter the JSON dataset or frontend JS assets.
+- If editing book references, check for QWERTY typos (e.g., `tkt` for `삿` / `Judges`).
