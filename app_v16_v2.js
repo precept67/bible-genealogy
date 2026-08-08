@@ -2383,6 +2383,30 @@ function initDatabase() {
       
       const cleanCharacterData = (c) => {
         let changed = false;
+        
+        // Generic UTF-8 replacement character (\uFFFD) self-healing for canonical characters
+        if (typeof BIBLE_CHARACTERS !== 'undefined') {
+          const canon = BIBLE_CHARACTERS.find(orig => orig.id === c.id);
+          if (canon) {
+            if (c.name && c.name.includes('\uFFFD')) {
+              c.name = canon.name;
+              changed = true;
+            }
+            if (c.desc && c.desc.includes('\uFFFD')) {
+              c.desc = canon.desc;
+              changed = true;
+            }
+            if (c.engName && c.engName.includes('\uFFFD')) {
+              c.engName = canon.engName;
+              changed = true;
+            }
+            if (c.engDesc && c.engDesc.includes('\uFFFD')) {
+              c.engDesc = canon.engDesc;
+              changed = true;
+            }
+          }
+        }
+
         if (c.id === 'salmon') {
           if (c.desc && (c.desc.includes('합과') || c.desc.includes('합') || c.desc.includes('') || c.desc.includes('합과'))) {
             c.desc = "가나안 정복의 지도자 중 하나. 여리고 기생 라합과 결혼함.";
@@ -2491,8 +2515,10 @@ function initDatabase() {
       
       // If canonical, preserve edits but ensure array properties and basic types are valid
       if (canon) {
-        if (c.name === undefined || c.name === null) c.name = canon.name;
-        if (c.engName === undefined || c.engName === null) c.engName = canon.engName;
+        if (c.name === undefined || c.name === null || c.name.includes('\uFFFD')) c.name = canon.name;
+        if (c.engName === undefined || c.engName === null || c.engName.includes('\uFFFD')) c.engName = canon.engName;
+        if (c.desc && c.desc.includes('\uFFFD')) c.desc = canon.desc;
+        if (c.engDesc && c.engDesc.includes('\uFFFD')) c.engDesc = canon.engDesc;
         if (c.gender === undefined || c.gender === null) c.gender = canon.gender;
         if (c.isMain === undefined || c.isMain === null) c.isMain = canon.isMain;
         

@@ -81,9 +81,10 @@ const server = http.createServer((req, res) => {
 
   // Parse Body for POST and DELETE requests
   if (req.method === 'POST' || req.method === 'DELETE') {
-    let body = '';
-    req.on('data', chunk => body += chunk.toString());
+    let chunks = [];
+    req.on('data', chunk => chunks.push(chunk));
     req.on('end', () => {
+      const body = Buffer.concat(chunks).toString('utf8');
       let data = {};
       try { if (body) data = JSON.parse(body); } catch(e) {}
       if (req.method === 'POST' || req.method === 'DELETE') {
@@ -543,10 +544,11 @@ function translateKoToEn(text) {
     }
     const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=ko&tl=en&dt=t&q=${encodeURIComponent(text)}`;
     const req = https.get(url, (res) => {
-      let data = '';
-      res.on('data', (chunk) => { data += chunk; });
+      let chunks = [];
+      res.on('data', (chunk) => { chunks.push(chunk); });
       res.on('end', () => {
         try {
+          const data = Buffer.concat(chunks).toString('utf8');
           const parsed = JSON.parse(data);
           if (parsed && parsed[0]) {
             const translated = parsed[0].map(item => item[0]).join('').trim();
