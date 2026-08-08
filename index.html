@@ -121,13 +121,13 @@
         </div>
         
         <button id="landing-guide-confirm-btn" style="width: 100%; padding: 12px; background: #e67e22; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; transition: all 0.2s; box-shadow: 0 4px 12px rgba(230,126,34,0.3); display: flex; align-items: center; justify-content: center; gap: 8px;">
-          확인했습니다
+          확인
         </button>
       </div>
 
       <!-- Download Lock Status / Notice -->
       <div id="download-lock-notice" style="font-size: 12.5px; color: #f87171; margin-bottom: 15px; font-weight: 600; text-align: center; transition: all 0.3s;">
-        🔒 위 설치 안내를 읽고 [확인했습니다] 버튼을 클릭하시면 다운로드 버튼이 활성화됩니다.
+        🔒 위 설치 안내를 읽고 [확인] 버튼을 클릭하시면 다운로드 버튼이 활성화됩니다.
       </div>
 
       <!-- Download Cards Container -->
@@ -218,7 +218,7 @@
         </ol>
       </div>
       
-      <button id="install-guide-confirm-btn" style="width: 100%; padding: 12px; background: #2c3e50; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; margin-top: 20px;">확인했습니다</button>
+      <button id="install-guide-confirm-btn" style="width: 100%; padding: 12px; background: #2c3e50; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; margin-top: 20px;">확인</button>
     </div>
   </div>
 
@@ -1178,7 +1178,7 @@
       downloadWindowsLink.addEventListener('click', function(e) {
         if (!isLandingDownloadConfirmed) {
           e.preventDefault();
-          alert('설치 안내 경고 확인이 필요합니다. 먼저 [확인했습니다] 버튼을 클릭해 주세요.');
+          alert('설치 안내 경고 확인이 필요합니다. 먼저 [확인] 버튼을 클릭해 주세요.');
           var target = document.getElementById('install-guide-inline-anchor');
           if (target) target.scrollIntoView({ behavior: 'smooth' });
         }
@@ -1188,7 +1188,7 @@
       downloadMacosLink.addEventListener('click', function(e) {
         if (!isLandingDownloadConfirmed) {
           e.preventDefault();
-          alert('설치 안내 경고 확인이 필요합니다. 먼저 [확인했습니다] 버튼을 클릭해 주세요.');
+          alert('설치 안내 경고 확인이 필요합니다. 먼저 [확인] 버튼을 클릭해 주세요.');
           var target = document.getElementById('install-guide-inline-anchor');
           if (target) target.scrollIntoView({ behavior: 'smooth' });
         }
@@ -1215,7 +1215,7 @@
         // Update confirmation button state
         landingGuideConfirmBtn.style.background = '#22c55e';
         landingGuideConfirmBtn.style.boxShadow = '0 4px 12px rgba(34,197,94,0.3)';
-        landingGuideConfirmBtn.innerHTML = '✓ 확인 완료됨 (다운로드 활성화됨)';
+        landingGuideConfirmBtn.innerHTML = '✓ 확인 완료';
         landingGuideConfirmBtn.disabled = true;
         landingGuideConfirmBtn.style.cursor = 'default';
       });
