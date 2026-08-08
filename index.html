@@ -86,8 +86,52 @@
         ※ 위 버튼을 클릭하면 5분 동안 실제 프로그램을 웹에서 미리 체험해 보실 수 있습니다.
       </div>
 
+      <!-- Anchor for smooth scrolling -->
+      <div id="install-guide-inline-anchor"></div>
+
+      <!-- Program Installation Security Warning Guide (Inline) -->
+      <div style="max-width: 600px; width: 100%; margin: 0 auto 25px auto; background: rgba(30, 41, 59, 0.75); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px; text-align: left; box-shadow: 0 15px 35px rgba(0,0,0,0.3); box-sizing: border-box;">
+        <h3 style="margin-top: 0; margin-bottom: 20px; font-size: 16px; color: #2c3e50; border-bottom: 2px solid #e67e22; padding-bottom: 10px; display: flex; align-items: center; gap: 6px; font-weight: 700; color: #f97316;">
+          <span>⚠️</span> 프로그램 설치 시 보안 경고 해결 안내
+        </h3>
+        
+        <div style="font-size: 12.5px; color: #1e293b; line-height: 1.6; margin-bottom: 20px; background: #fff3e0; border: 1px solid #ffe0b2; padding: 12px; border-radius: 8px; font-weight: 500;">
+          본 프로그램은 정식 서버에서 직접 빌드된 안전한 앱입니다. 대기업의 고가 유료 보안 서명을 거치지 않은 순수 배포용 파일이므로 운영체제가 차단 경고를 표시할 수 있으나 안심하고 실행하셔도 됩니다.
+        </div>
+
+        <!-- Windows Guide -->
+        <div style="margin-bottom: 20px;">
+          <h4 style="margin: 0 0 8px 0; color: #38bdf8; font-size: 14px; font-weight: 700;">🪟 Windows 설치 안내 (SmartScreen 우회)</h4>
+          <ol style="font-size: 12.5px; color: #cbd5e1; margin: 0; padding-left: 20px; line-height: 1.7;">
+            <li>다운로드받은 <b>msi</b> 파일을 실행합니다.</li>
+            <li>"Windows의 PC 보호" 파란색 차단 창이 뜨면 당황하지 마시고 창 본문의 <b>[추가 정보]</b> 링크를 클릭합니다.</li>
+            <li>그럼 화면 우측 하단에 나타나는 <b>[실행]</b>(Run anyway) 버튼을 누르면 정상적으로 설치가 시작됩니다!</li>
+          </ol>
+        </div>
+
+        <!-- macOS Guide -->
+        <div style="margin-bottom: 25px;">
+          <h4 style="margin: 0 0 8px 0; color: #c084fc; font-size: 14px; font-weight: 700;">🍎 macOS 설치 안내 (Gatekeeper 우회)</h4>
+          <ol style="font-size: 12.5px; color: #cbd5e1; margin: 0; padding-left: 20px; line-height: 1.7;">
+            <li>다운로드받은 <b>dmg</b> 파일을 열고 프로그램 아이콘을 <b>[응용 프로그램]</b>(Applications) 폴더로 끌어다 놓습니다.</li>
+            <li>응용 프로그램 폴더로 이동하여 해당 앱을 그냥 더블클릭하지 마시고, 마우스 <b>[우클릭]</b>(또는 Control + 클릭)을 합니다.</li>
+            <li>메뉴에서 <b>[열기]</b>를 선택한 뒤, 팝업 경고창이 나타나면 아래쪽의 <b>[열기]</b> 버튼을 누르면 즉시 실행됩니다. (최초 1회만 설정하시면 됩니다.)</li>
+            <li>또는 맥의 <b>[시스템 설정] ➡️ [개인정보 보호 및 보안]</b> 메뉴의 하단에서 <b>[확인 없이 열기]</b> 버튼을 누르셔도 실행 가능합니다.</li>
+          </ol>
+        </div>
+        
+        <button id="landing-guide-confirm-btn" style="width: 100%; padding: 12px; background: #e67e22; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; transition: all 0.2s; box-shadow: 0 4px 12px rgba(230,126,34,0.3); display: flex; align-items: center; justify-content: center; gap: 8px;">
+          확인했습니다
+        </button>
+      </div>
+
+      <!-- Download Lock Status / Notice -->
+      <div id="download-lock-notice" style="font-size: 12.5px; color: #f87171; margin-bottom: 15px; font-weight: 600; text-align: center; transition: all 0.3s;">
+        🔒 위 설치 안내를 읽고 [확인했습니다] 버튼을 클릭하시면 다운로드 버튼이 활성화됩니다.
+      </div>
+
       <!-- Download Cards Container -->
-      <div style="display: flex; gap: 24px; justify-content: center; margin-bottom: 30px; flex-wrap: wrap;">
+      <div id="download-cards-container" style="display: flex; gap: 24px; justify-content: center; margin-bottom: 30px; flex-wrap: wrap; opacity: 0.4; pointer-events: none; filter: grayscale(80%); transition: all 0.3s;">
         
         <!-- Windows Card -->
         <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 16px 24px; width: 280px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-5px)';" onmouseout="this.style.transform='translateY(0)';">
@@ -1120,7 +1164,7 @@
       }
     }
 
-    // Installation Guide Modal Handlers
+    // Installation Guide Modal Handlers (for app-internal downloads)
     var guideModal = document.getElementById('install-guide-modal');
     var guideLink = document.getElementById('show-install-guide-link');
     var guideClose = document.getElementById('install-guide-close-btn');
@@ -1128,22 +1172,56 @@
     var downloadWindowsLink = document.getElementById('download-windows-link');
     var downloadMacosLink = document.getElementById('download-macos-link');
 
+    // Inline Warning Guide Confirmation and Download Activation
+    var isLandingDownloadConfirmed = false;
+    var landingGuideConfirmBtn = document.getElementById('landing-guide-confirm-btn');
+    var downloadCardsContainer = document.getElementById('download-cards-container');
+    var downloadLockNotice = document.getElementById('download-lock-notice');
+
     if (downloadWindowsLink) {
       downloadWindowsLink.addEventListener('click', function(e) {
-        e.preventDefault();
-        pendingDownload = 'windows';
-        if (guideModal) {
-          guideModal.style.display = 'flex';
+        if (!isLandingDownloadConfirmed) {
+          e.preventDefault();
+          alert('설치 안내 경고 확인이 필요합니다. 먼저 [확인했습니다] 버튼을 클릭해 주세요.');
+          var target = document.getElementById('install-guide-inline-anchor');
+          if (target) target.scrollIntoView({ behavior: 'smooth' });
         }
       });
     }
     if (downloadMacosLink) {
       downloadMacosLink.addEventListener('click', function(e) {
-        e.preventDefault();
-        pendingDownload = 'macos';
-        if (guideModal) {
-          guideModal.style.display = 'flex';
+        if (!isLandingDownloadConfirmed) {
+          e.preventDefault();
+          alert('설치 안내 경고 확인이 필요합니다. 먼저 [확인했습니다] 버튼을 클릭해 주세요.');
+          var target = document.getElementById('install-guide-inline-anchor');
+          if (target) target.scrollIntoView({ behavior: 'smooth' });
         }
+      });
+    }
+
+    if (landingGuideConfirmBtn) {
+      landingGuideConfirmBtn.addEventListener('click', function() {
+        isLandingDownloadConfirmed = true;
+        
+        // Enable download cards container visual styling and mouse events
+        if (downloadCardsContainer) {
+          downloadCardsContainer.style.opacity = '1';
+          downloadCardsContainer.style.pointerEvents = 'auto';
+          downloadCardsContainer.style.filter = 'none';
+        }
+
+        // Update notice banner
+        if (downloadLockNotice) {
+          downloadLockNotice.style.color = '#22c55e';
+          downloadLockNotice.innerHTML = '🔓 다운로드 활성화 완료! 원하는 운영체제의 설치파일을 클릭하여 다운로드하세요.';
+        }
+
+        // Update confirmation button state
+        landingGuideConfirmBtn.style.background = '#22c55e';
+        landingGuideConfirmBtn.style.boxShadow = '0 4px 12px rgba(34,197,94,0.3)';
+        landingGuideConfirmBtn.innerHTML = '✓ 확인 완료됨 (다운로드 활성화됨)';
+        landingGuideConfirmBtn.disabled = true;
+        landingGuideConfirmBtn.style.cursor = 'default';
       });
     }
     if (guideLink) {
@@ -1245,8 +1323,10 @@
     if (landingInstallGuideLink) {
       landingInstallGuideLink.addEventListener('click', function(e) {
         e.preventDefault();
-        pendingDownload = null;
-        if (guideModal) guideModal.style.display = 'flex';
+        var target = document.getElementById('install-guide-inline-anchor');
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
       });
     }
 
