@@ -8312,7 +8312,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "shelomith_izhar",
     "name": "슬로못",
-    "engName": "Shelomith",
+    "engName": "Shelomoth",
     "gender": "M",
     "generation": 25,
     "column": -23.458,
@@ -8871,7 +8871,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "shelomith_zichri",
     "name": "슬로못",
-    "engName": "Shelomith",
+    "engName": "Shelomoth",
     "gender": "M",
     "generation": 32,
     "column": -25.014,
@@ -9549,7 +9549,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "nethaneel_jesse",
     "name": "느다넬",
-    "engName": "Nethaneel",
+    "engName": "Nethanel",
     "gender": "M",
     "generation": 32,
     "column": -5.458,
@@ -16642,7 +16642,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "amashiah_jamlech",
     "name": "아마시야(시므온)",
-    "engName": "Joshah's Father",
+    "engName": "Amaziah",
     "gender": "M",
     "generation": 26.84,
     "column": -36.133,
@@ -17041,7 +17041,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "naomi",
     "name": "나오미",
-    "engName": "naomi",
+    "engName": "Naomi",
     "gender": "F",
     "generation": 28,
     "column": 2.93,
@@ -17059,7 +17059,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "mahion",
     "name": "말론",
-    "engName": "mahion",
+    "engName": "Mahlon",
     "gender": "M",
     "generation": 29,
     "column": 2.1,
@@ -17136,7 +17136,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "Shua_daughter",
     "name": "수아의 딸",
-    "engName": "Shua's daughter",
+    "engName": "Daughter of Shua",
     "gender": "F",
     "generation": 22,
     "column": 1.9,
@@ -17371,7 +17371,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "noah_wife",
     "name": "노아의 아내",
-    "engName": "Noah_wife",
+    "engName": "Noah's Wife",
     "gender": "F",
     "generation": 9,
     "column": -1.171,
@@ -17389,7 +17389,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "shem_wife",
     "name": "셈의 아내",
-    "engName": "Shem_wife",
+    "engName": "Shem's Wife",
     "gender": "F",
     "generation": 10,
     "column": 1.1,
@@ -17407,7 +17407,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "ham_wife",
     "name": "함의 아내",
-    "engName": "Ham_wife",
+    "engName": "Ham's Wife",
     "gender": "F",
     "generation": 10,
     "column": -1.034,
@@ -17425,7 +17425,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "japheth_wife",
     "name": "야벳의 아내",
-    "engName": "Japheth_wife",
+    "engName": "Japheth's Wife",
     "gender": "F",
     "generation": 10.01,
     "column": -5.85,
@@ -17570,7 +17570,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "philip",
     "name": "빌립",
-    "engName": "philip",
+    "engName": "Philip",
     "gender": "M",
     "generation": 64.29,
     "column": -4.229,
@@ -17588,7 +17588,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "bartholomew",
     "name": "바돌로매",
-    "engName": "bartholomew",
+    "engName": "Bartholomew",
     "gender": "M",
     "generation": 64.29,
     "column": -3.504,
@@ -17606,7 +17606,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "thomas",
     "name": "도마",
-    "engName": "thomas",
+    "engName": "Thomas",
     "gender": "M",
     "generation": 64.29,
     "column": -2.767,
@@ -17642,7 +17642,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "james_alphaeus",
     "name": "야고보",
-    "engName": "james_alphaeus",
+    "engName": "James, son of Alphaeus",
     "gender": "M",
     "generation": 64.29,
     "column": -1.241,
@@ -17661,7 +17661,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "thaddaeus",
     "name": "다대오",
-    "engName": "thaddaeus",
+    "engName": "Thaddaeus",
     "gender": "M",
     "generation": 64.28,
     "column": -0.475,
@@ -17679,7 +17679,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "simon",
     "name": "시몬",
-    "engName": "simon",
+    "engName": "Simon",
     "gender": "M",
     "generation": 64.28,
     "column": 0.279,
@@ -17698,7 +17698,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "judas_lscariot",
     "name": "가룟 유다",
-    "engName": "judas lscariot",
+    "engName": "Judas Iscariot",
     "gender": "M",
     "generation": 64.27,
     "column": 1.038,
@@ -17716,7 +17716,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "matthias",
     "name": "맛디아",
-    "engName": "matthias",
+    "engName": "Matthias",
     "gender": "M",
     "generation": 64.27,
     "column": 2.563,
@@ -17752,7 +17752,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "cornelius",
     "name": "고넬료",
-    "engName": "cornelius",
+    "engName": "Cornelius",
     "gender": "M",
     "generation": 65.18,
     "column": -8.9,
@@ -18085,7 +18085,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "malchishua_saul",
     "name": "말기수아",
-    "engName": "Malchishua",
+    "engName": "Malchi-shua",
     "gender": "M",
     "generation": 29.95,
     "column": 62.572,
@@ -18773,7 +18773,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "gideon_wife",
     "name": "기드온의 아내들",
-    "engName": "Gideon's wives",
+    "engName": "Gideon's Wives",
     "gender": "F",
     "generation": 27.01,
     "column": 44.34,
@@ -18792,7 +18792,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "cush-moses",
     "name": "구스여인",
-    "engName": "Cush",
+    "engName": "Cushite Woman",
     "gender": "F",
     "generation": 25,
     "column": -25.904,
@@ -18810,7 +18810,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "becorath",
     "name": "베고랏",
-    "engName": "becorath",
+    "engName": "Becorath",
     "gender": "M",
     "generation": 25,
     "column": 65.6,
@@ -18828,7 +18828,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "zeror",
     "name": "스롤",
-    "engName": "zeror",
+    "engName": "Zeror",
     "gender": "M",
     "generation": 25.99,
     "column": 65.6,
@@ -18846,7 +18846,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "joel-reuben-1",
     "name": "요엘",
-    "engName": "joel",
+    "engName": "Joel",
     "gender": "M",
     "generation": 27,
     "column": -41.1,
@@ -18863,7 +18863,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "jokim",
     "name": "요김",
-    "engName": "jokim",
+    "engName": "Jokim",
     "gender": "M",
     "generation": 23.94,
     "column": 5.201,
@@ -18896,7 +18896,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "men_of_cozeba",
     "name": "고세바 사람",
-    "engName": "men of cozeba",
+    "engName": "Men of Cozeba",
     "gender": "M",
     "generation": 23.94,
     "column": 7.344,
@@ -18913,7 +18913,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "jashubi-lehem",
     "name": "야수비네헴",
-    "engName": "jashubi-lehem",
+    "engName": "Jashubi-lehem",
     "gender": "M",
     "generation": 23.94,
     "column": 8.058,
@@ -18930,7 +18930,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "sarah-judah",
     "name": "사랍",
-    "engName": "Sarah",
+    "engName": "Saraph",
     "gender": "M",
     "generation": 23.94,
     "column": 6.63,
@@ -18947,7 +18947,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "shuppim",
     "name": "숩빔",
-    "engName": "shuppim",
+    "engName": "Shuppim",
     "gender": "M",
     "generation": 25,
     "column": 60.842,
@@ -18966,7 +18966,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "huppim-benjamin",
     "name": "훕빔",
-    "engName": "huppim",
+    "engName": "Huppim",
     "gender": "M",
     "generation": 25,
     "column": 61.542,
@@ -19002,7 +19002,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "aher",
     "name": "아헬",
-    "engName": "aher",
+    "engName": "Aher",
     "gender": "M",
     "generation": 25.01,
     "column": 59.771,
@@ -19019,7 +19019,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "hushim",
     "name": "후심",
-    "engName": "hushim",
+    "engName": "Hushim",
     "gender": "M",
     "generation": 26.03,
     "column": 59.771,
@@ -19055,7 +19055,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "shimei-benjamin",
     "name": "시므이",
-    "engName": "shimei",
+    "engName": "Shimei",
     "gender": "M",
     "generation": 32.97,
     "column": 68.102,
@@ -19074,7 +19074,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "jair-benjamin",
     "name": "야일",
-    "engName": "jair",
+    "engName": "Jair",
     "gender": "M",
     "generation": 34,
     "column": 67.702,
@@ -19093,7 +19093,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "abihail-benjamin",
     "name": "아비하일",
-    "engName": "abihail",
+    "engName": "Abihail",
     "gender": "M",
     "generation": 34,
     "column": 68.6,
@@ -19112,7 +19112,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "mordecai",
     "name": "모르드개",
-    "engName": "mordecai",
+    "engName": "Mordecai",
     "gender": "M",
     "generation": 35.01,
     "column": 67.702,
@@ -19150,19 +19150,19 @@ const BIBLE_CHARACTERS = [
   {
     "id": "manoah-dan",
     "name": "마노아",
-    "engName": "manoah",
+    "engName": "Manoah",
     "gender": "M",
     "generation": 23.08,
     "column": 78.087,
     "parents": [],
     "spouses": [],
     "teachers": [],
-    "desc": "단 지파 소라 땅 출신의 인물로, 여호와의 사자에게 나실인의 출생 고지를 받은 사사 삼손의 아버지(tkt 13:2-24)",
+    "desc": "단 지파 소라 땅 출신의 인물로, 여호와의 사자에게 나실인의 출생 고지를 받은 사사 삼손의 아버지(삿 13:2-24)",
     "isMain": false,
     "isManual": true,
     "prophets": [],
     "relatedPeople": [],
-    "engDesc": "A person from the land of Zorah of the tribe of Dan, the father of Samson, the judge who received notice of the birth of the Nazirites from the angel of the Lord (tkt 13:2-24)"
+    "engDesc": "A person from the land of Zorah of the tribe of Dan, the father of Samson, the judge who received notice of the birth of the Nazirites from the angel of the Lord (Judges 13:2-24)"
   },
   {
     "id": "samson-dan",
@@ -19189,7 +19189,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "Delilah",
     "name": "들릴라",
-    "engName": "deiilah",
+    "engName": "Delilah",
     "gender": "F",
     "generation": 24.01,
     "column": 79.064,
@@ -19208,7 +19208,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "samson-wife",
     "name": "삼손의 부인",
-    "engName": "Samson",
+    "engName": "Samson's Wife",
     "gender": "F",
     "generation": 24.01,
     "column": 77.106,
@@ -19226,7 +19226,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "shamgar",
     "name": "삼갈",
-    "engName": "shamgar",
+    "engName": "Shamgar",
     "gender": "M",
     "generation": 24.96,
     "column": 74.835,
@@ -19278,7 +19278,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "dodo",
     "name": "도도",
-    "engName": "dodo",
+    "engName": "Dodo",
     "gender": "M",
     "generation": 24.7,
     "column": 22.166,
@@ -19295,7 +19295,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "puah",
     "name": "부아",
-    "engName": "puah",
+    "engName": "Puah",
     "gender": "M",
     "generation": 25.61,
     "column": 22.164,
@@ -19314,7 +19314,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "tola-judges",
     "name": "돌라",
-    "engName": "tola",
+    "engName": "Tola",
     "gender": "M",
     "generation": 26.61,
     "column": 22.166,
@@ -19333,19 +19333,19 @@ const BIBLE_CHARACTERS = [
   {
     "id": "ehud",
     "name": "에훗",
-    "engName": "ehud",
+    "engName": "Ehud",
     "gender": "M",
     "generation": 33,
     "column": 65.5,
     "parents": [],
     "spouses": [],
     "teachers": [],
-    "desc": "베냐민 지파 게라의 아들이자 왼손잡이 사사로, 18년 동안 이스라엘을 압제하던 모압 왕 에글론을 비밀리에 살해하고 이스라엘에 80년 동안의 평화를 가져온 인물(tkt 3:12-30)",
+    "desc": "베냐민 지파 게라의 아들이자 왼손잡이 사사로, 18년 동안 이스라엘을 압제하던 모압 왕 에글론을 비밀리에 살해하고 이스라엘에 80년 동안의 평화를 가져온 인물(삿 3:12-30)",
     "isMain": false,
     "isManual": true,
     "prophets": [],
     "relatedPeople": [],
-    "engDesc": "A left-handed judge and son of Gera of the tribe of Benjamin, who secretly murdered Eglon, king of Moab, who had oppressed Israel for 18 years, and brought 80 years of peace to Israel (tkt 3:12-30)"
+    "engDesc": "A left-handed judge and son of Gera of the tribe of Benjamin, who secretly murdered Eglon, king of Moab, who had oppressed Israel for 18 years, and brought 80 years of peace to Israel (Judges 3:12-30)"
   },
   {
     "id": "prophet_samuel",
@@ -19411,7 +19411,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "prophet_ahijah",
     "name": "아히야",
-    "engName": "ahijah",
+    "engName": "Ahijah",
     "gender": "M",
     "generation": 32.98,
     "column": -2.754,
@@ -19431,7 +19431,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "prophet_iddo",
     "name": "잇도",
-    "engName": "iddo",
+    "engName": "Iddo",
     "gender": "M",
     "generation": 32.98,
     "column": -1.992,
@@ -19487,7 +19487,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "prophet_hanani",
     "name": "하나니",
-    "engName": "hanani",
+    "engName": "Hanani",
     "gender": "M",
     "generation": 35.99,
     "column": -2.187,
@@ -19507,7 +19507,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "prophet_jehu",
     "name": "예후",
-    "engName": "jehu",
+    "engName": "Jehu",
     "gender": "M",
     "generation": 35.06,
     "column": -4.129,
@@ -19549,7 +19549,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "prophet_ahijah_1",
     "name": "아히야",
-    "engName": "ahijah",
+    "engName": "Ahijah",
     "gender": "M",
     "generation": 33.69,
     "column": -4.129,
@@ -19592,7 +19592,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "prophet_jonah",
     "name": "요나",
-    "engName": "jonah",
+    "engName": "Jonah",
     "gender": "M",
     "generation": 44.47,
     "column": -3.896,
@@ -19612,7 +19612,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "prophet_hosea",
     "name": "호세아",
-    "engName": "hosea",
+    "engName": "Hosea",
     "gender": "M",
     "generation": 45.33,
     "column": -3.897,
@@ -19632,7 +19632,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "prophet_amos",
     "name": "아모스",
-    "engName": "amos",
+    "engName": "Amos",
     "gender": "M",
     "generation": 44.9,
     "column": -3.894,
@@ -19652,7 +19652,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "prophet_jahaziel",
     "name": "야하시엘",
-    "engName": "jahaziel",
+    "engName": "Jahaziel",
     "gender": "M",
     "generation": 37,
     "column": -1.092,
@@ -19692,7 +19692,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "prophet_obadiah",
     "name": "오바댜",
-    "engName": "obadiah",
+    "engName": "Obadiah",
     "gender": "M",
     "generation": 42.13,
     "column": -2.414,
@@ -19710,7 +19710,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "prophet_joel",
     "name": "요엘",
-    "engName": "joel",
+    "engName": "Joel",
     "gender": "M",
     "generation": 37.01,
     "column": -1.786,
@@ -19728,7 +19728,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "prophet_huldah",
     "name": "여선지자 훌다",
-    "engName": "huldah",
+    "engName": "Huldah",
     "gender": "M",
     "generation": 47.24,
     "column": -2.035,
@@ -19748,7 +19748,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "prophet_nahum",
     "name": "나훔",
-    "engName": "nahum",
+    "engName": "Nahum",
     "gender": "M",
     "generation": 46.4,
     "column": -3.129,
@@ -19766,7 +19766,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "prophet_zephaniah",
     "name": "스바냐",
-    "engName": "zephaniah",
+    "engName": "Zephaniah",
     "gender": "M",
     "generation": 47.24,
     "column": -2.758,
@@ -19786,7 +19786,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "prophet_habakkuk",
     "name": "하박국",
-    "engName": "habakkuk",
+    "engName": "Habakkuk",
     "gender": "M",
     "generation": 47.73,
     "column": -3.129,
@@ -19804,7 +19804,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "prophet_jeremiah",
     "name": "예레미야",
-    "engName": "jeremiah",
+    "engName": "Jeremiah",
     "gender": "M",
     "generation": 48.94,
     "column": -2.035,
@@ -19863,7 +19863,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "prophet_haggai",
     "name": "학개",
-    "engName": "haggai",
+    "engName": "Haggai",
     "gender": "M",
     "generation": 54.61,
     "column": -1.524,
@@ -19899,7 +19899,7 @@ const BIBLE_CHARACTERS = [
   {
     "id": "prophet_malachi",
     "name": "말라기",
-    "engName": "malachi",
+    "engName": "Malachi",
     "gender": "M",
     "generation": 56.58,
     "column": -1.524,
