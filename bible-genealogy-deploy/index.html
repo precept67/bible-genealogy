@@ -249,6 +249,9 @@
           <button onclick="window.downloadLatestProgram()" style="display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 10px; background: var(--text-accent, #3498db); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; transition: background 0.2s;">
             🌐 최신 설치 파일 즉시 다운로드
           </button>
+          <div style="margin-top: 10px; text-align: center;">
+            <a href="javascript:void(0)" id="show-install-guide-link" style="color: #f97316; text-decoration: underline; font-weight: 600; font-size: 12px; display: inline-block;">⚠️ 첫 설치 시 보안 차단 경고 해결 방법 (필독!)</a>
+          </div>
         </div>
       </div>
 
@@ -989,6 +992,7 @@
 
   <script src="data_v16_v2.js?v=2300"></script>
   <script>
+    var pendingDownload = null;
     var isTauri = window.location.protocol.startsWith('tauri') || 
                   window.location.hostname === 'tauri.localhost' || 
                   window.location.protocol.startsWith('file') ||
@@ -1012,7 +1016,11 @@
           var platformKey = isMac ? 'darwin-universal' : 'windows-x86_64';
           var downloadUrl = data && data.platforms && data.platforms[platformKey] && data.platforms[platformKey].url;
           if (downloadUrl) {
-            window.openExternalLink(downloadUrl);
+            pendingDownload = downloadUrl;
+            var guideModal = document.getElementById('install-guide-modal');
+            if (guideModal) {
+              guideModal.style.display = 'flex';
+            }
           } else {
             // Fallback to official homepage if platform URL is missing
             window.openExternalLink('https://f.jubilee.or.kr');
@@ -1119,7 +1127,6 @@
     var guideConfirm = document.getElementById('install-guide-confirm-btn');
     var downloadWindowsLink = document.getElementById('download-windows-link');
     var downloadMacosLink = document.getElementById('download-macos-link');
-    var pendingDownload = null;
 
     if (downloadWindowsLink) {
       downloadWindowsLink.addEventListener('click', function(e) {
@@ -1171,6 +1178,8 @@
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
+        } else if (pendingDownload && pendingDownload.startsWith('http')) {
+          window.openExternalLink(pendingDownload);
         }
         pendingDownload = null;
       });
