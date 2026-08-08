@@ -316,7 +316,7 @@
         "jared"
       ],
       "spouses": [],
-      "desc": "300년간 하나님과 동행한 후 죽음을 보지 않고 승천함.",
+      "desc": "300년간 하나님과 ��행한 후 죽음을 보지 않고 승천함.",
       "isMain": true,
       "teachers": [],
       "prophets": [],
@@ -1356,7 +1356,7 @@
     },
     {
       "id": "nahor",
-      "name": "나홀",
+      "name": "나홀(형제)",
       "engName": "Nahor",
       "gender": "M",
       "generation": 18.05,
@@ -1373,8 +1373,7 @@
       "teachers": [],
       "prophets": [],
       "relatedPeople": [],
-      "engDesc": "Abraham's brother. Remained in Haran.",
-      "isProphet": false
+      "engDesc": "Abraham's brother. Remained in Haran."
     },
     {
       "id": "milcah",
@@ -2984,7 +2983,7 @@
     },
     {
       "id": "segub_libni",
-      "name": "세갑",
+      "name": "세��",
       "engName": "Segub",
       "gender": "M",
       "generation": 25,
@@ -3339,7 +3338,7 @@
         "tamar",
         "Shua_daughter"
       ],
-      "desc": "넷째 아들. 형제들의 중보자이자 다윗과 예수 그리스도의 왕권 지파.",
+      "desc": "넷째 아들. 형제들의 중보자이자 다윗과 예�� 그리스도의 왕권 지파.",
       "isMain": true,
       "isManual": true,
       "teachers": [],
@@ -4942,7 +4941,7 @@
     {
       "id": "ard",
       "name": "아릇",
-      "engName": "Ard",
+      "engName": "Arah",
       "gender": "M",
       "generation": 23.03,
       "column": 76.16,
@@ -8316,7 +8315,7 @@
     {
       "id": "shelomith_izhar",
       "name": "슬로못",
-      "engName": "Shelomoth",
+      "engName": "Shelomith",
       "gender": "M",
       "generation": 25,
       "column": -23.458,
@@ -8875,7 +8874,7 @@
     {
       "id": "shelomith_zichri",
       "name": "슬로못",
-      "engName": "Shelomoth",
+      "engName": "Shelomith",
       "gender": "M",
       "generation": 32,
       "column": -25.014,
@@ -9553,7 +9552,7 @@
     {
       "id": "nethaneel_jesse",
       "name": "느다넬",
-      "engName": "Nethanel",
+      "engName": "Nethaneel",
       "gender": "M",
       "generation": 32,
       "column": -5.455,
@@ -10086,7 +10085,7 @@
         "haggith_david"
       ],
       "spouses": [],
-      "desc": "다윗의 넷째 아들. 왕위를 스스로 노렸으나 솔로몬에게 처형당함.",
+      "desc": "다윗의 넷째 아들. 왕위를 ��스로 노렸으나 솔로몬에게 처형당함.",
       "isMain": false,
       "isManual": true,
       "nudgeX": 0,
@@ -10730,7 +10729,7 @@
       "spouses": [
         "athaliah"
       ],
-      "desc": "여호사밧의 아들. 아합의 딸 아달랴와 결혼해 유다에 우상 숭배를 들여옴.",
+      "desc": "여호사밧의 아들. 아합의 딸 아달랴와 결혼해 유다에 우상 숭��를 들여옴.",
       "isMain": true,
       "isManual": true,
       "teachers": [],
@@ -11326,7 +11325,7 @@
     },
     {
       "id": "jehoahaz",
-      "name": "여호아하스 왕",
+      "name": "여호아��스 ���",
       "engName": "Jehoahaz",
       "gender": "M",
       "generation": 48.12,
@@ -11596,7 +11595,7 @@
         "eliud"
       ],
       "spouses": [],
-      "desc": "엘리웃의 아들.",
+      "desc": "�������리��의 아들.",
       "isMain": true,
       "isManual": true,
       "teachers": [],
@@ -11634,7 +11633,7 @@
         "matthan"
       ],
       "spouses": [],
-      "desc": "맛단의 아들. 마리아의 남편 요셉의 아버지.",
+      "desc": "맛단의 ���들. 마리아의 남편 요셉의 아버지.",
       "isMain": true,
       "isManual": true,
       "teachers": [],
@@ -11653,7 +11652,7 @@
         "matthat_luke2"
       ],
       "spouses": [],
-      "desc": "마리아의 친아버지. 누가복음 예수 족보의 마지막 조상.",
+      "desc": "마리��의 ���아버지. 누가복음 예수 족보의 마지막 조상.",
       "isMain": false,
       "isManual": true,
       "teachers": [],
@@ -14569,7 +14568,7 @@
     },
     {
       "id": "tiria_jehalelyel",
-      "name": "디리야",
+      "name": "���리야",
       "engName": "Tiria",
       "gender": "M",
       "generation": 35.04,
@@ -15388,7 +15387,7 @@
     },
     {
       "id": "jeshebeab_div",
-      "name": "예세브압",
+      "name": "예세브���",
       "engName": "Jeshebeab",
       "gender": "M",
       "generation": 45.84,
@@ -15608,7 +15607,7 @@
       "spouses": [
         "elizabeth_priest_div"
       ],
-      "desc": "아비야 반열의 제사장. 세례 요한의 아버지.",
+      "desc": "아비야 반열의 제사장. 세례 요한의 ��버��.",
       "isMain": false,
       "isManual": true,
       "teachers": [],
@@ -16081,7 +16080,7 @@
         "shobal_chief"
       ],
       "spouses": [],
-      "desc": "소발의 아들.",
+      "desc": "���발��� 아들.",
       "isMain": false,
       "isManual": true,
       "teachers": [],
@@ -16652,7 +16651,7 @@
     {
       "id": "amashiah_jamlech",
       "name": "아마시야",
-      "engName": "Amaziah",
+      "engName": "Joshah's Father",
       "gender": "M",
       "generation": 26.84,
       "column": -36.133,
@@ -17059,7 +17058,7 @@
     {
       "id": "naomi",
       "name": "나오미",
-      "engName": "Naomi",
+      "engName": "naomi",
       "gender": "F",
       "generation": 28,
       "column": 2.93,
@@ -17077,7 +17076,7 @@
     {
       "id": "mahion",
       "name": "말론",
-      "engName": "Mahlon",
+      "engName": "mahion",
       "gender": "M",
       "generation": 29,
       "column": 2.103,
@@ -17154,7 +17153,7 @@
     {
       "id": "Shua_daughter",
       "name": "수아의 딸",
-      "engName": "Daughter of Shua",
+      "engName": "Shua's daughter",
       "gender": "F",
       "generation": 22,
       "column": 1.9,
@@ -17391,7 +17390,7 @@
     {
       "id": "noah_wife",
       "name": "노아의 아내",
-      "engName": "Noah's Wife",
+      "engName": "Noah_wife",
       "gender": "F",
       "generation": 9,
       "column": -1.171,
@@ -17409,7 +17408,7 @@
     {
       "id": "shem_wife",
       "name": "셈의 아내",
-      "engName": "Shem's Wife",
+      "engName": "Shem_wife",
       "gender": "F",
       "generation": 10,
       "column": 1.1,
@@ -17427,7 +17426,7 @@
     {
       "id": "ham_wife",
       "name": "함의 아내",
-      "engName": "Ham's Wife",
+      "engName": "Ham_wife",
       "gender": "F",
       "generation": 10,
       "column": -1.034,
@@ -17445,7 +17444,7 @@
     {
       "id": "japheth_wife",
       "name": "야벳의 아내",
-      "engName": "Japheth's Wife",
+      "engName": "Japheth_wife",
       "gender": "F",
       "generation": 10.01,
       "column": -5.85,
@@ -17475,6 +17474,61 @@
       "desc": "",
       "isMain": false,
       "isManual": true,
+      "prophets": [],
+      "relatedPeople": []
+    },
+    {
+      "id": "John_the_Baptist",
+      "name": "세례요한",
+      "engName": "John the Baptist",
+      "gender": "M",
+      "generation": 62.8,
+      "column": -31.483,
+      "parents": [
+        "Zechariah",
+        "Elizabeth"
+      ],
+      "spouses": [],
+      "desc": "",
+      "isMain": false,
+      "isManual": true,
+      "teachers": [],
+      "prophets": [],
+      "relatedPeople": []
+    },
+    {
+      "id": "Zechariah",
+      "name": "사가랴",
+      "engName": "Zechariah",
+      "gender": "M",
+      "generation": 61.81,
+      "column": -31.933,
+      "parents": [],
+      "spouses": [
+        "Elizabeth"
+      ],
+      "desc": "",
+      "isMain": false,
+      "isManual": true,
+      "teachers": [],
+      "prophets": [],
+      "relatedPeople": []
+    },
+    {
+      "id": "Elizabeth",
+      "name": "엘리사벳",
+      "engName": "Elizabeth",
+      "gender": "F",
+      "generation": 61.81,
+      "column": -31.033,
+      "parents": [],
+      "spouses": [
+        "Zechariah"
+      ],
+      "desc": "",
+      "isMain": false,
+      "isManual": true,
+      "teachers": [],
       "prophets": [],
       "relatedPeople": []
     },
@@ -17535,7 +17589,7 @@
     {
       "id": "philip",
       "name": "빌립",
-      "engName": "Philip",
+      "engName": "philip",
       "gender": "M",
       "generation": 64.29,
       "column": -4.229,
@@ -17553,7 +17607,7 @@
     {
       "id": "bartholomew",
       "name": "바돌로매",
-      "engName": "Bartholomew",
+      "engName": "bartholomew",
       "gender": "M",
       "generation": 64.29,
       "column": -3.504,
@@ -17571,7 +17625,7 @@
     {
       "id": "thomas",
       "name": "도마",
-      "engName": "Thomas",
+      "engName": "thomas",
       "gender": "M",
       "generation": 64.29,
       "column": -2.767,
@@ -17607,7 +17661,7 @@
     {
       "id": "james_alphaeus",
       "name": "야고보",
-      "engName": "James, son of Alphaeus",
+      "engName": "james_alphaeus",
       "gender": "M",
       "generation": 64.29,
       "column": -1.241,
@@ -17626,7 +17680,7 @@
     {
       "id": "thaddaeus",
       "name": "다대오",
-      "engName": "Thaddaeus",
+      "engName": "thaddaeus",
       "gender": "M",
       "generation": 64.28,
       "column": -0.475,
@@ -17644,7 +17698,7 @@
     {
       "id": "simon",
       "name": "시몬",
-      "engName": "Simon",
+      "engName": "simon",
       "gender": "M",
       "generation": 64.28,
       "column": 0.279,
@@ -17663,7 +17717,7 @@
     {
       "id": "judas_lscariot",
       "name": "가룟 유다",
-      "engName": "Judas Iscariot",
+      "engName": "judas lscariot",
       "gender": "M",
       "generation": 64.27,
       "column": 1.038,
@@ -17681,7 +17735,7 @@
     {
       "id": "matthias",
       "name": "맛디아",
-      "engName": "Matthias",
+      "engName": "matthias",
       "gender": "M",
       "generation": 64.27,
       "column": 2.563,
@@ -17717,7 +17771,7 @@
     {
       "id": "cornelius",
       "name": "고넬료",
-      "engName": "Cornelius",
+      "engName": "cornelius",
       "gender": "M",
       "generation": 65.47,
       "column": -7.979,
@@ -18050,7 +18104,7 @@
     {
       "id": "malchishua_saul",
       "name": "말기수아",
-      "engName": "Malchi-shua",
+      "engName": "Malchishua",
       "gender": "M",
       "generation": 29.95,
       "column": 62.572,
@@ -18738,7 +18792,7 @@
     {
       "id": "gideon_wife",
       "name": "기드온의 아내들",
-      "engName": "Gideon's Wives",
+      "engName": "Gideon's wives",
       "gender": "F",
       "generation": 27.01,
       "column": 44.34,
@@ -18757,7 +18811,7 @@
     {
       "id": "cush-moses",
       "name": "구스여인",
-      "engName": "Cushite Woman",
+      "engName": "Cush",
       "gender": "F",
       "generation": 25,
       "column": -25.904,
@@ -18775,7 +18829,7 @@
     {
       "id": "becorath",
       "name": "베고랏",
-      "engName": "Becorath",
+      "engName": "becorath",
       "gender": "M",
       "generation": 25,
       "column": 65.6,
@@ -18793,7 +18847,7 @@
     {
       "id": "zeror",
       "name": "스롤",
-      "engName": "Zeror",
+      "engName": "zeror",
       "gender": "M",
       "generation": 25.99,
       "column": 65.6,
@@ -18811,7 +18865,7 @@
     {
       "id": "joel-reuben-1",
       "name": "요엘",
-      "engName": "Joel",
+      "engName": "joel",
       "gender": "M",
       "generation": 27,
       "column": -41.1,
@@ -18828,7 +18882,7 @@
     {
       "id": "jokim",
       "name": "요김",
-      "engName": "Jokim",
+      "engName": "jokim",
       "gender": "M",
       "generation": 23.94,
       "column": 5.201,
@@ -18861,7 +18915,7 @@
     {
       "id": "men_of_cozeba",
       "name": "고세바 사람",
-      "engName": "Men of Cozeba",
+      "engName": "men of cozeba",
       "gender": "M",
       "generation": 23.94,
       "column": 7.344,
@@ -18878,7 +18932,7 @@
     {
       "id": "jashubi-lehem",
       "name": "야수비네헴",
-      "engName": "Jashubi-lehem",
+      "engName": "jashubi-lehem",
       "gender": "M",
       "generation": 23.94,
       "column": 8.058,
@@ -18895,7 +18949,7 @@
     {
       "id": "sarah-judah",
       "name": "사랍",
-      "engName": "Saraph",
+      "engName": "Sarah",
       "gender": "M",
       "generation": 23.94,
       "column": 6.63,
@@ -18912,7 +18966,7 @@
     {
       "id": "shuppim",
       "name": "숩빔",
-      "engName": "Shuppim",
+      "engName": "shuppim",
       "gender": "M",
       "generation": 25,
       "column": 60.842,
@@ -18931,7 +18985,7 @@
     {
       "id": "huppim-benjamin",
       "name": "훕빔",
-      "engName": "Huppim",
+      "engName": "huppim",
       "gender": "M",
       "generation": 25,
       "column": 61.542,
@@ -18967,7 +19021,7 @@
     {
       "id": "aher",
       "name": "아헬",
-      "engName": "Aher",
+      "engName": "aher",
       "gender": "M",
       "generation": 25.01,
       "column": 59.771,
@@ -18984,7 +19038,7 @@
     {
       "id": "hushim",
       "name": "후심",
-      "engName": "Hushim",
+      "engName": "hushim",
       "gender": "M",
       "generation": 26.03,
       "column": 59.771,
@@ -19020,7 +19074,7 @@
     {
       "id": "shimei-benjamin",
       "name": "시므이",
-      "engName": "Shimei",
+      "engName": "shimei",
       "gender": "M",
       "generation": 32.97,
       "column": 68.102,
@@ -19039,7 +19093,7 @@
     {
       "id": "jair-benjamin",
       "name": "야일",
-      "engName": "Jair",
+      "engName": "jair",
       "gender": "M",
       "generation": 34,
       "column": 67.702,
@@ -19058,7 +19112,7 @@
     {
       "id": "abihail-benjamin",
       "name": "아비하일",
-      "engName": "Abihail",
+      "engName": "abihail",
       "gender": "M",
       "generation": 34,
       "column": 68.6,
@@ -19077,7 +19131,7 @@
     {
       "id": "mordecai",
       "name": "모르드개",
-      "engName": "Mordecai",
+      "engName": "mordecai",
       "gender": "M",
       "generation": 35.01,
       "column": 67.702,
@@ -19116,19 +19170,19 @@
     {
       "id": "manoah-dan",
       "name": "마노아",
-      "engName": "Manoah",
+      "engName": "manoah",
       "gender": "M",
       "generation": 24.16,
       "column": 78.078,
       "parents": [],
       "spouses": [],
       "teachers": [],
-      "desc": "단 지파 소라 땅 출신의 인물로, 여호와의 사자에게 나실인의 출생 고지를 받은 사사 삼손의 아버지(삿 13:2-24)",
+      "desc": "단 지파 소라 땅 출신의 인물로, 여호와의 사자에게 나실인의 출생 고지를 받은 사사 ���손의 아버지(tkt 13:2-24)",
       "isMain": false,
       "isManual": true,
       "prophets": [],
       "relatedPeople": [],
-      "engDesc": "A person from the land of Zorah of the tribe of Dan, the father of Samson, the judge who received notice of the birth of the Nazirites from the angel of the Lord (Judges 13:2-24)"
+      "engDesc": "A person from the land of Zorah of the tribe of Dan, the father of Samson, the judge who received notice of the birth of the Nazirites from the angel of the Lord (tkt 13:2-24)"
     },
     {
       "id": "samson-dan",
@@ -19155,7 +19209,7 @@
     {
       "id": "Delilah",
       "name": "들릴라",
-      "engName": "Delilah",
+      "engName": "deiilah",
       "gender": "F",
       "generation": 25.09,
       "column": 79.055,
@@ -19174,7 +19228,7 @@
     {
       "id": "samson-wife",
       "name": "삼손의 부인",
-      "engName": "Samson's Wife",
+      "engName": "Samson",
       "gender": "F",
       "generation": 25.09,
       "column": 77.097,
@@ -19192,7 +19246,7 @@
     {
       "id": "shamgar",
       "name": "삼갈",
-      "engName": "Shamgar",
+      "engName": "shamgar",
       "gender": "M",
       "generation": 24.96,
       "column": 74.835,
@@ -19244,7 +19298,7 @@
     {
       "id": "dodo",
       "name": "도도",
-      "engName": "Dodo",
+      "engName": "dodo",
       "gender": "M",
       "generation": 24.7,
       "column": 22.166,
@@ -19261,7 +19315,7 @@
     {
       "id": "puah",
       "name": "부아",
-      "engName": "Puah",
+      "engName": "puah",
       "gender": "M",
       "generation": 25.61,
       "column": 22.164,
@@ -19280,7 +19334,7 @@
     {
       "id": "tola-judges",
       "name": "돌라",
-      "engName": "Tola",
+      "engName": "tola",
       "gender": "M",
       "generation": 26.61,
       "column": 22.166,
@@ -19299,19 +19353,19 @@
     {
       "id": "ehud",
       "name": "에훗",
-      "engName": "Ehud",
+      "engName": "ehud",
       "gender": "M",
       "generation": 33,
       "column": 65.5,
       "parents": [],
       "spouses": [],
       "teachers": [],
-      "desc": "베냐민 지파 게라의 아들이자 왼손잡이 사사로, 18년 동안 이스라엘을 압제하던 모압 왕 에글론을 비밀리에 살해하고 이스라엘에 80년 동안의 평화를 가져온 인물(삿 3:12-30)",
+      "desc": "베냐민 지파 게라의 아들이자 왼손잡이 사사로, 18년 동안 이스라엘을 압제하던 모압 왕 에글론을 비밀리에 살해하고 이스라엘에 80년 동안의 평화를 가져온 인물(tkt 3:12-30)",
       "isMain": false,
       "isManual": true,
       "prophets": [],
       "relatedPeople": [],
-      "engDesc": "A left-handed judge and son of Gera of the tribe of Benjamin, who secretly murdered Eglon, king of Moab, who had oppressed Israel for 18 years, and brought 80 years of peace to Israel (Judges 3:12-30)"
+      "engDesc": "A left-handed judge and son of Gera of the tribe of Benjamin, who secretly murdered Eglon, king of Moab, who had oppressed Israel for 18 years, and brought 80 years of peace to Israel (tkt 3:12-30)"
     },
     {
       "id": "prophet_samuel",
@@ -19377,7 +19431,7 @@
     {
       "id": "prophet_ahijah",
       "name": "아히야",
-      "engName": "Ahijah",
+      "engName": "ahijah",
       "gender": "M",
       "generation": 32.98,
       "column": -2.754,
@@ -19397,7 +19451,7 @@
     {
       "id": "prophet_iddo",
       "name": "잇도",
-      "engName": "Iddo",
+      "engName": "iddo",
       "gender": "M",
       "generation": 32.98,
       "column": -1.992,
@@ -19453,7 +19507,7 @@
     {
       "id": "prophet_hanani",
       "name": "하나니",
-      "engName": "Hanani",
+      "engName": "hanani",
       "gender": "M",
       "generation": 35.99,
       "column": -2.187,
@@ -19473,7 +19527,7 @@
     {
       "id": "prophet_jehu",
       "name": "예후",
-      "engName": "Jehu",
+      "engName": "jehu",
       "gender": "M",
       "generation": 35.07,
       "column": -3.483,
@@ -19515,7 +19569,7 @@
     {
       "id": "prophet_ahijah_1",
       "name": "아히야",
-      "engName": "Ahijah",
+      "engName": "ahijah",
       "gender": "M",
       "generation": 33.69,
       "column": -4.129,
@@ -19558,7 +19612,7 @@
     {
       "id": "prophet_jonah",
       "name": "요나",
-      "engName": "Jonah",
+      "engName": "jonah",
       "gender": "M",
       "generation": 44.47,
       "column": -3.896,
@@ -19578,7 +19632,7 @@
     {
       "id": "prophet_hosea",
       "name": "호세아",
-      "engName": "Hosea",
+      "engName": "hosea",
       "gender": "M",
       "generation": 45.33,
       "column": -3.897,
@@ -19598,7 +19652,7 @@
     {
       "id": "prophet_amos",
       "name": "아모스",
-      "engName": "Amos",
+      "engName": "amos",
       "gender": "M",
       "generation": 44.9,
       "column": -3.894,
@@ -19618,7 +19672,7 @@
     {
       "id": "prophet_jahaziel",
       "name": "야하시엘",
-      "engName": "Jahaziel",
+      "engName": "jahaziel",
       "gender": "M",
       "generation": 37,
       "column": -1.092,
@@ -19658,7 +19712,7 @@
     {
       "id": "prophet_obadiah",
       "name": "오바댜",
-      "engName": "Obadiah",
+      "engName": "obadiah",
       "gender": "M",
       "generation": 42.13,
       "column": -2.414,
@@ -19676,7 +19730,7 @@
     {
       "id": "prophet_joel",
       "name": "요엘",
-      "engName": "Joel",
+      "engName": "joel",
       "gender": "M",
       "generation": 37.01,
       "column": -1.786,
@@ -19694,7 +19748,7 @@
     {
       "id": "prophet_huldah",
       "name": "여선지자 훌다",
-      "engName": "Huldah",
+      "engName": "huldah",
       "gender": "M",
       "generation": 47.24,
       "column": -2.035,
@@ -19714,7 +19768,7 @@
     {
       "id": "prophet_nahum",
       "name": "나훔",
-      "engName": "Nahum",
+      "engName": "nahum",
       "gender": "M",
       "generation": 46.4,
       "column": -3.129,
@@ -19732,7 +19786,7 @@
     {
       "id": "prophet_zephaniah",
       "name": "스바냐",
-      "engName": "Zephaniah",
+      "engName": "zephaniah",
       "gender": "M",
       "generation": 47.24,
       "column": -2.758,
@@ -19752,7 +19806,7 @@
     {
       "id": "prophet_habakkuk",
       "name": "하박국",
-      "engName": "Habakkuk",
+      "engName": "habakkuk",
       "gender": "M",
       "generation": 47.73,
       "column": -3.129,
@@ -19770,7 +19824,7 @@
     {
       "id": "prophet_jeremiah",
       "name": "예레미야",
-      "engName": "Jeremiah",
+      "engName": "jeremiah",
       "gender": "M",
       "generation": 48.94,
       "column": -2.035,
@@ -19829,7 +19883,7 @@
     {
       "id": "prophet_haggai",
       "name": "학개",
-      "engName": "Haggai",
+      "engName": "haggai",
       "gender": "M",
       "generation": 54.61,
       "column": -1.524,
@@ -19865,7 +19919,7 @@
     {
       "id": "prophet_malachi",
       "name": "말라기",
-      "engName": "Malachi",
+      "engName": "malachi",
       "gender": "M",
       "generation": 56.58,
       "column": -1.524,
@@ -19941,7 +19995,7 @@
     {
       "id": "hanani",
       "name": "하나니",
-      "engName": "Hanani",
+      "engName": "hanani",
       "gender": "M",
       "generation": 42.54,
       "column": 21.98,
@@ -19961,7 +20015,7 @@
     {
       "id": "Brother_of_Nehemiah",
       "name": "다른 형제들",
-      "engName": "Brothers of Nehemiah",
+      "engName": "Brother of Nehemiah",
       "gender": "M",
       "generation": 42.54,
       "column": 21.239,
@@ -20403,17 +20457,16 @@
     ]
   },
   "lineZIndices": {
-    "rel-athaliah+jehoram->ahaziah": 1,
-    "rel-jehoshaphat->jehoram": 2,
-    "rel-maacah+rehoboam->abijah": 3,
-    "rel-bathsheba+david->solomon": 4,
-    "rel-jesse->david": 5,
-    "rel-perez->hezron": 6,
-    "rel-jacob+leah->judah": 7,
+    "rel-adam+eve->seth": 1,
+    "rel-jesse->david": 2,
+    "rel-bathsheba+david->solomon": 3,
+    "rel-maacah+rehoboam->abijah": 4,
+    "rel-perez->hezron": 5,
+    "rel-terah->abraham": 6,
+    "rel-eber->peleg": 7,
     "rel-isaac+rebekah->jacob": 8,
-    "rel-terah->abraham": 9,
-    "rel-adam+eve->seth": 10,
-    "rel-eber->peleg": 11
+    "rel-jehoshaphat->jehoram": 9,
+    "rel-athaliah+jehoram->ahaziah": 10
   },
   "customVisualLines": [],
   "canvasJunctions": [],
@@ -20578,7 +20631,7 @@
     },
     {
       "id": "note-1785291855597",
-      "text": "동일인",
+      "text": "동명이인",
       "x": 13816.598659087793,
       "y": 3595.122973775984,
       "width": 96,
@@ -20586,14 +20639,13 @@
       "fontSize": 12,
       "bold": false,
       "color": "#1e293b",
-      "bgColor": "#8bfb5b",
+      "bgColor": "#c3adf5",
       "relatedPeople": [
         "mahalath",
         "Mahalath-wife"
       ],
       "relatedEvents": [],
-      "relatedLocations": [],
-      "borderStyle": "none"
+      "relatedLocations": []
     },
     {
       "id": "note-1785292430353",
@@ -20976,56 +21028,6 @@
       ],
       "relatedEvents": [],
       "relatedLocations": []
-    },
-    {
-      "id": "annotation_1786089563807_13lwr6672",
-      "text": "동일인",
-      "x": 16642.817863922064,
-      "y": 3768.9061356719512,
-      "width": 96,
-      "height": 38,
-      "fontSize": 12,
-      "bold": false,
-      "italic": false,
-      "underline": false,
-      "align": "center",
-      "borderStyle": "dashed",
-      "borderWidth": 1,
-      "color": "#1e293b",
-      "bgColor": "#abf75f",
-      "borderColor": "#cbd5e1",
-      "auraEnabled": true,
-      "relatedPeople": [
-        "rebekah",
-        "rebekah_daughter"
-      ],
-      "relatedEvents": [],
-      "relatedLocations": []
-    },
-    {
-      "id": "annotation_1786089693693_m9wwg8a49",
-      "text": "동일인",
-      "x": 17215.668684546603,
-      "y": 3422.555838977626,
-      "width": 96,
-      "height": 38,
-      "fontSize": 12,
-      "bold": false,
-      "italic": false,
-      "underline": false,
-      "align": "center",
-      "borderStyle": "dashed",
-      "borderWidth": 1,
-      "color": "#1e293b",
-      "bgColor": "#abf75f",
-      "borderColor": "#cbd5e1",
-      "auraEnabled": true,
-      "relatedPeople": [
-        "milcah",
-        "milcah_daughter"
-      ],
-      "relatedEvents": [],
-      "relatedLocations": []
     }
   ],
   "styleSettings": {
@@ -21047,7 +21049,7 @@
       "fillOpacity": 0.03,
       "points": [
         {
-          "x": 15080,
+          "x": 15064.48,
           "y": 240
         },
         {
@@ -21059,13 +21061,13 @@
           "y": 1440
         },
         {
-          "x": 15080,
+          "x": 15074.48,
           "y": 1440
         }
       ],
       "label_en": "Cain descendants line",
-      "labelOffsetX": 32.53226240007701,
-      "labelOffsetY": -14.14446191307696
+      "labelOffsetX": 64.532262400077,
+      "labelOffsetY": 1.8555380869230405
     },
     {
       "id": "poly-japheth",
@@ -21117,9 +21119,7 @@
           "y": 2340
         }
       ],
-      "label_en": "Descendants of Ham (Canaanite/African people)",
-      "labelOffsetX": 23.46201806727417,
-      "labelOffsetY": -11.040949678717256
+      "label_en": "Descendants of Ham (Canaanite/African people)"
     },
     {
       "id": "poly-joktan",
@@ -21577,17 +21577,13 @@
     },
     {
       "id": "poly-custom-1785472705847",
-      "label": "갓 지파(창 46:16, 민 26:15-18, 대상 5:11-17)",
+      "label": "갓 지��(창 46:16, 민 26:15-18, 대상 5:11-17)",
       "color": "#22c55e",
       "fillOpacity": 0.03,
       "points": [
         {
           "x": 22500,
           "y": 4020
-        },
-        {
-          "x": 23257.47043761548,
-          "y": 4023.0373038435346
         },
         {
           "x": 23710.46179570396,
@@ -21677,8 +21673,8 @@
       "fillOpacity": 0.03,
       "points": [
         {
-          "x": 27940,
-          "y": 4200
+          "x": 27913.109375,
+          "y": 4202
         },
         {
           "x": 28846.222980087827,
@@ -21689,8 +21685,8 @@
           "y": 5999.570041380666
         },
         {
-          "x": 27940,
-          "y": 6000
+          "x": 27913.105835720253,
+          "y": 5999.570041380666
         }
       ],
       "label_en": "Tribe of Ephraim (Numbers 26:35-37, 1 Chronicles 7:20-29)"
@@ -21863,11 +21859,11 @@
           "y": 6700
         },
         {
-          "x": 16158.463027810003,
-          "y": 6701.3949421896805
+          "x": 16150,
+          "y": 6700
         },
         {
-          "x": 16160,
+          "x": 16150,
           "y": 6920
         },
         {
@@ -21911,11 +21907,11 @@
           "y": 8420
         },
         {
-          "x": 15660,
+          "x": 15670,
           "y": 8420
         },
         {
-          "x": 15660,
+          "x": 15670,
           "y": 8570
         },
         {
@@ -21975,11 +21971,11 @@
           "y": 8980
         },
         {
-          "x": 15720,
+          "x": 15730,
           "y": 8980
         },
         {
-          "x": 15720,
+          "x": 15730,
           "y": 8770
         },
         {
@@ -22060,8 +22056,8 @@
         }
       ],
       "label_en": "prophets",
-      "labelOffsetX": 20.828892382615393,
-      "labelOffsetY": 0.6844304695384302
+      "labelOffsetX": 17.828892382615393,
+      "labelOffsetY": -9.31556953046157
     }
   ],
   "events": [
@@ -22250,7 +22246,7 @@
     {
       "id": "ev-1785926941132",
       "name": "아하시야와 요람 동맹",
-      "desc": "남유다의 아하시야가 아람과의 전쟁에서 부상을 입은 북이스라엘의 요람을 문병하러 갔다가, 북이스라엘에서 일어난 예후의 반란 과정에서 함께 죽임을 당함",
+      "desc": "남유다의 ��하시야가 아람과의 전쟁에서 부상을 입은 북이스라엘의 요람을 문병하러 갔다가, 북이스라엘에서 일어난 예후의 반란 과정에서 함께 죽임을 당함",
       "refs": [
         "(왕하 8:28-29",
         "9:27-28)"
@@ -22485,7 +22481,7 @@
       "relatedPeople": [
         "noah"
       ],
-      "x": 16558,
+      "x": 16568,
       "y": 2661,
       "engName": "Plain of Shinar",
       "engDesc": "A plain where Noah's descendants gathered to build the Tower of Babel and oppose God."
