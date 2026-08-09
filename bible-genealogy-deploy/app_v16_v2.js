@@ -13485,6 +13485,11 @@ async function importNotesFromMdFiles() {
                 
                 // If it differs, Obsidian is the source of truth for the change
                 if (userNotes[id] !== body) {
+                  // Safety guard: Don't let a blank Obsidian markdown file wipe out a non-empty local note
+                  if (body.trim() === '' && userNotes[id] && userNotes[id].trim() !== '') {
+                    console.log(`[MD 가져오기 건너뜀] 로컬 메모가 존재하여 빈 MD 파일(${id}) 병합을 건너뜁니다.`);
+                    continue;
+                  }
                   userNotes[id] = body;
                   hasChanges = true;
                   console.log(`[MD 가져오기 성공] 업데이트된 키: ${id}`);
@@ -15199,6 +15204,9 @@ window.addEventListener('DOMContentLoaded', async () => {
   if (!isLicensed) return;
 
   applyLocalization();
+
+  // Load user notes unconditionally on startup (independent of login/offline status)
+  fetchUserNotes();
 
   const langToggleBtn = document.getElementById('lang-toggle');
   langToggleBtn?.addEventListener('click', () => {
