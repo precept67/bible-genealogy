@@ -10293,12 +10293,24 @@ function setupSearch() {
 function setupStudyPanel() {
   const closeBtn = document.getElementById('panel-close');
   const cancelBtn = document.getElementById('panel-cancel');
+  const expandBtn = document.getElementById('panel-expand');
   const saveBtn = document.getElementById('panel-save');
   const addResourceBtn = document.getElementById('add-resource-btn');
   const noteTextarea = document.getElementById('note-text');
   
   closeBtn.addEventListener('click', closeStudyPanel);
   cancelBtn.addEventListener('click', closeStudyPanel);
+  
+  if (expandBtn) {
+    expandBtn.addEventListener('click', () => {
+      studyPanel.classList.toggle('expanded');
+      document.body.classList.toggle('study-panel-expanded');
+      
+      const isExpanded = studyPanel.classList.contains('expanded');
+      expandBtn.title = isExpanded ? '축소' : '확장';
+      expandBtn.textContent = isExpanded ? '❐' : '⛶';
+    });
+  }
   
   saveBtn.addEventListener('click', () => {
     if (!activePersonId) return;
@@ -10470,6 +10482,15 @@ function openStudyPanel(personId) {
 
 function closeStudyPanel() {
   studyPanel.classList.remove('active');
+  studyPanel.classList.remove('expanded');
+  document.body.classList.remove('study-panel-expanded');
+  
+  const expandBtn = document.getElementById('panel-expand');
+  if (expandBtn) {
+    expandBtn.title = '확장';
+    expandBtn.textContent = '⛶';
+  }
+  
   activePersonId = null;
   activeStudyPanelType = null;
   clearAllHighlights();
