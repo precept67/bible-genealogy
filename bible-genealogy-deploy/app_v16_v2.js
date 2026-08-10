@@ -10325,6 +10325,7 @@ function setupStudyPanel() {
     
     studyPanel.style.left = `${newLeft}px`;
     studyPanel.style.top = `${newTop}px`;
+    studyPanel.style.right = 'auto';
   };
 
   const onMouseUp = () => {
@@ -10364,15 +10365,10 @@ function setupStudyPanel() {
       studyPanel.classList.toggle('expanded');
       
       if (!isExpandedBefore) {
-        // Compute default center coordinates
-        const width = 800;
-        const height = window.innerHeight * 0.8;
-        const left = Math.max(20, (window.innerWidth - width) / 2);
-        const top = Math.max(20, (window.innerHeight - height) / 2);
-        
-        studyPanel.style.left = `${left}px`;
-        studyPanel.style.top = `${top}px`;
-        studyPanel.style.right = 'auto';
+        // Expand immediately on the right side
+        studyPanel.style.right = '16px';
+        studyPanel.style.left = 'auto';
+        studyPanel.style.top = '80px';
         studyPanel.style.transform = 'none';
       } else {
         // Restore to docked position
