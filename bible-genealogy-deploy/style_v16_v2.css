@@ -536,13 +536,54 @@ header .subtitle {
   box-shadow: var(--shadow-panel);
   backdrop-filter: var(--glass-blur);
   z-index: 200;
-  transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
 }
 
 #study-panel.active {
   right: 16px;
+}
+
+.expand-btn {
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  margin: 0;
+}
+
+.expand-btn:hover {
+  color: var(--text-main);
+  transform: scale(1.2);
+}
+
+@media (min-width: 769px) {
+  #study-panel.expanded {
+    position: fixed;
+    width: 800px;
+    height: 80%;
+    max-width: 92vw;
+    max-height: 85vh;
+    z-index: 5000;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+  }
+  
+  #study-panel.expanded .panel-header {
+    cursor: move;
+  }
+  
+  #study-panel.expanded .note-textarea {
+    height: 350px;
+  }
 }
 
 .panel-header {
@@ -567,13 +608,23 @@ header .subtitle {
 .close-btn {
   background: transparent;
   border: none;
-  font-size: 20px;
+  font-size: 22px;
   color: var(--text-muted);
   cursor: pointer;
+  transition: color 0.2s ease, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0 0 2px 0;
+  margin: 0;
+  line-height: 1;
 }
 
 .close-btn:hover {
   color: var(--text-main);
+  transform: scale(1.2);
 }
 
 .panel-body {
