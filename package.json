@@ -5,7 +5,7 @@
   "main": "index.html",
   "scripts": {
     "tauri": "tauri",
-    "build": "mkdir -p dist && cp index.html style_v16_v2.css app_v16_v2.js data_v16_v2.js database.json app_logo.png dist/ && npx tauri build --target universal-apple-darwin --config '{\"tauri\": {\"updater\": {\"active\": false}, \"bundle\": {\"targets\": [\"dmg\", \"app\"]}}}'",
+    "build": "mkdir -p dist && cp index.html style_v16_v2.css app_v16_v2.js data_v16_v2.js database.json app_logo.png dist/ && npx tauri build --target universal-apple-darwin --config '{\"tauri\": {\"updater\": {\"active\": false}, \"bundle\": {\"targets\": [\"app\"]}}}'",
     "build:mobile": "mkdir -p dist && cp index.html style_v16_v2.css app_v16_v2.js data_v16_v2.js database.json app_logo.png dist/ && npx cap sync",
     "cap:open-ios": "npx cap open ios",
     "cap:open-android": "npx cap open android"
