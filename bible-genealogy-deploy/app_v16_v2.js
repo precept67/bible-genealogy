@@ -10301,10 +10301,86 @@ function setupStudyPanel() {
   closeBtn.addEventListener('click', closeStudyPanel);
   cancelBtn.addEventListener('click', closeStudyPanel);
   
+  // Draggable logic for expanded mode
+  let isDragging = false;
+  let startX, startY;
+  let initialLeft, initialTop;
+  const panelHeader = studyPanel.querySelector('.panel-header');
+
+  const onMouseMove = (e) => {
+    if (!isDragging) return;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    
+    let newLeft = initialLeft + dx;
+    let newTop = initialTop + dy;
+    
+    // Clamp to viewport boundaries
+    const rect = studyPanel.getBoundingClientRect();
+    const maxX = window.innerWidth - rect.width;
+    const maxY = window.innerHeight - rect.height;
+    
+    newLeft = Math.max(0, Math.min(newLeft, maxX));
+    newTop = Math.max(0, Math.min(newTop, maxY));
+    
+    studyPanel.style.left = `${newLeft}px`;
+    studyPanel.style.top = `${newTop}px`;
+  };
+
+  const onMouseUp = () => {
+    if (isDragging) {
+      isDragging = false;
+      studyPanel.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    }
+  };
+
+  if (panelHeader) {
+    panelHeader.addEventListener('mousedown', (e) => {
+      if (!studyPanel.classList.contains('expanded')) return;
+      if (e.target.closest('button')) return; // ignore button clicks
+      
+      isDragging = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      
+      const rect = studyPanel.getBoundingClientRect();
+      initialLeft = rect.left;
+      initialTop = rect.top;
+      
+      studyPanel.style.transition = 'none';
+      
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
+      e.preventDefault();
+    });
+  }
+
   if (expandBtn) {
     expandBtn.addEventListener('click', () => {
+      const isExpandedBefore = studyPanel.classList.contains('expanded');
+      
       studyPanel.classList.toggle('expanded');
-      document.body.classList.toggle('study-panel-expanded');
+      
+      if (!isExpandedBefore) {
+        // Compute default center coordinates
+        const width = 800;
+        const height = window.innerHeight * 0.8;
+        const left = Math.max(20, (window.innerWidth - width) / 2);
+        const top = Math.max(20, (window.innerHeight - height) / 2);
+        
+        studyPanel.style.left = `${left}px`;
+        studyPanel.style.top = `${top}px`;
+        studyPanel.style.right = 'auto';
+        studyPanel.style.transform = 'none';
+      } else {
+        // Restore to docked position
+        studyPanel.style.left = '';
+        studyPanel.style.top = '';
+        studyPanel.style.right = '';
+        studyPanel.style.transform = '';
+      }
       
       const isExpanded = studyPanel.classList.contains('expanded');
       expandBtn.title = isExpanded ? '축소' : '확장';
@@ -10484,6 +10560,13 @@ function closeStudyPanel() {
   studyPanel.classList.remove('active');
   studyPanel.classList.remove('expanded');
   document.body.classList.remove('study-panel-expanded');
+  
+  // Clear dragging/expanding inline styles
+  studyPanel.style.left = '';
+  studyPanel.style.top = '';
+  studyPanel.style.right = '';
+  studyPanel.style.transform = '';
+  studyPanel.style.transition = '';
   
   const expandBtn = document.getElementById('panel-expand');
   if (expandBtn) {
