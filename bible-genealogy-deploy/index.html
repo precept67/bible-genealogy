@@ -1034,7 +1034,9 @@
                   window.location.hostname === 'tauri.localhost' || 
                   window.location.protocol.startsWith('file') ||
                   window.location.protocol.startsWith('asset');
-    window.API_BASE_URL = isTauri ? "https://f.jubilee.or.kr" : "";
+    var isMobileApp = (typeof window.Capacitor !== 'undefined') || 
+                      window.location.protocol.startsWith('capacitor');
+    window.API_BASE_URL = (isTauri || isMobileApp) ? "https://f.jubilee.or.kr" : "";
 
     window.openExternalLink = function(url) {
       if (isTauri && window.__TAURI__ && window.__TAURI__.shell) {
