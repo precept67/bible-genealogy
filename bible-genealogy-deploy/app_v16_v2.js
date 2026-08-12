@@ -8570,7 +8570,11 @@ function setupZoomPan() {
       target.closest('.layer-marker') ||
       target.closest('#bottom-spawner-panel') ||
       target.closest('#spawner-panel-toggle-btn') ||
-      target.closest('.layer-control-panel')
+      target.closest('.layer-control-panel') ||
+      target.closest('#help-guide-modal') ||
+      target.closest('#install-guide-modal') ||
+      target.closest('#desktop-license-modal') ||
+      target.closest('#admin-dashboard-modal')
     );
   }
 
