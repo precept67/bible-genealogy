@@ -13097,6 +13097,27 @@ function updateAdminLockVisibility() {
 
 async function validateSession() {
   if (!userToken) {
+    const savedUser = localStorage.getItem('saved_username');
+    const savedPw = localStorage.getItem('saved_password');
+    if (savedUser && savedPw) {
+      try {
+        const res = await fetch(getApiUrl('/api/login'), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: savedUser, password: savedPw })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          userToken = data.token;
+          localStorage.setItem('bible_tree_token', userToken);
+        }
+      } catch (e) {
+        console.warn("Background auto-login failed: ", e);
+      }
+    }
+  }
+
+  if (!userToken) {
     hideAdminLockControls();
     return showAuthModal();
   }
@@ -13171,6 +13192,8 @@ async function handleLogin() {
     }
     userToken = data.token;
     localStorage.setItem('bible_tree_token', userToken);
+    localStorage.setItem('saved_username', username);
+    localStorage.setItem('saved_password', password);
     await validateSession();
   } catch (e) {
     authMessage.innerText = '서버 연결 실패';
@@ -13231,6 +13254,8 @@ if (authModal) {
 function handleLogout() {
   if (confirm("로그아웃 하시겠습니까?")) {
     localStorage.removeItem('bible_tree_token');
+    localStorage.removeItem('saved_username');
+    localStorage.removeItem('saved_password');
     window.location.reload();
   }
 }
