@@ -13090,6 +13090,10 @@ function updateAdminLockVisibility() {
   if (currentUser && currentUser.status === 'admin') {
     if (divider) divider.style.display = 'block';
     if (lockBtn) lockBtn.style.display = 'flex';
+    if (!isAdminMode) {
+      cachedAdminPassword = 'admin';
+      enterAdminMode();
+    }
   } else {
     hideAdminLockControls();
   }
