@@ -46,9 +46,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "macOS": {
-        "category": "public.app-category.reference"
-      }
+      "category": "public.app-category.reference"
     },
     "security": {
       "csp": null
