@@ -45,7 +45,10 @@
         "icons/128x128@2x.png",
         "icons/icon.icns",
         "icons/icon.ico"
-      ]
+      ],
+      "mac": {
+        "category": "public.app-category.reference"
+      }
     },
     "security": {
       "csp": null
