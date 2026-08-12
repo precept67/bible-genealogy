@@ -10,15 +10,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: windowScene)
         window?.rootViewController = CAPBridgeViewController()
         window?.makeKeyAndVisible()
-
-        CAPSceneDelegateProxy.shared.scene(scene, willConnectTo: session, options: connectionOptions)
     }
 
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
-        CAPSceneDelegateProxy.shared.scene(scene, openURLContexts: URLContexts)
+        if let openURLContext = URLContexts.first {
+            _ = ApplicationDelegateProxy.shared.application(UIApplication.shared, open: openURLContext.url, options: [:])
+        }
     }
 
     func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
-        CAPSceneDelegateProxy.shared.scene(scene, continue: userActivity)
+        _ = ApplicationDelegateProxy.shared.application(UIApplication.shared, continue: userActivity, restorationHandler: { _ in })
     }
 }
