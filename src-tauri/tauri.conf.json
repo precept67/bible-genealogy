@@ -46,7 +46,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "mac": {
+      "macOS": {
         "category": "public.app-category.reference"
       }
     },
