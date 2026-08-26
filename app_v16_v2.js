@@ -16547,40 +16547,7 @@ function setupFloatingHeaderEvents() {
 
 // Reposition separate undo/redo toggles to maintain exactly 4px gap side by side with the centered zoom bar
 function repositionHistoryButtons() {
-  // 브라우저 리플로우 완료 시점을 기다리기 위한 50ms 지연 안전 정렬 처리
-  setTimeout(() => {
-    const controlPanel = document.getElementById('control-panel');
-    const undoBtn = document.getElementById('admin-undo-btn');
-    const redoBtn = document.getElementById('admin-redo-btn');
-    if (!controlPanel || !undoBtn || !redoBtn) return;
-    
-    const rect = controlPanel.getBoundingClientRect();
-    const controlWidth = rect.width;
-    const controlHeight = rect.height;
-    const controlTop = rect.top;
-    
-    // Left margin calculation (left edges match precisely 4px gap from left wall of zoom bar)
-    // Zoom bar is at 50% screen center, so its left edge starts at window.innerWidth/2 - W/2
-    const controlLeft = window.innerWidth / 2 - controlWidth / 2;
-    const controlRight = window.innerWidth / 2 + controlWidth / 2;
-    
-    // 줌 조절바의 세로 중앙과 동일한 Y좌표(top)를 계산하여 되돌리기/다시실행 버튼을 완벽 수평정렬
-    const undoRect = undoBtn.getBoundingClientRect();
-    const undoHeight = undoRect.height || 38;
-    const targetTop = controlTop + (controlHeight / 2) - (undoHeight / 2);
-    
-    undoBtn.style.position = 'fixed';
-    undoBtn.style.top = `${targetTop}px`;
-    undoBtn.style.bottom = 'auto';
-    undoBtn.style.left = `${controlLeft - 8 - 38}px`;
-    undoBtn.style.transform = 'none';
-    
-    redoBtn.style.position = 'fixed';
-    redoBtn.style.top = `${targetTop}px`;
-    redoBtn.style.bottom = 'auto';
-    redoBtn.style.left = `${controlRight + 8}px`;
-    redoBtn.style.transform = 'none';
-  }, 50);
+  // 브라우저 flex 레이아웃에 직접 내장되어 스페이스 배치가 자동화되므로, 절대좌표 JS 계산 불필요
 }
 
 // Upgraded Settings Panel Handlers: Lang, Theme, and iCloud Sync
