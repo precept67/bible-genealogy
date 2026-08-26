@@ -1313,15 +1313,19 @@ header .subtitle {
 
 @media (max-width: 768px) {
   #style-editor-panel {
-    width: 100%;
-    left: -100%;
-    top: 0;
-    height: 100%;
-    border-radius: 0;
-    border: none;
+    width: 55% !important;
+    max-width: 55% !important;
+    left: auto !important;
+    right: -60% !important;
+    transform: none !important;
+    height: auto !important;
+    max-height: none !important;
+    border-radius: 16px !important;
+    border: 1px solid var(--border-panel) !important;
   }
   #style-editor-panel.active {
-    left: 0;
+    left: auto !important;
+    right: 16px !important;
   }
   #filter-panel {
     width: 75%;
@@ -2097,7 +2101,7 @@ header .subtitle {
   padding: 10px;
   box-shadow: var(--shadow-panel);
   z-index: 3000;
-  display: flex;
+  display: none;
   flex-direction: column;
   gap: 5px;
   font-family: 'Inter', sans-serif;
@@ -2970,8 +2974,6 @@ svg path.prophets-aura {
   color: var(--text-muted);
   letter-spacing: 0.05em;
   margin-bottom: 12px;
-  border-bottom: 1px solid var(--border-panel);
-  padding-bottom: 6px;
 }
 
 .settings-item {
@@ -3078,3 +3080,30 @@ svg path.prophets-aura {
   color: #2563eb;
 }
 
+/* 6:15~6:31 선 디자인 편집기 타이틀 상단 마진 축소 */
+#style-editor-panel .panel-header {
+  padding: 10px 16px 8px 16px !important;
+}
+#style-editor-panel .panel-header h2 {
+  margin-top: 0 !important;
+}
+
+/* 6:15~6:31 환경설정 창 너비 10% 축소 */
+#settings-modal .modal-content {
+  width: 80% !important;
+  max-width: 80% !important;
+  min-width: 80% !important;
+}
+
+/* History Undo/Redo Controls Float Styling */
+.history-control-btn {
+  transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.2s ease !important;
+}
+.history-control-btn:hover:not(:disabled) {
+  opacity: 0.95 !important;
+  transform: translateY(-1px) scale(1.04);
+  background: rgba(15, 23, 42, 0.8) !important;
+}
+.history-control-btn:active:not(:disabled) {
+  transform: translateY(0px) scale(0.96);
+}
