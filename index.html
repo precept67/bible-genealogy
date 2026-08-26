@@ -47,6 +47,75 @@
   
   <!-- Main Stylesheet -->
   <link rel="stylesheet" href="style_v16_v2.css?v=2300">
+
+  <!-- Upgraded Admin Toolkit Styling (40px circle, white background, 50% opacity emojis) -->
+  <style>
+    .admin-action-btn-circle {
+      width: 40px !important;
+      height: 40px !important;
+      border-radius: 20px !important;
+      background: #ffffff !important;
+      border: 1px solid rgba(0, 0, 0, 0.08) !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      cursor: pointer !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
+      transition: background-color 0.2s ease, transform 0.1s ease !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      position: relative !important;
+    }
+    .admin-action-btn-circle:hover {
+      background: #f8fafc !important;
+      transform: translateY(-2px) !important;
+    }
+    .admin-action-btn-circle .emoji-icon {
+      font-size: 15px !important;
+      opacity: 0.5 !important; /* 50% opacity for soft white-tint emoji look */
+    }
+    
+    /* Interactive Custom Hover Tooltips (Generic Class Support) */
+    .has-tooltip {
+      position: relative !important;
+    }
+    .has-tooltip::after {
+      content: attr(data-tooltip) !important;
+      position: absolute !important;
+      left: 50% !important;
+      transform: translateX(-50%) scale(0.85) !important;
+      background: rgba(15, 23, 42, 0.9) !important;
+      backdrop-filter: blur(4px) !important;
+      -webkit-backdrop-filter: blur(4px) !important;
+      color: #ffffff !important;
+      font-size: 11px !important;
+      font-weight: 600 !important;
+      padding: 6px 10px !important;
+      border-radius: 6px !important;
+      white-space: nowrap !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+      transition: opacity 0.15s ease, transform 0.15s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important;
+      z-index: 13000 !important;
+    }
+    .has-tooltip:hover::after {
+      opacity: 1 !important;
+      transform: translateX(-50%) scale(1) !important;
+    }
+
+    /* Direction: Downward tooltips (for top controls) */
+    .tooltip-down::after {
+      top: 50px !important;
+      bottom: auto !important;
+    }
+
+    /* Direction: Upward tooltips (for bottom controls) */
+    .tooltip-up::after {
+      bottom: 50px !important;
+      top: auto !important;
+    }
+  </style>
 </head>
 <body>
 
@@ -270,9 +339,9 @@
 
   <div id="app-container">
     
-    <!-- Floating Settings Button (Top Right corner) -->
-    <button id="floating-settings-btn" style="position: fixed; top: 16px; right: 16px; z-index: 12000; width: 38px; height: 38px; border-radius: 19px; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15); color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-size: 16px; transition: background-color 0.2s ease, transform 0.1s ease;" title="환경설정">
-      ⚙️
+    <!-- Floating Settings Button (Top Right corner - Fixed !important to override relative layouts) -->
+    <button id="floating-settings-btn" class="admin-action-btn-circle has-tooltip tooltip-down" data-tooltip="환경설정" style="position: fixed !important; top: 16px !important; right: 16px !important; z-index: 12000 !important;" title="환경설정">
+      <span class="emoji-icon">⚙️</span>
     </button>
 
 
@@ -325,26 +394,26 @@
     </main>
     
     <!-- 1. Undo Button (Left Wing, Separate Glass Circle Toggle - Dynamic JS Spacing) -->
-    <button id="admin-undo-btn" class="history-control-btn control-btn" title="되돌리기 (Ctrl+Z)" style="position: fixed; bottom: 16px; z-index: 12000; display: none; width: 38px; height: 38px; border-radius: 19px; background: var(--bg-panel); border: 1px solid var(--border-panel); color: var(--text-main); font-size: 14px; box-shadow: var(--shadow-panel); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); opacity: 0.2; align-items: center; justify-content: center; cursor: pointer; transition: opacity 0.2s ease, background-color 0.2s ease;" disabled>↩️</button>
+    <button id="admin-undo-btn" class="history-control-btn control-btn has-tooltip tooltip-up" data-tooltip="되돌리기 (Ctrl+Z)" title="되돌리기 (Ctrl+Z)" style="position: fixed; bottom: 16px; z-index: 12000; display: none; width: 38px; height: 38px; border-radius: 19px; background: var(--bg-panel); border: 1px solid var(--border-panel); color: var(--text-main); font-size: 14px; box-shadow: var(--shadow-panel); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); opacity: 0.2; align-items: center; justify-content: center; cursor: pointer; transition: opacity 0.2s ease, background-color 0.2s ease;" disabled>↩️</button>
     
     <!-- 2. Zoom Controls Panel (Permanently Absolute Centered Bottom) -->
     <div id="control-panel" style="position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); z-index: 12000; pointer-events: auto; display: flex; align-items: center; gap: 4px; background: var(--bg-panel); border: 1px solid var(--border-panel); padding: 4px 8px; border-radius: 50px; box-shadow: var(--shadow-panel); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);">
-      <button id="zoom-out" class="control-btn" title="축소">
+      <button id="zoom-out" class="control-btn has-tooltip tooltip-up" data-tooltip="축소" title="축소">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12" /></svg>
       </button>
       <span id="zoom-level" class="zoom-indicator">100%</span>
-      <button id="zoom-in" class="control-btn" title="확대">
+      <button id="zoom-in" class="control-btn has-tooltip tooltip-up" data-tooltip="확대" title="확대">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
       </button>
 
       <input type="file" id="user-notes-file-input" accept=".json" style="display: none;">
-      <button id="admin-lock-btn" class="control-btn" title="관리자 편집 모드 토글" style="display: none;">
+      <button id="admin-lock-btn" class="control-btn has-tooltip tooltip-up" data-tooltip="편집 잠금 토글" title="관리자 편집 모드 토글" style="display: none;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
       </button>
     </div>
 
     <!-- 3. Redo Button (Right Wing, Separate Glass Circle Toggle - Dynamic JS Spacing) -->
-    <button id="admin-redo-btn" class="history-control-btn control-btn" title="다시 실행 (Ctrl+Y)" style="position: fixed; bottom: 16px; z-index: 12000; display: none; width: 38px; height: 38px; border-radius: 19px; background: var(--bg-panel); border: 1px solid var(--border-panel); color: var(--text-main); font-size: 14px; box-shadow: var(--shadow-panel); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); opacity: 0.2; align-items: center; justify-content: center; cursor: pointer; transition: opacity 0.2s ease, background-color 0.2s ease;" disabled>↪️</button>
+    <button id="admin-redo-btn" class="history-control-btn control-btn has-tooltip tooltip-up" data-tooltip="다시 실행 (Ctrl+Y)" title="다시 실행 (Ctrl+Y)" style="position: fixed; bottom: 16px; z-index: 12000; display: none; width: 38px; height: 38px; border-radius: 19px; background: var(--bg-panel); border: 1px solid var(--border-panel); color: var(--text-main); font-size: 14px; box-shadow: var(--shadow-panel); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); opacity: 0.2; align-items: center; justify-content: center; cursor: pointer; transition: opacity 0.2s ease, background-color 0.2s ease;" disabled>↪️</button>
 
     <!-- 4. Floating Search Panel & Button Wrapper (Bottom Right - Decoupled to prevent layout shifting) -->
     <div id="floating-search-wrapper" style="position: fixed; bottom: 16px; right: 16px; z-index: 12000; display: flex; align-items: center; gap: 8px; pointer-events: none; transition: all 0.3s ease;">
@@ -353,9 +422,9 @@
         <input type="text" id="searchInput" class="search-box" placeholder="검색 (인물, 사건, 장소)..." autocomplete="off" style="height: 40px; box-sizing: border-box; padding: 0 16px; border-radius: 20px; width: 100%; min-width: 220px; font-size: 13px; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.25);">
         <ul id="search-results" class="search-results-dropdown" style="bottom: 50px; top: auto; width: 100%; min-width: 220px; max-height: 250px; overflow-y: auto;"></ul>
       </div>
-      <!-- Floating Search Toggle Button (🔍) -->
-      <button id="floating-search-toggle-btn" style="position: relative; width: 40px; height: 40px; border-radius: 20px; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15); color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-size: 16px; transition: background-color 0.2s ease, transform 0.1s ease; pointer-events: auto;" title="검색">
-        🔍
+      <!-- Floating Search Toggle Button (🔍 - Upgraded with white background) -->
+      <button id="floating-search-toggle-btn" class="admin-action-btn-circle has-tooltip tooltip-up" data-tooltip="검색" style="position: relative; pointer-events: auto;" title="검색">
+        <span class="emoji-icon">🔍</span>
       </button>
     </div>
 
@@ -585,16 +654,13 @@
     
     <!-- Admin Database Action Panel (Visible only in Admin Mode) -->
         <!-- Admin Database Action Panel (Visible only in Admin Mode - Clean draw toolkit) -->
-    <div id="admin-actions-bar" style="display: none;">
-       <div class="admin-bar-drag-handle" style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-align: center; border-bottom: 1px dashed var(--border-panel); padding-bottom: 6px; margin-bottom: 4px; cursor: move; user-select: none; display: flex; align-items: center; justify-content: center; gap: 4px;">
-         <span>⋮⋮ 관리자 도구 상자</span>
-       </div>
-       <button id="admin-add-btn" class="admin-action-btn primary">➕ 인물 추가</button>
-       <button id="admin-add-event-btn" class="admin-action-btn primary" style="background: #eab308; border-color: #eab308;">📜 사건 추가</button>
-       <button id="admin-add-location-btn" class="admin-action-btn primary" style="background: #22c55e; border-color: #22c55e;">📍 장소 추가</button>
-       <button id="admin-add-note-btn" class="admin-action-btn primary">📝 텍스트 상자 추가</button>
-       <button id="admin-add-polygon-btn" class="admin-action-btn primary" style="background: #ea580c; border-color: #ea580c;">⬡ 영역(다각형) 추가</button>
-       <button id="style-editor-toggle" class="admin-action-btn primary" style="background: #7c3aed; border-color: #7c3aed; font-weight: bold; color: #ffffff; cursor: pointer;">🎨 선 디자인 편집기</button>
+    <div id="admin-actions-bar" style="display: none; position: fixed; top: 16px; left: 50%; transform: translateX(-50%); z-index: 12000; flex-direction: row; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.95); border: 1px solid rgba(0, 0, 0, 0.08); padding: 6px; border-radius: 30px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); pointer-events: auto;">
+       <button id="admin-add-btn" class="admin-action-btn-circle has-tooltip tooltip-down" data-tooltip="인물 추가" title="인물 추가"><span class="emoji-icon">➕</span></button>
+       <button id="admin-add-event-btn" class="admin-action-btn-circle has-tooltip tooltip-down" data-tooltip="사건 추가" title="사건 추가"><span class="emoji-icon">📜</span></button>
+       <button id="admin-add-location-btn" class="admin-action-btn-circle has-tooltip tooltip-down" data-tooltip="장소 추가" title="장소 추가"><span class="emoji-icon">📍</span></button>
+       <button id="admin-add-note-btn" class="admin-action-btn-circle has-tooltip tooltip-down" data-tooltip="텍스트 상자 추가" title="텍스트 상자 추가"><span class="emoji-icon">📝</span></button>
+       <button id="admin-add-polygon-btn" class="admin-action-btn-circle has-tooltip tooltip-down" data-tooltip="영역(다각형) 추가" title="영역(다각형) 추가"><span class="emoji-icon">⬡</span></button>
+       <button id="style-editor-toggle" class="admin-action-btn-circle has-tooltip tooltip-down" data-tooltip="선 디자인 편집기" title="선 디자인 편집기"><span class="emoji-icon">🎨</span></button>
        
        <label class="admin-checkbox-label" style="display: none !important; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; color: #f8fafc; cursor: pointer; padding: 0 8px; margin-left: auto;">
          <input type="checkbox" id="admin-move-descendants-toggle" style="cursor: pointer; width: 14px; height: 14px;">
