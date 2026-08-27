@@ -3254,15 +3254,4 @@ svg path.prophets-aura {
     left: auto !important;
   }
 
-  /* 가로화면 키보드 출력 시: 텍스트 입력되는 곳이 키보드에 가리지 않고 상단 70px~190px 사이에 잘 보이도록,
-     임시로 상세창의 높이를 120px로 밀착 제한합니다. 키보드가 사라지면 100% 풀채우기 높이로 자동 원복됩니다. */
-  body.keyboard-open-landscape #study-panel {
-    max-height: 120px !important;
-    bottom: auto !important; /* 바닥 고정을 일시 해제하여 상단에만 밀착 */
-  }
-  
-  body.keyboard-open-landscape #settings-modal .modal-content {
-    max-height: 120px !important;
-    bottom: auto !important;
-  }
 }
