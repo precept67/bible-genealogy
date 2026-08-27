@@ -10609,6 +10609,22 @@ function setupStudyPanel() {
       }
     }
   });
+
+  // 참고 링크 입력 텍스트 실시간 자동 저장 (Auto-save)
+  const titleInput = document.getElementById('resource-title');
+  const urlInput = document.getElementById('resource-url');
+  if (titleInput) {
+    titleInput.addEventListener('input', () => {
+      if (!activePersonId) return;
+      localStorage.setItem(`temp_res_title_${activePersonId}`, titleInput.value);
+    });
+  }
+  if (urlInput) {
+    urlInput.addEventListener('input', () => {
+      if (!activePersonId) return;
+      localStorage.setItem(`temp_res_url_${activePersonId}`, urlInput.value);
+    });
+  }
   
   addResourceBtn.addEventListener('click', () => {
     const titleInput = document.getElementById('resource-title');
@@ -10626,6 +10642,10 @@ function setupStudyPanel() {
     
     titleInput.value = '';
     urlInput.value = '';
+    
+    // 추가 완료 시 임시 저장 메모리 비우기
+    localStorage.removeItem(`temp_res_title_${activePersonId}`);
+    localStorage.removeItem(`temp_res_url_${activePersonId}`);
     
     renderResourcesList(resources);
   });
@@ -10656,6 +10676,16 @@ function openStudyPanel(personId) {
   const savedNote = userNotes[personId] || '';
   noteTextarea.value = savedNote;
   
+  // 임시 입력중이던 참고자료 타이틀/URL 자동 복구 로드
+  const titleInput = document.getElementById('resource-title');
+  const urlInput = document.getElementById('resource-url');
+  if (titleInput) {
+    titleInput.value = localStorage.getItem(`temp_res_title_${personId}`) || '';
+  }
+  if (urlInput) {
+    urlInput.value = localStorage.getItem(`temp_res_url_${personId}`) || '';
+  }
+
   const resources = JSON.parse(localStorage.getItem(`bible_tree_resources_${personId}`)) || [];
   renderResourcesList(resources);
   
@@ -10667,6 +10697,7 @@ function closeStudyPanel() {
   studyPanel.classList.remove('active');
   studyPanel.classList.remove('expanded');
   document.body.classList.remove('study-panel-expanded');
+  document.body.classList.remove('keyboard-open-landscape'); // 패널이 닫힐 때 키보드 축소 클래스 강제 청소 복귀
   
   // Clear dragging/expanding inline styles
   studyPanel.style.left = '';
@@ -16662,6 +16693,18 @@ function setupUpgradedSettingsEvents() {
     if (icloudUsernameInput && savedICloudUser) icloudUsernameInput.value = savedICloudUser;
     if (icloudPasswordInput && savedICloudPass) icloudPasswordInput.value = savedICloudPass;
 
+    // iCloud 텍스트 입력 실시간 자동 저장 (Auto-save)
+    if (icloudUsernameInput) {
+      icloudUsernameInput.addEventListener('input', () => {
+        localStorage.setItem('icloud_username', icloudUsernameInput.value.trim());
+      });
+    }
+    if (icloudPasswordInput) {
+      icloudPasswordInput.addEventListener('input', () => {
+        localStorage.setItem('icloud_password', icloudPasswordInput.value.trim());
+      });
+    }
+
     icloudToggle.addEventListener('change', () => {
       const enabled = icloudToggle.checked;
       localStorage.setItem('icloud_sync_enabled', enabled);
@@ -16754,6 +16797,76 @@ function initCustomHeaderFeatures() {
       }, 800);
     });
   });
+
+  // 전역 가상 키보드 닫기 핸들러 기동 (빈 공간 터치 시 키보드 내리기)
+  setupGlobalKeyboardDismiss();
+}
+
+function setupGlobalKeyboardDismiss() {
+  const dismissKeyboard = (e) => {
+    const activeEl = document.activeElement;
+    // 현재 포커스된 엘리먼트가 input 또는 textarea 이며 글을 쓰는 상태일 때
+    if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')) {
+      // 터치/클릭된 대상이 입력 창이나 입력 폼 컨테이너가 아닐 때 포커스 해제하여 키보드 닫기
+      const clickedInputOrPanel = e.target.closest('input, textarea, #study-panel, #settings-modal, #search-panel');
+      if (!clickedInputOrPanel) {
+        activeEl.blur();
+      }
+    }
+  };
+
+  document.addEventListener('click', dismissKeyboard, { passive: true });
+  document.addEventListener('touchstart', dismissKeyboard, { passive: true });
+
+  // 가로 모드에서 텍스트 입력창 포커싱 시 창 내부 입력 영역으로 스크롤 이동
+  const handleInputFocus = (e) => {
+    const isLandscape = window.matchMedia('(orientation: landscape)').matches;
+    if (isLandscape && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
+      document.body.classList.add('keyboard-open-landscape');
+      // 포커스된 입력란이 상세 패널 또는 설정 모달 내부 스크롤뷰 최상단으로 스르륵 밀려 올라오도록 유도
+      setTimeout(() => {
+        e.target.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      }, 100);
+    }
+  };
+
+  const handleInputBlur = () => {
+    // 딜레이를 두어 다른 입력창으로 포커스가 바로 이어지는 경우는 복귀를 방지하고,
+    // 포커스가 완전히 입력창 바깥으로 벗어났을 때만 확실히 100% 높이로 복귀시킴
+    setTimeout(() => {
+      const activeEl = document.activeElement;
+      if (!activeEl || (activeEl.tagName !== 'INPUT' && activeEl.tagName !== 'TEXTAREA')) {
+        document.body.classList.remove('keyboard-open-landscape');
+      }
+    }, 100);
+  };
+
+  document.addEventListener('focusin', handleInputFocus, { passive: true });
+  document.addEventListener('focusout', handleInputBlur, { passive: true });
+
+  // 키보드 실행 시 화면이 강제로 스크롤되거나 움직이는 들썩임 현상 철저 봉쇄
+  window.addEventListener('scroll', () => {
+    if (window.scrollY !== 0 || window.scrollX !== 0) {
+      window.scrollTo(0, 0);
+    }
+  }, { passive: true });
+
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', () => {
+      window.scrollTo(0, 0);
+      document.body.scrollTop = 0;
+      // 키보드가 내려가서 원래 뷰포트 크기로 돌아오면(키보드 닫힘 감지) 클래스 강제 제거하여 레이아웃 복원
+      if (window.visualViewport.height >= window.innerHeight * 0.9) {
+        document.body.classList.remove('keyboard-open-landscape');
+      }
+    });
+    window.visualViewport.addEventListener('scroll', () => {
+      if (window.visualViewport.offsetTop > 0 || window.visualViewport.offsetLeft > 0) {
+        window.scrollTo(0, 0);
+        document.body.scrollTop = 0;
+      }
+    });
+  }
 }
 
 if (document.readyState === 'loading') {
