@@ -536,13 +536,7 @@ header .subtitle {
   }
 }
 
-#admin-actions-bar #floating-settings-btn {
-  position: static !important;
-  top: auto !important;
-  right: auto !important;
-  z-index: auto !important;
-  margin: 0 !important;
-}
+
 
 /* Study/Note Sidebar Panel */
 #study-panel {
@@ -856,12 +850,9 @@ header .subtitle {
   #admin-actions-bar {
     top: calc(51px + env(safe-area-inset-top)) !important; /* env가 0이더라도 최소 51px(다이나믹아일랜드 47px + 4px 여백) 확보 */
   }
-  #admin-actions-bar #floating-settings-btn {
-    position: static !important;
-    top: auto !important;
-    right: auto !important;
-    margin: 0 !important;
-    z-index: auto !important;
+  #floating-settings-btn {
+    top: calc(51px + env(safe-area-inset-top)) !important;
+    right: 16px !important;
   }
 
   .panel-header {
