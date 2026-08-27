@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>개인정보처리방침 - Open Genealogy Story</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    h1 {
+      border-bottom: 2px solid #eaecef;
+      padding-bottom: 0.3em;
+      color: #111;
+    }
+    h2 {
+      color: #24292e;
+      margin-top: 24px;
+    }
+    p, li {
+      color: #4f4f4f;
+    }
+    .lang-switch {
+      text-align: right;
+      margin-bottom: 20px;
+    }
+    .lang-switch a {
+      color: #0366d6;
+      text-decoration: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .lang-switch a:hover {
+      text-decoration: underline;
+    }
+    .section {
+      margin-bottom: 40px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="lang-switch">
+    <a onclick="showLang('ko')">한국어</a> | <a onclick="showLang('en')">English</a>
+  </div>
+
+  <!-- KOREAN VERSION -->
+  <div id="ko-content" class="section">
+    <h1>개인정보처리방침</h1>
+    <p>본 방침은 <strong>Open Genealogy Story</strong> (이하 "앱")의 개인정보 처리 방침을 안내합니다. 본 앱은 사용자의 개인정보 보호를 최우선으로 생각합니다.</p>
+
+    <h2>1. 개인정보의 수집 및 이용</h2>
+    <p>본 앱은 회원가입, 로그인 기능이 없으며, 이름, 이메일, 전화번호, 기기 식별값 등 <strong>어떠한 사용자의 개인정보도 수집하거나 저장하지 않습니다.</strong></p>
+
+    <h2>2. 개인정보의 제3자 제공 및 공유</h2>
+    <p>수집하는 개인정보 자체가 존재하지 않으므로, 어떠한 개인정보도 제3자에게 제공하거나 외부와 공유하지 않습니다.</p>
+
+    <h2>3. 쿠키 및 위치 정보 사용</h2>
+    <p>본 앱은 광고 서빙이나 분석 도구를 포함하지 않으며, 사용자의 브라우저 쿠키나 정밀한 실시간 위치 정보를 수집하거나 활용하지 않습니다.</p>
+
+    <h2>4. 개인정보 보호책임자 및 문의처</h2>
+    <p>본 앱의 개인정보 보호와 관련하여 문의 사항이 있으신 경우 아래 연락처로 문의해 주시기 바랍니다.</p>
+    <ul>
+      <li>이메일: <a href="mailto:jubileemc@gmail.com">jubileemc@gmail.com</a></li>
+    </ul>
+    
+    <p style="margin-top: 40px; font-size: 0.9em; color: #888;">공고일자: 2026년 8월 13일<br>시행일자: 2026년 8월 13일</p>
+  </div>
+
+  <!-- ENGLISH VERSION -->
+  <div id="en-content" class="section" style="display: none;">
+    <h1>Privacy Policy</h1>
+    <p>This Privacy Policy outlines how <strong>Open Genealogy Story</strong> (referred to as the "App") handles user information. We prioritize your privacy and do not collect user data.</p>
+
+    <h2>1. Collection and Use of Personal Information</h2>
+    <p>This App does not require registration or login. We <strong>do not collect, store, or access any personal information</strong>, such as names, emails, phone numbers, or device identifiers.</p>
+
+    <h2>2. Sharing of Personal Information with Third Parties</h2>
+    <p>Since we do not collect any personal information, no data is shared with or provided to third parties.</p>
+
+    <h2>3. Cookies and Location Data</h2>
+    <p>This App does not display ads or use tracking analytics. We do not use cookies or track your real-time location data.</p>
+
+    <h2>4. Contact Us</h2>
+    <p>If you have any questions regarding this Privacy Policy, please contact us at:</p>
+    <ul>
+      <li>Email: <a href="mailto:jubileemc@gmail.com">jubileemc@gmail.com</a></li>
+    </ul>
+
+    <p style="margin-top: 40px; font-size: 0.9em; color: #888;">Effective Date: August 13, 2026</p>
+  </div>
+
+  <script>
+    function showLang(lang) {
+      if (lang === 'ko') {
+        document.getElementById('ko-content').style.display = 'block';
+        document.getElementById('en-content').style.display = 'none';
+      } else {
+        document.getElementById('ko-content').style.display = 'none';
+        document.getElementById('en-content').style.display = 'block';
+      }
+    }
+  </script>
+</body>
+</html>

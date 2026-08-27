@@ -1,0 +1,30 @@
+{
+  "KEY-OPEN-BIBLE-TREE": {
+    "owner": "Sanghyun Kim",
+    "maxDevices": 99,
+    "expiryDate": "",
+    "registeredDevices": [],
+    "createdAt": "2026-07-29T11:55:00.000Z"
+  },
+  "KEYG-XCTV-32YR-8MTT": {
+    "owner": "김상현",
+    "maxDevices": 2,
+    "expiryDate": "",
+    "registeredDevices": [],
+    "createdAt": "2026-07-30T19:28:33.473Z"
+  },
+  "KEYR-K2PF-58JA-5FL8": {
+    "owner": "박호세",
+    "maxDevices": 2,
+    "expiryDate": "",
+    "registeredDevices": [],
+    "createdAt": "2026-08-06T05:50:09.779Z"
+  },
+  "KEY3-UKLP-Z5L3-XMPZ": {
+    "owner": "이향규 (추정)",
+    "maxDevices": 2,
+    "expiryDate": "",
+    "registeredDevices": [],
+    "createdAt": "2026-08-06T00:00:00.000Z"
+  }
+}

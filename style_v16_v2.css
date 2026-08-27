@@ -1391,6 +1391,14 @@ header .subtitle {
     left: auto !important;
     right: 16px !important;
   }
+  /* 환경설정 창도 모바일에서 선디자인 편집기와 동일하게 256px로 매칭 */
+  #settings-modal .modal-content {
+    width: 256px !important;
+    max-width: 90% !important;
+    min-width: auto !important;
+    max-height: 420px !important; /* 모바일 하단 검색 토글 간섭 차단 (40px 늘림) */
+    z-index: 13000 !important; /* 모바일에서도 검색 토글보다 앞쪽(레이어 위)에 오게 강제 */
+  }
   #filter-panel {
     width: 75%;
     left: -75%;
@@ -3028,16 +3036,16 @@ svg path.prophets-aura {
 }
 
 .settings-group {
-  margin-bottom: 24px;
+  margin-bottom: 5px !important; /* 주제 간의 상하 간격 80% 축소 (24px -> 5px) */
 }
 
 .settings-group h3 {
-  font-size: 13px;
+  font-size: 11.5px;
   font-weight: 700;
   text-transform: uppercase;
   color: var(--text-muted);
   letter-spacing: 0.05em;
-  margin-bottom: 12px;
+  margin-bottom: 2px !important; /* 주제(소제목)와 내용물 사이 간격 80% 축소 (12px -> 2px) */
 }
 
 .settings-item {
@@ -3045,7 +3053,7 @@ svg path.prophets-aura {
   justify-content: space-between;
   align-items: center;
   gap: 20px;
-  padding: 12px 0;
+  padding: 2px 0 !important; /* 상하 패딩 80% 이상 압축 (12px -> 2px) */
 }
 
 .settings-info {
@@ -3057,7 +3065,7 @@ svg path.prophets-aura {
   font-weight: 600;
   color: var(--text-primary);
   display: block;
-  margin-bottom: 4px;
+  margin-bottom: 0px !important; /* 하단 마진 제거하여 간격 밀착 */
 }
 
 .settings-desc {
@@ -3152,11 +3160,36 @@ svg path.prophets-aura {
   margin-top: 0 !important;
 }
 
-/* 6:15~6:31 환경설정 창 너비 10% 축소 */
+/* 환경설정 모달 전체 오버레이 페이드아웃(흐려짐/블러) 제거, 완전투명화 및 바깥 클릭 감지 복구 */
+#settings-modal {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  pointer-events: auto !important; /* 빈 화면 터치 시 창이 닫히도록 클릭 이벤트 감지 복구 */
+  z-index: 13000 !important;
+}
+
+/* 환경설정 창 너비를 선디자인 편집기(360px)와 매칭, 우측 하단 끝(bottom: 16px)까지 전체 연장 */
 #settings-modal .modal-content {
-  width: 80% !important;
-  max-width: 80% !important;
-  min-width: 80% !important;
+  position: absolute !important;
+  top: 80px !important; /* 환경설정 토글(⚙️) 바로 아래로 정렬 */
+  bottom: 16px !important; /* 하단 끝 화면 전체 채우기 */
+  right: 16px !important;
+  left: auto !important;
+  width: 360px !important;
+  max-width: 90% !important;
+  min-width: auto !important;
+  height: auto !important;
+  max-height: calc(100vh - 96px) !important; /* 뷰포트 하단 마진 제외하고 완전히 뻗침 */
+  overflow-y: auto !important;
+  pointer-events: auto !important; /* 설정창 내부 요소 터치 조작 허용 */
+  z-index: 13000 !important; /* 검색 토글보다 높은 레이어로 가림 */
+  background: var(--bg-panel) !important;
+  border: 1px solid var(--border-panel) !important;
+  border-radius: 16px !important;
+  box-shadow: var(--shadow-panel) !important;
+  backdrop-filter: none !important; /* 뒤쪽 검색 토글 실루엣 투과를 없애기 위해 블러 필터 해제 */
+  -webkit-backdrop-filter: none !important;
 }
 
 /* History Undo/Redo Controls Float Styling */
@@ -3183,5 +3216,23 @@ svg path.prophets-aura {
   #style-editor-panel.active {
     left: auto !important;
     right: 16px !important;
+  }
+  /* 환경설정 창도 가로화면에서 선디자인 편집기와 동일하게 256px로 매칭 */
+  #settings-modal .modal-content {
+    position: absolute !important;
+    top: 70px !important; /* 위로 10px 상향 조정 */
+    bottom: 0px !important; /* 화면 하단 끝까지 채우기 */
+    right: 16px !important;
+    left: auto !important;
+    width: 256px !important;
+    max-width: 90% !important;
+    min-width: auto !important;
+    height: auto !important;
+    max-height: calc(100vh - 70px) !important; /* 상단 마진을 뺀 하단 끝까지의 총 높이 */
+    z-index: 13000 !important; /* 검색 토글(12000)을 완벽하게 덮는 최상위 레이어 */
+    overflow-y: auto !important;
+    background: var(--bg-panel) !important; /* 뒤쪽 검색 토글이 비치지 않게 솔리드 패널 배경 적용 */
+    box-shadow: var(--shadow-panel) !important;
+    border-radius: 16px 16px 0 0 !important; /* 바닥에 닿는 면의 둥글기를 평평하게 다듬음 */
   }
 }
