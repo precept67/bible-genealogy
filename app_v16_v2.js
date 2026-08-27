@@ -16818,6 +16818,9 @@ function setupGlobalKeyboardDismiss() {
   document.addEventListener('click', dismissKeyboard, { passive: true });
   document.addEventListener('touchstart', dismissKeyboard, { passive: true });
 
+  // 각 패널의 포커싱 직전 원래 스크롤 위치 보관용 Map
+  let lastScrollPositions = new Map();
+
   // 가로 모드에서 텍스트 입력창 포커싱 시 창 내부 입력 영역으로 스크롤 이동
   const handleInputFocus = (e) => {
     const isLandscape = window.matchMedia('(orientation: landscape)').matches;
@@ -16828,9 +16831,14 @@ function setupGlobalKeyboardDismiss() {
       setTimeout(() => {
         const scrollParent = e.target.closest('.panel-body, .modal-content');
         if (scrollParent) {
+          // 포커싱 전의 원래 스크롤 오프셋을 안전하게 최초 기억
+          if (!lastScrollPositions.has(scrollParent)) {
+            lastScrollPositions.set(scrollParent, scrollParent.scrollTop);
+          }
+
           let targetOffsetTop = e.target.offsetTop;
           
-          // 포커스된 입력 필드의 위에 있는 소제목(H3)을 찾아 제목도 함께 화면 상단에 보이게 정렬
+          // 포커스된 입력 필드의 위에 있는 소제목(H3)을 찾아 제목과 입력창이 화면 가장 천장(최상단)에 딱 붙게 정렬
           let titleEl = null;
           if (e.target.id === 'note-text') {
             titleEl = e.target.previousElementSibling;
@@ -16845,8 +16853,9 @@ function setupGlobalKeyboardDismiss() {
             targetOffsetTop = titleEl.offsetTop;
           }
           
+          // 마진 오프셋을 빼지 않고 소제목 시작점에 완전 밀착 밀어올리기
           scrollParent.scrollTo({
-            top: targetOffsetTop - 10,
+            top: targetOffsetTop,
             behavior: 'smooth'
           });
         }
@@ -16861,14 +16870,17 @@ function setupGlobalKeyboardDismiss() {
       const activeEl = document.activeElement;
       if (!activeEl || (activeEl.tagName !== 'INPUT' && activeEl.tagName !== 'TEXTAREA')) {
         document.body.classList.remove('keyboard-open-landscape');
-        // 키보드가 내려가면 패널 내부의 찌그러졌던 스크롤도 부드럽게 맨 위 원점으로 되돌림
-        const scrollParent = document.querySelector('#study-panel .panel-body, #settings-modal .modal-content');
-        if (scrollParent) {
-          scrollParent.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-          });
-        }
+        
+        // 키보드가 내려가면 패널 내부의 스크롤을 포커싱 직전에 기억해 둔 원래 위치로 안전 복원
+        lastScrollPositions.forEach((originalScrollTop, scrollParent) => {
+          if (scrollParent && document.body.contains(scrollParent)) {
+            scrollParent.scrollTo({
+              top: originalScrollTop,
+              behavior: 'smooth'
+            });
+          }
+        });
+        lastScrollPositions.clear(); // 복원 완료 후 캐시 소거
       }
     }, 100);
   };
