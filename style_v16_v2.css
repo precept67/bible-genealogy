@@ -3254,4 +3254,19 @@ svg path.prophets-aura {
     left: auto !important;
   }
 
+  /* 가로화면에서 키보드가 활성화되었을 때: 
+     상세 패널의 바닥 끝선을 가로 키보드가 차지하는 높이인 45vh 위로 견인(Lift)하여,
+     하단의 [저장 완료], [취소] 푸터 버튼들이 키보드에 가려지지 않고 항상 키보드 위 경계선에 단정히 고정 노출되도록 함.
+     메모 입력창은 상세창 상단에 소제목과 매칭되고, 푸터는 패널 고유의 바닥 레이아웃을 그대로 유지합니다. */
+  body.keyboard-open-landscape #study-panel {
+    bottom: 45vh !important;
+    height: auto !important;
+    max-height: calc(100vh - 45vh) !important;
+  }
+  
+  body.keyboard-open-landscape #settings-modal .modal-content {
+    bottom: 45vh !important;
+    height: auto !important;
+    max-height: calc(100vh - 45vh - 70px) !important;
+  }
 }
