@@ -16828,12 +16828,29 @@ function setupGlobalKeyboardDismiss() {
       setTimeout(() => {
         const scrollParent = e.target.closest('.panel-body, .modal-content');
         if (scrollParent) {
+          let targetOffsetTop = e.target.offsetTop;
+          
+          // 포커스된 입력 필드의 위에 있는 소제목(H3)을 찾아 제목도 함께 화면 상단에 보이게 정렬
+          let titleEl = null;
+          if (e.target.id === 'note-text') {
+            titleEl = e.target.previousElementSibling;
+          } else if (e.target.id === 'resource-title' || e.target.id === 'resource-url') {
+            const wrapper = e.target.closest('.resource-input-wrapper');
+            if (wrapper) {
+              titleEl = wrapper.previousElementSibling;
+            }
+          }
+          
+          if (titleEl && (titleEl.tagName === 'H3' || titleEl.classList.contains('panel-sec-title'))) {
+            targetOffsetTop = titleEl.offsetTop;
+          }
+          
           scrollParent.scrollTo({
-            top: e.target.offsetTop - 15,
+            top: targetOffsetTop - 10,
             behavior: 'smooth'
           });
         }
-      }, 80);
+      }, 100);
     }
   };
 
