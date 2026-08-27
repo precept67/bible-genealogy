@@ -407,27 +407,30 @@
       </div>
     </main>
     
-    <!-- 2. Zoom & History Unified Controls Panel (Permanently Absolute Centered Bottom - Self-aligning Capsule) -->
-    <div id="control-panel" style="position: fixed; bottom: calc(16px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); z-index: 12000; pointer-events: auto; display: flex; align-items: center; gap: 10px; background: var(--bg-panel); border: 1px solid var(--border-panel); padding: 4px 14px; border-radius: 50px; box-shadow: var(--shadow-panel); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); height: 40px; box-sizing: border-box;">
+    <!-- 2. Zoom & History Unified Controls Panel Wrapper (Floating Centered Row Layout) -->
+    <div id="bottom-controls-wrapper" style="position: fixed; bottom: calc(16px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); z-index: 12000; display: flex; align-items: center; gap: 12px; pointer-events: none; height: 40px; box-sizing: border-box;">
       
-      <!-- 1. Undo Button (Unified inside zoom bar for perfect layout synchronization) -->
-      <button id="admin-undo-btn" class="history-control-btn control-btn has-tooltip tooltip-up" data-tooltip="되돌리기 (Ctrl+Z)" title="되돌리기 (Ctrl+Z)" style="display: none; background: none !important; border: none !important; box-shadow: none !important; color: var(--text-main); font-size: 15px !important; opacity: 0.2; cursor: not-allowed; transition: opacity 0.2s ease, transform 0.1s ease; padding: 0; margin: 0; align-items: center; justify-content: center;" disabled>↩️</button>
+      <!-- 1. Undo Button (Now Decoupled Outside, styled like Search Toggle) -->
+      <button id="admin-undo-btn" class="history-control-btn control-btn has-tooltip tooltip-up" data-tooltip="되돌리기 (Ctrl+Z)" title="되돌리기 (Ctrl+Z)" style="display: none; pointer-events: auto; background: var(--bg-panel) !important; border: 1px solid var(--border-panel) !important; box-shadow: var(--shadow-panel) !important; backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); color: #000000 !important; font-size: 31px !important; opacity: 0.35; cursor: not-allowed; transition: opacity 0.2s ease, transform 0.1s ease; padding: 0; margin: 0; align-items: center; justify-content: center; width: 40px !important; height: 40px !important; border-radius: 20px !important;" disabled>⤺</button>
       
-      <!-- 2. Zoom Out -->
-      <button id="zoom-out" class="control-btn has-tooltip tooltip-up" data-tooltip="축소" title="축소" style="display: flex; align-items: center; justify-content: center;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12" /></svg>
-      </button>
+      <!-- 2. Pure Zoom Control Panel Capsule -->
+      <div id="control-panel" style="pointer-events: auto; display: flex; align-items: center; gap: 10px; background: var(--bg-panel); border: 1px solid var(--border-panel); padding: 4px 14px; border-radius: 50px; box-shadow: var(--shadow-panel); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); height: 40px; box-sizing: border-box;">
+        <!-- Zoom Out -->
+        <button id="zoom-out" class="control-btn has-tooltip tooltip-up" data-tooltip="축소" title="축소" style="display: flex; align-items: center; justify-content: center;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12" /></svg>
+        </button>
+        
+        <!-- Zoom Level -->
+        <span id="zoom-level" class="zoom-indicator" style="font-size: 12px; font-weight: 700; user-select: none;">100%</span>
+        
+        <!-- Zoom In -->
+        <button id="zoom-in" class="control-btn has-tooltip tooltip-up" data-tooltip="확대" title="확대" style="display: flex; align-items: center; justify-content: center;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+        </button>
+      </div>
       
-      <!-- 3. Zoom Level -->
-      <span id="zoom-level" class="zoom-indicator" style="font-size: 12px; font-weight: 700; user-select: none;">100%</span>
-      
-      <!-- 4. Zoom In -->
-      <button id="zoom-in" class="control-btn has-tooltip tooltip-up" data-tooltip="확대" title="확대" style="display: flex; align-items: center; justify-content: center;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
-      </button>
-      
-      <!-- 5. Redo Button (Unified inside zoom bar for perfect layout synchronization) -->
-      <button id="admin-redo-btn" class="history-control-btn control-btn has-tooltip tooltip-up" data-tooltip="다시 실행 (Ctrl+Y)" title="다시 실행 (Ctrl+Y)" style="display: none; background: none !important; border: none !important; box-shadow: none !important; color: var(--text-main); font-size: 15px !important; opacity: 0.2; cursor: not-allowed; transition: opacity 0.2s ease, transform 0.1s ease; padding: 0; margin: 0; align-items: center; justify-content: center;" disabled>↪️</button>
+      <!-- 3. Redo Button (Now Decoupled Outside, styled like Search Toggle) -->
+      <button id="admin-redo-btn" class="history-control-btn control-btn has-tooltip tooltip-up" data-tooltip="다시 실행 (Ctrl+Y)" title="다시 실행 (Ctrl+Y)" style="display: none; pointer-events: auto; background: var(--bg-panel) !important; border: 1px solid var(--border-panel) !important; box-shadow: var(--shadow-panel) !important; backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); color: #000000 !important; font-size: 31px !important; opacity: 0.35; cursor: not-allowed; transition: opacity 0.2s ease, transform 0.1s ease; padding: 0; margin: 0; align-items: center; justify-content: center; width: 40px !important; height: 40px !important; border-radius: 20px !important;" disabled>⤻</button>
 
       <input type="file" id="user-notes-file-input" accept=".json" style="display: none;">
       <button id="admin-lock-btn" class="control-btn" style="display: none !important;"></button>

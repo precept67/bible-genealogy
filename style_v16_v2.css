@@ -151,11 +151,8 @@ header .subtitle {
 
 /* Control Panel (Zoom and Utilities) */
 #control-panel {
-  position: absolute;
-  bottom: 16px;
-  left: 50%;
-  right: auto;
-  transform: translateX(-50%);
+  position: static !important;
+  transform: none !important;
   display: flex;
   align-items: center;
   gap: 4px;
@@ -167,6 +164,21 @@ header .subtitle {
   backdrop-filter: var(--glass-blur);
   z-index: 3000;
   transition: all 0.3s ease;
+}
+
+/* 래퍼 스타일을 명시적으로 선언하여 수직/수평 정렬을 일관성있게 통제 */
+#bottom-controls-wrapper {
+  position: fixed;
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 12000;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  pointer-events: none;
+  height: 40px;
+  box-sizing: border-box;
 }
 
 #style-editor-toggle {
@@ -834,7 +846,7 @@ header .subtitle {
   .panel-header {
     padding-top: calc(16px + env(safe-area-inset-top));
   }
-  #control-panel {
+  #bottom-controls-wrapper {
     bottom: calc(16px + env(safe-area-inset-bottom));
   }
   #study-panel {
