@@ -1,0 +1,11 @@
+- `[x]` 1. Reconstruct database files (`users.json` and `licenses.json`)
+- `[x]` 2. Implement backend changes in `server.js` (unregistered license attempts logging & recovery endpoints)
+- `[x]` 3. Implement frontend UI changes in `app_v16_v2.js` and `bible-genealogy-deploy/app_v16_v2.js`
+- `[x]` 4. Deploy and verify changes on the remote production server
+- `[x]` 5. Fix zoom/pinch gesture bugs and lockouts in app_v16_v2.js
+- `[x]` 6. Implement keyboard alignment fix for all inputs/textareas to keep headers/panels fixed
+- `[x]` 7. Fix tap-outside to close study panel on mobile devices in app_v16_v2.js
+- `[x]` 8. Fix double-tap focus lag on mobile textareas/inputs in app_v16_v2.js
+- `[x]` 9. Dismiss virtual keyboard when touching/dragging background empty space on mobile
+- `[x]` 10. `app_v16_v2.js`에서 서버 API 통신 코드 제거 및 로컬 전용 세이브/로드 구현
+- `[x]` 11. `app_v16_v2.js`에서 편집 모드 토글 연동 및 누구나 편집할 수 있는 권한 일반화

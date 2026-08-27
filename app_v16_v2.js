@@ -16338,37 +16338,51 @@ function setupSettingsListeners() {
   const settingsCloseBtn = document.getElementById('settings-close-btn');
   const settingMdSync = document.getElementById('setting-md-sync');
 
-  if (settingsModal && settingsCloseBtn && settingMdSync) {
-    // Load initial setting
-    const isMdSyncEnabled = localStorage.getItem('bible_tree_md_sync') !== 'false';
-    settingMdSync.checked = isMdSyncEnabled;
+  const toggleSearchWrapper = (show) => {
+    const searchWrapper = document.getElementById('floating-search-wrapper');
+    if (searchWrapper) {
+      searchWrapper.style.opacity = show ? '1' : '0';
+      searchWrapper.style.pointerEvents = show ? 'auto' : 'none';
+    }
+  };
 
-    if (bottomSettingsBtn) {
-      bottomSettingsBtn.addEventListener('click', () => {
-        // Refresh state on open
-        settingMdSync.checked = localStorage.getItem('bible_tree_md_sync') !== 'false';
-        settingsModal.style.display = 'flex';
+  if (settingsModal) {
+    if (settingMdSync) {
+      const isMdSyncEnabled = localStorage.getItem('bible_tree_md_sync') !== 'false';
+      settingMdSync.checked = isMdSyncEnabled;
+
+      settingMdSync.addEventListener('change', () => {
+        const isChecked = settingMdSync.checked;
+        localStorage.setItem('bible_tree_md_sync', isChecked ? 'true' : 'false');
+        console.log("[환경설정] 마크다운 연동 변경됨:", isChecked);
+
+        if (isChecked) {
+          triggerAutoBackup();
+        }
       });
     }
 
-    settingsCloseBtn.addEventListener('click', () => {
-      settingsModal.style.display = 'none';
-    });
+    if (bottomSettingsBtn) {
+      bottomSettingsBtn.addEventListener('click', () => {
+        if (settingMdSync) {
+          settingMdSync.checked = localStorage.getItem('bible_tree_md_sync') !== 'false';
+        }
+        settingsModal.style.display = 'flex';
+        toggleSearchWrapper(false); // 환경설정이 켜지면 검색 토글 감추기
+      });
+    }
+
+    if (settingsCloseBtn) {
+      settingsCloseBtn.addEventListener('click', () => {
+        settingsModal.style.display = 'none';
+        toggleSearchWrapper(true); // 환경설정이 꺼지면 검색 토글 보이기
+      });
+    }
 
     settingsModal.addEventListener('click', (e) => {
       if (e.target === settingsModal) {
         settingsModal.style.display = 'none';
-      }
-    });
-
-    settingMdSync.addEventListener('change', () => {
-      const isChecked = settingMdSync.checked;
-      localStorage.setItem('bible_tree_md_sync', isChecked ? 'true' : 'false');
-      console.log("[환경설정] 마크다운 연동 변경됨:", isChecked);
-
-      if (isChecked) {
-        // Export notes immediately if switched back on
-        triggerAutoBackup();
+        toggleSearchWrapper(true); // 환경설정이 꺼지면 검색 토글 보이기
       }
     });
   }
@@ -16503,6 +16517,12 @@ function setupFloatingHeaderEvents() {
   if (floatSettingsBtn && settingsModal) {
     floatSettingsBtn.addEventListener('click', () => {
       settingsModal.style.display = 'flex';
+      // 환경설정이 켜지면 우측 하단 검색 토글 감추기
+      const searchWrapper = document.getElementById('floating-search-wrapper');
+      if (searchWrapper) {
+        searchWrapper.style.opacity = '0';
+        searchWrapper.style.pointerEvents = 'none';
+      }
     });
   }
 

@@ -742,48 +742,41 @@
     <!-- Settings Modal (Upgraded with Language, Theme, Layers, and iCloud Sync options) -->
     <div id="settings-modal" class="modal-overlay" style="display: none;">
       <div class="modal-content" style="width: 480px; max-height: 90vh; overflow-y: auto;">
-        <div class="modal-header">
-          <h2>환경 설정 (Settings)</h2>
-          <button id="settings-close-btn" class="close-btn">&times;</button>
-        </div>
-        <div class="settings-body" style="display: flex; flex-direction: column; gap: 20px;">
+        <!-- Settings Modal Header Removed for Compact Layout -->
+        <div class="settings-body" style="display: flex; flex-direction: column; gap: 1.5px; padding: 12px 10px 1px 10px;">
           
           <!-- 1. General App Configurations (Lang & Theme) -->
           <div class="settings-group">
-            <h3>일반 설정 (General Settings)</h3>
-            <div style="display: flex; gap: 10px; margin-top: 8px;">
-              <button id="settings-lang-toggle" class="settings-btn primary-outline" style="flex: 1; font-size: 12px; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid var(--border-panel); background: var(--bg-panel); color: var(--text-main);">
-                🌐 한국어 / English 전환
+            <h3 style="margin: 0; font-size: 11.5px; padding: 1px 0 0 0;">일반 설정</h3>
+            <div style="display: flex; gap: 6px; margin-top: 1px;">
+              <button id="settings-lang-toggle" class="settings-btn primary-outline" style="flex: 1; font-size: 10.5px; padding: 1.5px 4px; border-radius: 5px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 3px; border: 1px solid var(--border-panel); background: var(--bg-panel); color: var(--text-main);">
+                🌐 언어 전환
               </button>
-              <button id="settings-theme-toggle" class="settings-btn primary-outline" style="flex: 1; font-size: 12px; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid var(--border-panel); background: var(--bg-panel); color: var(--text-main);">
-                🌓 테마 모드 전환 (Light/Dark)
+              <button id="settings-theme-toggle" class="settings-btn primary-outline" style="flex: 1; font-size: 10.5px; padding: 1.5px 4px; border-radius: 5px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 3px; border: 1px solid var(--border-panel); background: var(--bg-panel); color: var(--text-main);">
+                🌓 테마 모드 전환
               </button>
             </div>
           </div>
 
           <!-- 2. Layer Toggle Configurations (Transferred from main screen view) -->
           <div class="settings-group">
-            <h3>레이어 표시 설정 (Layers)</h3>
-            <div style="display: flex; flex-direction: column; gap: 8px; font-size: 13px; color: var(--text-main); background: rgba(255,255,255,0.02); padding: 12px; border-radius: 8px; border: 1px solid var(--border-panel); margin-top: 8px;">
-              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;"><input type="checkbox" id="toggle-layer-people" checked> <span>인물 족보 (Genealogy)</span></label>
-              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;"><input type="checkbox" id="toggle-layer-events" checked> <span>주요 사건 (Events)</span></label>
-              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;"><input type="checkbox" id="toggle-layer-locations" checked> <span>장소/지명 (Locations)</span></label>
-              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;"><input type="checkbox" id="toggle-layer-polygons" checked> <span>영역 (Areas)</span></label>
-              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;"><input type="checkbox" id="toggle-layer-prophets" checked> <span>선지자 (Prophets)</span></label>
+            <h3 style="margin: 0; font-size: 11.5px; padding: 1px 0 0 0;">레이어 표시 설정</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2px 10px; font-size: 10.5px; color: var(--text-main); background: rgba(255,255,255,0.02); padding: 2px 8px; border-radius: 6px; border: 1px solid var(--border-panel); margin-top: 1px;">
+              <label style="display: flex; align-items: center; gap: 3px; cursor: pointer; white-space: nowrap;"><input type="checkbox" id="toggle-layer-people" checked style="width: 12px; height: 12px;"> <span>인물 족보</span></label>
+              <label style="display: flex; align-items: center; gap: 3px; cursor: pointer; white-space: nowrap;"><input type="checkbox" id="toggle-layer-events" checked style="width: 12px; height: 12px;"> <span>주요 사건</span></label>
+              <label style="display: flex; align-items: center; gap: 3px; cursor: pointer; white-space: nowrap;"><input type="checkbox" id="toggle-layer-locations" checked style="width: 12px; height: 12px;"> <span>장소/지명</span></label>
+              <label style="display: flex; align-items: center; gap: 3px; cursor: pointer; white-space: nowrap;"><input type="checkbox" id="toggle-layer-polygons" checked style="width: 12px; height: 12px;"> <span>영역</span></label>
+              <label style="display: flex; align-items: center; gap: 3px; cursor: pointer; white-space: nowrap;"><input type="checkbox" id="toggle-layer-prophets" checked style="width: 12px; height: 12px;"> <span>선지자</span></label>
               <input type="checkbox" id="toggle-relationship-highlight" checked style="display: none;">
             </div>
           </div>
 
           <!-- 3. iCloud Synchronization Options (Integrated with Apple ID Credentials) -->
           <div class="settings-group">
-            <h3>iCloud 자동 동기화 (iCloud Sync)</h3>
-            <div class="settings-item" style="margin-top: 8px;">
-              <div class="settings-info">
-                <label for="setting-icloud-sync" style="font-weight: 600;">iCloud 자동 동기화 활성화</label>
-                <p class="settings-desc" style="font-size: 11px; margin-top: 4px; color: var(--text-muted);">나의 다른 Apple/Windows 기기들과 가계도 메모 및 설정 데이터를 백그라운드에서 실시간 자동 동기화합니다.</p>
-              </div>
+            <div class="settings-item" style="margin-top: 0; display: flex; justify-content: space-between; align-items: center;">
+              <h3 style="margin: 0; font-size: 11.5px; font-weight: 600; padding: 1px 0 0 0;">iCloud 자동 동기화 활성화</h3>
               <div class="settings-action">
-                <label class="switch-toggle">
+                <label class="switch-toggle" style="transform: scale(0.75); transform-origin: right center;">
                   <input type="checkbox" id="setting-icloud-sync">
                   <span class="slider-round"></span>
                 </label>
@@ -791,19 +784,19 @@
             </div>
             
             <!-- iCloud Account Credentials Input (Toggles visible dynamically) -->
-            <div id="icloud-account-fields" style="display: none; flex-direction: column; gap: 10px; margin-top: 12px; background: rgba(255,255,255,0.02); padding: 12px; border-radius: 8px; border: 1px solid var(--border-panel);">
-              <div style="display: flex; flex-direction: column; gap: 4px;">
-                <label style="font-size: 11px; font-weight: 600; color: var(--text-muted);">iCloud 계정 (Apple ID)</label>
-                <input type="text" id="settings-icloud-username" placeholder="example@icloud.com" style="width: 100%; padding: 8px 12px; border: 1px solid var(--border-panel); border-radius: 6px; background: var(--bg-panel); color: var(--text-main); font-size: 12px; box-sizing: border-box;">
+            <div id="icloud-account-fields" style="display: none; flex-direction: column; gap: 2px; margin-top: 2px; background: rgba(255,255,255,0.02); padding: 2px 8px; border-radius: 6px; border: 1px solid var(--border-panel);">
+              <div style="display: flex; flex-direction: column; gap: 1px;">
+                <label style="font-size: 10px; font-weight: 600; color: var(--text-muted);">iCloud 계정 (Apple ID)</label>
+                <input type="text" id="settings-icloud-username" placeholder="example@icloud.com" style="width: 100%; padding: 3px 8px; border: 1px solid var(--border-panel); border-radius: 5px; background: var(--bg-panel); color: var(--text-main); font-size: 11px; box-sizing: border-box;">
               </div>
-              <div style="display: flex; flex-direction: column; gap: 4px;">
-                <label style="font-size: 11px; font-weight: 600; color: var(--text-muted);">App 전용 암호 (iCloud Password)</label>
-                <input type="password" id="settings-icloud-password" placeholder="••••••••••••" style="width: 100%; padding: 8px 12px; border: 1px solid var(--border-panel); border-radius: 6px; background: var(--bg-panel); color: var(--text-main); font-size: 12px; box-sizing: border-box;">
+              <div style="display: flex; flex-direction: column; gap: 1px;">
+                <label style="font-size: 10px; font-weight: 600; color: var(--text-muted);">App 전용 암호 (iCloud Password)</label>
+                <input type="password" id="settings-icloud-password" placeholder="••••••••••••" style="width: 100%; padding: 3px 8px; border: 1px solid var(--border-panel); border-radius: 5px; background: var(--bg-panel); color: var(--text-main); font-size: 11px; box-sizing: border-box;">
               </div>
-              <button id="settings-icloud-save-btn" class="settings-btn primary" style="background: #0284c7; border-color: #0284c7; color: white; width: 100%; font-size: 12px; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: 600; border: none; margin-top: 6px; transition: background 0.2s;">
+              <button id="settings-icloud-save-btn" class="settings-btn primary" style="background: #0284c7; border-color: #0284c7; color: white; width: 100%; font-size: 11px; padding: 4px; border-radius: 5px; cursor: pointer; font-weight: 600; border: none; margin-top: 2px; transition: background 0.2s;">
                 iCloud 동기화 연동 완료
               </button>
-              <div id="icloud-sync-status" style="font-size: 11px; color: #10b981; font-weight: 600; text-align: center; margin-top: 4px; display: none;">
+              <div id="icloud-sync-status" style="font-size: 10px; color: #10b981; font-weight: 600; text-align: center; margin-top: 2px; display: none;">
                 ☁️ iCloud 자동 동기화 활성화 중 (실시간 연결됨)
               </div>
             </div>
@@ -811,14 +804,13 @@
 
           <!-- 4. Local File Sync & Manual Backup -->
           <div class="settings-group">
-            <h3>로컬 파일 관리 (Local Files)</h3>
-            <div class="settings-item" style="margin-top: 8px;">
-              <div class="settings-info">
-                <label for="setting-md-sync">Obsidian 마크다운 연동 (.md 생성)</label>
-                <p class="settings-desc" style="font-size: 11px; margin-top: 4px; color: var(--text-muted);">메모 작성 시 내 문서 폴더에 자동으로 인물별 마크다운 파일(.md)을 생성하고 양방향으로 연동합니다. 비활성화 시 파일 생성을 중단하고 내부에만 보안 저장됩니다.</p>
+            <h3 style="margin: 0; font-size: 11.5px; padding: 1px 0 0 0;">로컬 파일 관리</h3>
+            <div class="settings-item" style="margin-top: 1px; display: flex; justify-content: space-between; align-items: center;">
+              <div class="settings-info" style="flex: 1; padding-right: 8px;">
+                <label for="setting-md-sync" style="font-weight: 600; font-size: 10.5px;">Obsidian 마크다운 연동</label>
               </div>
               <div class="settings-action">
-                <label class="switch-toggle">
+                <label class="switch-toggle" style="transform: scale(0.75); transform-origin: right center;">
                   <input type="checkbox" id="setting-md-sync" checked>
                   <span class="slider-round"></span>
                 </label>
@@ -827,29 +819,27 @@
           </div>
           
           <div class="settings-group">
-            <h3>백업 및 복원 (Backup & Restore)</h3>
-            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
-              <div class="settings-item">
-                <div class="settings-info">
-                  <label>전체 메모 백업 (JSON 내보내기)</label>
-                  <p class="settings-desc" style="font-size: 11px; color: var(--text-muted);">현재 작성된 전체 메모 데이터를 안전한 JSON 백업 파일로 컴퓨터에 다운로드합니다.</p>
+            <h3 style="margin: 0; font-size: 11.5px; padding: 1px 0 0 0;">백업 및 복원</h3>
+            <div style="display: flex; flex-direction: column; gap: 2px; margin-top: 1px;">
+              <div class="settings-item" style="display: flex; justify-content: space-between; align-items: center;">
+                <div class="settings-info" style="flex: 1; padding-right: 8px;">
+                  <label style="font-weight: 600; font-size: 10.5px;">전체 메모 백업</label>
                 </div>
                 <div class="settings-action">
-                  <button id="bottom-backup-btn" class="settings-btn primary-outline" style="font-size: 11px; padding: 6px 12px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 600; border: 1px solid var(--border-panel); background: var(--bg-panel); color: var(--text-main);">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
-                    백업 파일 생성
+                  <button id="bottom-backup-btn" class="settings-btn primary-outline" style="font-size: 9.5px; padding: 1.5px 6px; border-radius: 5px; cursor: pointer; display: flex; align-items: center; gap: 3px; font-weight: 600; border: 1px solid var(--border-panel); background: var(--bg-panel); color: var(--text-main);">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                    백업 생성
                   </button>
                 </div>
               </div>
-              <div class="settings-item">
-                <div class="settings-info">
-                  <label>백업 파일 불러오기 (JSON 복원)</label>
-                  <p class="settings-desc" style="font-size: 11px; color: var(--text-muted);">이전에 다운로드했던 JSON 백업 파일을 불러와 현재 성경 족보 메모를 복원합니다.</p>
+              <div class="settings-item" style="display: flex; justify-content: space-between; align-items: center;">
+                <div class="settings-info" style="flex: 1; padding-right: 8px;">
+                  <label style="font-weight: 600; font-size: 10.5px;">백업 불러오기</label>
                 </div>
                 <div class="settings-action">
-                  <button id="bottom-restore-btn" class="settings-btn primary-outline" style="font-size: 11px; padding: 6px 12px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 600; border: 1px solid var(--border-panel); background: var(--bg-panel); color: var(--text-main);">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                    백업 파일 선택
+                  <button id="bottom-restore-btn" class="settings-btn primary-outline" style="font-size: 9.5px; padding: 1.5px 6px; border-radius: 5px; cursor: pointer; display: flex; align-items: center; gap: 3px; font-weight: 600; border: 1px solid var(--border-panel); background: var(--bg-panel); color: var(--text-main);">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    백업 선택
                   </button>
                 </div>
               </div>
