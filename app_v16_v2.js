@@ -16823,10 +16823,17 @@ function setupGlobalKeyboardDismiss() {
     const isLandscape = window.matchMedia('(orientation: landscape)').matches;
     if (isLandscape && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
       document.body.classList.add('keyboard-open-landscape');
-      // 포커스된 입력란이 상세 패널 또는 설정 모달 내부 스크롤뷰 최상단으로 스르륵 밀려 올라오도록 유도
+      // 브라우저 뷰포트 전체 스크롤을 흔드는 scrollIntoView 대신,
+      // 패널 내부의 스크롤 컨테이너(.panel-body)의 scrollTop만 제어하여 창이 통째로 튕겨 날아가는 현상 완전 차단
       setTimeout(() => {
-        e.target.scrollIntoView({ block: 'start', behavior: 'smooth' });
-      }, 100);
+        const scrollParent = e.target.closest('.panel-body, .modal-content');
+        if (scrollParent) {
+          scrollParent.scrollTo({
+            top: e.target.offsetTop - 15,
+            behavior: 'smooth'
+          });
+        }
+      }, 80);
     }
   };
 
@@ -16837,6 +16844,14 @@ function setupGlobalKeyboardDismiss() {
       const activeEl = document.activeElement;
       if (!activeEl || (activeEl.tagName !== 'INPUT' && activeEl.tagName !== 'TEXTAREA')) {
         document.body.classList.remove('keyboard-open-landscape');
+        // 키보드가 내려가면 패널 내부의 찌그러졌던 스크롤도 부드럽게 맨 위 원점으로 되돌림
+        const scrollParent = document.querySelector('#study-panel .panel-body, #settings-modal .modal-content');
+        if (scrollParent) {
+          scrollParent.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+        }
       }
     }, 100);
   };
