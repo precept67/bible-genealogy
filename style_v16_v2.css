@@ -843,6 +843,15 @@ header .subtitle {
   .search-box:focus {
     width: 180px;
   }
+  
+  /* 세로화면(모바일)에서 상단 데이터베이스 액션바(6개 토글 및 박스)와 환경설정 토글 다이나믹아일랜드 5px 아래 하강 배치 */
+  #admin-actions-bar {
+    top: calc(5px + env(safe-area-inset-top)) !important;
+  }
+  #floating-settings-btn {
+    top: calc(5px + env(safe-area-inset-top)) !important;
+  }
+
   .panel-header {
     padding-top: calc(16px + env(safe-area-inset-top));
   }
