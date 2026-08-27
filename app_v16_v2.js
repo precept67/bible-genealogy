@@ -6324,8 +6324,13 @@ function renderTree() {
             }
           });
           updateTransform();
+          
+          // 편집모드일 때는 연필 조준 없이, 상자 자체 클릭 시 즉시 인물편집 팝업 폼 오픈!
+          openAdminForm(char.id);
+        } else {
+          // 일반모드일 때만 스터디 상세 설명 우측 패널 오픈!
+          openStudyPanel(char.id);
         }
-        openStudyPanel(char.id);
       }
     });
     
@@ -11440,7 +11445,7 @@ function activateAddAnnotationMode() {
   isAddAnnotationModeActive = true;
   adminAddNoteBtn.classList.add('active-tool');
   if (adminAddNoteBtn) {
-    adminAddNoteBtn.innerHTML = '❌ 추가 취소';
+    adminAddNoteBtn.innerHTML = '<span class="emoji-icon">📝</span>';
     adminAddNoteBtn.classList.add('danger');
   }
   viewerContainer.style.cursor = 'crosshair';
@@ -11476,7 +11481,7 @@ function deactivateAddAnnotationMode() {
   isAddAnnotationModeActive = false;
   adminAddNoteBtn.classList.remove('active-tool');
   if (adminAddNoteBtn) {
-    adminAddNoteBtn.innerHTML = '📝 텍스트 상자 추가';
+    adminAddNoteBtn.innerHTML = '<span class="emoji-icon">📝</span>';
     adminAddNoteBtn.classList.remove('danger');
   }
   viewerContainer.style.cursor = 'grab';
@@ -11488,7 +11493,7 @@ function deactivateAddAnnotationMode() {
 function activateAddPersonMode() {
   deactivateAddAnnotationMode();
   isAddPersonModeActive = true;
-  adminAddBtn.innerHTML = '❌ 추가 취소';
+  adminAddBtn.innerHTML = '<span class="emoji-icon">➕</span>';
   adminAddBtn.classList.add('danger');
   viewerContainer.style.cursor = 'cell';
   
@@ -11498,7 +11503,7 @@ function activateAddPersonMode() {
 
 function deactivateAddPersonMode() {
   isAddPersonModeActive = false;
-  adminAddBtn.innerHTML = '➕ 인물 추가';
+  adminAddBtn.innerHTML = '<span class="emoji-icon">➕</span>';
   adminAddBtn.classList.remove('danger');
   viewerContainer.style.cursor = 'grab';
   
@@ -11539,7 +11544,7 @@ function deactivateAddPolygonMode() {
   if (btn) {
     btn.style.background = '#ea580c';
     btn.style.borderColor = '#ea580c';
-    btn.innerHTML = '⬡ 영역(다각형) 추가';
+    btn.innerHTML = '<span class="emoji-icon">⬡</span>';
   }
 }
 
@@ -11558,7 +11563,7 @@ function activateAddPolygonMode() {
   if (btn) {
     btn.style.background = '#9a3412';
     btn.style.borderColor = '#9a3412';
-    btn.innerHTML = '● 추가 모드 종료 (ESC)';
+    btn.innerHTML = '<span class="emoji-icon">⬡</span>';
   }
   showToast("⬡ 다각형 영역 추가 모드가 활성화되었습니다. 화면을 클릭하여 다각형 꼭짓점을 만드세요.");
   renderTree();
@@ -12738,7 +12743,9 @@ function setupStyleEditor() {
     }
   });
   
-  stylePanelClose.addEventListener('click', closeStyleEditorPanel);
+  if (stylePanelClose) {
+    stylePanelClose.addEventListener('click', closeStyleEditorPanel);
+  }
   
   // Real-time Style Controls Binding
   // Real-time Style Controls Binding
@@ -13139,29 +13146,18 @@ function openStyleEditorPanel() {
   // Close other sidebar to prevent overlapping on small viewports
   closeStudyPanel();
   
-  // 6:15~6:31 Dynamic bound calculation to align style panel top/bottom precisely (+7px margin)
+  // CSS에 기반한 컴팩트 레이아웃(top: 80px, height: auto)을 사용하므로 동적 계산은 생략합니다.
   function adjustPanelPosition() {
-    const mainHeader = document.getElementById('main-header');
-    const searchPanel = document.getElementById('search-panel');
-    if (mainHeader && styleEditorPanel) {
-      const headerRect = mainHeader.getBoundingClientRect();
-      styleEditorPanel.style.top = (headerRect.bottom + 7) + 'px';
-      
-      if (searchPanel) {
-        const searchTop = searchPanel.getBoundingClientRect().top;
-        const screenHeight = window.innerHeight;
-        styleEditorPanel.style.bottom = (screenHeight - searchTop + 7) + 'px';
-      }
+    if (styleEditorPanel) {
+      styleEditorPanel.style.top = '80px';
+      styleEditorPanel.style.bottom = 'auto';
     }
   }
   
   adjustPanelPosition();
   styleEditorPanel.classList.add('active');
   
-  // Recalculate on window resize
   window.addEventListener('resize', adjustPanelPosition);
-  
-  // Store resize handler to clean up later on panel close if needed
   styleEditorPanel._resizeHandler = adjustPanelPosition;
 }
 
@@ -13246,7 +13242,13 @@ async function validateSession() {
 
   if (!userToken) {
     hideAdminLockControls();
-    return showAuthModal();
+    // 로그인 창을 절대 띄우지 않고, 즉시 오프라인 모드로 연결하여 실행
+    currentUser = { username: 'offline_user', status: 'approved' };
+    hideAuthModal();
+    updateAdminLockVisibility();
+    const landing = document.getElementById('landing-page');
+    if (landing) landing.style.display = 'none';
+    return;
   }
   try {
     const res = await fetch(getApiUrl('/api/me'), { headers: { 'Authorization': 'Bearer ' + userToken } });
@@ -13255,7 +13257,12 @@ async function validateSession() {
         userToken = null;
         localStorage.removeItem('bible_tree_token');
         hideAdminLockControls();
-        showAuthModal();
+        // 세션 만료 시에도 로그인 창 대신 오프라인 자동 우회 전환
+        currentUser = { username: 'offline_user', status: 'approved' };
+        hideAuthModal();
+        updateAdminLockVisibility();
+        const landing = document.getElementById('landing-page');
+        if (landing) landing.style.display = 'none';
       }
       return;
     }
@@ -13282,14 +13289,8 @@ async function validateSession() {
 }
 
 function showAuthModal() {
-  if (authModal) {
-    authModal.style.display = 'flex';
-    // Hide other panels when auth modal pops up to prevent overlapping clutter
-    const filterPanel = document.getElementById('filter-panel');
-    if (filterPanel) filterPanel.classList.remove('active');
-    closeStudyPanel();
-    closeStyleEditorPanel();
-  }
+  // 로그인 모달 팝업 원천 차단
+  return;
 }
 function hideAuthModal() {
   const isCapacitor = !!window.Capacitor || window.location.protocol.startsWith('capacitor');
@@ -16439,9 +16440,9 @@ function setupSlideLockDragEvents() {
       slideHandle.style.transition = 'none';
       
       // Reveal background border and shadow dynamically when dragging starts
-      slideContainer.style.background = isAdminMode ? 'rgba(239, 68, 68, 0.2)' : 'rgba(15, 23, 42, 0.6)';
-      slideContainer.style.borderColor = 'rgba(255, 255, 255, 0.15)';
-      slideContainer.style.boxShadow = '0 4px 15px rgba(0,0,0,0.3)';
+      slideContainer.style.background = 'transparent';
+      slideContainer.style.borderColor = 'transparent';
+      slideContainer.style.boxShadow = 'none';
       slideText.style.opacity = '0.5';
     }
 
@@ -16455,13 +16456,9 @@ function setupSlideLockDragEvents() {
       slideText.style.opacity = Math.max(0.2, 1 - (currentX / maxSlide) * 0.6);
 
       if (currentX > maxSlide * 0.8) {
-        if (isAdminMode) {
-          slideContainer.style.background = 'rgba(239, 68, 68, 0.5)'; // Red for exit
-        } else {
-          slideContainer.style.background = 'rgba(16, 185, 129, 0.5)'; // Green for enter
-        }
+        slideContainer.style.background = 'transparent';
       } else {
-        slideContainer.style.background = isAdminMode ? 'rgba(239, 68, 68, 0.2)' : 'rgba(15, 23, 42, 0.6)';
+        slideContainer.style.background = 'transparent';
       }
     }
 
@@ -16670,6 +16667,25 @@ function initCustomHeaderFeatures() {
       observer.observe(cp);
     }
   }
+
+  // Mobile Touch-friendly Hover Tooltips Support
+  document.querySelectorAll('.has-tooltip').forEach(btn => {
+    let tooltipTimeout = null;
+    btn.addEventListener('touchstart', () => {
+      btn.classList.add('active-tooltip');
+      if (tooltipTimeout) clearTimeout(tooltipTimeout);
+      tooltipTimeout = setTimeout(() => {
+        btn.classList.remove('active-tooltip');
+      }, 1500);
+    }, { passive: true });
+    
+    btn.addEventListener('touchend', () => {
+      if (tooltipTimeout) clearTimeout(tooltipTimeout);
+      tooltipTimeout = setTimeout(() => {
+        btn.classList.remove('active-tooltip');
+      }, 800);
+    });
+  });
 }
 
 if (document.readyState === 'loading') {
