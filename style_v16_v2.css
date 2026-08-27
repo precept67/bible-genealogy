@@ -846,10 +846,10 @@ header .subtitle {
   
   /* 세로화면(모바일)에서 상단 데이터베이스 액션바(6개 토글 및 박스)와 환경설정 토글 다이나믹아일랜드 5px 아래 하강 배치 */
   #admin-actions-bar {
-    top: calc(5px + env(safe-area-inset-top)) !important;
+    top: calc(52px + env(safe-area-inset-top)) !important; /* env가 0이더라도 최소 52px(다이나믹아일랜드 47px + 5px 여백) 확보 */
   }
   #floating-settings-btn {
-    top: calc(5px + env(safe-area-inset-top)) !important; /* 다이나믹 아일랜드 기준 5px 아래 위치로 복원 */
+    top: calc(52px + env(safe-area-inset-top)) !important;
   }
 
   .panel-header {
