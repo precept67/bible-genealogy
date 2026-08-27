@@ -849,7 +849,7 @@ header .subtitle {
     top: calc(5px + env(safe-area-inset-top)) !important;
   }
   #floating-settings-btn {
-    top: calc(12px + env(safe-area-inset-top)) !important; /* 다이나믹 아일랜드 기준 7px 더 하강하여 총 12px 여백 부여 */
+    top: calc(5px + env(safe-area-inset-top)) !important; /* 다이나믹 아일랜드 기준 5px 아래 위치로 복원 */
   }
 
   .panel-header {
