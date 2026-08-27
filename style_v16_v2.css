@@ -3221,18 +3221,18 @@ svg path.prophets-aura {
   #settings-modal .modal-content {
     position: absolute !important;
     top: 70px !important; /* 위로 10px 상향 조정 */
-    bottom: 0px !important; /* 화면 하단 끝까지 채우기 */
+    bottom: 20vh !important; /* 화면 전체 높이의 20% 만큼 바닥을 줄여 띄움 */
     right: 16px !important;
     left: auto !important;
     width: 256px !important;
     max-width: 90% !important;
     min-width: auto !important;
     height: auto !important;
-    max-height: calc(100vh - 70px) !important; /* 상단 마진을 뺀 하단 끝까지의 총 높이 */
+    max-height: calc(80vh - 70px) !important; /* 바닥 20%를 뺀 나머지 화면 안에서 최대 높이 제한 */
     z-index: 13000 !important; /* 검색 토글(12000)을 완벽하게 덮는 최상위 레이어 */
     overflow-y: auto !important;
     background: var(--bg-panel) !important; /* 뒤쪽 검색 토글이 비치지 않게 솔리드 패널 배경 적용 */
     box-shadow: var(--shadow-panel) !important;
-    border-radius: 16px 16px 0 0 !important; /* 바닥에 닿는 면의 둥글기를 평평하게 다듬음 */
+    border-radius: 16px !important; /* 하단이 공중에 뜨므로 사방 모서리를 다시 둥글게 원복 */
   }
 }

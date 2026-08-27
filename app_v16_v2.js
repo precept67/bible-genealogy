@@ -122,12 +122,22 @@ const UI_TEXTS = {
     desc_import: "이전에 저장했던 JSON 백업 파일을 업로드하여 메모 데이터를 원상 복구합니다.",
     btn_export: "파일 내보내기",
     btn_import: "파일 업로드",
-    group_icloud: "iCloud 동기화 설정",
+    group_icloud: "iCloud 자동 동기화 활성화",
     icloud_active: "iCloud 자동 동기화 활성화됨",
     icloud_logout: "로그아웃 (로컬 전환)",
     icloud_login: "로그인 및 자동동기화 시작",
     icloud_placeholder_id: "iCloud 이메일 아이디",
-    icloud_placeholder_pw: "비밀번호"
+    icloud_placeholder_pw: "비밀번호",
+    settings_lang_btn: "🌐 언어 전환",
+    settings_theme_btn: "🌓 테마 모드 전환",
+    settings_icloud_username_label: "iCloud 계정 (Apple ID)",
+    settings_icloud_password_label: "App 전용 암호 (iCloud Password)",
+    settings_icloud_save_btn: "iCloud 동기화 연동 완료",
+    settings_md_sync_label: "Obsidian 마크다운 연동",
+    settings_backup_label: "전체 메모 백업",
+    settings_backup_btn: "백업 생성",
+    settings_restore_label: "백업 불러오기",
+    settings_restore_btn: "백업 선택"
   },
   en: {
     search_placeholder: "Search (People, Events, Locations)...",
@@ -189,12 +199,22 @@ const UI_TEXTS = {
     desc_import: "Upload a previously saved JSON backup file to restore note data.",
     btn_export: "Export File",
     btn_import: "Upload File",
-    group_icloud: "iCloud Sync Settings",
+    group_icloud: "Enable iCloud Auto-Sync",
     icloud_active: "iCloud Auto-Sync Active",
     icloud_logout: "Log Out (Switch to Local)",
     icloud_login: "Log In & Sync",
     icloud_placeholder_id: "iCloud Email ID",
-    icloud_placeholder_pw: "Password"
+    icloud_placeholder_pw: "Password",
+    settings_lang_btn: "🌐 Change Language",
+    settings_theme_btn: "🌓 Toggle Dark Theme",
+    settings_icloud_username_label: "iCloud Account (Apple ID)",
+    settings_icloud_password_label: "App-Specific Password (iCloud Password)",
+    settings_icloud_save_btn: "iCloud Synchronization Setup Complete",
+    settings_md_sync_label: "Obsidian Markdown Sync",
+    settings_backup_label: "Backup All Notes",
+    settings_backup_btn: "Create Backup",
+    settings_restore_label: "Import Notes",
+    settings_restore_btn: "Select Backup"
   }
 };
 
@@ -15466,6 +15486,22 @@ function applyLocalization() {
     'btn-icloud-login-text': { attr: 'textContent', key: 'icloud_login' },
     'icloud-username': { attr: 'placeholder', key: 'icloud_placeholder_id' },
     'icloud-password': { attr: 'placeholder', key: 'icloud_placeholder_pw' },
+    // 설정창 내 신규 다국어 처리 매핑 리스트
+    'settings-group-general-title': { attr: 'textContent', key: 'group_general' },
+    'settings-lang-btn-text': { attr: 'textContent', key: 'settings_lang_btn' },
+    'settings-theme-btn-text': { attr: 'textContent', key: 'settings_theme_btn' },
+    'settings-group-layers-title': { attr: 'textContent', key: 'group_layers' },
+    'settings-group-icloud-title': { attr: 'textContent', key: 'group_icloud' },
+    'settings-icloud-username-label': { attr: 'textContent', key: 'settings_icloud_username_label' },
+    'settings-icloud-password-label': { attr: 'textContent', key: 'settings_icloud_password_label' },
+    'settings-icloud-save-btn-text': { attr: 'textContent', key: 'settings_icloud_save_btn' },
+    'settings-group-files-title': { attr: 'textContent', key: 'group_files' },
+    'settings-md-sync-label': { attr: 'textContent', key: 'settings_md_sync_label' },
+    'settings-group-backup-title': { attr: 'textContent', key: 'group_backup' },
+    'settings-backup-label': { attr: 'textContent', key: 'settings_backup_label' },
+    'settings-backup-btn-text': { attr: 'textContent', key: 'settings_backup_btn' },
+    'settings-restore-label': { attr: 'textContent', key: 'settings_restore_label' },
+    'settings-restore-btn-text': { attr: 'textContent', key: 'settings_restore_btn' },
   };
 
   for (const [id, config] of Object.entries(elementsToTranslate)) {
@@ -16341,8 +16377,14 @@ function setupSettingsListeners() {
   const toggleSearchWrapper = (show) => {
     const searchWrapper = document.getElementById('floating-search-wrapper');
     if (searchWrapper) {
-      searchWrapper.style.opacity = show ? '1' : '0';
-      searchWrapper.style.pointerEvents = show ? 'auto' : 'none';
+      const isLandscape = window.matchMedia('(orientation: landscape)').matches;
+      if (isLandscape) {
+        searchWrapper.style.opacity = '1';
+        searchWrapper.style.pointerEvents = 'auto';
+      } else {
+        searchWrapper.style.opacity = show ? '1' : '0';
+        searchWrapper.style.pointerEvents = show ? 'auto' : 'none';
+      }
     }
   };
 
@@ -16517,11 +16559,17 @@ function setupFloatingHeaderEvents() {
   if (floatSettingsBtn && settingsModal) {
     floatSettingsBtn.addEventListener('click', () => {
       settingsModal.style.display = 'flex';
-      // 환경설정이 켜지면 우측 하단 검색 토글 감추기
+      // 환경설정이 켜지면 우측 하단 검색 토글 감추기 (가로화면 제외)
       const searchWrapper = document.getElementById('floating-search-wrapper');
       if (searchWrapper) {
-        searchWrapper.style.opacity = '0';
-        searchWrapper.style.pointerEvents = 'none';
+        const isLandscape = window.matchMedia('(orientation: landscape)').matches;
+        if (isLandscape) {
+          searchWrapper.style.opacity = '1';
+          searchWrapper.style.pointerEvents = 'auto';
+        } else {
+          searchWrapper.style.opacity = '0';
+          searchWrapper.style.pointerEvents = 'none';
+        }
       }
     });
   }
