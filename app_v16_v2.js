@@ -1588,22 +1588,22 @@ function updateHistoryButtonsState() {
   if (undoBtn) {
     if (undoStack.length > 0) {
       undoBtn.disabled = false;
-      undoBtn.style.opacity = "0.7";
+      undoBtn.style.opacity = "1";
       undoBtn.style.cursor = "pointer";
     } else {
       undoBtn.disabled = true;
-      undoBtn.style.opacity = "0.2";
+      undoBtn.style.opacity = "0.35";
       undoBtn.style.cursor = "not-allowed";
     }
   }
   if (redoBtn) {
     if (redoStack.length > 0) {
       redoBtn.disabled = false;
-      redoBtn.style.opacity = "0.7";
+      redoBtn.style.opacity = "1";
       redoBtn.style.cursor = "pointer";
     } else {
       redoBtn.disabled = true;
-      redoBtn.style.opacity = "0.2";
+      redoBtn.style.opacity = "0.35";
       redoBtn.style.cursor = "not-allowed";
     }
   }
