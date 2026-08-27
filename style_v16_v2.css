@@ -1160,30 +1160,41 @@ header .subtitle {
 #style-editor-panel {
   position: absolute;
   top: 80px;
-  left: -380px; /* Initially hidden on the left */
+  right: -380px; /* Hide on the right instead of left */
+  left: auto !important;
   width: 360px;
-  height: calc(100% - 96px);
+  height: auto;
+  max-height: 480px; /* Compact height to avoid overlap with bottom controls */
+  overflow-y: auto;
   background: var(--bg-panel);
   border: 1px solid var(--border-panel);
   border-radius: 16px;
   box-shadow: var(--shadow-panel);
   backdrop-filter: var(--glass-blur);
-  z-index: 200;
-  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 13000;
+  transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
 }
 
 #style-editor-panel.active {
-  left: 16px;
+  right: 16px;
+  left: auto !important;
+}
+
+#style-editor-panel .panel-body {
+  padding: 8px !important;
+  gap: 8px !important;
+  display: flex;
+  flex-direction: column;
 }
 
 .style-section {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 8px;
   background: rgba(148, 163, 184, 0.04);
-  padding: 16px;
+  padding: 8px 10px;
   border-radius: 8px;
   border: 1px solid var(--border-panel);
 }
@@ -1191,11 +1202,11 @@ header .subtitle {
 .style-control-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 3px;
 }
 
 .style-control-group label {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--text-main);
 }
@@ -1208,6 +1219,46 @@ header .subtitle {
   padding: 2px;
   cursor: pointer;
   background: transparent;
+}
+
+/* Custom Grid layout for 선디자인 편집기 색상칩 */
+.style-color-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.compact-color-group {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 4px !important;
+  background: rgba(148, 163, 184, 0.08);
+  padding: 3px 6px !important;
+  border-radius: 6px !important;
+  border: 1px solid var(--border-panel) !important;
+}
+.compact-color-group label {
+  font-size: 10.5px !important;
+  margin: 0 !important;
+  white-space: nowrap !important;
+  color: var(--text-main);
+}
+.compact-color-input {
+  width: 30px !important;
+  height: 20px !important;
+  padding: 0 !important;
+  border: none !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  background: transparent !important;
+}
+/* Reduce Slider Track Thickness */
+.style-control-group input[type="range"] {
+  height: 4px !important;
+  border-radius: 2px !important;
+  background: var(--border-panel) !important;
+  margin-top: 2px;
 }
 
 .slider-label-row {
@@ -1314,13 +1365,13 @@ header .subtitle {
 
 @media (max-width: 768px) {
   #style-editor-panel {
-    width: 55% !important;
-    max-width: 55% !important;
+    width: 256px !important; /* 가로화면/모바일 너비 20% 축소 (320px -> 256px) */
+    max-width: 90% !important;
     left: auto !important;
-    right: -60% !important;
+    right: -280px !important;
     transform: none !important;
     height: auto !important;
-    max-height: none !important;
+    max-height: 400px !important; /* 모바일에서도 줌 조작바를 가리지 않게 축소 */
     border-radius: 16px !important;
     border: 1px solid var(--border-panel) !important;
   }
@@ -3107,4 +3158,18 @@ svg path.prophets-aura {
 }
 .history-control-btn:active:not(:disabled) {
   transform: translateY(0px) scale(0.96);
+}
+
+/* Landscape Mode layout width 20% reduction adjustment for style-editor-panel */
+@media (orientation: landscape) {
+  #style-editor-panel {
+    width: 256px !important; /* 20% reduction (320px -> 256px) */
+    max-width: 90% !important;
+    left: auto !important;
+    right: -280px !important;
+  }
+  #style-editor-panel.active {
+    left: auto !important;
+    right: 16px !important;
+  }
 }
