@@ -16616,14 +16616,14 @@ function setupFloatingHeaderEvents() {
       isSearchOpen = false;
       document.body.classList.remove('search-focused');
       if (searchWrapper) {
-        searchWrapper.style.position = '';
-        searchWrapper.style.left = '';
-        searchWrapper.style.right = '';
-        searchWrapper.style.transform = '';
-        searchWrapper.style.width = '';
-        searchWrapper.style.maxWidth = '';
-        searchWrapper.style.bottom = '';
-        searchWrapper.style.pointerEvents = '';
+        searchWrapper.style.position = 'fixed';
+        searchWrapper.style.left = 'auto';
+        searchWrapper.style.right = '16px';
+        searchWrapper.style.transform = 'none';
+        searchWrapper.style.width = 'auto';
+        searchWrapper.style.maxWidth = 'none';
+        searchWrapper.style.bottom = 'calc(6px + env(safe-area-inset-bottom))';
+        searchWrapper.style.pointerEvents = 'none';
       }
       searchPanel.style.width = '0px';
       searchPanel.style.opacity = '0';
