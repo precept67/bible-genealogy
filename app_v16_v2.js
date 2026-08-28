@@ -16488,29 +16488,29 @@ function syncSlideLockUI(isAdmin) {
 
   if (isAdmin) {
     if (slideHandle) {
-      slideHandle.style.background = '#10b981'; // green accent node
+      slideHandle.style.background = '#ffffff'; // 배경색은 항상 흰색으로 통일
     }
     if (slideText) {
       slideText.innerText = '편집 모드';
-      slideText.style.color = '#a7f3d0';
+      slideText.style.color = '#10b981'; // 편집 모드 텍스트 색상 초록 강조
     }
     if (slideIcon) {
       slideIcon.innerHTML = `<rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path>`;
-      slideIcon.querySelector('rect').setAttribute('stroke', '#ffffff');
-      if (slideIcon.querySelector('path')) slideIcon.querySelector('path').setAttribute('stroke', '#ffffff');
+      slideIcon.querySelector('rect').setAttribute('stroke', '#10b981'); // 자물쇠 열림 아이콘 초록색 매칭
+      if (slideIcon.querySelector('path')) slideIcon.querySelector('path').setAttribute('stroke', '#10b981');
     }
   } else {
     if (slideHandle) {
-      slideHandle.style.background = '#ffffff';
+      slideHandle.style.background = '#ffffff'; // 배경색은 항상 흰색으로 통일
     }
     if (slideText) {
       slideText.innerText = '밀어서 편집';
-      slideText.style.color = 'rgba(255,255,255,0.65)';
+      slideText.style.color = '#475569'; // 흰색 배경 위에 가독성 슬레이트 회색
     }
     if (slideIcon) {
       slideIcon.innerHTML = `<rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>`;
-      slideIcon.querySelector('rect').setAttribute('stroke', '#0f172a');
-      if (slideIcon.querySelector('path')) slideIcon.querySelector('path').setAttribute('stroke', '#0f172a');
+      slideIcon.querySelector('rect').setAttribute('stroke', '#64748b'); // 닫힘 아이콘 회색 기어 톤 매칭
+      if (slideIcon.querySelector('path')) slideIcon.querySelector('path').setAttribute('stroke', '#64748b');
     }
   }
 }

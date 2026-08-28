@@ -3320,3 +3320,64 @@ body.search-focused #search-panel {
   pointer-events: auto !important;
   margin: 0 !important; /* 쏠림을 방지하기 위해 잔여 마진을 완전히 제거 */
 }
+
+/* ==========================================================================
+   🎨 락 버튼 및 헤더/컨트롤 모든 버튼 내부 이모지/아이콘 회색 톤 및 크기 규격화 통일
+   ========================================================================== */
+/* 1. 락 버튼 컨테이너를 다른 버튼들과 동일한 프리미엄 흰색 테마로 단정히 격상 */
+#slide-lock-container {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* 2. 락 슬라이더 텍스트 색상을 흰색 배경에 맞춰 어두운 슬레이트 그레이로 가시성 확보 */
+#slide-lock-text {
+  color: #475569 !important;
+}
+
+/* 3. 락 버튼 내부 자물쇠 아이콘 색상을 설정 톱니바퀴처럼 차분한 회색으로 통일 */
+#slide-lock-icon {
+  stroke: #64748b !important;
+}
+
+/* 4. 헤더/줌 컨트롤 등 모든 원형 버튼들 내부 이모지 및 SVG 아이콘의 크기/색조 일괄 통일 */
+.admin-action-btn-circle span,
+.admin-action-btn-circle svg,
+#floating-settings-btn svg,
+#floating-search-toggle-btn span,
+#bottom-settings-btn svg,
+#style-editor-toggle-btn span,
+#filter-panel-toggle span,
+#floating-undo-btn span,
+#floating-redo-btn span,
+#slide-lock-handle svg {
+  font-size: 18px !important;
+  width: 18px !important;
+  height: 18px !important;
+  line-height: 1 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #64748b !important; /* 차분한 그레이 */
+  fill: #64748b !important;
+  
+  /* 이모지(📜, 📍, 📝, 🎨, 🔍 등)를 회색 설정 기어 톤으로 grayscale 변환 */
+  filter: grayscale(100%) brightness(55%) contrast(120%) !important;
+}
+
+/* 5. 줌 바 내부의 육각형 아이콘 등 SVG 스트로크 컬러도 설정 그레이로 통일 */
+.admin-action-btn-circle svg path,
+.admin-action-btn-circle svg circle,
+.admin-action-btn-circle svg polygon,
+.admin-action-btn-circle svg rect {
+  stroke: #64748b !important;
+  fill: none !important;
+}
+
+/* 6. + (더하기) 및 - (빼기) 텍스트 기호의 색상과 폰트 크기 정밀 락 */
+.admin-action-btn-circle {
+  color: #64748b !important;
+  font-size: 18px !important;
+  font-weight: bold !important;
+}
