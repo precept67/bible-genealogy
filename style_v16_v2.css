@@ -3342,7 +3342,8 @@ body.search-focused #search-panel {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  filter: grayscale(100%) brightness(55%) contrast(120%) !important;
+  /* 밝기를 75%로 높여 진한 검은색을 걷어내고 밝고 부드러운 실버 회색 톤으로 보정 */
+  filter: grayscale(100%) brightness(75%) contrast(100%) !important;
 }
 
 /* 3-1. 락 슬라이더 원형 손잡이의 입체적인 동그란 윤곽을 흰색 캡슐 위에서 부각시킴 */
@@ -3373,8 +3374,8 @@ body.search-focused #search-panel {
   color: #64748b !important; /* 차분한 그레이 */
   fill: #64748b !important;
   
-  /* 이모지(📜, 📍, 📝, 🎨, 🔍 등)를 회색 설정 기어 톤으로 grayscale 변환 */
-  filter: grayscale(100%) brightness(55%) contrast(120%) !important;
+  /* 이모지(📜, 📍, 📝, 🎨, 🔍 등)를 밝고 화사한 실버 회색 톤으로 grayscale 및 밝기 75% 적용 보정 */
+  filter: grayscale(100%) brightness(75%) contrast(100%) !important;
 }
 
 /* 5. 줌 바 내부의 육각형 아이콘 등 SVG 스트로크 컬러도 설정 그레이로 통일 */
