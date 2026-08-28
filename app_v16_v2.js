@@ -1604,27 +1604,38 @@ function restoreState(state) {
 function updateHistoryButtonsState() {
   const undoBtn = document.getElementById('admin-undo-btn');
   const redoBtn = document.getElementById('admin-redo-btn');
+  const isEditing = typeof isAdmin !== 'undefined' ? isAdmin : false;
   
   if (undoBtn) {
-    if (undoStack.length > 0) {
-      undoBtn.disabled = false;
-      undoBtn.style.opacity = "1";
-      undoBtn.style.cursor = "pointer";
+    if (!isEditing) {
+      undoBtn.style.display = 'none'; // 잠금(일반 뷰어) 상태일 때는 비보출 은닉!
     } else {
-      undoBtn.disabled = true;
-      undoBtn.style.opacity = "0.35";
-      undoBtn.style.cursor = "not-allowed";
+      undoBtn.style.display = 'flex'; // 편집(어드민) 모드일 때만 비로소 노출!
+      if (undoStack.length > 0) {
+        undoBtn.disabled = false;
+        undoBtn.style.opacity = "1";
+        undoBtn.style.cursor = "pointer";
+      } else {
+        undoBtn.disabled = true;
+        undoBtn.style.opacity = "0.35";
+        undoBtn.style.cursor = "not-allowed";
+      }
     }
   }
   if (redoBtn) {
-    if (redoStack.length > 0) {
-      redoBtn.disabled = false;
-      redoBtn.style.opacity = "1";
-      redoBtn.style.cursor = "pointer";
+    if (!isEditing) {
+      redoBtn.style.display = 'none'; // 잠금(일반 뷰어) 상태일 때는 비보출 은닉!
     } else {
-      redoBtn.disabled = true;
-      redoBtn.style.opacity = "0.35";
-      redoBtn.style.cursor = "not-allowed";
+      redoBtn.style.display = 'flex'; // 편집(어드민) 모드일 때만 비로소 노출!
+      if (redoStack.length > 0) {
+        redoBtn.disabled = false;
+        redoBtn.style.opacity = "1";
+        redoBtn.style.cursor = "pointer";
+      } else {
+        redoBtn.disabled = true;
+        redoBtn.style.opacity = "0.35";
+        redoBtn.style.cursor = "not-allowed";
+      }
     }
   }
 }
@@ -16509,6 +16520,8 @@ function syncSlideLockUI(isAdmin) {
       slideIcon.innerText = '🔑'; // 자물쇠 대신 열쇠 이모지 통일 고정!
     }
   }
+  // 편집 모드 락/언락 시점에 되돌리기/다시실행 버튼 표시 여부를 실시간 제어
+  updateHistoryButtonsState();
 }
 
 // Setup Slide to Unlock Drag & Touch Listeners
