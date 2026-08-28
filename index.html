@@ -46,7 +46,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
   
   <!-- Main Stylesheet -->
-  <link rel="stylesheet" href="style_v16_v2.css?v=3700">
+  <link rel="stylesheet" href="style_v16_v2.css?v=3800">
 
   <!-- Upgraded Admin Toolkit Styling (40px circle, white background, 50% opacity emojis) -->
   <style>
@@ -355,7 +355,13 @@
     
     <!-- Floating Settings Button (Fixed 16px right margin, 51px top safe margin to align with actions-bar) -->
     <button id="floating-settings-btn" class="admin-action-btn-circle has-tooltip tooltip-down" data-tooltip="환경설정" style="position: fixed !important; top: 61px !important; right: 16px !important; z-index: 12000 !important;" title="환경설정">
-      <span class="emoji-icon">⚙️</span>
+      <span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 18px; height: 18px;">
+        <svg class="custom-settings-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b; width: 18px; height: 18px; fill: none !important;">
+          <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" style="fill: none !important;" />
+          <circle cx="12" cy="12" r="4.5" style="fill: none !important;" />
+          <circle cx="12" cy="12" r="1.5" style="fill: currentColor !important; stroke: none !important;" />
+        </svg>
+      </span>
     </button>
 
     
@@ -1411,6 +1417,6 @@
       });
     }
   </script>
-  <script src="app_v16_v2.js?v=3700"></script>
+  <script src="app_v16_v2.js?v=3800"></script>
 </body>
 </html>

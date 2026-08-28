@@ -3533,6 +3533,8 @@ svg.history-custom-icon {
 #text-box-custom-icon path,
 .custom-style-editor-icon,
 .custom-style-editor-icon circle,
-.custom-style-editor-icon path {
+.custom-style-editor-icon path,
+.custom-settings-icon,
+.custom-settings-icon path {
   fill: none !important;
 }
