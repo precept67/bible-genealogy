@@ -407,7 +407,12 @@
     <div id="bottom-controls-wrapper" style="position: fixed; bottom: calc(6px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); z-index: 12000; display: flex; align-items: center; gap: 6px; pointer-events: none; height: 40px; box-sizing: border-box;">
       
       <!-- 1. Undo Button (Now Decoupled Outside, styled like Search Toggle) -->
-      <button id="admin-undo-btn" class="history-control-btn control-btn has-tooltip tooltip-up" data-tooltip="되돌리기 (Ctrl+Z)" title="되돌리기 (Ctrl+Z)" style="display: none; pointer-events: auto; background: rgba(255, 255, 255, 0.95) !important; border: 1px solid rgba(0, 0, 0, 0.08) !important; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important; color: #64748b !important; font-size: 18px !important; cursor: not-allowed; transition: opacity 0.2s ease, transform 0.1s ease; padding: 0; margin: 0; display: flex; align-items: center; justify-content: center; width: 40px !important; height: 40px !important; border-radius: 20px !important;" disabled>↩️</button>
+      <button id="admin-undo-btn" class="history-control-btn control-btn has-tooltip tooltip-up" data-tooltip="되돌리기 (Ctrl+Z)" title="되돌리기 (Ctrl+Z)" style="display: none; pointer-events: auto; background: rgba(255, 255, 255, 0.95) !important; border: 1px solid rgba(0, 0, 0, 0.08) !important; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important; color: #64748b !important; cursor: not-allowed; transition: opacity 0.2s ease, transform 0.1s ease; padding: 0; margin: 0; display: flex; align-items: center; justify-content: center; width: 40px !important; height: 40px !important; border-radius: 20px !important;" disabled>
+        <svg class="history-custom-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 7v6h6"></path>
+          <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"></path>
+        </svg>
+      </button>
       
       <!-- 2. Pure Zoom Control Panel Capsule -->
       <div id="control-panel" style="pointer-events: auto; display: flex; align-items: center; gap: 10px; background: rgba(255, 255, 255, 0.95); border: 1px solid rgba(0, 0, 0, 0.08); padding: 4px 14px; border-radius: 50px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); height: 40px; box-sizing: border-box;">
@@ -426,7 +431,12 @@
       </div>
       
       <!-- 3. Redo Button (Now Decoupled Outside, styled like Search Toggle) -->
-      <button id="admin-redo-btn" class="history-control-btn control-btn has-tooltip tooltip-up" data-tooltip="다시 실행 (Ctrl+Y)" title="다시 실행 (Ctrl+Y)" style="display: none; pointer-events: auto; background: rgba(255, 255, 255, 0.95) !important; border: 1px solid rgba(0, 0, 0, 0.08) !important; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important; color: #64748b !important; font-size: 18px !important; cursor: not-allowed; transition: opacity 0.2s ease, transform 0.1s ease; padding: 0; margin: 0; display: flex; align-items: center; justify-content: center; width: 40px !important; height: 40px !important; border-radius: 20px !important;" disabled>↪️</button>
+      <button id="admin-redo-btn" class="history-control-btn control-btn has-tooltip tooltip-up" data-tooltip="다시 실행 (Ctrl+Y)" title="다시 실행 (Ctrl+Y)" style="display: none; pointer-events: auto; background: rgba(255, 255, 255, 0.95) !important; border: 1px solid rgba(0, 0, 0, 0.08) !important; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important; color: #64748b !important; cursor: not-allowed; transition: opacity 0.2s ease, transform 0.1s ease; padding: 0; margin: 0; display: flex; align-items: center; justify-content: center; width: 40px !important; height: 40px !important; border-radius: 20px !important;" disabled>
+        <svg class="history-custom-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 7v6h-6"></path>
+          <path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7"></path>
+        </svg>
+      </button>
 
       <input type="file" id="user-notes-file-input" accept=".json" style="display: none;">
       <button id="admin-lock-btn" class="control-btn" style="display: none !important;"></button>
