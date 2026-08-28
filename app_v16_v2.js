@@ -16530,11 +16530,9 @@ function setupSlideLockDragEvents() {
       startX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
       slideHandle.style.transition = 'none';
       
-      // Reveal background border and shadow dynamically when dragging starts
-      slideContainer.style.background = 'transparent';
-      slideContainer.style.borderColor = 'transparent';
-      slideContainer.style.boxShadow = 'none';
-      slideText.style.opacity = '0.5';
+      // 드래그가 시작되면 락 컨테이너에 dragging 클래스를 부여하여 가이드 선/배경을 부드럽게 띄움
+      slideContainer.classList.add('dragging');
+      slideText.style.opacity = '1';
     }
 
     function onDragMove(e) {
@@ -16544,13 +16542,8 @@ function setupSlideLockDragEvents() {
       currentX = Math.max(0, Math.min(maxSlide, deltaX));
       slideHandle.style.transform = `translateX(${currentX}px)`;
       
-      slideText.style.opacity = Math.max(0.2, 1 - (currentX / maxSlide) * 0.6);
-
-      if (currentX > maxSlide * 0.8) {
-        slideContainer.style.background = 'transparent';
-      } else {
-        slideContainer.style.background = 'transparent';
-      }
+      // 슬라이딩 진척도에 따라 가이드 텍스트 투명도를 페이드아웃 처리
+      slideText.style.opacity = Math.max(0.1, 1 - (currentX / maxSlide) * 0.9);
     }
 
     function onDragEnd() {
@@ -16566,10 +16559,8 @@ function setupSlideLockDragEvents() {
       
       slideHandle.style.transform = 'translateX(0px)';
       
-      // Hide outer track borders and backgrounds on release
-      slideContainer.style.background = 'rgba(15, 23, 42, 0)';
-      slideContainer.style.borderColor = 'rgba(255, 255, 255, 0)';
-      slideContainer.style.boxShadow = 'none';
+      // 드래그가 해제되면 dragging 클래스를 제거하여 가이드 선/배경을 스무스하게 은닉
+      slideContainer.classList.remove('dragging');
       slideText.style.opacity = '0';
     }
 
