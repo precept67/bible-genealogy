@@ -16604,15 +16604,15 @@ function setupFloatingHeaderEvents() {
         const currentHeight = window.innerHeight;
         const keyboardHeight = window.innerHeight - window.visualViewport.height;
         
-        // 세로/가로 공통으로 자판 25px 상단 정밀 연동 실시
+        // 세로/가로 공통으로 자판 50px 상단 정밀 연동 실시 (50px로 넉넉하게 높여 시원한 여유 공간 확보)
         // [1단계] Overlay 키보드 모드 감지 (비주얼 뷰포트 격차가 100px 초과 시)
         if (keyboardHeight > 100) {
-          searchWrapper.style.bottom = `${keyboardHeight + 25}px`;
+          searchWrapper.style.bottom = `${keyboardHeight + 50}px`;
           searchWrapper.style.top = 'auto'; // 수직 중앙 top 해제
         } 
         // [2단계] Resize 키보드 모드 감지 (웹뷰 자체가 150px 이상 축소되었을 시)
         else if (originalWindowHeight - currentHeight > 150) {
-          searchWrapper.style.bottom = '25px'; // 축소된 웹뷰의 바닥(키보드 윗선) 기준 25px 띄움
+          searchWrapper.style.bottom = '50px'; // 축소된 웹뷰의 바닥(키보드 윗선) 기준 50px 띄움
           searchWrapper.style.top = 'auto';
         } 
         // [3단계] 평상시 대기 상태 (키보드가 없거나 다 올라오기 전 초기 단계)
