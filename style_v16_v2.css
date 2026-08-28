@@ -3513,6 +3513,6 @@ svg.history-custom-icon {
 
   /* 5. 세로 화면 시 락 토글의 폭을 20px 축소하여 우측의 되돌리기 버튼에 닿지 않도록 방어 */
   #slide-lock-container {
-    width: 94px !important;
+    width: 91px !important;
   }
 }
