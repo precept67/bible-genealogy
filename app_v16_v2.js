@@ -16600,30 +16600,24 @@ function setupFloatingHeaderEvents() {
 
     const handleVisualViewportChange = () => {
       if (window.visualViewport && document.body.classList.contains('search-focused') && searchWrapper) {
-        const isLandscape = window.matchMedia('(orientation: landscape)').matches;
-        // 세로화면일 때는 키보드를 배제한 실제 가시 영역(visualViewport)의 정확한 수직 정중앙으로 동적 대피 정렬
-        if (!isLandscape) {
-          const viewportCenterY = window.visualViewport.height / 2;
-          searchWrapper.style.top = `${viewportCenterY}px`;
-          searchWrapper.style.transform = 'translate(-50%, -50%)';
-          searchWrapper.style.bottom = 'auto';
-          return;
-        }
-
         const currentHeight = window.innerHeight;
         const keyboardHeight = window.innerHeight - window.visualViewport.height;
         
+        // 세로 화면 및 가로 화면 공통으로 자판 25px 밀착 대응 실시
         // [1단계] Overlay 키보드 모드 감지 (비주얼 뷰포트 격차가 100px 초과 시)
         if (keyboardHeight > 100) {
           searchWrapper.style.bottom = `${keyboardHeight + 25}px`;
+          searchWrapper.style.top = 'auto'; // 수직 중앙 top 해제
         } 
         // [2단계] Resize 키보드 모드 감지 (웹뷰 자체가 150px 이상 축소되었을 시)
         else if (originalWindowHeight - currentHeight > 150) {
           searchWrapper.style.bottom = '25px'; // 축소된 웹뷰의 바닥(키보드 윗선) 기준 25px 띄움
+          searchWrapper.style.top = 'auto';
         } 
         // [3단계] 평상시 대기 상태
         else {
           searchWrapper.style.bottom = 'calc(6px + env(safe-area-inset-bottom))';
+          searchWrapper.style.top = 'auto';
         }
       }
     };
@@ -16644,8 +16638,9 @@ function setupFloatingHeaderEvents() {
         searchWrapper.style.pointerEvents = 'none';
       }
 
-      // 🔍 검색 버튼 원래대로 다시 보이기 및 터치 활성화
+      // 🔍 검색 버튼 원래대로 다시 보이기 및 물리 영역 복원
       if (floatSearchBtn) {
+        floatSearchBtn.style.display = ''; // block/flex 디폴트로 물리 영역 복구!
         floatSearchBtn.style.opacity = '1';
         floatSearchBtn.style.pointerEvents = 'auto';
       }
@@ -16673,19 +16668,20 @@ function setupFloatingHeaderEvents() {
         if (!isLandscape && searchWrapper) {
           document.body.classList.add('search-focused');
           
-          // 🔍 검색 버튼 원래 자리에서 보이지 않게 감추기
+          // 🔍 검색 버튼의 물리 공간을 아예 없애서 가로 중앙 쏠림 오류를 완치!
+          floatSearchBtn.style.display = 'none';
           floatSearchBtn.style.opacity = '0';
           floatSearchBtn.style.pointerEvents = 'none';
           
           searchWrapper.style.position = 'fixed';
           searchWrapper.style.left = '50%';
           searchWrapper.style.right = 'auto';
-          searchWrapper.style.transform = 'translate(-50%, -50%)'; // 수평/수직 정중앙 정렬
+          searchWrapper.style.transform = 'translateX(-50%)'; // 수평 정중앙 정렬
           searchWrapper.style.width = 'calc(100% - 32px)';
           searchWrapper.style.maxWidth = '320px';
           searchWrapper.style.pointerEvents = 'auto';
-          searchWrapper.style.top = '50%'; // 초기 화면 한가운데 정중앙 대기
-          searchWrapper.style.bottom = 'auto'; // 하단 구속 해제
+          searchWrapper.style.top = 'auto'; // 키보드 연동을 위해 top 해제
+          searchWrapper.style.bottom = 'calc(6px + env(safe-area-inset-bottom))'; // 초기 하단 대기선
         }
 
         searchPanel.style.width = '240px';
