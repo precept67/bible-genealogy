@@ -16641,6 +16641,7 @@ function setupFloatingHeaderEvents() {
         searchWrapper.style.top = ''; // 상단 고정 해제
         searchWrapper.style.bottom = 'calc(6px + env(safe-area-inset-bottom))';
         searchWrapper.style.pointerEvents = 'none';
+        searchWrapper.style.justifyContent = ''; // 정렬 리셋
       }
 
       // 🔍 검색 버튼 원래대로 다시 보이기 및 물리 영역 복원
@@ -16679,11 +16680,12 @@ function setupFloatingHeaderEvents() {
           floatSearchBtn.style.pointerEvents = 'none';
           
           searchWrapper.style.position = 'fixed';
-          searchWrapper.style.left = '50%';
-          searchWrapper.style.right = 'auto';
-          searchWrapper.style.transform = 'translateX(-50%)'; // 수평 정중앙 정렬
-          searchWrapper.style.width = 'calc(100% - 32px)';
-          searchWrapper.style.maxWidth = '320px';
+          searchWrapper.style.left = '16px'; // 화면 좌측 테두리 여백 16px 강제 지정
+          searchWrapper.style.right = '16px'; // 화면 우측 테두리 여백 16px 강제 지정 (좌우 1:1 대칭 매칭)
+          searchWrapper.style.transform = 'none'; // 쏠림 오류를 낳던 변환식 해제
+          searchWrapper.style.width = 'auto';
+          searchWrapper.style.maxWidth = 'none';
+          searchWrapper.style.justifyContent = 'center'; // 내부 검색창 요소를 정가운데 정렬
           searchWrapper.style.pointerEvents = 'auto';
           searchWrapper.style.top = 'auto'; // 키보드 연동을 위해 top 해제
           searchWrapper.style.bottom = 'calc(6px + env(safe-area-inset-bottom))'; // 초기 하단 대기선
