@@ -16626,6 +16626,59 @@ function setupFloatingHeaderEvents() {
         if (resultsDropdown) resultsDropdown.innerHTML = '';
       }
     });
+
+    // 세로화면에서 검색 입력 포커스 시 검색창을 화면 중앙, 소프트 키보드 액세서리 뷰 3px 위로 흡수 정렬
+    const searchWrapper = document.getElementById('floating-search-wrapper');
+    if (searchInput && searchWrapper) {
+      const handleVisualViewportChange = () => {
+        if (window.visualViewport && document.body.classList.contains('search-focused')) {
+          // 가상 키보드 및 액세서리 뷰가 솟아오른 실제 수직 높이 도출
+          const keyboardHeight = window.innerHeight - window.visualViewport.height;
+          // 액세서리 뷰 경계선 바로 3px 위에 정밀 밀착 고정
+          searchWrapper.style.bottom = `${keyboardHeight + 3}px`;
+        }
+      };
+
+      searchInput.addEventListener('focus', () => {
+        const isLandscape = window.matchMedia('(orientation: landscape)').matches;
+        if (!isLandscape) {
+          document.body.classList.add('search-focused');
+          
+          searchWrapper.style.position = 'fixed';
+          searchWrapper.style.left = '50%';
+          searchWrapper.style.right = 'auto';
+          searchWrapper.style.transform = 'translateX(-50%)';
+          searchWrapper.style.width = 'calc(100% - 32px)';
+          searchWrapper.style.maxWidth = '320px';
+          searchWrapper.style.pointerEvents = 'auto';
+
+          if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', handleVisualViewportChange);
+            window.visualViewport.addEventListener('scroll', handleVisualViewportChange);
+            handleVisualViewportChange();
+          }
+        }
+      });
+
+      searchInput.addEventListener('blur', () => {
+        document.body.classList.remove('search-focused');
+        
+        // 포커스 아웃 시 즉시 원래의 우측 하단 디폴트 위치로 사뿐히 복귀
+        searchWrapper.style.position = '';
+        searchWrapper.style.left = '';
+        searchWrapper.style.right = '';
+        searchWrapper.style.transform = '';
+        searchWrapper.style.width = '';
+        searchWrapper.style.maxWidth = '';
+        searchWrapper.style.bottom = '';
+        searchWrapper.style.pointerEvents = '';
+
+        if (window.visualViewport) {
+          window.visualViewport.removeEventListener('resize', handleVisualViewportChange);
+          window.visualViewport.removeEventListener('scroll', handleVisualViewportChange);
+        }
+      });
+    }
   }
 }
 
