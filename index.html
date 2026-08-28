@@ -404,7 +404,7 @@
     </main>
     
     <!-- 2. Zoom & History Unified Controls Panel Wrapper (Floating Centered Row Layout) -->
-    <div id="bottom-controls-wrapper" style="position: fixed; bottom: calc(6px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); z-index: 12000; display: flex; align-items: center; gap: 6px; pointer-events: none; height: 40px; box-sizing: border-box;">
+    <div id="bottom-controls-wrapper" style="position: fixed; bottom: calc(1px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); z-index: 12000; display: flex; align-items: center; gap: 6px; pointer-events: none; height: 40px; box-sizing: border-box;">
       
       <!-- 1. Undo Button (Now Decoupled Outside, styled like Search Toggle) -->
       <button id="admin-undo-btn" class="history-control-btn control-btn has-tooltip tooltip-up" data-tooltip="되돌리기 (Ctrl+Z)" title="되돌리기 (Ctrl+Z)" style="display: none; pointer-events: auto; background: rgba(255, 255, 255, 0.95) !important; border: 1px solid rgba(0, 0, 0, 0.08) !important; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important; color: #64748b !important; cursor: not-allowed; transition: opacity 0.2s ease, transform 0.1s ease; padding: 0; margin: 0; display: flex; align-items: center; justify-content: center; width: 40px !important; height: 40px !important; border-radius: 20px !important;" disabled>
@@ -443,7 +443,7 @@
     </div>
 
     <!-- 4. Floating Search Panel & Button Wrapper (Bottom Right - Decoupled to prevent layout shifting) -->
-    <div id="floating-search-wrapper" style="position: fixed; bottom: env(safe-area-inset-bottom); right: 16px; z-index: 12000; display: flex; align-items: center; gap: 8px; pointer-events: none; transition: all 0.3s ease;">
+    <div id="floating-search-wrapper" style="position: fixed; bottom: calc(1px + env(safe-area-inset-bottom)); right: 16px; z-index: 12000; display: flex; align-items: center; gap: 8px; pointer-events: none; transition: all 0.3s ease;">
       <!-- Expandable Search Panel -->
       <div id="search-panel" style="position: relative; display: flex; align-items: center; width: 0px; opacity: 0; overflow: visible; transition: width 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.3s ease; pointer-events: none; margin: 0;">
         <input type="text" id="searchInput" class="search-box" placeholder="검색 (인물, 사건, 장소)..." autocomplete="off" style="height: 40px; box-sizing: border-box; padding: 0 16px; border-radius: 20px; width: 100%; min-width: 220px; font-size: 13px; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.25);">

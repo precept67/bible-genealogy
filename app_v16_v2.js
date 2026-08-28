@@ -16614,7 +16614,7 @@ function setupFloatingHeaderEvents() {
         } 
         // [3단계] 평상시 대기 상태 (키보드가 없거나 다 올라오기 전 초기 단계)
         else {
-          searchWrapper.style.bottom = 'env(safe-area-inset-bottom)';
+          searchWrapper.style.bottom = 'calc(1px + env(safe-area-inset-bottom))';
           searchWrapper.style.top = 'auto';
         }
       }
@@ -16630,7 +16630,7 @@ function setupFloatingHeaderEvents() {
       }
       if (searchWrapper) {
         searchWrapper.style.top = 'auto'; // 수직 정렬 top 해제
-        searchWrapper.style.bottom = 'env(safe-area-inset-bottom)'; // 원래 우측 하단 정박선 복구!
+        searchWrapper.style.bottom = 'calc(1px + env(safe-area-inset-bottom))'; // 원래 우측 하단 정박선 복구!
       }
       searchInput.value = '';
       const resultsDropdown = document.getElementById('search-results');
@@ -16653,7 +16653,7 @@ function setupFloatingHeaderEvents() {
         if (searchWrapper) {
           document.body.classList.add('search-focused');
           searchWrapper.style.top = 'auto'; // 키보드 연동을 위해 top 해제
-          searchWrapper.style.bottom = 'env(safe-area-inset-bottom)'; // 초기 하단 대기선
+          searchWrapper.style.bottom = 'calc(1px + env(safe-area-inset-bottom))'; // 초기 하단 대기선
         }
 
         // 포커싱과 동시에 50ms 실시간 폴러 감시 타이머 구동
