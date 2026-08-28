@@ -3369,8 +3369,8 @@ body.search-focused #search-panel {
 #bottom-settings-btn svg,
 #style-editor-toggle-btn span,
 #filter-panel-toggle span,
-#floating-undo-btn span,
-#floating-redo-btn span,
+#admin-undo-btn,
+#admin-redo-btn,
 #slide-lock-handle svg {
   font-size: 18px !important;
   width: 18px !important;
