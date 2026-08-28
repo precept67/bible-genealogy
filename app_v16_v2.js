@@ -16534,9 +16534,9 @@ function setupSlideLockDragEvents() {
     let currentX = 0;
 
     function getDynamicMaxSlide() {
-      const containerWidth = slideContainer.getBoundingClientRect().width || 114;
+      const containerWidth = slideContainer.getBoundingClientRect().width || 111;
       const handleWidth = slideHandle.getBoundingClientRect().width || 40;
-      return Math.max(30, containerWidth - handleWidth - 8);
+      return Math.max(30, containerWidth - handleWidth);
     }
 
     function onDragStart(e) {
