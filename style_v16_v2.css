@@ -856,7 +856,7 @@ header .subtitle {
     top: 55px !important; /* 화면 최상단 기준 정확히 55px 아래 고정 배치 */
   }
   #floating-settings-btn {
-    top: 55px !important; /* 화면 최상단 기준 정확히 55px 아래 고정 배치 */
+    top: 59px !important; /* 화면 최상단 기준 정확히 59px 아래 고정 배치 */
     right: 16px !important;
   }
 
