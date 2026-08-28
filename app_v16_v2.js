@@ -16692,9 +16692,15 @@ function setupFloatingHeaderEvents() {
       }
     });
 
-    // 포커스 아웃(blur) 시 IME 입력기 자동완성 간섭에 의한 검색창 이탈 방지
+    // 포커스 아웃(blur) 시 100ms 안심 복구 감지 필터를 통해 검색창 안전 복원 및 돋보기 강제 복구
     searchInput.addEventListener('blur', () => {
-      // 한글/영문 입력 변환이나 추천단어 바 생성 도중 포커스가 미세하게 풀리더라도 검색창이 활성화된 상태(isSearchOpen)면 위치를 강제 롤백하지 않고 중앙 고수
+      setTimeout(() => {
+        const activeEl = document.activeElement;
+        // 포커스가 완전히 검색창 영역(searchWrapper) 외부로 탈출했을 때만 복원 함수를 강제 작동!
+        if (isSearchOpen && searchWrapper && !searchWrapper.contains(activeEl)) {
+          closeSearchWrapper();
+        }
+      }, 100);
     });
   }
 }
