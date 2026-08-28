@@ -16595,16 +16595,16 @@ function setupFloatingHeaderEvents() {
 
   if (floatSearchBtn && searchPanel && searchInput) {
     let isSearchOpen = false;
+    let searchViewportInterval = null; // iOS 키보드 높이 감지 씹힘 방지용 실시간 타이머 폴러
     const searchWrapper = document.getElementById('floating-search-wrapper');
     const originalWindowHeight = window.innerHeight;
 
     const handleVisualViewportChange = () => {
       if (window.visualViewport && document.body.classList.contains('search-focused') && searchWrapper) {
-
         const currentHeight = window.innerHeight;
         const keyboardHeight = window.innerHeight - window.visualViewport.height;
         
-        // [가로 화면용] 자판 25px 밀착 대응
+        // 세로/가로 공통으로 자판 25px 상단 정밀 연동 실시
         // [1단계] Overlay 키보드 모드 감지 (비주얼 뷰포트 격차가 100px 초과 시)
         if (keyboardHeight > 100) {
           searchWrapper.style.bottom = `${keyboardHeight + 25}px`;
@@ -16615,7 +16615,7 @@ function setupFloatingHeaderEvents() {
           searchWrapper.style.bottom = '25px'; // 축소된 웹뷰의 바닥(키보드 윗선) 기준 25px 띄움
           searchWrapper.style.top = 'auto';
         } 
-        // [3단계] 평상시 대기 상태
+        // [3단계] 평상시 대기 상태 (키보드가 없거나 다 올라오기 전 초기 단계)
         else {
           searchWrapper.style.bottom = 'calc(6px + env(safe-area-inset-bottom))';
           searchWrapper.style.top = 'auto';
@@ -16627,6 +16627,10 @@ function setupFloatingHeaderEvents() {
     const closeSearchWrapper = () => {
       isSearchOpen = false;
       document.body.classList.remove('search-focused');
+      if (searchViewportInterval) {
+        clearInterval(searchViewportInterval);
+        searchViewportInterval = null;
+      }
       if (searchWrapper) {
         searchWrapper.style.position = 'fixed';
         searchWrapper.style.left = 'auto';
@@ -16689,8 +16693,15 @@ function setupFloatingHeaderEvents() {
         searchPanel.style.opacity = '1';
         searchPanel.style.pointerEvents = 'auto';
         
+        // 포커싱과 동시에 50ms 실시간 폴러 감시 타이머 구동
         setTimeout(() => {
           searchInput.focus();
+          
+          if (!isLandscape) {
+            if (searchViewportInterval) clearInterval(searchViewportInterval);
+            searchViewportInterval = setInterval(handleVisualViewportChange, 50);
+          }
+          
           if (!isLandscape && window.visualViewport) {
             window.visualViewport.addEventListener('resize', handleVisualViewportChange);
             window.visualViewport.addEventListener('scroll', handleVisualViewportChange);
