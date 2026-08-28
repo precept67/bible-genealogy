@@ -1408,9 +1408,9 @@ header .subtitle {
     left: auto !important;
     right: 16px !important;
   }
-  /* 환경설정 창도 모바일에서 선디자인 편집기와 동일하게 256px로 매칭 (단, 화면 너비의 60%를 넘지 않게 규제하며 상하 111px씩 균등 여백 적용) */
+  /* 환경설정 창도 모바일에서 선디자인 편집기와 동일하게 350px로 매칭 (단, 화면 너비의 60%를 넘지 않게 규제하며 상단 111px 기준으로 높이를 400px 지정) */
   #settings-modal .modal-content {
-    width: 256px !important;
+    width: 350px !important; /* 가로 너비 350px */
     max-width: 60% !important; /* 화면 너비의 60%를 넘지 않게 제한 */
     min-width: auto !important;
     top: 111px !important; /* 화면 상단 111px 정밀 여백 */
@@ -3192,14 +3192,14 @@ svg path.prophets-aura {
 #settings-modal .modal-content {
   position: absolute !important;
   top: 111px !important; /* 환경설정 창의 시작 상단을 화면 상단에서 111px 아래로 정박 */
-  bottom: 16px !important; /* 하단 끝 화면 전체 채우기 */
+  bottom: auto !important; /* 고정 높이 400px 동작을 위해 하단 구속 해제 */
   right: 16px !important;
   left: auto !important;
-  width: 360px !important;
+  width: 350px !important; /* 가로 너비 350px 통일 */
   max-width: 90% !important;
   min-width: auto !important;
-  height: auto !important;
-  max-height: calc(100vh - 127px) !important; /* 뷰포트 하단 마진과 상단 111px을 제외한 한도 높이 지정 */
+  height: 400px !important; /* 세로 높이 400px 고정 */
+  max-height: 400px !important;
   overflow-y: auto !important;
   pointer-events: auto !important; /* 설정창 내부 요소 터치 조작 허용 */
   z-index: 13000 !important; /* 검색 토글보다 높은 레이어로 가림 */
