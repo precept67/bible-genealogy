@@ -851,7 +851,7 @@ header .subtitle {
     top: calc(51px + env(safe-area-inset-top)) !important; /* env가 0이더라도 최소 51px(다이나믹아일랜드 47px + 4px 여백) 확보 */
   }
   #floating-settings-btn {
-    top: calc(1px + env(safe-area-inset-top)) !important; /* 위로 50px 상향하여 총 1px 여백 적용 */
+    top: 50px !important; /* 화면 최상단 기준 정확히 50px 아래 고정 배치 */
     right: 16px !important;
   }
 
