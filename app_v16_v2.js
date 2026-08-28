@@ -16601,9 +16601,11 @@ function setupFloatingHeaderEvents() {
     const handleVisualViewportChange = () => {
       if (window.visualViewport && document.body.classList.contains('search-focused') && searchWrapper) {
         const isLandscape = window.matchMedia('(orientation: landscape)').matches;
-        // 세로화면일 때는 상단 고정이므로 키보드에 밀려 춤추지 않도록 연산 통과
+        // 세로화면일 때는 키보드를 배제한 실제 가시 영역(visualViewport)의 정확한 수직 정중앙으로 동적 대피 정렬
         if (!isLandscape) {
-          searchWrapper.style.top = '111px';
+          const viewportCenterY = window.visualViewport.height / 2;
+          searchWrapper.style.top = `${viewportCenterY}px`;
+          searchWrapper.style.transform = 'translate(-50%, -50%)';
           searchWrapper.style.bottom = 'auto';
           return;
         }
@@ -16641,6 +16643,13 @@ function setupFloatingHeaderEvents() {
         searchWrapper.style.bottom = 'calc(6px + env(safe-area-inset-bottom))';
         searchWrapper.style.pointerEvents = 'none';
       }
+
+      // 🔍 검색 버튼 원래대로 다시 보이기 및 터치 활성화
+      if (floatSearchBtn) {
+        floatSearchBtn.style.opacity = '1';
+        floatSearchBtn.style.pointerEvents = 'auto';
+      }
+
       searchPanel.style.width = '0px';
       searchPanel.style.opacity = '0';
       searchPanel.style.pointerEvents = 'none';
@@ -16663,14 +16672,19 @@ function setupFloatingHeaderEvents() {
         // 터치 즉시 화면 가로 중앙 및 하단 대기선으로 먼저 던져두어 포커싱 전 사라짐 방지
         if (!isLandscape && searchWrapper) {
           document.body.classList.add('search-focused');
+          
+          // 🔍 검색 버튼 원래 자리에서 보이지 않게 감추기
+          floatSearchBtn.style.opacity = '0';
+          floatSearchBtn.style.pointerEvents = 'none';
+          
           searchWrapper.style.position = 'fixed';
           searchWrapper.style.left = '50%';
           searchWrapper.style.right = 'auto';
-          searchWrapper.style.transform = 'translateX(-50%)';
+          searchWrapper.style.transform = 'translate(-50%, -50%)'; // 수평/수직 정중앙 정렬
           searchWrapper.style.width = 'calc(100% - 32px)';
           searchWrapper.style.maxWidth = '320px';
           searchWrapper.style.pointerEvents = 'auto';
-          searchWrapper.style.top = '111px'; // 화면 상단 111px 배치
+          searchWrapper.style.top = '50%'; // 초기 화면 한가운데 정중앙 대기
           searchWrapper.style.bottom = 'auto'; // 하단 구속 해제
         }
 
