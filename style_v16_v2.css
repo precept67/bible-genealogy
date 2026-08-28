@@ -1408,12 +1408,14 @@ header .subtitle {
     left: auto !important;
     right: 16px !important;
   }
-  /* 환경설정 창도 모바일에서 선디자인 편집기와 동일하게 256px로 매칭 (단, 화면 너비의 60%를 넘지 않게 규제) */
+  /* 환경설정 창도 모바일에서 선디자인 편집기와 동일하게 256px로 매칭 (단, 화면 너비의 60%를 넘지 않게 규제하며 상하 111px씩 균등 여백 적용) */
   #settings-modal .modal-content {
     width: 256px !important;
     max-width: 60% !important; /* 화면 너비의 60%를 넘지 않게 제한 */
     min-width: auto !important;
-    max-height: 420px !important; /* 모바일 하단 검색 토글 간섭 차단 (40px 늘림) */
+    top: 111px !important; /* 화면 상단 111px 정밀 여백 */
+    bottom: 111px !important; /* 화면 하단 111px 동일 대칭 여백 */
+    max-height: calc(100vh - 222px) !important; /* 상하 여백을 뺀 높이 한도로 박스 조절 */
     z-index: 13000 !important; /* 모바일에서도 검색 토글보다 앞쪽(레이어 위)에 오게 강제 */
   }
   #filter-panel {
