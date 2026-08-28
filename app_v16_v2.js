@@ -16701,9 +16701,9 @@ function setupFloatingHeaderEvents() {
       }
     });
 
-    // 외부 영역 클릭 시 검색창 자동 닫기
+    // 외부 영역 클릭 시 검색창 자동 닫기 (검색창 내부 구성품 터치 시 오작동 닫힘 전면 방지)
     window.addEventListener('click', (e) => {
-      if (isSearchOpen && !searchPanel.contains(e.target) && e.target !== floatSearchBtn) {
+      if (isSearchOpen && searchWrapper && !searchWrapper.contains(e.target)) {
         closeSearchWrapper();
       }
     });
