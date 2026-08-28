@@ -3371,8 +3371,7 @@ body.search-focused #search-panel {
 #bottom-settings-btn svg,
 #style-editor-toggle-btn span,
 #filter-panel-toggle span,
-#admin-undo-btn,
-#admin-redo-btn,
+.history-custom-icon,
 #text-box-custom-icon,
 #search-custom-icon,
 #slide-lock-handle svg {
