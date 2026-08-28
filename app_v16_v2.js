@@ -16688,14 +16688,9 @@ function setupFloatingHeaderEvents() {
       }
     });
 
-    // 포커스 아웃(blur) 시에도 복원 헬퍼 연동
+    // 포커스 아웃(blur) 시 IME 입력기 자동완성 간섭에 의한 검색창 이탈 방지
     searchInput.addEventListener('blur', () => {
-      setTimeout(() => {
-        const activeEl = document.activeElement;
-        if (activeEl !== searchInput && isSearchOpen) {
-          closeSearchWrapper();
-        }
-      }, 100);
+      // 한글/영문 입력 변환이나 추천단어 바 생성 도중 포커스가 미세하게 풀리더라도 검색창이 활성화된 상태(isSearchOpen)면 위치를 강제 롤백하지 않고 중앙 고수
     });
   }
 }
