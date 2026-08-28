@@ -1608,9 +1608,9 @@ function updateHistoryButtonsState() {
   
   if (undoBtn) {
     if (!isEditing) {
-      undoBtn.style.display = 'none'; // 잠금(일반 뷰어) 상태일 때는 비보출 은닉!
+      undoBtn.style.setProperty('display', 'none', 'important'); // 잠금(일반 뷰어) 상태일 때는 비보출 은닉!
     } else {
-      undoBtn.style.display = 'flex'; // 편집(어드민) 모드일 때만 비로소 노출!
+      undoBtn.style.setProperty('display', 'flex', 'important'); // 편집(어드민) 모드일 때만 비로소 노출!
       if (undoStack.length > 0) {
         undoBtn.disabled = false;
         undoBtn.style.cursor = "pointer";
@@ -1622,9 +1622,9 @@ function updateHistoryButtonsState() {
   }
   if (redoBtn) {
     if (!isEditing) {
-      redoBtn.style.display = 'none'; // 잠금(일반 뷰어) 상태일 때는 비보출 은닉!
+      redoBtn.style.setProperty('display', 'none', 'important'); // 잠금(일반 뷰어) 상태일 때는 비보출 은닉!
     } else {
-      redoBtn.style.display = 'flex'; // 편집(어드민) 모드일 때만 비로소 노출!
+      redoBtn.style.setProperty('display', 'flex', 'important'); // 편집(어드민) 모드일 때만 비로소 노출!
       if (redoStack.length > 0) {
         redoBtn.disabled = false;
         redoBtn.style.cursor = "pointer";
