@@ -11511,7 +11511,7 @@ function activateAddAnnotationMode() {
   isAddAnnotationModeActive = true;
   adminAddNoteBtn.classList.add('active-tool');
   if (adminAddNoteBtn) {
-    adminAddNoteBtn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 25px; height: 25px;"><svg id="text-box-custom-icon" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" style="color: #ef4444; width: 25px; height: 25px; fill: none !important;"><path d="M5 3h14v13h-3a2 2 0 0 0-2 2v3H5V3z" style="fill: none !important;"></path><path d="M14 21c0-1.5 1.5-3 3-3h2" style="fill: none !important;"></path><path d="M8 7h8M8 10h8M8 13h8" style="fill: none !important;"></path></svg></span>';
+    adminAddNoteBtn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 30px; height: 30px;"><svg id="text-box-custom-icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" style="color: #ef4444; width: 30px; height: 30px; fill: none !important;"><path d="M5 3h14v13h-3a2 2 0 0 0-2 2v3H5V3z" style="fill: none !important;"></path><path d="M14 21c0-1.5 1.5-3 3-3h2" style="fill: none !important;"></path><path d="M8 7h8M8 10h8M8 13h8" style="fill: none !important;"></path></svg></span>';
     adminAddNoteBtn.classList.add('danger');
   }
   viewerContainer.style.cursor = 'crosshair';
@@ -11547,7 +11547,7 @@ function deactivateAddAnnotationMode() {
   isAddAnnotationModeActive = false;
   adminAddNoteBtn.classList.remove('active-tool');
   if (adminAddNoteBtn) {
-    adminAddNoteBtn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 25px; height: 25px;"><svg id="text-box-custom-icon" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b; width: 25px; height: 25px; fill: none !important;"><path d="M5 3h14v13h-3a2 2 0 0 0-2 2v3H5V3z" style="fill: none !important;"></path><path d="M14 21c0-1.5 1.5-3 3-3h2" style="fill: none !important;"></path><path d="M8 7h8M8 10h8M8 13h8" style="fill: none !important;"></path></svg></span>';
+    adminAddNoteBtn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 30px; height: 30px;"><svg id="text-box-custom-icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b; width: 30px; height: 30px; fill: none !important;"><path d="M5 3h14v13h-3a2 2 0 0 0-2 2v3H5V3z" style="fill: none !important;"></path><path d="M14 21c0-1.5 1.5-3 3-3h2" style="fill: none !important;"></path><path d="M8 7h8M8 10h8M8 13h8" style="fill: none !important;"></path></svg></span>';
     adminAddNoteBtn.classList.remove('danger');
   }
   viewerContainer.style.cursor = 'grab';
@@ -11560,7 +11560,7 @@ function activateAddPersonMode() {
   deactivateAddAnnotationMode();
   isAddPersonModeActive = true;
   // 활성화(취소 가능) 시에는 더하기(+) 기호를 빼기(-) 기호로 전환하여 세련되게 시각화
-  adminAddBtn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 25px; height: 25px;"><svg class="custom-add-person-icon" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" style="color: #ef4444; width: 25px; height: 25px; fill: none !important;"><circle cx="10" cy="8" r="4" style="fill: none !important;"></circle><path d="M3 20a7 7 0 0 1 14 0" style="fill: none !important;"></path><path d="M17 9h6" style="fill: none !important;"></path></svg></span>';
+  adminAddBtn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 30px; height: 30px;"><svg class="custom-add-person-icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" style="color: #ef4444; width: 30px; height: 30px; fill: none !important;"><circle cx="10" cy="8" r="4" style="fill: none !important;"></circle><path d="M3 20a7 7 0 0 1 14 0" style="fill: none !important;"></path><path d="M17 9h6" style="fill: none !important;"></path></svg></span>';
   adminAddBtn.classList.add('danger');
   viewerContainer.style.cursor = 'cell';
   
@@ -11571,7 +11571,7 @@ function activateAddPersonMode() {
 function deactivateAddPersonMode() {
   isAddPersonModeActive = false;
   // 비활성화(평상시)에는 사람 형상과 더하기(+) 아이콘 노출
-  adminAddBtn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 25px; height: 25px;"><svg class="custom-add-person-icon" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b; width: 25px; height: 25px; fill: none !important;"><circle cx="10" cy="8" r="4" style="fill: none !important;"></circle><path d="M3 20a7 7 0 0 1 14 0" style="fill: none !important;"></path><path d="M17 9h6M20 6v6" style="fill: none !important;"></path></svg></span>';
+  adminAddBtn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 30px; height: 30px;"><svg class="custom-add-person-icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b; width: 30px; height: 30px; fill: none !important;"><circle cx="10" cy="8" r="4" style="fill: none !important;"></circle><path d="M3 20a7 7 0 0 1 14 0" style="fill: none !important;"></path><path d="M17 9h6M20 6v6" style="fill: none !important;"></path></svg></span>';
   adminAddBtn.classList.remove('danger');
   viewerContainer.style.cursor = 'grab';
   
@@ -11612,7 +11612,7 @@ function deactivateAddPolygonMode() {
   if (btn) {
     btn.style.background = '#ea580c';
     btn.style.borderColor = '#ea580c';
-    btn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 25px; height: 25px;"><svg class="custom-add-polygon-icon" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b; width: 25px; height: 25px; fill: none !important;"><rect x="4" y="4" width="16" height="16" rx="3" style="fill: none !important;"></rect><path d="M8 4v16M12 4v16M16 4v16M4 8h16M4 12h16M4 16h16" style="fill: none !important;"></path></svg></span>';
+    btn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 30px; height: 30px;"><svg class="custom-add-polygon-icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b; width: 30px; height: 30px; fill: none !important;"><rect x="4" y="4" width="16" height="16" rx="3" style="fill: none !important;"></rect><path d="M8 4v16M12 4v16M16 4v16M4 8h16M4 12h16M4 16h16" style="fill: none !important;"></path></svg></span>';
   }
 }
 
@@ -11631,7 +11631,7 @@ function activateAddPolygonMode() {
   if (btn) {
     btn.style.background = '#9a3412';
     btn.style.borderColor = '#9a3412';
-    btn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 25px; height: 25px;"><svg class="custom-add-polygon-icon" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" style="color: #ef4444; width: 25px; height: 25px; fill: none !important;"><rect x="4" y="4" width="16" height="16" rx="3" style="fill: none !important;"></rect><path d="M8 4v16M12 4v16M16 4v16M4 8h16M4 12h16M4 16h16" style="fill: none !important;"></path></svg></span>';
+    btn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 30px; height: 30px;"><svg class="custom-add-polygon-icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" style="color: #ef4444; width: 30px; height: 30px; fill: none !important;"><rect x="4" y="4" width="16" height="16" rx="3" style="fill: none !important;"></rect><path d="M8 4v16M12 4v16M16 4v16M4 8h16M4 12h16M4 16h16" style="fill: none !important;"></path></svg></span>';
   }
   showToast("⬡ 다각형 영역 추가 모드가 활성화되었습니다. 화면을 클릭하여 다각형 꼭짓점을 만드세요.");
   renderTree();
