@@ -3535,6 +3535,8 @@ svg.history-custom-icon {
 .custom-style-editor-icon circle,
 .custom-style-editor-icon path,
 .custom-settings-icon,
-.custom-settings-icon path {
+.custom-settings-icon path,
+.history-custom-icon,
+.history-custom-icon path {
   fill: none !important;
 }
