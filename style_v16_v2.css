@@ -3385,9 +3385,7 @@ body.search-focused #search-panel {
 #text-box-custom-icon,
 #search-custom-icon,
 #slide-lock-handle svg {
-  font-size: 18px !important;
-  width: 18px !important;
-  height: 18px !important;
+  /* 크기는 HTML 인라인 스타일 및 SVG 속성을 직접 따르도록 규격 해제 */
   line-height: 1 !important;
   display: inline-flex !important;
   align-items: center !important;
