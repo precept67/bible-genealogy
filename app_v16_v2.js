@@ -11612,7 +11612,7 @@ function deactivateAddPolygonMode() {
   if (btn) {
     btn.style.background = '#ea580c';
     btn.style.borderColor = '#ea580c';
-    btn.innerHTML = '<span class="emoji-icon">⬡</span>';
+    btn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 18px; height: 18px;"><svg class="custom-add-polygon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b; width: 18px; height: 18px; fill: none !important;"><rect x="4" y="4" width="16" height="16" rx="3" style="fill: none !important;"></rect><path d="M8 4v16M12 4v16M16 4v16M4 8h16M4 12h16M4 16h16" style="fill: none !important;"></path></svg></span>';
   }
 }
 
@@ -11631,7 +11631,7 @@ function activateAddPolygonMode() {
   if (btn) {
     btn.style.background = '#9a3412';
     btn.style.borderColor = '#9a3412';
-    btn.innerHTML = '<span class="emoji-icon">⬡</span>';
+    btn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 18px; height: 18px;"><svg class="custom-add-polygon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" style="color: #ef4444; width: 18px; height: 18px; fill: none !important;"><rect x="4" y="4" width="16" height="16" rx="3" style="fill: none !important;"></rect><path d="M8 4v16M12 4v16M16 4v16M4 8h16M4 12h16M4 16h16" style="fill: none !important;"></path></svg></span>';
   }
   showToast("⬡ 다각형 영역 추가 모드가 활성화되었습니다. 화면을 클릭하여 다각형 꼭짓점을 만드세요.");
   renderTree();
