@@ -538,6 +538,11 @@ header .subtitle {
 
 
 
+#floating-settings-btn {
+  position: fixed !important;
+  right: 16px !important; /* 오른쪽 화면 끝에서 정확히 16px 고정 배치 */
+}
+
 /* Study/Note Sidebar Panel */
 #study-panel {
   position: absolute;
