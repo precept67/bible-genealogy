@@ -3525,6 +3525,9 @@ svg.history-custom-icon {
 .custom-add-person-icon circle,
 .custom-add-person-icon path,
 .custom-add-event-icon,
-.custom-add-event-icon path {
+.custom-add-event-icon path,
+.custom-add-location-icon,
+.custom-add-location-icon circle,
+.custom-add-location-icon path {
   fill: none !important;
 }
