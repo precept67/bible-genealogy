@@ -16640,8 +16640,8 @@ function setupFloatingHeaderEvents() {
         searchViewportInterval = null;
       }
       if (searchWrapper) {
-        searchWrapper.style.top = ''; 
-        searchWrapper.style.bottom = ''; // 동적 인라인 값만 리셋
+        searchWrapper.style.top = 'auto'; // 수직 정렬 top 해제
+        searchWrapper.style.bottom = 'calc(6px + env(safe-area-inset-bottom))'; // 원래 우측 하단 정박선 복구!
       }
       searchInput.value = '';
       const resultsDropdown = document.getElementById('search-results');
