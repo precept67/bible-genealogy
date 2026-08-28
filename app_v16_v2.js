@@ -16600,15 +16600,6 @@ function setupFloatingHeaderEvents() {
 
     const handleVisualViewportChange = () => {
       if (window.visualViewport && document.body.classList.contains('search-focused') && searchWrapper) {
-        const isLandscape = window.matchMedia('(orientation: landscape)').matches;
-        // 세로 화면일 때는 키보드를 배제한 실제 노출 영역(visualViewport)의 정확한 수직 정중앙으로 항시 정렬
-        if (!isLandscape) {
-          const viewportCenterY = window.visualViewport.height / 2;
-          searchWrapper.style.top = `${viewportCenterY}px`;
-          searchWrapper.style.transform = 'translate(-50%, -50%)';
-          searchWrapper.style.bottom = 'auto';
-          return;
-        }
 
         const currentHeight = window.innerHeight;
         const keyboardHeight = window.innerHeight - window.visualViewport.height;
@@ -16686,12 +16677,12 @@ function setupFloatingHeaderEvents() {
           searchWrapper.style.position = 'fixed';
           searchWrapper.style.left = '50%';
           searchWrapper.style.right = 'auto';
-          searchWrapper.style.transform = 'translate(-50%, -50%)'; // 수평/수직 정중앙 정렬
+          searchWrapper.style.transform = 'translateX(-50%)'; // 수평 정중앙 정렬
           searchWrapper.style.width = 'calc(100% - 32px)';
           searchWrapper.style.maxWidth = '320px';
           searchWrapper.style.pointerEvents = 'auto';
-          searchWrapper.style.top = '50%'; // 초기 화면 정중앙 대기
-          searchWrapper.style.bottom = 'auto'; // 하단 구속 해제
+          searchWrapper.style.top = 'auto'; // 키보드 연동을 위해 top 해제
+          searchWrapper.style.bottom = 'calc(6px + env(safe-area-inset-bottom))'; // 초기 하단 대기선
         }
 
         searchPanel.style.width = '240px';
