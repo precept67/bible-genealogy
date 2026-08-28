@@ -16632,30 +16632,9 @@ function setupFloatingHeaderEvents() {
         searchViewportInterval = null;
       }
       if (searchWrapper) {
-        searchWrapper.style.position = 'fixed';
-        searchWrapper.style.left = 'auto';
-        searchWrapper.style.right = '16px';
-        searchWrapper.style.transform = 'none';
-        searchWrapper.style.width = 'auto';
-        searchWrapper.style.maxWidth = 'none';
-        searchWrapper.style.top = ''; // 상단 고정 해제
-        searchWrapper.style.bottom = 'calc(6px + env(safe-area-inset-bottom))';
-        searchWrapper.style.pointerEvents = 'none';
-        searchWrapper.style.justifyContent = ''; // 정렬 리셋
+        searchWrapper.style.top = ''; 
+        searchWrapper.style.bottom = ''; // 동적 인라인 값만 리셋
       }
-
-      // 🔍 검색 버튼 원래대로 다시 보이기 및 물리 영역 복원
-      if (floatSearchBtn) {
-        floatSearchBtn.style.display = ''; // block/flex 디폴트로 물리 영역 복구!
-        floatSearchBtn.style.opacity = '1';
-        floatSearchBtn.style.pointerEvents = 'auto';
-      }
-
-      searchPanel.style.width = '0px';
-      searchPanel.style.opacity = '0';
-      searchPanel.style.pointerEvents = 'none';
-      searchPanel.style.marginLeft = ''; // 마진 리셋
-      searchPanel.style.marginRight = ''; // 마진 리셋
       searchInput.value = '';
       const resultsDropdown = document.getElementById('search-results');
       if (resultsDropdown) resultsDropdown.innerHTML = '';
@@ -16671,48 +16650,20 @@ function setupFloatingHeaderEvents() {
       e.stopPropagation();
       isSearchOpen = !isSearchOpen;
       if (isSearchOpen) {
-        const isLandscape = window.matchMedia('(orientation: landscape)').matches;
-        // 터치 즉시 화면 가로 중앙 및 하단 대기선으로 먼저 던져두어 포커싱 전 사라짐 방지
-        if (!isLandscape && searchWrapper) {
+        if (searchWrapper) {
           document.body.classList.add('search-focused');
-          
-          // 🔍 검색 버튼의 물리 공간을 아예 없애서 가로 중앙 쏠림 오류를 완치!
-          floatSearchBtn.style.display = 'none';
-          floatSearchBtn.style.opacity = '0';
-          floatSearchBtn.style.pointerEvents = 'none';
-          
-          searchWrapper.style.position = 'fixed';
-          searchWrapper.style.left = '16px'; // 화면 좌측 테두리 여백 16px 강제 지정
-          searchWrapper.style.right = '16px'; // 화면 우측 테두리 여백 16px 강제 지정 (좌우 1:1 대칭 매칭)
-          searchWrapper.style.transform = 'none'; // 쏠림 오류를 낳던 변환식 해제
-          searchWrapper.style.width = 'auto';
-          searchWrapper.style.maxWidth = 'none';
-          searchWrapper.style.justifyContent = 'center'; // 내부 검색창 요소를 정가운데 정렬
-          searchWrapper.style.pointerEvents = 'auto';
           searchWrapper.style.top = 'auto'; // 키보드 연동을 위해 top 해제
           searchWrapper.style.bottom = 'calc(6px + env(safe-area-inset-bottom))'; // 초기 하단 대기선
         }
 
-        searchPanel.style.width = '240px';
-        searchPanel.style.opacity = '1';
-        searchPanel.style.pointerEvents = 'auto';
-        
-        // 세로 화면일 때는 부모 flex-start 및 인라인 margin-right 오작동을 차단하기 위해 마진을 좌우 auto로 강제 잠금
-        if (!isLandscape) {
-          searchPanel.style.marginLeft = 'auto';
-          searchPanel.style.marginRight = 'auto';
-        }
-        
         // 포커싱과 동시에 50ms 실시간 폴러 감시 타이머 구동
         setTimeout(() => {
           searchInput.focus();
           
-          if (!isLandscape) {
-            if (searchViewportInterval) clearInterval(searchViewportInterval);
-            searchViewportInterval = setInterval(handleVisualViewportChange, 50);
-          }
+          if (searchViewportInterval) clearInterval(searchViewportInterval);
+          searchViewportInterval = setInterval(handleVisualViewportChange, 50);
           
-          if (!isLandscape && window.visualViewport) {
+          if (window.visualViewport) {
             window.visualViewport.addEventListener('resize', handleVisualViewportChange);
             window.visualViewport.addEventListener('scroll', handleVisualViewportChange);
             handleVisualViewportChange();
