@@ -16654,6 +16654,8 @@ function setupFloatingHeaderEvents() {
       searchPanel.style.width = '0px';
       searchPanel.style.opacity = '0';
       searchPanel.style.pointerEvents = 'none';
+      searchPanel.style.marginLeft = ''; // 마진 리셋
+      searchPanel.style.marginRight = ''; // 마진 리셋
       searchInput.value = '';
       const resultsDropdown = document.getElementById('search-results');
       if (resultsDropdown) resultsDropdown.innerHTML = '';
@@ -16694,6 +16696,12 @@ function setupFloatingHeaderEvents() {
         searchPanel.style.width = '240px';
         searchPanel.style.opacity = '1';
         searchPanel.style.pointerEvents = 'auto';
+        
+        // 세로 화면일 때는 부모 flex-start 및 인라인 margin-right 오작동을 차단하기 위해 마진을 좌우 auto로 강제 잠금
+        if (!isLandscape) {
+          searchPanel.style.marginLeft = 'auto';
+          searchPanel.style.marginRight = 'auto';
+        }
         
         // 포커싱과 동시에 50ms 실시간 폴러 감시 타이머 구동
         setTimeout(() => {
