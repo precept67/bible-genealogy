@@ -3401,3 +3401,30 @@ body.search-focused #search-panel {
   font-size: 18px !important;
   font-weight: bold !important;
 }
+
+/* 7. 되돌리기 및 다시실행 버튼의 배경 화이트 및 비활성화(disabled) 명도 오차 방어 */
+#admin-undo-btn,
+#admin-redo-btn {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  font-size: 18px !important;
+  font-weight: bold !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* 비활성화 상태에서도 단추 배경의 맑은 흰색은 그대로 보존하고, 내부 이모지만 자연스럽게 페이드 처리 */
+#admin-undo-btn:disabled,
+#admin-redo-btn:disabled {
+  background: rgba(255, 255, 255, 0.95) !important;
+  opacity: 1 !important; /* 전체 투명화에 의한 회색 탁해짐 방지 */
+  cursor: not-allowed !important;
+}
+#admin-undo-btn:disabled,
+#admin-redo-btn:disabled {
+  filter: grayscale(100%) brightness(85%) opacity(0.3) !important;
+}
