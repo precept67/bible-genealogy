@@ -16600,6 +16600,14 @@ function setupFloatingHeaderEvents() {
 
     const handleVisualViewportChange = () => {
       if (window.visualViewport && document.body.classList.contains('search-focused') && searchWrapper) {
+        const isLandscape = window.matchMedia('(orientation: landscape)').matches;
+        // 세로화면일 때는 상단 고정이므로 키보드에 밀려 춤추지 않도록 연산 통과
+        if (!isLandscape) {
+          searchWrapper.style.top = '111px';
+          searchWrapper.style.bottom = 'auto';
+          return;
+        }
+
         const currentHeight = window.innerHeight;
         const keyboardHeight = window.innerHeight - window.visualViewport.height;
         
@@ -16629,6 +16637,7 @@ function setupFloatingHeaderEvents() {
         searchWrapper.style.transform = 'none';
         searchWrapper.style.width = 'auto';
         searchWrapper.style.maxWidth = 'none';
+        searchWrapper.style.top = ''; // 상단 고정 해제
         searchWrapper.style.bottom = 'calc(6px + env(safe-area-inset-bottom))';
         searchWrapper.style.pointerEvents = 'none';
       }
@@ -16661,7 +16670,8 @@ function setupFloatingHeaderEvents() {
           searchWrapper.style.width = 'calc(100% - 32px)';
           searchWrapper.style.maxWidth = '320px';
           searchWrapper.style.pointerEvents = 'auto';
-          searchWrapper.style.bottom = 'calc(6px + env(safe-area-inset-bottom))';
+          searchWrapper.style.top = '111px'; // 화면 상단 111px 배치
+          searchWrapper.style.bottom = 'auto'; // 하단 구속 해제
         }
 
         searchPanel.style.width = '240px';
