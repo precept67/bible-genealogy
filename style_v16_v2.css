@@ -1408,7 +1408,7 @@ header .subtitle {
     left: auto !important;
     right: 16px !important;
   }
-  /* 환경설정 창도 모바일에서 선디자인 편집기와 동일하게 350px로 매칭 (단, 화면 너비의 60%를 넘지 않게 규제하며 상단 111px 기준으로 높이를 400px 지정) */
+  /* 환경설정 창도 모바일에서 선디자인 편집기와 동일하게 350px로 매칭 (단, 화면 너비의 60%를 넘지 않게 규제하며 상단 111px 기준 높이 400px으로 우측 벽 밀착) */
   #settings-modal .modal-content {
     width: 350px !important; /* 가로 너비 350px */
     max-width: 60% !important; /* 화면 너비의 60%를 넘지 않게 제한 */
@@ -3193,7 +3193,7 @@ svg path.prophets-aura {
   position: absolute !important;
   top: 111px !important; /* 환경설정 창의 시작 상단을 화면 상단에서 111px 아래로 정박 */
   bottom: auto !important; /* 고정 높이 400px 동작을 위해 하단 구속 해제 */
-  right: 16px !important;
+  right: 0px !important; /* 화면 우측 끝 밀착 */
   left: auto !important;
   width: 350px !important; /* 가로 너비 350px 통일 */
   max-width: 90% !important;
@@ -3205,7 +3205,7 @@ svg path.prophets-aura {
   z-index: 13000 !important; /* 검색 토글보다 높은 레이어로 가림 */
   background: var(--bg-panel) !important;
   border: 1px solid var(--border-panel) !important;
-  border-radius: 16px !important;
+  border-radius: 16px 0px 0px 16px !important; /* 우측 면은 화면 모서리에 딱 맞추고, 좌측 노출 면만 둥글게 가공 */
   box-shadow: var(--shadow-panel) !important;
   backdrop-filter: none !important; /* 뒤쪽 검색 토글 실루엣 투과를 없애기 위해 블러 필터 해제 */
   -webkit-backdrop-filter: none !important;
