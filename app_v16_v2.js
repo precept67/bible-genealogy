@@ -13265,15 +13265,22 @@ function hideAdminLockControls() {
 function updateAdminLockVisibility() {
   const divider = document.getElementById('admin-divider');
   const lockBtn = document.getElementById('admin-lock-btn');
+  const slideLockContainer = document.getElementById('slide-lock-container');
+  
   if (lockBtn) lockBtn.style.display = 'flex';
+  
   if (currentUser && currentUser.status === 'admin') {
     if (divider) divider.style.display = 'block';
-    if (!isAdminMode) {
-      cachedAdminPassword = 'admin';
-      enterAdminMode();
-    }
+    // 어드민 사용자일 때만 슬라이드 잠금해제 단추를 보여줍니다.
+    if (slideLockContainer) slideLockContainer.style.display = 'flex';
   } else {
     if (divider) divider.style.display = 'none';
+    // 일반 회원일 때는 슬라이드 단추 자체를 은닉 차단합니다.
+    if (slideLockContainer) slideLockContainer.style.display = 'none';
+    // 혹시라도 일반 권한인데 어드민 상태라면 즉각 잠금상태로 강제 추방합니다.
+    if (isAdminMode) {
+      exitAdminMode();
+    }
   }
 }
 
