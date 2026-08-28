@@ -1613,11 +1613,9 @@ function updateHistoryButtonsState() {
       undoBtn.style.display = 'flex'; // 편집(어드민) 모드일 때만 비로소 노출!
       if (undoStack.length > 0) {
         undoBtn.disabled = false;
-        undoBtn.style.opacity = "1";
         undoBtn.style.cursor = "pointer";
       } else {
         undoBtn.disabled = true;
-        undoBtn.style.opacity = "0.35";
         undoBtn.style.cursor = "not-allowed";
       }
     }
@@ -1629,11 +1627,9 @@ function updateHistoryButtonsState() {
       redoBtn.style.display = 'flex'; // 편집(어드민) 모드일 때만 비로소 노출!
       if (redoStack.length > 0) {
         redoBtn.disabled = false;
-        redoBtn.style.opacity = "1";
         redoBtn.style.cursor = "pointer";
       } else {
         redoBtn.disabled = true;
-        redoBtn.style.opacity = "0.35";
         redoBtn.style.cursor = "not-allowed";
       }
     }
