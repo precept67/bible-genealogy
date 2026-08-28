@@ -3191,7 +3191,7 @@ svg path.prophets-aura {
 /* 환경설정 창 너비를 선디자인 편집기(360px)와 매칭, 우측 하단 끝(bottom: 16px)까지 전체 연장 */
 #settings-modal .modal-content {
   position: absolute !important;
-  top: 80px !important; /* 환경설정 토글(⚙️) 바로 아래로 정렬 */
+  top: 111px !important; /* 환경설정 창의 시작 상단을 화면 상단에서 111px 아래로 정박 */
   bottom: 16px !important; /* 하단 끝 화면 전체 채우기 */
   right: 16px !important;
   left: auto !important;
@@ -3199,7 +3199,7 @@ svg path.prophets-aura {
   max-width: 90% !important;
   min-width: auto !important;
   height: auto !important;
-  max-height: calc(100vh - 96px) !important; /* 뷰포트 하단 마진 제외하고 완전히 뻗침 */
+  max-height: calc(100vh - 127px) !important; /* 뷰포트 하단 마진과 상단 111px을 제외한 한도 높이 지정 */
   overflow-y: auto !important;
   pointer-events: auto !important; /* 설정창 내부 요소 터치 조작 허용 */
   z-index: 13000 !important; /* 검색 토글보다 높은 레이어로 가림 */
