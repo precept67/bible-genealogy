@@ -10343,6 +10343,10 @@ function setupSearch() {
               centerOnCoords(matched.x, matched.y);
             }
           }
+          // 검색 리스트 클릭 완료 즉시 검색창 안전 리셋 및 돋보기 원복!
+          if (window.closeSearchWrapper) {
+            window.closeSearchWrapper();
+          }
         });
         
         searchResults.appendChild(li);
@@ -10353,6 +10357,10 @@ function setupSearch() {
   searchInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
       searchInput.blur();
+      // 엔터 키 검색 완료 즉시 검색창 안전 리셋 및 돋보기 원복!
+      if (window.closeSearchWrapper) {
+        window.closeSearchWrapper();
+      }
     }
   });
 
@@ -16644,6 +16652,9 @@ function setupFloatingHeaderEvents() {
         window.visualViewport.removeEventListener('scroll', handleVisualViewportChange);
       }
     };
+
+    // 전역 스코프에서 다른 검색 리스트 클릭 및 키 바인딩 시 복구할 수 있도록 노출
+    window.closeSearchWrapper = closeSearchWrapper;
 
     // 🔍 검색 토글 버튼 클릭 핸들러
     floatSearchBtn.addEventListener('click', (e) => {
