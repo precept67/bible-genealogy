@@ -3326,6 +3326,14 @@ body.search-focused #search-panel {
    ========================================================================== */
 /* 1. 락 버튼 컨테이너를 다른 버튼들과 동일한 프리미엄 흰색 테마로 단정히 격상 */
 #slide-lock-container {
+  background: transparent !important; /* 평소에는 가이드 배경을 투명하게 숨김 */
+  border: 1px solid transparent !important; /* 평소에는 가이드 선을 투명하게 숨김 */
+  box-shadow: none !important; /* 평소에는 그림자 숨김 */
+  transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease !important;
+}
+
+/* 사용자가 슬라이더 동그라미를 손가락으로 붙잡고 미는(dragging) 찰나의 순간에만 가이드 선과 배경이 스르륵 등장 */
+#slide-lock-container.dragging {
   background: rgba(255, 255, 255, 0.95) !important;
   border: 1px solid rgba(0, 0, 0, 0.08) !important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
