@@ -3294,28 +3294,29 @@ svg path.prophets-aura {
 }
 
 /* ==========================================================================
-   🔍 검색창 활성화 시 가로/세로 전체 무조건 가로 정중앙 정밀 안착 및 대칭 락
+   🔍 검색창 활성화 시 가로/세로 전체 무조건 X축 절대 정중앙 정밀 대칭 고정 락
    ========================================================================== */
 body.search-focused #floating-search-wrapper {
   position: fixed !important;
-  left: 16px !important;
-  right: 16px !important;
-  width: auto !important;
-  max-width: none !important;
-  transform: none !important;
+  left: 50% !important; /* 화면 가로폭의 정확히 50% 지점 */
+  right: auto !important;
+  transform: translateX(-50%) !important; /* 50% 지점에서 검색창 자체 절반 크기만큼 역인출하여 완벽한 데칼코마니 대칭 실현 */
+  width: 240px !important; /* 패널 크기인 240px에 타이트하게 일치화하여 잔존 gap 쏠림을 원천 제거 */
+  max-width: 240px !important;
   display: flex !important;
-  justify-content: center !important; /* 래퍼 내부의 검색 패널을 가로 중앙으로 정밀 대칭 정렬 */
+  justify-content: center !important;
   align-items: center !important;
+  gap: 0px !important;
   pointer-events: auto !important;
 }
 
 body.search-focused #floating-search-toggle-btn {
-  display: none !important; /* 활성화 시 돋보기 버튼 물리 영역 완전 소멸하여 쏠림 오차 제거 */
+  display: none !important; /* 활성화 시 돋보기 버튼 물리 영역 완전 제거 */
 }
 
 body.search-focused #search-panel {
   width: 240px !important;
   opacity: 1 !important;
   pointer-events: auto !important;
-  margin: 0 auto !important; /* 알맹이 자체도 좌우 auto 마진으로 완벽한 대칭 수립 */
+  margin: 0 !important; /* 쏠림을 방지하기 위해 잔여 마진을 완전히 제거 */
 }
