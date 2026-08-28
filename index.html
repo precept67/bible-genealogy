@@ -46,7 +46,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
   
   <!-- Main Stylesheet -->
-  <link rel="stylesheet" href="style_v16_v2.css?v=55555">
+  <link rel="stylesheet" href="style_v16_v2.css?v=66666">
 
   <!-- Upgraded Admin Toolkit Styling (40px circle, white background, 50% opacity emojis) -->
   <style>
@@ -355,7 +355,7 @@
     
     <!-- Floating Settings Button (Fixed 16px right margin, 51px top safe margin to align with actions-bar) -->
     <button id="floating-settings-btn" class="admin-action-btn-circle has-tooltip tooltip-down" data-tooltip="환경설정" style="position: fixed !important; top: 61px !important; right: 16px !important; z-index: 12000 !important;" title="환경설정">
-      <img src="settings_btn.png" alt="환경설정" style="width: 30px; height: 30px; object-fit: contain; display: block; opacity: 0.8; filter: drop-shadow(0px 1px 2px rgba(0,0,0,0.1));" />
+      <img src="settings_btn.png" alt="환경설정" style="width: 26px; height: 26px; object-fit: contain; display: block; opacity: 0.8; filter: drop-shadow(0px 1px 2px rgba(0,0,0,0.1));" />
     </button>
 
     
@@ -408,7 +408,7 @@
       
       <!-- 1. Undo Button (Now Decoupled Outside, styled like Search Toggle) -->
       <button id="admin-undo-btn" class="history-control-btn control-btn has-tooltip tooltip-up" data-tooltip="되돌리기" title="되돌리기" style="display: none !important; pointer-events: auto; background: rgba(255, 255, 255, 0.95) !important; border: 1px solid rgba(0, 0, 0, 0.08) !important; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important; color: #64748b !important; cursor: not-allowed; transition: opacity 0.2s ease, transform 0.1s ease; padding: 0; margin: 0; display: flex; align-items: center; justify-content: center; width: 40px !important; height: 40px !important; border-radius: 20px !important;" disabled>
-        <img src="undo_btn.png" alt="되돌리기" style="width: 25px; height: 25px; object-fit: contain; display: block; opacity: 0.8;" />
+        <img src="undo_btn.png" alt="되돌리기" style="width: 21px; height: 21px; object-fit: contain; display: block; opacity: 0.8;" />
       </button>
       
       <!-- 2. Pure Zoom Control Panel Capsule -->
@@ -429,7 +429,7 @@
       
       <!-- 3. Redo Button (Now Decoupled Outside, styled like Search Toggle) -->
       <button id="admin-redo-btn" class="history-control-btn control-btn has-tooltip tooltip-up" data-tooltip="다시 실행" title="다시 실행" style="display: none !important; pointer-events: auto; background: rgba(255, 255, 255, 0.95) !important; border: 1px solid rgba(0, 0, 0, 0.08) !important; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important; color: #64748b !important; cursor: not-allowed; transition: opacity 0.2s ease, transform 0.1s ease; padding: 0; margin: 0; display: flex; align-items: center; justify-content: center; width: 40px !important; height: 40px !important; border-radius: 20px !important;" disabled>
-        <img src="redo_btn.png" alt="다시 실행" style="width: 25px; height: 25px; object-fit: contain; display: block; opacity: 0.8;" />
+        <img src="redo_btn.png" alt="다시 실행" style="width: 21px; height: 21px; object-fit: contain; display: block; opacity: 0.8;" />
       </button>
 
       <input type="file" id="user-notes-file-input" accept=".json" style="display: none;">
@@ -445,7 +445,7 @@
       </div>
       <!-- Floating Search Toggle Button (🔍 - Upgraded with white background) -->
       <button id="floating-search-toggle-btn" class="admin-action-btn-circle has-tooltip tooltip-up" data-tooltip="검색" style="position: relative; pointer-events: auto;" title="검색">
-        <svg id="search-custom-icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <svg id="search-custom-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="11" cy="11" r="8"></circle>
           <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           <line x1="11" y1="8" x2="11" y2="14"></line>
@@ -457,9 +457,9 @@
     <!-- 5. Left Bottom Slide-to-Unlock Edit Mode Slider (40px handle resized to match settings and search buttons) -->
     <div id="slide-lock-container" style="position: fixed; left: 16px; bottom: calc(1px + env(safe-area-inset-bottom)); z-index: 15000; width: 111px; height: 40px; border-radius: 20px; display: flex; align-items: center; padding: 0; box-sizing: border-box; user-select: none; transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;">
       <div id="slide-lock-handle" style="width: 40px; height: 40px; background: #ffffff; border-radius: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; transform: translateX(0px); transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1), background-color 0.2s ease;">
-        <span id="slide-lock-icon" style="display: flex; align-items: center; justify-content: center; width: 30px; height: 30px;">
+        <span id="slide-lock-icon" style="display: flex; align-items: center; justify-content: center; width: 26px; height: 26px;">
           <!-- User-provided unlocked padlock icon (Fixed shape, only color transitions) -->
-          <svg id="slide-lock-icon-svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b; width: 30px; height: 30px; transition: color 0.2s ease; fill: none !important;">
+          <svg id="slide-lock-icon-svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b; width: 26px; height: 26px; transition: color 0.2s ease; fill: none !important;">
             <rect x="5.5" y="11" width="13" height="9.5" rx="2.5" style="fill: none !important;" />
             <path d="M8.5 11V7a3.5 3.5 0 0 1 7 0v2" style="fill: none !important;" />
           </svg>
@@ -683,8 +683,8 @@
         <!-- Admin Database Action Panel (Visible only in Admin Mode - Clean draw toolkit) -->
     <div id="admin-actions-bar" style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 12000; flex-direction: row; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.95); border: 1px solid rgba(0, 0, 0, 0.08); padding: 6px; border-radius: 30px; box-shadow: none; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); pointer-events: auto;">
        <button id="admin-add-btn" class="admin-action-btn-circle has-tooltip tooltip-down" data-tooltip="인물 추가" title="인물 추가">
-         <span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 30px; height: 30px;">
-           <svg class="custom-add-person-icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b; width: 30px; height: 30px; fill: none !important;">
+         <span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 26px; height: 26px;">
+           <svg class="custom-add-person-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b; width: 26px; height: 26px; fill: none !important;">
              <circle cx="10" cy="8" r="4" style="fill: none !important;" />
              <path d="M3 20a7 7 0 0 1 14 0" style="fill: none !important;" />
              <path d="M17 9h6M20 6v6" style="fill: none !important;" />
@@ -692,16 +692,16 @@
          </span>
        </button>
         <button id="admin-add-event-btn" class="admin-action-btn-circle has-tooltip tooltip-down" data-tooltip="사건 추가" title="사건 추가">
-          <span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 30px; height: 30px;">
-            <svg class="custom-add-event-icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b; width: 30px; height: 30px; fill: none !important;">
+          <span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 26px; height: 26px;">
+            <svg class="custom-add-event-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b; width: 26px; height: 26px; fill: none !important;">
               <path d="M6 4c1 4-3 12 0 16M18 4c1 4-3 12 0 16M6 4h12M6 20h12" style="fill: none !important;" />
               <path d="M9 12h6M12 9v6" style="fill: none !important;" />
             </svg>
           </span>
         </button>
         <button id="admin-add-location-btn" class="admin-action-btn-circle has-tooltip tooltip-down" data-tooltip="장소 추가" title="장소 추가">
-          <span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 30px; height: 30px;">
-            <svg class="custom-add-location-icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b; width: 30px; height: 30px; fill: none !important;">
+          <span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 26px; height: 26px;">
+            <svg class="custom-add-location-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b; width: 26px; height: 26px; fill: none !important;">
               <path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z" style="fill: none !important;" />
               <circle cx="12" cy="10" r="3.5" style="fill: none !important;" />
               <path d="M10 10h4M12 8v4" style="fill: none !important;" />
@@ -709,8 +709,8 @@
           </span>
         </button>
        <button id="admin-add-note-btn" class="admin-action-btn-circle has-tooltip tooltip-down" data-tooltip="텍스트 상자 추가" title="텍스트 상자 추가">
-         <span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 30px; height: 30px;">
-           <svg id="text-box-custom-icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b; width: 30px; height: 30px; fill: none !important;">
+         <span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 26px; height: 26px;">
+           <svg id="text-box-custom-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b; width: 26px; height: 26px; fill: none !important;">
              <path d="M5 3h14v13h-3a2 2 0 0 0-2 2v3H5V3z" style="fill: none !important;" />
              <path d="M14 21c0-1.5 1.5-3 3-3h2" style="fill: none !important;" />
              <path d="M8 7h8M8 10h8M8 13h8" style="fill: none !important;" />
@@ -718,16 +718,16 @@
          </span>
        </button>
         <button id="admin-add-polygon-btn" class="admin-action-btn-circle has-tooltip tooltip-down" data-tooltip="영역(다각형) 추가" title="영역(다각형) 추가">
-          <span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 30px; height: 30px;">
-            <svg class="custom-add-polygon-icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b; width: 30px; height: 30px; fill: none !important;">
+          <span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 26px; height: 26px;">
+            <svg class="custom-add-polygon-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b; width: 26px; height: 26px; fill: none !important;">
               <rect x="4" y="4" width="16" height="16" rx="3" style="fill: none !important;" />
               <path d="M8 4v16M12 4v16M16 4v16M4 8h16M4 12h16M4 16h16" style="fill: none !important;" />
             </svg>
           </span>
         </button>
        <button id="style-editor-toggle" class="admin-action-btn-circle has-tooltip tooltip-down" data-tooltip="선 디자인 편집기" title="선 디자인 편집기">
-         <span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 30px; height: 30px;">
-           <svg class="custom-style-editor-icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b; width: 30px; height: 30px; fill: none !important;">
+         <span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 26px; height: 26px;">
+           <svg class="custom-style-editor-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b; width: 26px; height: 26px; fill: none !important;">
              <circle cx="6" cy="18" r="3" style="fill: none !important;" />
              <circle cx="18" cy="18" r="3" style="fill: none !important;" />
              <path d="M9 15L16 5M15 15L8 5" style="fill: none !important;" />
@@ -1405,6 +1405,6 @@
       });
     }
   </script>
-  <script src="app_v16_v2.js?v=55555"></script>
+  <script src="app_v16_v2.js?v=66666"></script>
 </body>
 </html>
