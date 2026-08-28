@@ -1408,10 +1408,10 @@ header .subtitle {
     left: auto !important;
     right: 16px !important;
   }
-  /* 환경설정 창도 모바일에서 선디자인 편집기와 동일하게 350px로 매칭 (우측 벽에 밀착하여 좌측 방향으로 온전한 350px 너비 유지) */
+  /* 환경설정 창도 모바일에서 세로 화면 전체 가로 너비의 정확히 60% 영역을 정박하도록 맞춤 튜닝 */
   #settings-modal .modal-content {
-    width: 350px !important; /* 가로 너비 350px */
-    max-width: 95% !important; /* 화면을 넘지 않는 안전 한도(95%)만 남기고 60% 찌그러짐 제한 걷어냄 */
+    width: 60% !important; /* 세로 화면 가로 너비의 정확히 60% 크기로 정밀 지정 */
+    max-width: 60% !important; 
     min-width: auto !important;
     top: 111px !important; /* 화면 상단 111px 정밀 여백 */
     bottom: auto !important; /* 고정 높이 400px 렌더링을 위해 하단 구속 해제 */
