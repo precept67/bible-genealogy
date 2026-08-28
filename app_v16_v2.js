@@ -16590,18 +16590,6 @@ function setupFloatingHeaderEvents() {
   if (floatSettingsBtn && settingsModal) {
     floatSettingsBtn.addEventListener('click', () => {
       settingsModal.style.display = 'flex';
-      // 환경설정이 켜지면 우측 하단 검색 토글 감추기 (가로화면 제외)
-      const searchWrapper = document.getElementById('floating-search-wrapper');
-      if (searchWrapper) {
-        const isLandscape = window.matchMedia('(orientation: landscape)').matches;
-        if (isLandscape) {
-          searchWrapper.style.opacity = '1';
-          searchWrapper.style.pointerEvents = 'auto';
-        } else {
-          searchWrapper.style.opacity = '0';
-          searchWrapper.style.pointerEvents = 'none';
-        }
-      }
     });
   }
 
