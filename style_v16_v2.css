@@ -3373,6 +3373,7 @@ body.search-focused #search-panel {
 #filter-panel-toggle span,
 #admin-undo-btn,
 #admin-redo-btn,
+#text-box-custom-icon,
 #slide-lock-handle svg {
   font-size: 18px !important;
   width: 18px !important;
