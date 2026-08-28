@@ -11511,7 +11511,7 @@ function activateAddAnnotationMode() {
   isAddAnnotationModeActive = true;
   adminAddNoteBtn.classList.add('active-tool');
   if (adminAddNoteBtn) {
-    adminAddNoteBtn.innerHTML = '<span class="emoji-icon">📝</span>';
+    adminAddNoteBtn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 18px; height: 18px;"><svg id="text-box-custom-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" style="color: #ef4444; width: 18px; height: 18px; fill: none !important;"><path d="M5 3h14v13h-3a2 2 0 0 0-2 2v3H5V3z" style="fill: none !important;"></path><path d="M14 21c0-1.5 1.5-3 3-3h2" style="fill: none !important;"></path><path d="M8 7h8M8 10h8M8 13h8" style="fill: none !important;"></path></svg></span>';
     adminAddNoteBtn.classList.add('danger');
   }
   viewerContainer.style.cursor = 'crosshair';
@@ -11547,7 +11547,7 @@ function deactivateAddAnnotationMode() {
   isAddAnnotationModeActive = false;
   adminAddNoteBtn.classList.remove('active-tool');
   if (adminAddNoteBtn) {
-    adminAddNoteBtn.innerHTML = '<span class="emoji-icon">📝</span>';
+    adminAddNoteBtn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 18px; height: 18px;"><svg id="text-box-custom-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b; width: 18px; height: 18px; fill: none !important;"><path d="M5 3h14v13h-3a2 2 0 0 0-2 2v3H5V3z" style="fill: none !important;"></path><path d="M14 21c0-1.5 1.5-3 3-3h2" style="fill: none !important;"></path><path d="M8 7h8M8 10h8M8 13h8" style="fill: none !important;"></path></svg></span>';
     adminAddNoteBtn.classList.remove('danger');
   }
   viewerContainer.style.cursor = 'grab';

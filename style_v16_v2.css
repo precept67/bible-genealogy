@@ -3528,6 +3528,8 @@ svg.history-custom-icon {
 .custom-add-event-icon path,
 .custom-add-location-icon,
 .custom-add-location-icon circle,
-.custom-add-location-icon path {
+.custom-add-location-icon path,
+#text-box-custom-icon,
+#text-box-custom-icon path {
   fill: none !important;
 }
