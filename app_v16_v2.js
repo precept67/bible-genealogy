@@ -16493,6 +16493,9 @@ function syncSlideLockUI(isAdmin) {
   if (slideBg && slideBg.id !== 'slide-lock-container') slideBg.style.opacity = '0';
   if (slideText) slideText.style.opacity = '0';
 
+  const svgLocked = document.getElementById('slide-lock-svg-locked');
+  const svgUnlocked = document.getElementById('slide-lock-svg-unlocked');
+
   if (isAdmin) {
     if (slideHandle) {
       slideHandle.style.background = '#ffffff'; // 배경색은 항상 흰색으로 통일
@@ -16501,9 +16504,8 @@ function syncSlideLockUI(isAdmin) {
       slideText.innerText = '편집 모드';
       slideText.style.color = '#10b981'; // 편집 모드 텍스트 색상 초록 강조
     }
-    if (slideIcon) {
-      slideIcon.innerText = '🔑'; // 자물쇠 대신 열쇠 이모지 통일 고정!
-    }
+    if (svgLocked) svgLocked.style.display = 'none';
+    if (svgUnlocked) svgUnlocked.style.display = 'inline-block';
   } else {
     if (slideHandle) {
       slideHandle.style.background = '#ffffff'; // 배경색은 항상 흰색으로 통일
@@ -16512,9 +16514,8 @@ function syncSlideLockUI(isAdmin) {
       slideText.innerText = '밀어서 편집';
       slideText.style.color = '#475569'; // 흰색 배경 위에 가독성 슬레이트 회색
     }
-    if (slideIcon) {
-      slideIcon.innerText = '🔑'; // 자물쇠 대신 열쇠 이모지 통일 고정!
-    }
+    if (svgLocked) svgLocked.style.display = 'inline-block';
+    if (svgUnlocked) svgUnlocked.style.display = 'none';
   }
   // 편집 모드 락/언락 시점에 되돌리기/다시실행 버튼 표시 여부를 실시간 제어
   updateHistoryButtonsState();
