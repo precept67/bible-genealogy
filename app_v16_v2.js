@@ -16634,8 +16634,13 @@ function setupFloatingHeaderEvents() {
         if (window.visualViewport && document.body.classList.contains('search-focused')) {
           // 가상 키보드 및 액세서리 뷰가 솟아오른 실제 수직 높이 도출
           const keyboardHeight = window.innerHeight - window.visualViewport.height;
-          // 액세서리 뷰 경계선 바로 3px 위에 정밀 밀착 고정
-          searchWrapper.style.bottom = `${keyboardHeight + 3}px`;
+          // 키보드가 100px 이상 활성화되어 솟구쳤을 때만 액세서리 뷰 바로 3px 위에 밀착 정렬
+          if (keyboardHeight > 100) {
+            searchWrapper.style.bottom = `${keyboardHeight + 3}px`;
+          } else {
+            // 키보드가 안 올라왔거나 미미한 크기일 때는 원래의 바닥 여백 유지하여 가라앉음 차단
+            searchWrapper.style.bottom = 'calc(6px + env(safe-area-inset-bottom))';
+          }
         }
       };
 
