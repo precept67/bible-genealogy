@@ -555,7 +555,7 @@ header .subtitle {
   border-radius: 16px;
   box-shadow: var(--shadow-panel);
   backdrop-filter: var(--glass-blur);
-  z-index: 200;
+  z-index: 30000;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
@@ -875,7 +875,7 @@ header .subtitle {
     border: none;
     border-left: 1px solid var(--border-panel);
     box-shadow: -5px 0 25px rgba(0, 0, 0, 0.15);
-    z-index: 4000;
+    z-index: 30000;
   }
   #study-panel.active {
     right: 0;
@@ -1018,7 +1018,7 @@ header .subtitle {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 999;
+  z-index: 30000;
 }
 
 .modal-content {
@@ -1202,7 +1202,7 @@ header .subtitle {
   border-radius: 16px;
   box-shadow: var(--shadow-panel);
   backdrop-filter: var(--glass-blur);
-  z-index: 13000;
+  z-index: 30000;
   transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
@@ -1421,7 +1421,7 @@ header .subtitle {
     max-height: 400px !important;
     right: 0px !important; /* 화면 우측 끝 밀착 */
     border-radius: 16px 0px 0px 16px !important; /* 우측 모서리는 화면에 맞춤 정렬 */
-    z-index: 13000 !important; /* 모바일에서도 검색 토글보다 앞쪽(레이어 위)에 오게 강제 */
+    z-index: 30000 !important; /* 모바일에서도 검색 토글보다 앞쪽(레이어 위)에 오게 강제 */
   }
   #filter-panel {
     width: 75%;
@@ -1432,7 +1432,7 @@ header .subtitle {
     border: none;
     border-right: 1px solid var(--border-panel);
     box-shadow: 5px 0 25px rgba(0, 0, 0, 0.15);
-    z-index: 4000;
+    z-index: 30000;
   }
   #filter-panel.active {
     left: 0;
@@ -3190,7 +3190,7 @@ svg path.prophets-aura {
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   pointer-events: auto !important; /* 빈 화면 터치 시 창이 닫히도록 클릭 이벤트 감지 복구 */
-  z-index: 13000 !important;
+  z-index: 30000 !important;
 }
 
 /* 환경설정 창 너비를 선디자인 편집기(360px)와 매칭, 우측 하단 끝(bottom: 16px)까지 전체 연장 */
