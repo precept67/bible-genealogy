@@ -3408,28 +3408,37 @@ body.search-focused #search-panel {
 /* 7. 되돌리기 및 다시실행 버튼의 배경 화이트 및 비활성화(disabled) 명도 오차 방어 */
 #admin-undo-btn,
 #admin-redo-btn {
-  background: rgba(255, 255, 255, 0.95) !important;
+  background: #ffffff !important; /* 불투명한 100% 맑은 순백색 고정 */
   border: 1px solid rgba(0, 0, 0, 0.08) !important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
-  font-size: 18px !important;
-  font-weight: bold !important;
-  display: inline-flex !important;
+  display: none; /* 평소(잠금 상태)에는 완전히 노출 차단 은닉 (자바스크립트 오버라이드 허용) */
   align-items: center !important;
   justify-content: center !important;
 }
 
-/* 비활성화 상태에서도 단추 배경의 맑은 흰색은 그대로 보존하고, 내부 이모지만 자연스럽게 페이드 처리 */
+/* 비활성화 상태에서도 단추 배경의 맑은 흰색은 그대로 보존하고, 브라우저 기본 disabled opacity 강제 해제 */
 #admin-undo-btn:disabled,
 #admin-redo-btn:disabled {
-  background: rgba(255, 255, 255, 0.95) !important;
-  opacity: 1 !important; /* 전체 투명화에 의한 회색 탁해짐 방지 */
+  background: #ffffff !important;
+  opacity: 1 !important; /* 브라우저 기본 반투명화 방지 */
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
   cursor: not-allowed !important;
 }
-#admin-undo-btn:disabled,
-#admin-redo-btn:disabled {
-  filter: grayscale(100%) brightness(85%) opacity(0.3) !important;
+
+/* 비활성 상태일 때 버튼 배경은 두고, 오직 내부 화살표 라인만 연하게 페이드아웃 */
+#admin-undo-btn:disabled svg.history-custom-icon,
+#admin-redo-btn:disabled svg.history-custom-icon {
+  opacity: 0.25 !important;
+}
+
+/* 역사 제어 벡터 화살표 아이콘 면 채우기(fill)를 방지하여 선명한 라인만 표출 (토끼귀 찌그러짐 해소) */
+svg.history-custom-icon {
+  fill: none !important;
+  stroke: #64748b !important;
+  stroke-width: 2.5 !important;
 }
 
 /* ==========================================================================
