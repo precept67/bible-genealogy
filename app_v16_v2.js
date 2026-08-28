@@ -16595,80 +16595,27 @@ function setupFloatingHeaderEvents() {
 
   if (floatSearchBtn && searchPanel && searchInput) {
     let isSearchOpen = false;
-
-    floatSearchBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      isSearchOpen = !isSearchOpen;
-      if (isSearchOpen) {
-        searchPanel.style.width = '240px';
-        searchPanel.style.opacity = '1';
-        searchPanel.style.pointerEvents = 'auto';
-        setTimeout(() => searchInput.focus(), 150);
-      } else {
-        searchPanel.style.width = '0px';
-        searchPanel.style.opacity = '0';
-        searchPanel.style.pointerEvents = 'none';
-        searchInput.value = '';
-        const resultsDropdown = document.getElementById('search-results');
-        if (resultsDropdown) resultsDropdown.innerHTML = '';
-      }
-    });
-
-    // Close search drawer if clicked outside
-    window.addEventListener('click', (e) => {
-      if (isSearchOpen && !searchPanel.contains(e.target) && e.target !== floatSearchBtn) {
-        isSearchOpen = false;
-        searchPanel.style.width = '0px';
-        searchPanel.style.opacity = '0';
-        searchPanel.style.pointerEvents = 'none';
-        searchInput.value = '';
-        const resultsDropdown = document.getElementById('search-results');
-        if (resultsDropdown) resultsDropdown.innerHTML = '';
-      }
-    });
-
-    // 세로화면에서 검색 입력 포커스 시 검색창을 화면 중앙, 소프트 키보드 액세서리 뷰 3px 위로 흡수 정렬
     const searchWrapper = document.getElementById('floating-search-wrapper');
-    if (searchInput && searchWrapper) {
-      const handleVisualViewportChange = () => {
-        if (window.visualViewport && document.body.classList.contains('search-focused')) {
-          // 가상 키보드 및 액세서리 뷰가 솟아오른 실제 수직 높이 도출
-          const keyboardHeight = window.innerHeight - window.visualViewport.height;
-          // 키보드가 100px 이상 활성화되어 솟구쳤을 때만 액세서리 뷰 바로 3px 위에 밀착 정렬
-          if (keyboardHeight > 100) {
-            searchWrapper.style.bottom = `${keyboardHeight + 3}px`;
-          } else {
-            // 키보드가 안 올라왔거나 미미한 크기일 때는 원래의 바닥 여백 유지하여 가라앉음 차단
-            searchWrapper.style.bottom = 'calc(6px + env(safe-area-inset-bottom))';
-          }
+
+    const handleVisualViewportChange = () => {
+      if (window.visualViewport && document.body.classList.contains('search-focused') && searchWrapper) {
+        // 가상 키보드 및 액세서리 뷰가 솟아오른 실제 수직 높이 도출
+        const keyboardHeight = window.innerHeight - window.visualViewport.height;
+        // 키보드가 100px 이상 활성화되어 솟구쳤을 때만 액세서리 뷰 바로 3px 위에 밀착 정렬
+        if (keyboardHeight > 100) {
+          searchWrapper.style.bottom = `${keyboardHeight + 3}px`;
+        } else {
+          // 키보드가 안 올라왔거나 미미한 크기일 때는 원래의 바닥 여백 유지하여 가라앉음 차단
+          searchWrapper.style.bottom = 'calc(6px + env(safe-area-inset-bottom))';
         }
-      };
+      }
+    };
 
-      searchInput.addEventListener('focus', () => {
-        const isLandscape = window.matchMedia('(orientation: landscape)').matches;
-        if (!isLandscape) {
-          document.body.classList.add('search-focused');
-          
-          searchWrapper.style.position = 'fixed';
-          searchWrapper.style.left = '50%';
-          searchWrapper.style.right = 'auto';
-          searchWrapper.style.transform = 'translateX(-50%)';
-          searchWrapper.style.width = 'calc(100% - 32px)';
-          searchWrapper.style.maxWidth = '320px';
-          searchWrapper.style.pointerEvents = 'auto';
-
-          if (window.visualViewport) {
-            window.visualViewport.addEventListener('resize', handleVisualViewportChange);
-            window.visualViewport.addEventListener('scroll', handleVisualViewportChange);
-            handleVisualViewportChange();
-          }
-        }
-      });
-
-      searchInput.addEventListener('blur', () => {
-        document.body.classList.remove('search-focused');
-        
-        // 포커스 아웃 시 즉시 원래의 우측 하단 디폴트 위치로 사뿐히 복귀
+    // 검색창 원래 상태로 안전 리셋 및 복원 헬퍼
+    const closeSearchWrapper = () => {
+      isSearchOpen = false;
+      document.body.classList.remove('search-focused');
+      if (searchWrapper) {
         searchWrapper.style.position = '';
         searchWrapper.style.left = '';
         searchWrapper.style.right = '';
@@ -16677,13 +16624,72 @@ function setupFloatingHeaderEvents() {
         searchWrapper.style.maxWidth = '';
         searchWrapper.style.bottom = '';
         searchWrapper.style.pointerEvents = '';
+      }
+      searchPanel.style.width = '0px';
+      searchPanel.style.opacity = '0';
+      searchPanel.style.pointerEvents = 'none';
+      searchInput.value = '';
+      const resultsDropdown = document.getElementById('search-results');
+      if (resultsDropdown) resultsDropdown.innerHTML = '';
 
-        if (window.visualViewport) {
-          window.visualViewport.removeEventListener('resize', handleVisualViewportChange);
-          window.visualViewport.removeEventListener('scroll', handleVisualViewportChange);
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', handleVisualViewportChange);
+        window.visualViewport.removeEventListener('scroll', handleVisualViewportChange);
+      }
+    };
+
+    // 🔍 검색 토글 버튼 클릭 핸들러
+    floatSearchBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      isSearchOpen = !isSearchOpen;
+      if (isSearchOpen) {
+        const isLandscape = window.matchMedia('(orientation: landscape)').matches;
+        // 터치 즉시 화면 가로 중앙 및 하단 대기선으로 먼저 던져두어 포커싱 전 사라짐 방지
+        if (!isLandscape && searchWrapper) {
+          document.body.classList.add('search-focused');
+          searchWrapper.style.position = 'fixed';
+          searchWrapper.style.left = '50%';
+          searchWrapper.style.right = 'auto';
+          searchWrapper.style.transform = 'translateX(-50%)';
+          searchWrapper.style.width = 'calc(100% - 32px)';
+          searchWrapper.style.maxWidth = '320px';
+          searchWrapper.style.pointerEvents = 'auto';
+          searchWrapper.style.bottom = 'calc(6px + env(safe-area-inset-bottom))';
         }
-      });
-    }
+
+        searchPanel.style.width = '240px';
+        searchPanel.style.opacity = '1';
+        searchPanel.style.pointerEvents = 'auto';
+        
+        setTimeout(() => {
+          searchInput.focus();
+          if (!isLandscape && window.visualViewport) {
+            window.visualViewport.addEventListener('resize', handleVisualViewportChange);
+            window.visualViewport.addEventListener('scroll', handleVisualViewportChange);
+            handleVisualViewportChange();
+          }
+        }, 150);
+      } else {
+        closeSearchWrapper();
+      }
+    });
+
+    // 외부 영역 클릭 시 검색창 자동 닫기
+    window.addEventListener('click', (e) => {
+      if (isSearchOpen && !searchPanel.contains(e.target) && e.target !== floatSearchBtn) {
+        closeSearchWrapper();
+      }
+    });
+
+    // 포커스 아웃(blur) 시에도 복원 헬퍼 연동
+    searchInput.addEventListener('blur', () => {
+      setTimeout(() => {
+        const activeEl = document.activeElement;
+        if (activeEl !== searchInput && isSearchOpen) {
+          closeSearchWrapper();
+        }
+      }, 100);
+    });
   }
 }
 
