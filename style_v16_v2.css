@@ -3530,6 +3530,9 @@ svg.history-custom-icon {
 .custom-add-location-icon circle,
 .custom-add-location-icon path,
 #text-box-custom-icon,
-#text-box-custom-icon path {
+#text-box-custom-icon path,
+.custom-style-editor-icon,
+.custom-style-editor-icon circle,
+.custom-style-editor-icon path {
   fill: none !important;
 }
