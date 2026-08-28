@@ -3516,3 +3516,10 @@ svg.history-custom-icon {
     width: 91px !important;
   }
 }
+
+/* 6. 락 토글 아이콘 뭉개짐(fill 간섭) 완전 차단 2중 수호자 룰 */
+#slide-lock-icon-svg,
+#slide-lock-icon-svg rect,
+#slide-lock-icon-svg path {
+  fill: none !important;
+}
