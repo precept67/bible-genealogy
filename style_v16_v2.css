@@ -1027,6 +1027,8 @@ header .subtitle {
   border-radius: 16px;
   width: 500px;
   max-width: 90%;
+  max-height: 85vh; /* 화면의 85% 이상 늘어나지 않도록 구속 */
+  overflow-y: auto; /* 내용이 넘칠 때 내부 스크롤 허용 */
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
   display: flex;
   flex-direction: column;
@@ -3427,4 +3429,65 @@ body.search-focused #search-panel {
 #admin-undo-btn:disabled,
 #admin-redo-btn:disabled {
   filter: grayscale(100%) brightness(85%) opacity(0.3) !important;
+}
+
+/* ==========================================================================
+   📱 모바일 세로 화면/좁은 스크린 최적화 모달 보정 (텍스트 상자 추가 등 잘림 완치)
+   ========================================================================== */
+@media (max-width: 768px) {
+  /* 1. 모달 오버레이를 상단 정렬 및 전체 스크롤이 가능하도록 강제 개선 */
+  .modal-overlay {
+    align-items: flex-start !important;
+    overflow-y: auto !important;
+    padding: 16px 8px !important;
+  }
+
+  /* 2. 모달 콘텐츠 높이를 기기 전체 높이 한도 내로 정밀 구속 */
+  .modal-content {
+    margin: 8px auto !important;
+    max-height: calc(100vh - 32px) !important;
+    max-width: 96% !important;
+    border-radius: 12px !important;
+  }
+
+  /* 3. 모달의 헤더/바디/푸터 패딩을 밀도 있게 압축 */
+  .modal-header {
+    padding: 12px 16px !important;
+  }
+  .modal-header h2 {
+    font-size: 16px !important;
+  }
+
+  .form-grid {
+    padding: 12px 16px !important;
+    gap: 8px !important; /* 폼 요소 간격 다이어트 */
+  }
+  .form-group label {
+    font-size: 11px !important;
+    margin-bottom: 2px !important;
+  }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: 6px 8px !important;
+    font-size: 12px !important;
+  }
+
+  /* 4. 긴 관계 체크리스트 박스의 높이를 축소하여 레이아웃 부담 대폭 경감 */
+  .relation-selector-box {
+    max-height: 100px !important;
+  }
+  .selected-relation-tags {
+    gap: 3px !important;
+    margin-bottom: 3px !important;
+  }
+
+  .modal-footer {
+    padding: 10px 16px !important;
+    gap: 6px !important;
+  }
+  .modal-btn {
+    padding: 6px 12px !important;
+    font-size: 11px !important;
+  }
 }
