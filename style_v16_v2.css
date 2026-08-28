@@ -3338,7 +3338,18 @@ body.search-focused #search-panel {
 
 /* 3. 락 버튼 내부 자물쇠 아이콘 색상을 설정 톱니바퀴처럼 차분한 회색으로 통일 */
 #slide-lock-icon {
-  stroke: #64748b !important;
+  font-size: 18px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  filter: grayscale(100%) brightness(55%) contrast(120%) !important;
+}
+
+/* 3-1. 락 슬라이더 원형 손잡이의 입체적인 동그란 윤곽을 흰색 캡슐 위에서 부각시킴 */
+#slide-lock-handle {
+  background: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
 }
 
 /* 4. 헤더/줌 컨트롤 등 모든 원형 버튼들 내부 이모지 및 SVG 아이콘의 크기/색조 일괄 통일 */

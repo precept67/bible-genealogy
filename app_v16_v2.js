@@ -16495,9 +16495,7 @@ function syncSlideLockUI(isAdmin) {
       slideText.style.color = '#10b981'; // 편집 모드 텍스트 색상 초록 강조
     }
     if (slideIcon) {
-      slideIcon.innerHTML = `<rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path>`;
-      slideIcon.querySelector('rect').setAttribute('stroke', '#10b981'); // 자물쇠 열림 아이콘 초록색 매칭
-      if (slideIcon.querySelector('path')) slideIcon.querySelector('path').setAttribute('stroke', '#10b981');
+      slideIcon.innerText = '🔑'; // 자물쇠 대신 열쇠 이모지 통일 고정!
     }
   } else {
     if (slideHandle) {
@@ -16508,9 +16506,7 @@ function syncSlideLockUI(isAdmin) {
       slideText.style.color = '#475569'; // 흰색 배경 위에 가독성 슬레이트 회색
     }
     if (slideIcon) {
-      slideIcon.innerHTML = `<rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>`;
-      slideIcon.querySelector('rect').setAttribute('stroke', '#64748b'); // 닫힘 아이콘 회색 기어 톤 매칭
-      if (slideIcon.querySelector('path')) slideIcon.querySelector('path').setAttribute('stroke', '#64748b');
+      slideIcon.innerText = '🔑'; // 자물쇠 대신 열쇠 이모지 통일 고정!
     }
   }
 }
