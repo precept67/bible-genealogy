@@ -1604,7 +1604,7 @@ function restoreState(state) {
 function updateHistoryButtonsState() {
   const undoBtn = document.getElementById('admin-undo-btn');
   const redoBtn = document.getElementById('admin-redo-btn');
-  const isEditing = typeof isAdmin !== 'undefined' ? isAdmin : false;
+  const isEditing = typeof isAdminMode !== 'undefined' ? isAdminMode : false;
   
   if (undoBtn) {
     if (!isEditing) {
@@ -11718,10 +11718,6 @@ function enterAdminMode() {
   const actionsBar = document.getElementById('admin-actions-bar');
   if (actionsBar) actionsBar.style.display = 'flex';
 
-  const undoBtn = document.getElementById('admin-undo-btn');
-  const redoBtn = document.getElementById('admin-redo-btn');
-  if (undoBtn) undoBtn.style.display = 'inline-flex';
-  if (redoBtn) redoBtn.style.display = 'inline-flex';
   repositionHistoryButtons();
   
   const styleEditorToggleEl = document.getElementById('style-editor-toggle');
@@ -11759,10 +11755,7 @@ function exitAdminMode() {
   const actionsBar = document.getElementById('admin-actions-bar');
   if (actionsBar) actionsBar.style.display = 'none';
 
-  const undoBtn = document.getElementById('admin-undo-btn');
-  const redoBtn = document.getElementById('admin-redo-btn');
-  if (undoBtn) undoBtn.style.display = 'none';
-  if (redoBtn) redoBtn.style.display = 'none';
+  // updateHistoryButtonsState() 가 syncSlideLockUI(false)를 통해 자동 제어함
   
   const styleEditorToggleEl = document.getElementById('style-editor-toggle');
   if (styleEditorToggleEl) styleEditorToggleEl.style.display = 'none';
