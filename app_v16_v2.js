@@ -16525,7 +16525,12 @@ function setupSlideLockDragEvents() {
     let isDragging = false;
     let startX = 0;
     let currentX = 0;
-    const maxSlide = 70;
+
+    function getDynamicMaxSlide() {
+      const containerWidth = slideContainer.getBoundingClientRect().width || 116;
+      const handleWidth = slideHandle.getBoundingClientRect().width || 36;
+      return Math.max(30, containerWidth - handleWidth - 10);
+    }
 
     function onDragStart(e) {
       isDragging = true;
@@ -16541,6 +16546,7 @@ function setupSlideLockDragEvents() {
       if (!isDragging) return;
       const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
       const deltaX = clientX - startX;
+      const maxSlide = getDynamicMaxSlide();
       currentX = Math.max(0, Math.min(maxSlide, deltaX));
       slideHandle.style.transform = `translateX(${currentX}px)`;
       
@@ -16553,6 +16559,7 @@ function setupSlideLockDragEvents() {
       isDragging = false;
       slideHandle.style.transition = 'transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1), background-color 0.2s ease';
       
+      const maxSlide = getDynamicMaxSlide();
       if (currentX >= maxSlide * 0.9) {
         if (originalLockBtn) {
           originalLockBtn.click();
