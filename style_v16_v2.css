@@ -3517,9 +3517,14 @@ svg.history-custom-icon {
   }
 }
 
-/* 6. 락 토글 아이콘 뭉개짐(fill 간섭) 완전 차단 2중 수호자 룰 */
+/* 6. 락 토글 및 신규 선화 아이콘들의 뭉개짐(fill 간섭) 완전 차단 2중 수호자 룰 */
 #slide-lock-icon-svg,
 #slide-lock-icon-svg rect,
-#slide-lock-icon-svg path {
+#slide-lock-icon-svg path,
+.custom-add-person-icon,
+.custom-add-person-icon circle,
+.custom-add-person-icon path,
+.custom-add-event-icon,
+.custom-add-event-icon path {
   fill: none !important;
 }
