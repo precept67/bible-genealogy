@@ -3641,3 +3641,18 @@ svg.history-custom-icon {
     left: 16px !important; /* 락버튼 좌측 16px 간격 정박 */
   }
 }
+
+/* ==========================================================================
+   📱 iPhone 16 Pro Max & iPhone 17 Pro Max (440x956) Dedicated Margins
+   ========================================================================== */
+@media only screen and (device-width: 440px) and (device-height: 956px) and (-webkit-device-pixel-ratio: 3),
+       only screen and (device-width: 956px) and (device-height: 440px) and (-webkit-device-pixel-ratio: 3) {
+  body:not(.search-focused) #floating-search-wrapper {
+    right: 16px !important; /* 검색 버튼 우측 16px 간격 정박 */
+    left: auto !important;
+    transform: none !important;
+  }
+  #slide-lock-container {
+    left: 16px !important; /* 락버튼 좌측 16px 간격 정박 */
+  }
+}
