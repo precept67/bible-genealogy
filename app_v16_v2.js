@@ -12795,14 +12795,15 @@ function importDatabaseJSON(e) {
 // ==========================================
 
 function setupStyleEditor() {
-  // Toggle style editor panel
-  styleEditorToggle.addEventListener('click', () => {
-    if (styleEditorPanel.classList.contains('active')) {
-      closeStyleEditorPanel();
-    } else {
-      openStyleEditorPanel();
-    }
-  });
+  if (styleEditorToggle) {
+    styleEditorToggle.addEventListener('click', () => {
+      if (styleEditorPanel.classList.contains('active')) {
+        closeStyleEditorPanel();
+      } else {
+        openStyleEditorPanel();
+      }
+    });
+  }
   
   if (stylePanelClose) {
     stylePanelClose.addEventListener('click', closeStyleEditorPanel);
