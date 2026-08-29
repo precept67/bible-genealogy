@@ -260,6 +260,11 @@ header .subtitle {
   width: 300px;
 }
 
+.search-box::placeholder {
+  color: #64748b !important;
+  opacity: 0.8 !important;
+}
+
 /* Viewer Container & Interactive Board */
 #viewer-container {
   width: 100% !important;
