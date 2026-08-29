@@ -3616,4 +3616,10 @@ svg.history-custom-icon {
   #slide-lock-container {
     left: 31px !important; /* 검색창 우측 여백(31px)과 수평 좌우 대칭 일치화 */
   }
+  #admin-actions-bar {
+    top: 23px !important; /* 기본 20px에서 3px 아래로 인하 조정 */
+  }
+  #floating-settings-btn {
+    top: 29px !important; /* 기본 26px에서 3px 아래로 인하 조정 (상하 중심선 49px 일치) */
+  }
 }
