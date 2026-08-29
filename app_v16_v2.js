@@ -16753,8 +16753,9 @@ function setupFloatingHeaderEvents() {
     window.closeSearchWrapper = closeSearchWrapper;
 
     // 🔍 검색 토글 버튼 클릭 핸들러
-    floatSearchBtn.addEventListener('click', (e) => {
+    const handleSearchToggle = (e) => {
       e.stopPropagation();
+      if (e.cancelable) e.preventDefault();
       isSearchOpen = !isSearchOpen;
       if (isSearchOpen) {
         if (searchWrapper) {
@@ -16779,14 +16780,11 @@ function setupFloatingHeaderEvents() {
       } else {
         closeSearchWrapper();
       }
-    });
+    };
 
-    // 외부 영역 클릭 시 검색창 자동 닫기 (검색창 내부 구성품 터치 시 오작동 닫힘 전면 방지)
-    window.addEventListener('click', (e) => {
-      if (isSearchOpen && searchWrapper && !searchWrapper.contains(e.target)) {
-        closeSearchWrapper();
-      }
-    });
+    floatSearchBtn.addEventListener('click', handleSearchToggle);
+    floatSearchBtn.addEventListener('touchend', handleSearchToggle, { passive: false });
+    floatSearchBtn.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
 
     // 포커스 아웃(blur) 시 100ms 안심 복구 감지 필터를 통해 검색창 안전 복원 및 돋보기 강제 복구
     searchInput.addEventListener('blur', () => {

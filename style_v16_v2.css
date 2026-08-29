@@ -3319,6 +3319,10 @@ body.search-focused #floating-search-wrapper {
   pointer-events: auto !important;
 }
 
+#floating-search-toggle-btn, #search-panel, #searchInput, #search-results {
+  pointer-events: auto !important; /* 부모 wrapper가 pointer-events none이어도 본인들은 터치를 획득하게 수립 */
+}
+
 body.search-focused #floating-search-toggle-btn {
   display: none !important; /* 활성화 시 돋보기 버튼 물리 영역 완전 제거 */
 }
