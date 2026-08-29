@@ -14258,7 +14258,7 @@ function renderEvents() {
     
     makeLayerDraggable(el, ev, 'event');
     
-    el.addEventListener('click', (e) => {
+    const handleEventActivate = (e) => {
       e.stopPropagation();
       if (el.isDraggingFinished) {
         el.isDraggingFinished = false;
@@ -14266,7 +14266,18 @@ function renderEvents() {
       }
       openLayerDetails(ev, 'event');
       highlightRelatedElements(ev.id, 'event');
-    });
+    };
+    el.addEventListener('click', handleEventActivate);
+    el.addEventListener('touchend', (e) => {
+      if (el.isDraggingFinished) {
+        el.isDraggingFinished = false;
+        e.stopPropagation();
+        e.preventDefault();
+        return;
+      }
+      handleEventActivate(e);
+      e.preventDefault(); // iOS/iPadOS click 시뮬레이션 중복 발동 방지 차단
+    }, { passive: false });
     
     el.addEventListener('dblclick', (e) => {
       e.stopPropagation();
@@ -14301,7 +14312,7 @@ function renderLocations() {
     
     makeLayerDraggable(el, loc, 'location');
     
-    el.addEventListener('click', (e) => {
+    const handleLocationActivate = (e) => {
       e.stopPropagation();
       if (el.isDraggingFinished) {
         el.isDraggingFinished = false;
@@ -14309,7 +14320,18 @@ function renderLocations() {
       }
       openLayerDetails(loc, 'location');
       highlightRelatedElements(loc.id, 'location');
-    });
+    };
+    el.addEventListener('click', handleLocationActivate);
+    el.addEventListener('touchend', (e) => {
+      if (el.isDraggingFinished) {
+        el.isDraggingFinished = false;
+        e.stopPropagation();
+        e.preventDefault();
+        return;
+      }
+      handleLocationActivate(e);
+      e.preventDefault(); // iOS/iPadOS click 시뮬레이션 중복 발동 방지 차단
+    }, { passive: false });
     
     el.addEventListener('dblclick', (e) => {
       e.stopPropagation();
