@@ -3310,8 +3310,8 @@ body.search-focused #floating-search-wrapper {
   left: 50% !important; /* 화면 가로폭의 정확히 50% 지점 */
   right: auto !important;
   transform: translateX(-50%) !important; /* 50% 지점에서 검색창 자체 절반 크기만큼 역인출하여 완벽한 데칼코마니 대칭 실현 */
-  width: 240px !important; /* 패널 크기인 240px에 타이트하게 일치화하여 잔존 gap 쏠림을 원천 제거 */
-  max-width: 240px !important;
+  width: 268px !important; /* 패널 크기(220px input + 8px gap + 40px btn)에 타이트하게 일치화하여 중앙 데칼코마니 대칭 실현 */
+  max-width: 268px !important;
   display: flex !important;
   justify-content: center !important;
   align-items: center !important;
