@@ -10424,8 +10424,31 @@ function setupStudyPanel() {
   const addResourceBtn = document.getElementById('add-resource-btn');
   const noteTextarea = document.getElementById('note-text');
   
-  closeBtn.addEventListener('click', closeStudyPanel);
-  cancelBtn.addEventListener('click', closeStudyPanel);
+  const handleClosePanel = (e) => {
+    e.stopPropagation();
+    if (e.cancelable) e.preventDefault();
+    closeStudyPanel();
+  };
+  
+  if (closeBtn) {
+    closeBtn.addEventListener('click', handleClosePanel);
+    closeBtn.addEventListener('touchend', handleClosePanel, { passive: false });
+    closeBtn.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
+  }
+  if (cancelBtn) {
+    cancelBtn.addEventListener('click', handleClosePanel);
+    cancelBtn.addEventListener('touchend', handleClosePanel, { passive: false });
+    cancelBtn.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
+  }
+
+  // 상세 창 자체 내부의 터치/클릭이 뒷판 가계도 및 마커로 버블링되어 고스트 재오픈되는 현상을 원천 방지
+  if (studyPanel) {
+    studyPanel.addEventListener('mousedown', (e) => e.stopPropagation());
+    studyPanel.addEventListener('click', (e) => e.stopPropagation());
+    studyPanel.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
+    studyPanel.addEventListener('touchmove', (e) => e.stopPropagation(), { passive: true });
+    studyPanel.addEventListener('touchend', (e) => e.stopPropagation(), { passive: true });
+  }
   
   // Draggable logic for expanded mode
   let isDragging = false;
