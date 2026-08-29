@@ -3575,7 +3575,7 @@ svg.history-custom-icon {
   }
   body:not(.search-focused) #floating-search-wrapper {
     bottom: 4px !important;
-    right: 31px !important; /* 환경설정 가로모드 우측 여백 31px와 수평 일치 */
+    right: 16px !important; /* 환경설정 가로모드 우측 여백 16px와 수평 일치 */
     left: auto !important;
     transform: none !important;
   }
@@ -3597,12 +3597,12 @@ svg.history-custom-icon {
    ========================================================================== */
 @media only screen and (device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2) {
   body:not(.search-focused) #floating-search-wrapper {
-    right: 31px !important; /* 환경설정 대화면(iPad) 우측 여백 31px와 수평 일치 */
+    right: 16px !important; /* 환경설정 대화면(iPad) 우측 여백 16px와 수평 일치 */
     left: auto !important;
     transform: none !important;
   }
   #slide-lock-container {
-    left: 31px !important; /* 검색창 우측 여백(31px)과 수평 좌우 대칭 일치화 */
+    left: 16px !important; /* 검색창 우측 여백(16px)과 수평 좌우 대칭 일치화 */
   }
 }
 
@@ -3612,12 +3612,12 @@ svg.history-custom-icon {
 @media only screen and (device-width: 820px) and (device-height: 1180px) and (-webkit-device-pixel-ratio: 2),
        only screen and (device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2) {
   body:not(.search-focused) #floating-search-wrapper {
-    right: 31px !important; /* 환경설정 대화면(iPad 11) 우측 여백 31px와 수평 일치 */
+    right: 16px !important; /* 환경설정 대화면(iPad 11) 우측 여백 16px와 수평 일치 */
     left: auto !important;
     transform: none !important;
   }
   #slide-lock-container {
-    left: 31px !important; /* 검색창 우측 여백(31px)과 수평 좌우 대칭 일치화 */
+    left: 16px !important; /* 검색창 우측 여백(16px)과 수평 좌우 대칭 일치화 */
   }
   #admin-actions-bar {
     top: 23px !important; /* 기본 20px에서 3px 아래로 인하 조정 */
