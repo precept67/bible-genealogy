@@ -16555,6 +16555,7 @@ function setupSlideLockDragEvents() {
     }
 
     function onDragMove(e) {
+      if (e.cancelable) e.preventDefault(); // 아이패드 등 태블릿/모바일 OS의 기본 제스처 간섭 원천 배제 차단
       if (!isDragging) return;
       const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
       const deltaX = clientX - startX;
