@@ -16545,6 +16545,8 @@ function setupSlideLockDragEvents() {
     }
 
     function onDragStart(e) {
+      e.stopPropagation(); // 뒷판 가계도 패닝 버블링 차단
+      if (e.cancelable) e.preventDefault();
       isDragging = true;
       startX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
       slideHandle.style.transition = 'none';
@@ -16555,6 +16557,7 @@ function setupSlideLockDragEvents() {
     }
 
     function onDragMove(e) {
+      e.stopPropagation(); // 뒷판 가계도 패닝 버블링 차단
       if (e.cancelable) e.preventDefault(); // 아이패드 등 태블릿/모바일 OS의 기본 제스처 간섭 원천 배제 차단
       if (!isDragging) return;
       const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
@@ -16567,7 +16570,11 @@ function setupSlideLockDragEvents() {
       slideText.style.opacity = Math.max(0.1, 1 - (currentX / maxSlide) * 0.9);
     }
 
-    function onDragEnd() {
+    function onDragEnd(e) {
+      if (e) {
+        e.stopPropagation();
+        if (e.cancelable) e.preventDefault();
+      }
       if (!isDragging) return;
       isDragging = false;
       slideHandle.style.transition = 'transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1), background-color 0.2s ease';
@@ -16586,9 +16593,9 @@ function setupSlideLockDragEvents() {
       slideText.style.opacity = '0';
     }
 
-    slideHandle.addEventListener('touchstart', onDragStart, { passive: true });
+    slideHandle.addEventListener('touchstart', onDragStart, { passive: false });
     window.addEventListener('touchmove', onDragMove, { passive: false });
-    window.addEventListener('touchend', onDragEnd);
+    window.addEventListener('touchend', onDragEnd, { passive: false });
 
     slideHandle.addEventListener('mousedown', onDragStart);
     window.addEventListener('mousemove', onDragMove);
