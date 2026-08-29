@@ -10371,12 +10371,27 @@ function setupSearch() {
     }
   });
 
-  document.addEventListener('click', (e) => {
-    if (searchResults && !searchInput.contains(e.target) && !searchResults.contains(e.target)) {
-      searchResults.style.display = 'none';
+  const handleGlobalOutsideClick = (e) => {
+    // 0. Search Focus / Results Panel auto close when clicking/touching outside
+    const searchWrapper = document.getElementById('floating-search-wrapper');
+    const searchInput = document.getElementById('search-input');
+    const searchResults = document.getElementById('search-results');
+    
+    if (document.body.classList.contains('search-focused') || (searchResults && searchResults.style.display !== 'none')) {
+      const isClickInsideSearch = 
+        (searchWrapper && searchWrapper.contains(e.target)) || 
+        (searchResults && searchResults.contains(e.target)) ||
+        e.target.closest('#floating-search-wrapper') ||
+        e.target.closest('#search-results');
+        
+      if (!isClickInsideSearch) {
+        document.body.classList.remove('search-focused');
+        if (searchResults) searchResults.style.display = 'none';
+        if (searchInput) searchInput.blur();
+      }
     }
 
-    // 1. Lineage Filter Panel (#filter-panel) auto close when clicking outside
+    // 1. Lineage Filter Panel (#filter-panel) auto close when clicking/touching outside
     const filterPanel = document.getElementById('filter-panel');
     if (filterPanel && filterPanel.classList.contains('active')) {
       if (!e.target.closest('#filter-panel') && !e.target.closest('#filter-panel-toggle')) {
@@ -10384,7 +10399,7 @@ function setupSearch() {
       }
     }
 
-    // 2. Personal Study/Memo Panel (#study-panel) auto close when clicking outside
+    // 2. Personal Study/Memo Panel (#study-panel) auto close when clicking/touching outside
     const studyPanel = document.getElementById('study-panel');
     if (studyPanel && studyPanel.classList.contains('active')) {
       const isClickInsideStudyPanel = e.target.closest('#study-panel');
@@ -10403,7 +10418,7 @@ function setupSearch() {
       }
     }
     
-    // 3. Line Design Editor (#style-editor-panel) auto close when clicking outside
+    // 3. Line Design Editor (#style-editor-panel) auto close when clicking/touching outside
     const stylePanel = document.getElementById('style-editor-panel');
     if (stylePanel && stylePanel.classList.contains('active')) {
       const isClickInsideStylePanel = e.target.closest('#style-editor-panel');
@@ -10412,7 +10427,10 @@ function setupSearch() {
         closeStyleEditorPanel();
       }
     }
-  });
+  };
+
+  document.addEventListener('click', handleGlobalOutsideClick);
+  document.addEventListener('touchstart', handleGlobalOutsideClick, { passive: true });
 }
 
 // Study Sidebar Panel Note management
