@@ -3626,3 +3626,18 @@ svg.history-custom-icon {
     top: 29px !important; /* 기본 26px에서 3px 아래로 인하 조정 (상하 중심선 49px 일치) */
   }
 }
+
+/* ==========================================================================
+   📱 iPhone 15 & iPhone 15 Pro (393x852) Dedicated Margins
+   ========================================================================== */
+@media only screen and (device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3),
+       only screen and (device-width: 852px) and (device-height: 393px) and (-webkit-device-pixel-ratio: 3) {
+  body:not(.search-focused) #floating-search-wrapper {
+    right: 16px !important; /* 검색 버튼 우측 16px 간격 정박 */
+    left: auto !important;
+    transform: none !important;
+  }
+  #slide-lock-container {
+    left: 16px !important; /* 락버튼 좌측 16px 간격 정박 */
+  }
+}
