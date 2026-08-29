@@ -46,7 +46,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
   
   <!-- Main Stylesheet -->
-  <link rel="stylesheet" href="style_v16_v2.css?v=99999">
+  <link rel="stylesheet" href="style_v16_v2.css?v=11111">
 
   <!-- Upgraded Admin Toolkit Styling (40px circle, white background, 50% opacity emojis) -->
   <style>
@@ -403,13 +403,8 @@
       </div>
     </main>
     
-    <!-- 2. Zoom & History Unified Controls Panel Wrapper (Floating Centered Row Layout) -->
+    <!-- 2. Zoom Control Panel Wrapper (Floating Centered Row Layout) -->
     <div id="bottom-controls-wrapper" style="position: fixed; bottom: calc(1px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); z-index: 12000; display: flex; align-items: center; gap: 5px; pointer-events: none; height: 40px; box-sizing: border-box;">
-      
-      <!-- 1. Undo Button (Now Decoupled Outside, styled like Search Toggle) -->
-      <button id="admin-undo-btn" class="history-control-btn control-btn has-tooltip tooltip-up" data-tooltip="되돌리기" title="되돌리기" style="display: none !important; pointer-events: auto; background: rgba(255, 255, 255, 0.95) !important; border: 1px solid rgba(0, 0, 0, 0.08) !important; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important; color: #64748b !important; cursor: not-allowed; transition: opacity 0.2s ease, transform 0.1s ease; padding: 0; margin: 0; display: flex; align-items: center; justify-content: center; width: 40px !important; height: 40px !important; border-radius: 20px !important;" disabled>
-        <img src="undo_btn.png" alt="되돌리기" style="width: 24px; height: 24px; object-fit: contain; display: block; opacity: 0.8;" />
-      </button>
       
       <!-- 2. Pure Zoom Control Panel Capsule -->
       <div id="control-panel" style="pointer-events: auto; display: flex; align-items: center; gap: 10px; background: rgba(255, 255, 255, 0.95); border: 1px solid rgba(0, 0, 0, 0.08); padding: 4px 14px; border-radius: 50px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); height: 40px; box-sizing: border-box;">
@@ -426,11 +421,6 @@
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
         </button>
       </div>
-      
-      <!-- 3. Redo Button (Now Decoupled Outside, styled like Search Toggle) -->
-      <button id="admin-redo-btn" class="history-control-btn control-btn has-tooltip tooltip-up" data-tooltip="다시 실행" title="다시 실행" style="display: none !important; pointer-events: auto; background: rgba(255, 255, 255, 0.95) !important; border: 1px solid rgba(0, 0, 0, 0.08) !important; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important; color: #64748b !important; cursor: not-allowed; transition: opacity 0.2s ease, transform 0.1s ease; padding: 0; margin: 0; display: flex; align-items: center; justify-content: center; width: 40px !important; height: 40px !important; border-radius: 20px !important;" disabled>
-        <img src="redo_btn.png" alt="다시 실행" style="width: 24px; height: 24px; object-fit: contain; display: block; opacity: 0.8;" />
-      </button>
 
       <input type="file" id="user-notes-file-input" accept=".json" style="display: none;">
       <button id="admin-lock-btn" class="control-btn" style="display: none !important;"></button>
@@ -1397,6 +1387,6 @@
       });
     }
   </script>
-  <script src="app_v16_v2.js?v=99999"></script>
+  <script src="app_v16_v2.js?v=11111"></script>
 </body>
 </html>
