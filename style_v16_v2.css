@@ -540,7 +540,9 @@ header .subtitle {
 
 #floating-settings-btn {
   position: fixed !important;
-  right: 16px !important; /* 오른쪽 화면 끝에서 정확히 16px 고정 배치 */
+  top: 26px !important; /* 가로화면일 때 6개 버튼 박스의 상하 중심에 맞춤 */
+  right: 31px !important; /* 가로화면일 때 오른쪽 마진 31px */
+  z-index: 12000 !important;
 }
 
 /* Study/Note Sidebar Panel */
