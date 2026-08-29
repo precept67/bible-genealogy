@@ -3339,6 +3339,7 @@ body.search-focused #search-panel {
   border: 1px solid transparent !important; /* 평소에는 가이드 선을 투명하게 숨김 */
   box-shadow: none !important; /* 평소에는 그림자 숨김 */
   transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease !important;
+  touch-action: none !important; /* iOS/iPadOS 스와이프 제스처 간섭 차단 */
 }
 
 /* 사용자가 슬라이더 동그라미를 손가락으로 붙잡고 미는(dragging) 찰나의 순간에만 가이드 선과 배경이 스르륵 등장 */
@@ -3378,6 +3379,7 @@ body.search-focused #search-panel {
   flex-shrink: 0 !important;
   flex-grow: 0 !important;
   box-sizing: border-box !important;
+  touch-action: none !important; /* iOS/iPadOS 스와이프 제스처 간섭 차단 */
 }
 
 /* 4. 헤더/줌 컨트롤 등 모든 원형 버튼들 내부 이모지 및 SVG 아이콘의 크기/색조 일괄 통일 */
