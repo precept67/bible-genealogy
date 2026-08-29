@@ -3323,6 +3323,13 @@ body.search-focused #floating-search-wrapper {
   pointer-events: auto !important; /* 부모 wrapper가 pointer-events none이어도 본인들은 터치를 획득하게 수립 */
 }
 
+/* 모든 기종 공통: 가로화면(Landscape)일 때 검색 결과 드롭다운 최대 높이 제한 축소 보정 */
+@media (orientation: landscape) {
+  #search-results {
+    max-height: 90px !important; /* 화면 가림 방지 및 키보드 위 잔여공간에 최적화 */
+  }
+}
+
 body.search-focused #floating-search-toggle-btn {
   display: none !important; /* 활성화 시 돋보기 버튼 물리 영역 완전 제거 */
 }
