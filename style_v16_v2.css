@@ -3545,3 +3545,41 @@ svg.history-custom-icon {
 .history-custom-icon path {
   fill: none !important;
 }
+
+/* ==========================================================================
+   📱 iPhone 8 / 7 / 6s / 6 (375x667) Dedicated Precision Margins
+   ========================================================================== */
+
+/* 1. Portrait Mode (세로화면) */
+@media only screen and (device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait) {
+  #bottom-controls-wrapper {
+    bottom: 4px !important;
+  }
+  body:not(.search-focused) #floating-search-wrapper {
+    bottom: 4px !important;
+  }
+  #slide-lock-container {
+    bottom: 4px !important;
+  }
+}
+
+/* 2. Landscape Mode (가로화면) */
+@media only screen and (device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape) {
+  #bottom-controls-wrapper {
+    bottom: 4px !important;
+  }
+  body:not(.search-focused) #floating-search-wrapper {
+    bottom: 4px !important;
+  }
+  #slide-lock-container {
+    bottom: 4px !important;
+  }
+
+  /* 도구버튼모음박스와 환경설정을 상단화면끝에서 4px 간격을 두고 정박 */
+  #admin-actions-bar {
+    top: 4px !important;
+  }
+  #floating-settings-btn {
+    top: 4px !important;
+  }
+}
