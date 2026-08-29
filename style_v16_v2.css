@@ -3613,4 +3613,7 @@ svg.history-custom-icon {
     left: auto !important;
     transform: none !important;
   }
+  #slide-lock-container {
+    left: 31px !important; /* 검색창 우측 여백(31px)과 수평 좌우 대칭 일치화 */
+  }
 }
