@@ -16694,6 +16694,7 @@ function setupFloatingHeaderEvents() {
 
   if (floatSearchBtn && searchPanel && searchInput) {
     let isSearchOpen = false;
+    let lastToggleTime = 0; // 더블 탭으로 인한 중복 연쇄 반전 버그 방지용 쿨다운 타이머
     let searchViewportInterval = null; // iOS 키보드 높이 감지 씹힘 방지용 실시간 타이머 폴러
     const searchWrapper = document.getElementById('floating-search-wrapper');
     const originalWindowHeight = window.innerHeight;
@@ -16756,7 +16757,15 @@ function setupFloatingHeaderEvents() {
     const handleSearchToggle = (e) => {
       e.stopPropagation();
       if (e.cancelable) e.preventDefault();
-      isSearchOpen = !isSearchOpen;
+      
+      const now = Date.now();
+      if (now - lastToggleTime < 250) return; // 250ms 이내 중복 터치/클릭 연쇄 발동 강제 무력화
+      lastToggleTime = now;
+      
+      // 상태 기준 동기화 분기: search-focused 클래스가 없으면 활성화, 있으면 닫기
+      const isCurrentlyOpen = document.body.classList.contains('search-focused');
+      isSearchOpen = !isCurrentlyOpen;
+      
       if (isSearchOpen) {
         if (searchWrapper) {
           document.body.classList.add('search-focused');
