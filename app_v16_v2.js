@@ -6316,7 +6316,7 @@ function renderTree() {
     card.addEventListener('touchcancel', clearHighlight);
 
     // Click action opens study panel or adds a child if in Add Person Mode
-    card.addEventListener('click', (e) => {
+    const handleCardActivate = (e) => {
       e.stopPropagation();
       if (card.isDraggingFinished) {
         card.isDraggingFinished = false;
@@ -6359,7 +6359,19 @@ function renderTree() {
           openStudyPanel(char.id);
         }
       }
-    });
+    };
+
+    card.addEventListener('click', handleCardActivate);
+    card.addEventListener('touchend', (e) => {
+      if (card.isDraggingFinished) {
+        card.isDraggingFinished = false;
+        e.stopPropagation();
+        e.preventDefault();
+        return;
+      }
+      handleCardActivate(e);
+      e.preventDefault(); // iOS/iPadOS click 시뮬레이션 중복 발동 방지 차단
+    }, { passive: false });
     
     if (isAdminMode) {
       ['top', 'right', 'bottom', 'left', 'top-left', 'top-right', 'bottom-left', 'bottom-right'].forEach(portName => {
