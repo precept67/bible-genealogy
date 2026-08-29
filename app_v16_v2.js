@@ -16631,9 +16631,9 @@ function setupFloatingHeaderEvents() {
           searchWrapper.style.bottom = '57px'; // 축소된 웹뷰의 바닥(키보드 윗선) 기준 57px 띄움
           searchWrapper.style.top = 'auto';
         } 
-        // [3단계] 물리 키보드가 장착되어 가상 키보드는 없으나 포커스 상태인 경우 (줌조절바 상단 20px 위에 위치하게 조율)
+        // [3단계] 물리 키보드가 장착되어 가상 키보드는 없으나 포커스 상태인 경우 (줌조절바 상단 80px 위에 위치하게 조율 - 60px 추가 상향)
         else if (document.activeElement === searchInput) {
-          searchWrapper.style.bottom = 'calc(61px + env(safe-area-inset-bottom))'; // 줌 조절바 상단(41px + safe-area) + 20px = 61px + safe-area
+          searchWrapper.style.bottom = 'calc(121px + env(safe-area-inset-bottom))'; // 줌 조절바 상단(41px + safe-area) + 80px = 121px + safe-area
           searchWrapper.style.top = 'auto';
         }
         // [4단계] 평상시 대기 상태 (키보드가 없거나 포커스가 풀린 기본 상태)
