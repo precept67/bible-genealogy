@@ -9074,6 +9074,10 @@ function setupZoomPan() {
       startPanX = panX;
       startPanY = panY;
       
+      // 모바일 기기 터치 시작 지점의 정밀 트래킹 동기화 (터치 탭 씹힘 완치)
+      startClickX = e.touches[0].clientX;
+      startClickY = e.touches[0].clientY;
+      
       lastTouchX = e.touches[0].clientX;
       lastTouchY = e.touches[0].clientY;
       lastTouchTime = Date.now();
@@ -11613,7 +11617,7 @@ function activateAddPersonMode() {
   deactivateAddAnnotationMode();
   isAddPersonModeActive = true;
   // 활성화(취소 가능) 시에는 더하기(+) 기호를 빼기(-) 기호로 전환하여 세련되게 시각화
-  adminAddBtn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;"><svg class="custom-add-person-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="color: #ef4444; width: 24px; height: 24px; fill: none !important;"><circle cx="10" cy="8" r="4" style="fill: none !important;"></circle><path d="M3 20a7 7 0 0 1 14 0" style="fill: none !important;"></path><path d="M17 9h6" style="fill: none !important;"></path></svg></span>';
+  adminAddBtn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;"><svg class="custom-add-person-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="color: #ef4444; width: 24px; height: 24px; fill: none !important; transform: scale(1.1); transform-origin: center;"><circle cx="10" cy="8" r="4" style="fill: none !important;"></circle><path d="M3 20a7 7 0 0 1 14 0" style="fill: none !important;"></path><path d="M17 9h6" style="fill: none !important;"></path></svg></span>';
   adminAddBtn.classList.add('danger');
   viewerContainer.style.cursor = 'cell';
   
@@ -11624,7 +11628,7 @@ function activateAddPersonMode() {
 function deactivateAddPersonMode() {
   isAddPersonModeActive = false;
   // 비활성화(평상시)에는 사람 형상과 더하기(+) 아이콘 노출
-  adminAddBtn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;"><svg class="custom-add-person-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b; width: 24px; height: 24px; fill: none !important;"><circle cx="10" cy="8" r="4" style="fill: none !important;"></circle><path d="M3 20a7 7 0 0 1 14 0" style="fill: none !important;"></path><path d="M17 9h6M20 6v6" style="fill: none !important;"></path></svg></span>';
+  adminAddBtn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;"><svg class="custom-add-person-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b; width: 24px; height: 24px; fill: none !important; transform: scale(1.1); transform-origin: center;"><circle cx="10" cy="8" r="4" style="fill: none !important;"></circle><path d="M3 20a7 7 0 0 1 14 0" style="fill: none !important;"></path><path d="M17 9h6M20 6v6" style="fill: none !important;"></path></svg></span>';
   adminAddBtn.classList.remove('danger');
   viewerContainer.style.cursor = 'grab';
   
