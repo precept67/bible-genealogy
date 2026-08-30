@@ -10885,11 +10885,20 @@ function setupAdminMode() {
   }
 
   adminAddBtn.addEventListener('click', () => {
-    if (isAddPersonModeActive) {
-      deactivateAddPersonMode();
-    } else {
-      activateAddPersonMode();
+    // 인물 추가 버튼 터치 시 즉시 등록 상세 창(모달) 오픈
+    let containerCenterX = viewerContainer.clientWidth / 2;
+    let containerCenterY = viewerContainer.clientHeight / 2;
+    if (containerCenterX === 0) {
+      containerCenterX = window.innerWidth / 2;
+      containerCenterY = (window.innerHeight - 80) / 2;
     }
+    const worldX = (containerCenterX - panX) / currentScale;
+    const worldY = (containerCenterY - panY) / currentScale;
+    
+    const clickGen = Math.max(0, Math.round((worldY - BOARD_PADDING_Y) / GEN_HEIGHT));
+    const clickCol = parseFloat(((worldX - centerX) / COL_WIDTH).toFixed(1));
+    
+    openAdminFormWithCoords(clickGen, clickCol);
   });
 
   adminAddNoteBtn.addEventListener('click', () => {
