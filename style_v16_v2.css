@@ -3669,7 +3669,7 @@ svg.history-custom-icon {
 }
 
 /* ==========================================================================
-   🎨 전체 버튼 아이콘들의 선 색상(#64748b)과 농도(70%)를 완벽하게 대통합
+   🎨 전체 버튼 아이콘들의 선 색상을 100% 불투명한 순수 RGB(100, 116, 139)로 대통합
    ========================================================================== */
 .admin-action-btn-circle svg,
 #floating-settings-btn svg,
@@ -3678,5 +3678,5 @@ svg.history-custom-icon {
 #zoom-in svg,
 #zoom-out svg {
   color: #64748b !important;
-  opacity: 0.7 !important;
+  opacity: 1 !important;
 }
