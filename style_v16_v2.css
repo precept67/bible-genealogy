@@ -3667,3 +3667,12 @@ svg.history-custom-icon {
     left: 16px !important; /* 락버튼 좌측 16px 간격 정박 */
   }
 }
+
+/* ==========================================================================
+   🎨 전체 버튼 아이콘들의 선 농도를 회색 70% (검정 30% 감소)로 일괄 통일 락
+   ========================================================================== */
+.admin-action-btn-circle svg,
+#floating-settings-btn svg,
+#floating-search-toggle-btn svg {
+  opacity: 0.7 !important;
+}
