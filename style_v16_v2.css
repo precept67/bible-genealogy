@@ -3669,10 +3669,14 @@ svg.history-custom-icon {
 }
 
 /* ==========================================================================
-   🎨 전체 버튼 아이콘들의 선 농도를 회색 70% (검정 30% 감소)로 일괄 통일 락
+   🎨 전체 버튼 아이콘들의 선 색상(#64748b)과 농도(70%)를 완벽하게 대통합
    ========================================================================== */
 .admin-action-btn-circle svg,
 #floating-settings-btn svg,
-#floating-search-toggle-btn svg {
+#floating-search-toggle-btn svg,
+#slide-lock-icon-svg,
+#zoom-in svg,
+#zoom-out svg {
+  color: #64748b !important;
   opacity: 0.7 !important;
 }
