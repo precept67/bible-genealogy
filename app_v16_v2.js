@@ -9001,7 +9001,177 @@ function setupZoomPan() {
     }
   };
   
+  let lastCanvasTapTimestamp = 0;
+  
+  function handleCanvasTapOrClick(clientX, clientY, target) {
+    if (!target) return;
+    
+    // UI 상단 바, 제어판, 검색창, 관리자 바, 모달 내부 클릭/터치는 캔버스 액션 제외
+    if (target.closest('header') || 
+        target.closest('#control-panel') || 
+        target.closest('#search-panel') || 
+        target.closest('#admin-actions-bar') || 
+        target.closest('.modal-content') || 
+        target.closest('#style-editor-panel') || 
+        target.closest('.bottom-spawner-panel')) {
+      return;
+    }
+
+    if (isAdminMode && activeSpawnerItem) {
+      const rect = treeBoard.getBoundingClientRect();
+      const clickX = (clientX - rect.left) / currentScale;
+      const clickY = (clientY - rect.top) / currentScale;
+      
+      pushHistoryState();
+      
+      if (activeSpawnerType === 'location') {
+        const newLoc = {
+          id: 'loc-' + Date.now(),
+          name: activeSpawnerItem.name,
+          desc: activeSpawnerItem.desc || '',
+          refs: activeSpawnerItem.refs ? [...activeSpawnerItem.refs] : [],
+          relatedEvents: activeSpawnerItem.relatedEvents ? [...activeSpawnerItem.relatedEvents] : [],
+          relatedPeople: activeSpawnerItem.relatedPeople ? [...activeSpawnerItem.relatedPeople] : [],
+          x: Math.round(clickX),
+          y: Math.round(clickY)
+        };
+        locations.push(newLoc);
+        saveLocations();
+        renderLocations();
+        showToast(`📍 '${activeSpawnerItem.name}' 장소가 복사되어 배치되었습니다.`);
+      } else if (activeSpawnerType === 'event') {
+        const newEv = {
+          id: 'ev-' + Date.now(),
+          name: activeSpawnerItem.name,
+          desc: activeSpawnerItem.desc || '',
+          refs: activeSpawnerItem.refs ? [...activeSpawnerItem.refs] : [],
+          relatedLocations: activeSpawnerItem.relatedLocations ? [...activeSpawnerItem.relatedLocations] : [],
+          relatedPeople: activeSpawnerItem.relatedPeople ? [...activeSpawnerItem.relatedPeople] : [],
+          x: Math.round(clickX),
+          y: Math.round(clickY)
+        };
+        events.push(newEv);
+        saveEvents();
+        renderEvents();
+        showToast(`📜 '${activeSpawnerItem.name}' 사건이 복사되어 배치되었습니다.`);
+      }
+      
+      cancelPlacementMode();
+      autoSaveToServer();
+      return;
+    }
+
+    // 1) 다각형 영역 추가 모드
+    if (isAddPolygonModeActive) {
+      const rect = treeBoard.getBoundingClientRect();
+      const clickX = (clientX - rect.left) / currentScale;
+      const clickY = (clientY - rect.top) / currentScale;
+      
+      let finalX = clickX;
+      let finalY = clickY;
+      
+      if (tempPolygonPoints.length >= 3) {
+        const startPt = tempPolygonPoints[0];
+        const distToStartRaw = Math.hypot(clickX - startPt.x, clickY - startPt.y);
+        if (distToStartRaw < 20) {
+          completePolygonCreation();
+          return;
+        }
+      }
+      
+      tempPolygonPoints.push({ x: finalX, y: finalY });
+      showToast(`정점 ${tempPolygonPoints.length}개가 추가되었습니다. 계속 탭하여 선을 긋고, 시작점을 다시 누르면 완료됩니다.`);
+      updateTempPolygonPreview();
+      return;
+    }
+
+    // 2) 텍스트 상자 추가 모드
+    if (isAddAnnotationModeActive) {
+      const rect = treeBoard.getBoundingClientRect();
+      const clickX = (clientX - rect.left) / currentScale;
+      const clickY = (clientY - rect.top) / currentScale;
+      
+      pushHistoryState();
+      
+      const newNote = {
+        id: `note-${Date.now()}`,
+        text: "새 텍스트 상자\n(클릭하여 편집)",
+        x: Math.round(clickX - 100),
+        y: Math.round(clickY - 30),
+        width: 200,
+        height: 60,
+        fontSize: 14,
+        bold: false,
+        color: "#1e293b",
+        bgColor: "#ffffff"
+      };
+      
+      annotations.push(newNote);
+      saveAnnotations();
+      renderAnnotations();
+      deactivateAddAnnotationMode();
+      autoSaveToServer();
+      showToast("📝 텍스트 상자가 성공적으로 생성되었습니다.");
+      return;
+    }
+
+    // 3) 인물 추가 모드
+    if (isAddPersonModeActive) {
+      if (target.closest('.person-card') || target.closest('.canvas-annotation')) return;
+      
+      const rect = viewerContainer.getBoundingClientRect();
+      const mouseX = clientX - rect.left;
+      const mouseY = clientY - rect.top;
+      const worldX = (mouseX - panX) / currentScale;
+      const worldY = (mouseY - panY) / currentScale;
+      
+      const clickGen = Math.max(0, Math.round((worldY - BOARD_PADDING_Y) / GEN_HEIGHT));
+      const clickCol = parseFloat(((worldX - centerX) / COL_WIDTH).toFixed(1));
+      
+      deactivateAddPersonMode();
+      openAdminFormWithCoords(clickGen, clickCol);
+      return;
+    }
+
+    // 4) 빈 공간 클릭/탭 (선택 해제 및 패널 닫기)
+    const clickedEmptySpace = !target.closest('.person-card') && 
+                              !target.closest('.layer-marker') && 
+                              !target.closest('#study-panel') && 
+                              !target.closest('.canvas-annotation') && 
+                              !target.closest('.canvas-junction-node') &&
+                              !target.closest('.line-bend-handle') &&
+                              !target.closest('.poly-vertex-handle') &&
+                              !target.closest('.family-group-label') &&
+                              !target.closest('.family-group-panel-poly') &&
+                              !target.closest('.spouse-connector') && 
+                              !target.closest('.connector-line');
+                              
+    if (clickedEmptySpace) {
+      if (selectedPersonId || selectedPersonIds.size > 0 || selectedLineKey || selectedJunctionId || selectedPolygonId) {
+        selectedPersonId = null;
+        selectedPersonIds.clear();
+        selectedLineKey = null;
+        selectedJunctionId = null;
+        selectedPolygonId = null;
+        document.querySelectorAll('.canvas-junction-node').forEach(n => n.classList.remove('selected-junction'));
+        renderTree();
+      }
+      closeStudyPanel();
+      closeStyleEditorPanel();
+      document.getElementById('filter-panel')?.classList.remove('active');
+      clearAllHighlights();
+    }
+  }
+
   const onTouchEnd = (e) => {
+    // 터치 이동 거리가 15px 이하인 가벼운 탭 제스처인 경우 직접 캔버스 액션 실행
+    const touchDist = Math.hypot(lastTouchX - startClickX, lastTouchY - startClickY);
+    if (!isTouchZooming && touchDist <= 15) {
+      lastCanvasTapTimestamp = Date.now();
+      const touchTarget = document.elementFromPoint(lastTouchX, lastTouchY) || e.target;
+      handleCanvasTapOrClick(lastTouchX, lastTouchY, touchTarget);
+    }
+
     if (isDragging) {
       const speed = Math.sqrt(velocityX * velocityX + velocityY * velocityY);
       if (speed > 0.15) {
@@ -9091,200 +9261,14 @@ function setupZoomPan() {
   }, { passive: false });
 
   viewerContainer.addEventListener('click', (e) => {
+    // 이미 터치 탭으로 처리된 경우 중복 실행 방지
+    if (Date.now() - lastCanvasTapTimestamp < 450) return;
+
     // Ignore click if the user was dragging/panning the board
     const clickDist = Math.sqrt(Math.pow(e.clientX - startClickX, 2) + Math.pow(e.clientY - startClickY, 2));
-    if (clickDist > 6) return;
+    if (clickDist > 8) return;
 
-    if (isAdminMode && activeSpawnerItem) {
-      if (e.target.closest('header') || e.target.closest('#control-panel') || e.target.closest('#search-panel') || e.target.closest('#admin-actions-bar') || e.target.closest('.modal-content') || e.target.closest('#style-editor-panel') || e.target.closest('.bottom-spawner-panel')) return;
-      
-      const rect = treeBoard.getBoundingClientRect();
-      const clickX = (e.clientX - rect.left) / currentScale;
-      const clickY = (e.clientY - rect.top) / currentScale;
-      
-      pushHistoryState();
-      
-      if (activeSpawnerType === 'location') {
-        const newLoc = {
-          id: 'loc-' + Date.now(),
-          name: activeSpawnerItem.name,
-          desc: activeSpawnerItem.desc || '',
-          refs: activeSpawnerItem.refs ? [...activeSpawnerItem.refs] : [],
-          relatedEvents: activeSpawnerItem.relatedEvents ? [...activeSpawnerItem.relatedEvents] : [],
-          relatedPeople: activeSpawnerItem.relatedPeople ? [...activeSpawnerItem.relatedPeople] : [],
-          x: Math.round(clickX),
-          y: Math.round(clickY)
-        };
-        locations.push(newLoc);
-        saveLocations();
-        renderLocations();
-        showToast(`📍 '${activeSpawnerItem.name}' 장소가 복사되어 배치되었습니다.`);
-      } else if (activeSpawnerType === 'event') {
-        const newEv = {
-          id: 'ev-' + Date.now(),
-          name: activeSpawnerItem.name,
-          desc: activeSpawnerItem.desc || '',
-          refs: activeSpawnerItem.refs ? [...activeSpawnerItem.refs] : [],
-          relatedLocations: activeSpawnerItem.relatedLocations ? [...activeSpawnerItem.relatedLocations] : [],
-          relatedPeople: activeSpawnerItem.relatedPeople ? [...activeSpawnerItem.relatedPeople] : [],
-          x: Math.round(clickX),
-          y: Math.round(clickY)
-        };
-        events.push(newEv);
-        saveEvents();
-        renderEvents();
-        showToast(`📜 '${activeSpawnerItem.name}' 사건이 복사되어 배치되었습니다.`);
-      }
-      
-      cancelPlacementMode();
-      autoSaveToServer();
-      return;
-    }
-
-    const clickedEmptySpace = !e.target.closest('.person-card') && 
-                              !e.target.closest('.layer-marker') && 
-                              !e.target.closest('#study-panel') && 
-                              !e.target.closest('header') && 
-                              !e.target.closest('#control-panel') && 
-                              !e.target.closest('#search-panel') && 
-                              !e.target.closest('#admin-actions-bar') && 
-                              !e.target.closest('.modal-content') && 
-                              !e.target.closest('#style-editor-panel') && 
-                              !e.target.closest('.canvas-annotation') && 
-                              !e.target.closest('.canvas-junction-node') &&
-                              !e.target.closest('.line-bend-handle') &&
-                              !e.target.closest('.poly-vertex-handle') &&
-                              !e.target.closest('.family-group-label') &&
-                              !e.target.closest('.family-group-panel-poly') &&
-                              !e.target.closest('.spouse-connector') && 
-                              !e.target.closest('.connector-line');
-                              
-    if (clickedEmptySpace) {
-      if (selectedPersonId || selectedPersonIds.size > 0 || selectedLineKey || selectedJunctionId || selectedPolygonId) {
-        selectedPersonId = null;
-        selectedPersonIds.clear();
-        selectedLineKey = null;
-        selectedJunctionId = null;
-        selectedPolygonId = null;
-        document.querySelectorAll('.canvas-junction-node').forEach(n => n.classList.remove('selected-junction'));
-        renderTree();
-      }
-      closeStudyPanel();
-      closeStyleEditorPanel();
-      document.getElementById('filter-panel')?.classList.remove('active');
-      clearAllHighlights();
-    }
-
-    if (isAddPolygonModeActive) {
-      if (e.target.closest('header') || e.target.closest('#control-panel') || e.target.closest('#search-panel') || e.target.closest('#admin-actions-bar') || e.target.closest('.modal-content') || e.target.closest('#style-editor-panel')) return;
-      
-      const rect = treeBoard.getBoundingClientRect();
-      const clickX = (e.clientX - rect.left) / currentScale;
-      const clickY = (e.clientY - rect.top) / currentScale;
-      
-      let finalX = clickX;
-      let finalY = clickY;
-      
-      if (e.shiftKey && tempPolygonPoints.length > 0) {
-        const lastPt = tempPolygonPoints[tempPolygonPoints.length - 1];
-        const dx = clickX - lastPt.x;
-        const dy = clickY - lastPt.y;
-        const dist = Math.hypot(dx, dy);
-        if (dist > 0) {
-          const angleRad = Math.atan2(dy, dx);
-          let angleDeg = angleRad * (180 / Math.PI);
-          if (angleDeg < 0) angleDeg += 360;
-          
-          const quadrant = Math.floor(angleDeg / 90);
-          const relativeAngle = angleDeg % 90;
-          
-          const allowedBaseAngles = [0, 30, 45, 75, 90];
-          let closestBase = 0;
-          let minDiff = Infinity;
-          for (const base of allowedBaseAngles) {
-            const diff = Math.abs(relativeAngle - base);
-            if (diff < minDiff) {
-              minDiff = diff;
-              closestBase = base;
-            }
-          }
-          
-          const constrainedDeg = (quadrant * 90) + closestBase;
-          const constrainedRad = constrainedDeg * (Math.PI / 180);
-          finalX = lastPt.x + dist * Math.cos(constrainedRad);
-          finalY = lastPt.y + dist * Math.sin(constrainedRad);
-        }
-      }
-      
-      if (tempPolygonPoints.length >= 3) {
-        const startPt = tempPolygonPoints[0];
-        const distToStartRaw = Math.hypot(clickX - startPt.x, clickY - startPt.y);
-        const distToStartConstrained = Math.hypot(finalX - startPt.x, finalY - startPt.y);
-        if (distToStartRaw < 15 || distToStartConstrained < 15) {
-          completePolygonCreation();
-          return;
-        }
-      }
-      
-      tempPolygonPoints.push({ x: finalX, y: finalY });
-      showToast(`정점 ${tempPolygonPoints.length}개가 추가되었습니다. 계속 클릭하여 선을 긋고, 시작점을 다시 누르거나 Enter 키로 완료하세요.`);
-      updateTempPolygonPreview();
-      return;
-    }
-    
-    if (isAddAnnotationModeActive) {
-      if (e.target.closest('header') || e.target.closest('#control-panel') || e.target.closest('#search-panel') || e.target.closest('#admin-actions-bar') || e.target.closest('.modal-content') || e.target.closest('#style-editor-panel')) return;
-      
-      const dist = Math.hypot(e.clientX - startClickX, e.clientY - startClickY);
-      if (dist > 5) return;
-      
-      const rect = treeBoard.getBoundingClientRect();
-      const clickX = (e.clientX - rect.left) / currentScale;
-      const clickY = (e.clientY - rect.top) / currentScale;
-      
-      pushHistoryState();
-      
-      const newNote = {
-        id: `note-${Date.now()}`,
-        text: "새 텍스트 상자\n(클릭하여 편집)",
-        x: Math.round(clickX - 100),
-        y: Math.round(clickY - 30),
-        width: 200,
-        height: 60,
-        fontSize: 14,
-        bold: false,
-        color: "#1e293b",
-        bgColor: "#ffffff"
-      };
-      
-      annotations.push(newNote);
-      saveAnnotations();
-      renderAnnotations();
-      deactivateAddAnnotationMode();
-      autoSaveToServer();
-      showToast("📝 텍스트 상자가 성공적으로 생성되었습니다.");
-      return;
-    }
-    
-    if (!isAddPersonModeActive) return;
-    if (e.target.closest('.person-card') || e.target.closest('header') || e.target.closest('#control-panel') || e.target.closest('#search-panel') || e.target.closest('#admin-actions-bar') || e.target.closest('.modal-content') || e.target.closest('#style-editor-panel') || e.target.closest('.canvas-annotation')) return;
-    
-    // Only proceed if it was a genuine click, not a drag
-    const dist = Math.hypot(e.clientX - startClickX, e.clientY - startClickY);
-    if (dist > 5) return;
-    
-    // Convert click coordinates to world space
-    const rect = viewerContainer.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
-    const worldX = (mouseX - panX) / currentScale;
-    const worldY = (mouseY - panY) / currentScale;
-    
-    const clickGen = Math.max(0, Math.round((worldY - BOARD_PADDING_Y) / GEN_HEIGHT));
-    const clickCol = parseFloat(((worldX - centerX) / COL_WIDTH).toFixed(1));
-    
-    deactivateAddPersonMode();
-    openAdminFormWithCoords(clickGen, clickCol);
+    handleCanvasTapOrClick(e.clientX, e.clientY, e.target);
   });
 }
 
@@ -10884,7 +10868,28 @@ function setupAdminMode() {
     });
   }
 
-  adminAddBtn.addEventListener('click', () => {
+  function bindHybridButton(el, callback) {
+    if (!el) return;
+    let lastTriggerTime = 0;
+    const trigger = (e) => {
+      const now = Date.now();
+      if (now - lastTriggerTime < 350) return;
+      lastTriggerTime = now;
+      callback(e);
+    };
+    el.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      trigger(e);
+    }, { passive: false });
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      trigger(e);
+    });
+  }
+
+  bindHybridButton(adminAddBtn, () => {
     if (isAddPersonModeActive) {
       deactivateAddPersonMode();
     } else {
@@ -10892,7 +10897,7 @@ function setupAdminMode() {
     }
   });
 
-  adminAddNoteBtn.addEventListener('click', () => {
+  bindHybridButton(adminAddNoteBtn, () => {
     if (isAddAnnotationModeActive) {
       deactivateAddAnnotationMode();
     } else {
@@ -10901,7 +10906,7 @@ function setupAdminMode() {
   });
 
   if (adminAddEventBtn) {
-    adminAddEventBtn.addEventListener('click', () => {
+    bindHybridButton(adminAddEventBtn, () => {
       let containerCenterX = viewerContainer.clientWidth / 2;
       let containerCenterY = viewerContainer.clientHeight / 2;
       if (containerCenterX === 0) {
@@ -10917,7 +10922,7 @@ function setupAdminMode() {
   }
 
   if (adminAddLocationBtn) {
-    adminAddLocationBtn.addEventListener('click', () => {
+    bindHybridButton(adminAddLocationBtn, () => {
       let containerCenterX = viewerContainer.clientWidth / 2;
       let containerCenterY = viewerContainer.clientHeight / 2;
       if (containerCenterX === 0) {
@@ -10933,7 +10938,7 @@ function setupAdminMode() {
   }
 
   if (adminAddLinkBtn) {
-    adminAddLinkBtn.addEventListener('click', () => {
+    bindHybridButton(adminAddLinkBtn, () => {
       if (isAddLinkModeActive) {
         deactivateAddLinkMode();
       } else {
@@ -10944,7 +10949,7 @@ function setupAdminMode() {
 
   const adminAddPolygonBtn = document.getElementById('admin-add-polygon-btn');
   if (adminAddPolygonBtn) {
-    adminAddPolygonBtn.addEventListener('click', () => {
+    bindHybridButton(adminAddPolygonBtn, () => {
       if (isAddPolygonModeActive) {
         deactivateAddPolygonMode();
       } else {
@@ -10954,7 +10959,7 @@ function setupAdminMode() {
   }
 
   if (adminAddJunctionBtn) {
-    adminAddJunctionBtn.addEventListener('click', () => {
+    bindHybridButton(adminAddJunctionBtn, () => {
       const containerCenterX = viewerContainer.clientWidth / 2;
       const containerCenterY = viewerContainer.clientHeight / 2;
       const worldX = (containerCenterX - panX) / currentScale;
@@ -11568,7 +11573,7 @@ function activateAddAnnotationMode() {
   isAddAnnotationModeActive = true;
   adminAddNoteBtn.classList.add('active-tool');
   if (adminAddNoteBtn) {
-    adminAddNoteBtn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;"><svg id="text-box-custom-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="color: #ef4444; width: 24px; height: 24px; fill: none !important;"><path d="M5 3h14v13h-3a2 2 0 0 0-2 2v3H5V3z" style="fill: none !important;"></path><path d="M14 21c0-1.5 1.5-3 3-3h2" style="fill: none !important;"></path><path d="M8 7h8M8 10h8M8 13h8" style="fill: none !important;"></path></svg></span>';
+    adminAddNoteBtn.innerHTML = '<span style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;"><svg class="custom-add-note-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="color: #ef4444; width: 24px; height: 24px; fill: none !important; transform: scale(1.1); transform-origin: center;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" style="fill: none !important;"></path><polyline points="14 2 14 8 20 8" style="fill: none !important;"></polyline><line x1="12" y1="11" x2="12" y2="17" style="fill: none !important;"></line><line x1="9" y1="14" x2="15" y2="14" style="fill: none !important;"></line></svg></span>';
     adminAddNoteBtn.classList.add('danger');
   }
   viewerContainer.style.cursor = 'crosshair';
@@ -11597,14 +11602,14 @@ function activateAddAnnotationMode() {
   };
   document.addEventListener('mousemove', onMouseMove);
   
-  showToast("📝 보드 위의 원하는 위치를 클릭(터치)하면 텍스트 상자가 즉시 생성됩니다.");
+  showToast("📝 텍스트 상자 추가 모드: 배치할 캔버스 위치를 클릭(터치)하세요.");
 }
 
 function deactivateAddAnnotationMode() {
   isAddAnnotationModeActive = false;
   adminAddNoteBtn.classList.remove('active-tool');
   if (adminAddNoteBtn) {
-    adminAddNoteBtn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;"><svg id="text-box-custom-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b; width: 24px; height: 24px; fill: none !important;"><path d="M5 3h14v13h-3a2 2 0 0 0-2 2v3H5V3z" style="fill: none !important;"></path><path d="M14 21c0-1.5 1.5-3 3-3h2" style="fill: none !important;"></path><path d="M8 7h8M8 10h8M8 13h8" style="fill: none !important;"></path></svg></span>';
+    adminAddNoteBtn.innerHTML = '<span style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;"><svg class="custom-add-note-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b; width: 24px; height: 24px; fill: none !important; transform: scale(1.1); transform-origin: center;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" style="fill: none !important;"></path><polyline points="14 2 14 8 20 8" style="fill: none !important;"></polyline><line x1="12" y1="11" x2="12" y2="17" style="fill: none !important;"></line><line x1="9" y1="14" x2="15" y2="14" style="fill: none !important;"></line></svg></span>';
     adminAddNoteBtn.classList.remove('danger');
   }
   viewerContainer.style.cursor = 'grab';
@@ -11623,6 +11628,7 @@ function activateAddPersonMode() {
   
   const banner = document.getElementById('add-person-instruction');
   if (banner) banner.style.display = 'flex';
+  showToast("👤 인물 추가 모드: 배치할 캔버스 위치를 클릭(터치)하세요.");
 }
 
 function deactivateAddPersonMode() {
