@@ -2074,6 +2074,28 @@ const labelCornerRadius = document.getElementById('label-corner-radius');
 const labelSplitOffset = document.getElementById('label-split-offset');
 const labelSiblingGap = document.getElementById('label-sibling-gap');
 
+// Global Hybrid Event Helper (Touch + Click without drop/delay)
+function bindHybridButton(el, callback) {
+  if (!el) return;
+  let lastTriggerTime = 0;
+  const trigger = (e) => {
+    const now = Date.now();
+    if (now - lastTriggerTime < 350) return;
+    lastTriggerTime = now;
+    callback(e);
+  };
+  el.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    trigger(e);
+  }, { passive: false });
+  el.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    trigger(e);
+  });
+}
+
 // Node Coordinate Map
 let coordinates = {};
 
@@ -10868,27 +10890,6 @@ function setupAdminMode() {
     });
   }
 
-  function bindHybridButton(el, callback) {
-    if (!el) return;
-    let lastTriggerTime = 0;
-    const trigger = (e) => {
-      const now = Date.now();
-      if (now - lastTriggerTime < 350) return;
-      lastTriggerTime = now;
-      callback(e);
-    };
-    el.addEventListener('touchend', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      trigger(e);
-    }, { passive: false });
-    el.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      trigger(e);
-    });
-  }
-
   bindHybridButton(adminAddBtn, () => {
     if (isAddPersonModeActive) {
       deactivateAddPersonMode();
@@ -11049,9 +11050,26 @@ function setupAdminMode() {
     });
   }
 
-  modalClose.addEventListener('click', closeAdminForm);
-  modalCancel.addEventListener('click', closeAdminForm);
-  document.getElementById('modal-cancel').addEventListener('click', closeAdminForm);
+  const modalCancelBtn = document.getElementById('modal-cancel');
+  if (modalClose) bindHybridButton(modalClose, closeAdminForm);
+  if (modalCancel) bindHybridButton(modalCancel, closeAdminForm);
+  if (modalCancelBtn) bindHybridButton(modalCancelBtn, closeAdminForm);
+
+  const adminModalEl = document.getElementById('admin-modal');
+  if (adminModalEl) {
+    adminModalEl.addEventListener('click', (e) => {
+      if (e.target === adminModalEl) {
+        closeAdminForm();
+      }
+    });
+    adminModalEl.addEventListener('touchend', (e) => {
+      if (e.target === adminModalEl) {
+        e.preventDefault();
+        e.stopPropagation();
+        closeAdminForm();
+      }
+    }, { passive: false });
+  }
 
   adminForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -12869,7 +12887,7 @@ function setupStyleEditor() {
   }
   
   if (stylePanelClose) {
-    stylePanelClose.addEventListener('click', closeStyleEditorPanel);
+    bindHybridButton(stylePanelClose, closeStyleEditorPanel);
   }
   
   // Real-time Style Controls Binding
@@ -14894,15 +14912,31 @@ function updateSelectedTags(type) {
 }
 
 function setupLayerItemModalEvents() {
-  if (layerItemModalClose) {
-    layerItemModalClose.addEventListener('click', () => {
-      layerItemModal.style.display = 'none';
+  const layerItemModalEl = document.getElementById('layer-item-modal');
+  const layerItemModalCancelBtn = document.getElementById('layer-item-modal-cancel');
+
+  const closeLayerItemModal = () => {
+    if (layerItemModalEl) layerItemModalEl.style.display = 'none';
+    if (typeof layerItemModal !== 'undefined' && layerItemModal) layerItemModal.style.display = 'none';
+  };
+
+  if (layerItemModalClose) bindHybridButton(layerItemModalClose, closeLayerItemModal);
+  if (layerItemModalCancel) bindHybridButton(layerItemModalCancel, closeLayerItemModal);
+  if (layerItemModalCancelBtn) bindHybridButton(layerItemModalCancelBtn, closeLayerItemModal);
+
+  if (layerItemModalEl) {
+    layerItemModalEl.addEventListener('click', (e) => {
+      if (e.target === layerItemModalEl) {
+        closeLayerItemModal();
+      }
     });
-  }
-  if (layerItemModalCancel) {
-    layerItemModalCancel.addEventListener('click', () => {
-      layerItemModal.style.display = 'none';
-    });
+    layerItemModalEl.addEventListener('touchend', (e) => {
+      if (e.target === layerItemModalEl) {
+        e.preventDefault();
+        e.stopPropagation();
+        closeLayerItemModal();
+      }
+    }, { passive: false });
   }
   
   // Setup searches
@@ -16549,7 +16583,7 @@ function setupSettingsListeners() {
     }
 
     if (settingsCloseBtn) {
-      settingsCloseBtn.addEventListener('click', () => {
+      bindHybridButton(settingsCloseBtn, () => {
         settingsModal.style.display = 'none';
         toggleSearchWrapper(true); // 환경설정이 꺼지면 검색 토글 보이기
       });
@@ -16561,6 +16595,14 @@ function setupSettingsListeners() {
         toggleSearchWrapper(true); // 환경설정이 꺼지면 검색 토글 보이기
       }
     });
+    settingsModal.addEventListener('touchend', (e) => {
+      if (e.target === settingsModal) {
+        e.preventDefault();
+        e.stopPropagation();
+        settingsModal.style.display = 'none';
+        toggleSearchWrapper(true);
+      }
+    }, { passive: false });
   }
 }
 
