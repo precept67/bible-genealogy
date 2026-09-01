@@ -16805,11 +16805,29 @@ function setupSettingsListeners() {
     const icloudToggle = document.getElementById('setting-icloud-sync');
     const icloudFields = document.getElementById('icloud-account-fields');
     const icloudStatus = document.getElementById('icloud-sync-status');
+    const icloudUserInput = document.getElementById('settings-icloud-username');
+    const icloudPassInput = document.getElementById('settings-icloud-password');
+
     if (icloudToggle) {
       const isICloudEnabled = localStorage.getItem('icloud_sync_enabled') === 'true';
+      const savedUser = localStorage.getItem('icloud_username') || '';
+      const savedPass = localStorage.getItem('icloud_password') || '';
+      
       icloudToggle.checked = isICloudEnabled;
-      if (icloudFields) icloudFields.style.display = isICloudEnabled ? 'flex' : 'none';
-      if (icloudStatus) icloudStatus.style.display = isICloudEnabled ? 'block' : 'none';
+      if (icloudUserInput && savedUser) icloudUserInput.value = savedUser;
+      if (icloudPassInput && savedPass) icloudPassInput.value = savedPass;
+
+      if (icloudFields) {
+        icloudFields.style.setProperty('display', isICloudEnabled ? 'flex' : 'none', 'important');
+      }
+      if (icloudStatus) {
+        if (isICloudEnabled && savedUser) {
+          icloudStatus.style.display = 'block';
+          icloudStatus.textContent = `☁️ iCloud 자동 동기화 활성화 중 (${savedUser})`;
+        } else {
+          icloudStatus.style.display = 'none';
+        }
+      }
     }
 
     const layerKeys = [

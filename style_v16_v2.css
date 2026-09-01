@@ -3252,18 +3252,18 @@ svg path.prophets-aura {
   z-index: 30000 !important;
 }
 
-/* 환경설정 창 너비 축소(250px) 및 100% 완전 불투명(Solid) 배경 적용 */
+/* 환경설정 창 너비 축소(250px), 동적 높이 및 100% 완전 불투명(Solid) 배경 적용 */
 #settings-modal .modal-content {
   position: absolute !important;
   top: 111px !important; /* 환경설정 창의 시작 상단을 화면 상단에서 111px 아래로 정박 */
-  bottom: auto !important; /* 고정 높이 400px 동작을 위해 하단 구속 해제 */
+  bottom: auto !important;
   right: 0px !important; /* 화면 우측 끝 밀착 */
   left: auto !important;
   width: 250px !important; /* 가로 너비 250px로 컴팩트하게 축소 */
   max-width: 85vw !important;
   min-width: auto !important;
-  height: 400px !important; /* 세로 높이 400px 고정 */
-  max-height: 400px !important;
+  height: auto !important; /* 동적 높이 확장 */
+  max-height: calc(100vh - 125px) !important;
   overflow-y: auto !important;
   pointer-events: auto !important; /* 설정창 내부 요소 터치 조작 허용 */
   z-index: 13000 !important; /* 검색 토글보다 높은 레이어로 가림 */
