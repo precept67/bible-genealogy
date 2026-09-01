@@ -17184,26 +17184,24 @@ function setupUpgradedSettingsEvents() {
     });
   }
 
-  // 3. Layer Toggles with Persistence and Instant Sync
+  // 3. Layer Toggles with Direct Button Hybrid Touch
   const layerToggles = [
-    { id: 'toggle-layer-people', key: 'bible_layer_people', defaultVal: true },
-    { id: 'toggle-layer-events', key: 'bible_layer_events', defaultVal: true },
-    { id: 'toggle-layer-locations', key: 'bible_layer_locations', defaultVal: true },
-    { id: 'toggle-layer-polygons', key: 'bible_layer_polygons', defaultVal: true },
-    { id: 'toggle-layer-prophets', key: 'bible_layer_prophets', defaultVal: true },
+    { btnId: 'btn-layer-people', id: 'toggle-layer-people', key: 'bible_layer_people', defaultVal: true },
+    { btnId: 'btn-layer-events', id: 'toggle-layer-events', key: 'bible_layer_events', defaultVal: true },
+    { btnId: 'btn-layer-locations', id: 'toggle-layer-locations', key: 'bible_layer_locations', defaultVal: true },
+    { btnId: 'btn-layer-polygons', id: 'toggle-layer-polygons', key: 'bible_layer_polygons', defaultVal: true },
+    { btnId: 'btn-layer-prophets', id: 'toggle-layer-prophets', key: 'bible_layer_prophets', defaultVal: true },
   ];
 
-  layerToggles.forEach(({ id, key, defaultVal }) => {
+  layerToggles.forEach(({ btnId, id, key, defaultVal }) => {
     const el = document.getElementById(id);
+    const btn = document.getElementById(btnId);
     if (!el) return;
     const saved = localStorage.getItem(key);
-    if (saved !== null) {
-      el.checked = (saved === 'true');
-    } else {
-      el.checked = defaultVal;
-    }
+    el.checked = (saved !== null) ? (saved === 'true') : defaultVal;
 
-    const onLayerToggleChange = () => {
+    const toggleThisLayer = () => {
+      el.checked = !el.checked;
       localStorage.setItem(key, el.checked ? 'true' : 'false');
       if (id === 'toggle-layer-prophets') {
         activeFilters['prophets'] = el.checked;
@@ -17219,7 +17217,11 @@ function setupUpgradedSettingsEvents() {
       updateLayersVisibility();
     };
 
-    el.addEventListener('change', onLayerToggleChange);
+    if (btn) {
+      bindHybridButton(btn, () => {
+        toggleThisLayer();
+      });
+    }
   });
 
   // 4. Backup & Restore Buttons with Hybrid Touch
@@ -17294,6 +17296,7 @@ function setupUpgradedSettingsEvents() {
   }
 
   // 5. iCloud Automatic Synchronization Setup
+  const icloudSwitchBtn = document.getElementById('switch-icloud-btn');
   const icloudToggle = document.getElementById('setting-icloud-sync');
   const icloudFields = document.getElementById('icloud-account-fields');
   const icloudUsernameInput = document.getElementById('settings-icloud-username');
@@ -17369,9 +17372,12 @@ function setupUpgradedSettingsEvents() {
       }
     };
 
-    icloudToggle.addEventListener('change', () => {
-      toggleICloudState(icloudToggle.checked);
-    });
+    if (icloudSwitchBtn) {
+      bindHybridButton(icloudSwitchBtn, () => {
+        const nextState = !icloudToggle.checked;
+        toggleICloudState(nextState);
+      });
+    }
 
     const handleICloudConnect = async () => {
       const username = icloudUsernameInput?.value.trim() || '';
@@ -17437,6 +17443,7 @@ function setupUpgradedSettingsEvents() {
   }
 
   // 6. Obsidian Markdown Sync Switch Handling
+  const mdSwitchBtn = document.getElementById('switch-md-btn');
   const mdToggle = document.getElementById('setting-md-sync');
   if (mdToggle) {
     const isMdEnabled = localStorage.getItem('bible_tree_md_sync') !== 'false';
@@ -17449,9 +17456,12 @@ function setupUpgradedSettingsEvents() {
         triggerAutoBackup();
       }
     };
-    mdToggle.addEventListener('change', () => {
-      toggleMdState(mdToggle.checked);
-    });
+    if (mdSwitchBtn) {
+      bindHybridButton(mdSwitchBtn, () => {
+        const nextState = !mdToggle.checked;
+        toggleMdState(nextState);
+      });
+    }
   }
 }
 
