@@ -3432,8 +3432,8 @@ body.search-focused #search-panel {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  color: #64748b !important; /* 차분한 그레이 */
-  fill: #64748b !important;
+  color: #475569 !important; /* #475569 통일 */
+  fill: #475569 !important;
   
   /* 이모지(📜, 📍, 📝, 🎨, 🔍 등)를 밝고 화사한 실버 회색 톤으로 grayscale 및 밝기 75% 적용 보정 */
   filter: grayscale(100%) brightness(75%) contrast(100%) !important;
@@ -3444,13 +3444,13 @@ body.search-focused #search-panel {
 .admin-action-btn-circle svg circle,
 .admin-action-btn-circle svg polygon,
 .admin-action-btn-circle svg rect {
-  stroke: #64748b !important;
+  stroke: #475569 !important;
   fill: none !important;
 }
 
 /* 6. + (더하기) 및 - (빼기) 텍스트 기호의 색상과 폰트 크기 정밀 락 */
 .admin-action-btn-circle {
-  color: #64748b !important;
+  color: #475569 !important;
   font-size: 18px !important;
   font-weight: bold !important;
 }
@@ -3487,7 +3487,7 @@ body.search-focused #search-panel {
 /* 역사 제어 벡터 화살표 아이콘 면 채우기(fill)를 방지하여 선명한 라인만 표출 (토끼귀 찌그러짐 해소) */
 svg.history-custom-icon {
   fill: none !important;
-  stroke: #64748b !important;
+  stroke: #475569 !important;
   stroke-width: 2.5 !important;
 }
 
