@@ -11825,9 +11825,9 @@ function deactivateAddPolygonMode() {
   removeTempPolygonPreview();
   const btn = document.getElementById('admin-add-polygon-btn');
   if (btn) {
-    btn.style.background = '#ea580c';
-    btn.style.borderColor = '#ea580c';
-    btn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;"><svg class="custom-add-polygon-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b; width: 24px; height: 24px; fill: none !important;"><rect x="4" y="4" width="16" height="16" rx="3" style="fill: none !important;"></rect><path d="M8 4v16M12 4v16M16 4v16M4 8h16M4 12h16M4 16h16" style="fill: none !important;"></path></svg></span>';
+    btn.style.background = '#ffffff';
+    btn.style.borderColor = 'rgba(0, 0, 0, 0.08)';
+    btn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;"><img src="add_polygon_btn.png" alt="영역 추가" style="width: 24px; height: 24px; object-fit: contain; transform: scale(1.1); transform-origin: center; pointer-events: none;"></span>';
   }
   const banner = document.getElementById('add-person-instruction');
   if (banner) banner.style.display = 'none';
@@ -11851,9 +11851,9 @@ function activateAddPolygonMode() {
   tempPolygonPoints = [];
   const btn = document.getElementById('admin-add-polygon-btn');
   if (btn) {
-    btn.style.background = '#9a3412';
-    btn.style.borderColor = '#9a3412';
-    btn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;"><svg class="custom-add-polygon-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="color: #ef4444; width: 24px; height: 24px; fill: none !important;"><rect x="4" y="4" width="16" height="16" rx="3" style="fill: none !important;"></rect><path d="M8 4v16M12 4v16M16 4v16M4 8h16M4 12h16M4 16h16" style="fill: none !important;"></path></svg></span>';
+    btn.style.background = '#ffffff';
+    btn.style.borderColor = 'rgba(0, 0, 0, 0.08)';
+    btn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;"><img src="add_polygon_btn.png" alt="영역 추가" style="width: 24px; height: 24px; object-fit: contain; transform: scale(1.1); transform-origin: center; filter: invert(34%) sepia(85%) saturate(2287%) hue-rotate(338deg) brightness(97%) contrast(92%); pointer-events: none;"></span>';
   }
   const banner = document.getElementById('add-person-instruction');
   if (banner) {
