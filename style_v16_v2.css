@@ -3692,14 +3692,73 @@ svg.history-custom-icon {
 }
 
 /* ==========================================================================
-   🎨 전체 버튼 아이콘들의 선 색상을 100% 불투명한 순수 RGB(100, 116, 139)로 대통합
+   🎨 모든 버튼 배경색 RGB(255, 255, 255) 및 선/아이콘 RGB(100, 116, 139) 100% 대통합
    ========================================================================== */
+/* 1. 흰색 배경 버튼들의 백그라운드 RGB(255, 255, 255) 고정 */
+#admin-actions-bar,
+.admin-action-btn-circle,
+#floating-search-wrapper,
+#floating-search-toggle-btn,
+#floating-settings-btn,
+#bottom-settings-btn,
+#admin-undo-btn,
+#admin-redo-btn,
+#zoom-in,
+#zoom-out,
+.zoom-btn,
+#slide-lock-container,
+#slide-lock-handle,
+#style-editor-toggle-btn,
+.close-btn {
+  background: rgb(255, 255, 255) !important; /* 순수 백색 RGB(255, 255, 255) 100% 통일 */
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* 2. 모든 버튼 내부 아이콘 SVG / 스판 / 텍스트의 선 및 글자 RGB(100, 116, 139) 통일 */
 .admin-action-btn-circle svg,
 #floating-settings-btn svg,
 #floating-search-toggle-btn svg,
-#slide-lock-icon-svg,
+#bottom-settings-btn svg,
+#admin-undo-btn svg,
+#admin-redo-btn svg,
 #zoom-in svg,
-#zoom-out svg {
-  color: #64748b !important;
+#zoom-out svg,
+.zoom-btn svg,
+#slide-lock-icon-svg,
+#style-editor-toggle-btn svg,
+.close-btn,
+.admin-action-btn-circle span,
+#floating-search-toggle-btn span {
+  color: rgb(100, 116, 139) !important; /* RGB(100, 116, 139) / #64748b */
+  stroke: rgb(100, 116, 139) !important;
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+/* 3. SVG 내부의 path, circle, polyline, line 등의 선 색상 지정 */
+.admin-action-btn-circle svg path,
+.admin-action-btn-circle svg circle,
+.admin-action-btn-circle svg polyline,
+.admin-action-btn-circle svg line,
+.admin-action-btn-circle svg rect,
+#floating-settings-btn svg path,
+#floating-settings-btn svg circle,
+#floating-search-toggle-btn svg path,
+#floating-search-toggle-btn svg circle,
+#bottom-settings-btn svg path,
+#bottom-settings-btn svg circle,
+#admin-undo-btn svg path,
+#admin-redo-btn svg path,
+#zoom-in svg line,
+#zoom-in svg path,
+#zoom-out svg line,
+#zoom-out svg path,
+#slide-lock-icon-svg path,
+#slide-lock-icon-svg circle {
+  stroke: rgb(100, 116, 139) !important;
+  fill: none !important;
   opacity: 1 !important;
 }
