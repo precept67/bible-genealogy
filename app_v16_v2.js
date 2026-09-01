@@ -11582,6 +11582,28 @@ function setupAutocomplete() {
   if (layerLocationsInput && layerLocationsSug) handleLayerInput(layerLocationsInput, layerLocationsSug, locations);
 }
 
+function positionAddInstructionBanner() {
+  const banner = document.getElementById('add-person-instruction');
+  const bar = document.getElementById('admin-actions-bar');
+  if (!banner) return;
+  if (bar && bar.style.display !== 'none') {
+    const rect = bar.getBoundingClientRect();
+    const topPos = Math.round(rect.bottom + 5);
+    banner.style.top = `${topPos}px`;
+  } else {
+    banner.style.top = '79px';
+  }
+  banner.style.left = '50%';
+  banner.style.transform = 'translateX(-50%)';
+}
+
+window.addEventListener('resize', () => {
+  const banner = document.getElementById('add-person-instruction');
+  if (banner && banner.style.display === 'flex') {
+    positionAddInstructionBanner();
+  }
+});
+
 function activateAddAnnotationMode() {
   deactivateAddPersonMode();
   deactivateAddLinkMode();
@@ -11620,6 +11642,12 @@ function activateAddAnnotationMode() {
   };
   document.addEventListener('mousemove', onMouseMove);
   
+  const banner = document.getElementById('add-person-instruction');
+  if (banner) {
+    banner.innerHTML = '📝 <span>보드 위의 원하는 위치를 클릭(터치)하면 텍스트 상자가 생성됩니다.</span>';
+    positionAddInstructionBanner();
+    banner.style.display = 'flex';
+  }
   showToast("📝 텍스트 상자 추가 모드: 배치할 캔버스 위치를 클릭(터치)하세요.");
 }
 
@@ -11634,6 +11662,9 @@ function deactivateAddAnnotationMode() {
   
   const ghost = document.getElementById('note-ghost-preview');
   if (ghost) ghost.remove();
+
+  const banner = document.getElementById('add-person-instruction');
+  if (banner) banner.style.display = 'none';
 }
 
 function activateAddPersonMode() {
@@ -11645,7 +11676,11 @@ function activateAddPersonMode() {
   viewerContainer.style.cursor = 'cell';
   
   const banner = document.getElementById('add-person-instruction');
-  if (banner) banner.style.display = 'flex';
+  if (banner) {
+    banner.innerHTML = '💡 <span>추가할 자식의 부모 카드를 클릭하거나, 빈 공간을 클릭하여 새 조상을 시작하세요.</span>';
+    positionAddInstructionBanner();
+    banner.style.display = 'flex';
+  }
   showToast("👤 인물 추가 모드: 배치할 캔버스 위치를 클릭(터치)하세요.");
 }
 
@@ -11669,6 +11704,12 @@ function activateAddLinkMode() {
     adminAddLinkBtn.style.background = '#ff7800';
     adminAddLinkBtn.style.color = '#fff';
   }
+  const banner = document.getElementById('add-person-instruction');
+  if (banner) {
+    banner.innerHTML = '🔗 <span>연결할 첫 번째 상자(인물 또는 텍스트)를 클릭하세요.</span>';
+    positionAddInstructionBanner();
+    banner.style.display = 'flex';
+  }
   showToast("연결선 추가 모드: 연결할 첫 번째 상자(인물 또는 텍스트)를 클릭하세요.");
   
   if (isAddPersonModeActive) deactivateAddPersonMode();
@@ -11682,6 +11723,8 @@ function deactivateAddLinkMode() {
     adminAddLinkBtn.style.background = '';
     adminAddLinkBtn.style.color = '';
   }
+  const banner = document.getElementById('add-person-instruction');
+  if (banner) banner.style.display = 'none';
   document.querySelectorAll('.link-source-highlight').forEach(el => el.classList.remove('link-source-highlight'));
 }
 
@@ -11695,6 +11738,8 @@ function deactivateAddPolygonMode() {
     btn.style.borderColor = '#ea580c';
     btn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;"><svg class="custom-add-polygon-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b; width: 24px; height: 24px; fill: none !important;"><rect x="4" y="4" width="16" height="16" rx="3" style="fill: none !important;"></rect><path d="M8 4v16M12 4v16M16 4v16M4 8h16M4 12h16M4 16h16" style="fill: none !important;"></path></svg></span>';
   }
+  const banner = document.getElementById('add-person-instruction');
+  if (banner) banner.style.display = 'none';
 }
 
 function activateAddPolygonMode() {
@@ -11713,6 +11758,12 @@ function activateAddPolygonMode() {
     btn.style.background = '#9a3412';
     btn.style.borderColor = '#9a3412';
     btn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;"><svg class="custom-add-polygon-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="color: #ef4444; width: 24px; height: 24px; fill: none !important;"><rect x="4" y="4" width="16" height="16" rx="3" style="fill: none !important;"></rect><path d="M8 4v16M12 4v16M16 4v16M4 8h16M4 12h16M4 16h16" style="fill: none !important;"></path></svg></span>';
+  }
+  const banner = document.getElementById('add-person-instruction');
+  if (banner) {
+    banner.innerHTML = '⬡ <span>화면을 클릭하여 다각형 꼭짓점을 만드세요. (시작점 클릭 시 완료)</span>';
+    positionAddInstructionBanner();
+    banner.style.display = 'flex';
   }
   showToast("⬡ 다각형 영역 추가 모드가 활성화되었습니다. 화면을 클릭하여 다각형 꼭짓점을 만드세요.");
   renderTree();
