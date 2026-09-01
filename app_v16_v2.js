@@ -11753,8 +11753,7 @@ function deactivateAddAnnotationMode() {
 function activateAddPersonMode() {
   deactivateAddAnnotationMode();
   isAddPersonModeActive = true;
-  // 활성화(취소 가능) 시에는 더하기(+) 기호를 빼기(-) 기호로 전환하여 세련되게 시각화
-  adminAddBtn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;"><svg class="custom-add-person-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="color: #ef4444; width: 24px; height: 24px; fill: none !important; transform: scale(1.1); transform-origin: center;"><circle cx="10" cy="8" r="4" style="fill: none !important;"></circle><path d="M3 20a7 7 0 0 1 14 0" style="fill: none !important;"></path><path d="M17 9h6" style="fill: none !important;"></path></svg></span>';
+  adminAddBtn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;"><img src="add_person_btn.png" alt="인물 추가" style="width: 24px; height: 24px; object-fit: contain; transform: scale(1.1); transform-origin: center; filter: invert(34%) sepia(85%) saturate(2287%) hue-rotate(338deg) brightness(97%) contrast(92%); pointer-events: none;"></span>';
   adminAddBtn.classList.add('danger');
   viewerContainer.style.cursor = 'cell';
   
@@ -11769,8 +11768,7 @@ function activateAddPersonMode() {
 
 function deactivateAddPersonMode() {
   isAddPersonModeActive = false;
-  // 비활성화(평상시)에는 사람 형상과 더하기(+) 아이콘 노출
-  adminAddBtn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;"><svg class="custom-add-person-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b; width: 24px; height: 24px; fill: none !important; transform: scale(1.1); transform-origin: center;"><circle cx="10" cy="8" r="4" style="fill: none !important;"></circle><path d="M3 20a7 7 0 0 1 14 0" style="fill: none !important;"></path><path d="M17 9h6M20 6v6" style="fill: none !important;"></path></svg></span>';
+  adminAddBtn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;"><img src="add_person_btn.png" alt="인물 추가" style="width: 24px; height: 24px; object-fit: contain; transform: scale(1.1); transform-origin: center; pointer-events: none;"></span>';
   adminAddBtn.classList.remove('danger');
   viewerContainer.style.cursor = 'grab';
   
