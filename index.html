@@ -46,7 +46,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
   
   <!-- Main Stylesheet -->
-  <link rel="stylesheet" href="style_v16_v2.css?v=23540">
+  <link rel="stylesheet" href="style_v16_v2.css?v=23550">
 
   <!-- Upgraded Admin Toolkit Styling (40px circle, white background, 50% opacity emojis) -->
   <style>
@@ -904,7 +904,7 @@
           <h2 id="modal-title">인물 정보 추가/수정</h2>
           <button id="modal-close" class="close-btn">&times;</button>
         </div>
-        <form id="admin-form" onsubmit="return false;">
+        <form id="admin-form">
           <div id="relation-presets-container" style="display: none; background: var(--bg-panel); border: 1px solid var(--border-panel); padding: 10px; border-radius: 8px; margin: 0 16px 12px 16px; flex-direction: column; gap: 6px;">
             <p style="margin: 0; font-size: 11px; color: var(--text-muted); font-weight: 600;">선택된 인물 연계 프리셋 (<span id="relation-target-name">이름</span>)</p>
             <div style="display: flex; gap: 8px;">
@@ -1003,7 +1003,7 @@
           <h2 id="layer-item-modal-title">사건/장소 정보 수정</h2>
           <button id="layer-item-modal-close" class="close-btn">&times;</button>
         </div>
-        <form id="layer-item-form" onsubmit="return false;">
+        <form id="layer-item-form">
           <div class="form-grid">
             <div class="form-group full-width">
               <label id="layer-item-name-label" for="layer-item-name">이름*</label>
@@ -1397,6 +1397,6 @@
       });
     }
   </script>
-  <script src="app_v16_v2.js?v=23540"></script>
+  <script src="app_v16_v2.js?v=23550"></script>
 </body>
 </html>

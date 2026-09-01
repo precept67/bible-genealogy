@@ -11142,6 +11142,13 @@ function setupAdminMode() {
     saveAdminForm();
   });
 
+  const modalSubmitBtn = document.getElementById('modal-submit');
+  if (modalSubmitBtn) {
+    bindHybridButton(modalSubmitBtn, () => {
+      saveAdminForm();
+    });
+  }
+
   formDeleteBtn.addEventListener('click', () => {
     deletePerson(editingPersonId);
   });
@@ -15298,6 +15305,16 @@ function setupLayerItemModalEvents() {
       showToast("삭제되었습니다.");
     });
   }
+  const layerItemModalSubmitBtn = document.getElementById('layer-item-modal-submit');
+  if (layerItemModalSubmitBtn) {
+    bindHybridButton(layerItemModalSubmitBtn, () => {
+      if (layerItemForm) {
+        const submitEvent = new Event('submit', { cancelable: true, bubbles: true });
+        layerItemForm.dispatchEvent(submitEvent);
+      }
+    });
+  }
+
   if (layerItemForm) {
     layerItemForm.addEventListener('submit', (e) => {
       e.preventDefault();
