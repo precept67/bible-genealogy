@@ -11733,7 +11733,7 @@ function deactivateAddAnnotationMode() {
   isAddAnnotationModeActive = false;
   adminAddNoteBtn.classList.remove('active-tool');
   if (adminAddNoteBtn) {
-    adminAddNoteBtn.innerHTML = '<span style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;"><svg class="custom-add-note-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" style="color: #475569; width: 24px; height: 24px; fill: none !important; transform: scale(1.1); transform-origin: center;"><path d="M6.5 2.5h11a1.8 1.8 0 0 1 1.8 1.8v11.7c0 .5-.2.9-.5 1.2l-3.3 3.3c-.3.3-.7.5-1.2.5H6.5a1.8 1.8 0 0 1-1.8-1.8V4.3a1.8 1.8 0 0 1 1.8-1.8z" style="fill: none !important;"></path><path d="M14.2 21v-2.8a1.2 1.2 0 0 1 1.2-1.2h2.8" style="fill: none !important;"></path><line x1="12" y1="6.5" x2="12" y2="13.5" style="fill: none !important;"></line><line x1="8.5" y1="10" x2="15.5" y2="10" style="fill: none !important;"></line></svg></span>';
+    adminAddNoteBtn.innerHTML = '<span style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;"><img src="add_note_btn.png" alt="텍스트 상자 추가" style="width: 24px; height: 24px; object-fit: contain; pointer-events: none;"></span>';
     adminAddNoteBtn.classList.remove('danger');
   }
   viewerContainer.style.cursor = 'grab';

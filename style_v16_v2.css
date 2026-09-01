@@ -3435,8 +3435,8 @@ body.search-focused #search-panel {
   color: #475569 !important; /* #475569 통일 */
   fill: #475569 !important;
   
-  /* 이모지(📜, 📍, 📝, 🎨, 🔍 등)를 밝고 화사한 실버 회색 톤으로 grayscale 및 밝기 75% 적용 보정 */
-  filter: grayscale(100%) brightness(75%) contrast(100%) !important;
+  /* 100% 원본 렌더링 */
+  filter: none !important;
 }
 
 /* 5. 줌 바 내부의 육각형 아이콘 등 SVG 스트로크 컬러도 설정 그레이로 통일 */
