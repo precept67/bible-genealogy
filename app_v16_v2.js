@@ -16798,10 +16798,12 @@ function setupAutoTranslationListeners() {
 }
 
 function setupSettingsListeners() {
-  const bottomSettingsBtn = document.getElementById('bottom-settings-btn');
+  const floatSettingsBtn = document.getElementById('floating-settings-btn') || document.getElementById('bottom-settings-btn');
   const settingsModal = document.getElementById('settings-modal');
   const settingsCloseBtn = document.getElementById('settings-close-btn');
   const settingMdSync = document.getElementById('setting-md-sync');
+
+  let isJustOpened = false;
 
   const toggleSearchWrapper = (show) => {
     const searchWrapper = document.getElementById('floating-search-wrapper');
@@ -16814,6 +16816,33 @@ function setupSettingsListeners() {
         searchWrapper.style.opacity = show ? '1' : '0';
         searchWrapper.style.pointerEvents = show ? 'auto' : 'none';
       }
+    }
+  };
+
+  const openSettings = (e) => {
+    if (e) {
+      if (typeof e.stopPropagation === 'function') e.stopPropagation();
+      if (typeof e.preventDefault === 'function' && e.cancelable) e.preventDefault();
+    }
+    if (settingMdSync) {
+      settingMdSync.checked = localStorage.getItem('bible_tree_md_sync') !== 'false';
+    }
+    if (settingsModal) {
+      isJustOpened = true;
+      setTimeout(() => { isJustOpened = false; }, 350);
+      settingsModal.style.setProperty('display', 'flex', 'important');
+      toggleSearchWrapper(false); // 환경설정이 켜지면 검색 토글 감추기
+    }
+  };
+
+  const closeSettings = (e) => {
+    if (e) {
+      if (typeof e.stopPropagation === 'function') e.stopPropagation();
+      if (typeof e.preventDefault === 'function' && e.cancelable) e.preventDefault();
+    }
+    if (settingsModal) {
+      settingsModal.style.setProperty('display', 'none', 'important');
+      toggleSearchWrapper(true); // 환경설정이 꺼지면 검색 토글 보이기
     }
   };
 
@@ -16833,35 +16862,24 @@ function setupSettingsListeners() {
       });
     }
 
-    if (bottomSettingsBtn) {
-      bottomSettingsBtn.addEventListener('click', () => {
-        if (settingMdSync) {
-          settingMdSync.checked = localStorage.getItem('bible_tree_md_sync') !== 'false';
-        }
-        settingsModal.style.display = 'flex';
-        toggleSearchWrapper(false); // 환경설정이 켜지면 검색 토글 감추기
-      });
+    if (floatSettingsBtn) {
+      bindHybridButton(floatSettingsBtn, openSettings);
     }
 
     if (settingsCloseBtn) {
-      bindHybridButton(settingsCloseBtn, () => {
-        settingsModal.style.display = 'none';
-        toggleSearchWrapper(true); // 환경설정이 꺼지면 검색 토글 보이기
-      });
+      bindHybridButton(settingsCloseBtn, closeSettings);
     }
 
     settingsModal.addEventListener('click', (e) => {
+      if (isJustOpened) return;
       if (e.target === settingsModal) {
-        settingsModal.style.display = 'none';
-        toggleSearchWrapper(true); // 환경설정이 꺼지면 검색 토글 보이기
+        closeSettings(e);
       }
     });
     settingsModal.addEventListener('touchend', (e) => {
+      if (isJustOpened) return;
       if (e.target === settingsModal) {
-        e.preventDefault();
-        e.stopPropagation();
-        settingsModal.style.display = 'none';
-        toggleSearchWrapper(true);
+        closeSettings(e);
       }
     }, { passive: false });
   }
@@ -16999,11 +17017,7 @@ function setupFloatingHeaderEvents() {
   const searchInput = document.getElementById('searchInput');
   const settingsModal = document.getElementById('settings-modal');
 
-  if (floatSettingsBtn && settingsModal) {
-    floatSettingsBtn.addEventListener('click', () => {
-      settingsModal.style.display = 'flex';
-    });
-  }
+
 
   if (floatSearchBtn && searchPanel && searchInput) {
     let isSearchOpen = false;
