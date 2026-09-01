@@ -17189,12 +17189,37 @@ function setupUpgradedSettingsEvents() {
       localStorage.setItem(key, el.checked ? 'true' : 'false');
       if (id === 'toggle-layer-prophets') {
         activeFilters['prophets'] = el.checked;
+        const treeBoard = document.getElementById('tree-board');
+        if (treeBoard) {
+          if (el.checked) {
+            treeBoard.classList.add('prophets-filter-active');
+          } else {
+            treeBoard.classList.remove('prophets-filter-active');
+          }
+        }
       }
-      applyFilters();
       updateLayersVisibility();
     };
 
     el.addEventListener('change', onLayerToggleChange);
+
+    const parentLabel = el.closest('label');
+    if (parentLabel) {
+      parentLabel.addEventListener('click', (e) => {
+        if (e.target === el) return;
+        e.preventDefault();
+        e.stopPropagation();
+        el.checked = !el.checked;
+        onLayerToggleChange();
+      });
+      parentLabel.addEventListener('touchend', (e) => {
+        if (e.target === el) return;
+        e.preventDefault();
+        e.stopPropagation();
+        el.checked = !el.checked;
+        onLayerToggleChange();
+      }, { passive: false });
+    }
   });
 
   // 4. Backup & Restore Buttons with Hybrid Touch
