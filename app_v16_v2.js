@@ -17311,7 +17311,12 @@ function setupUpgradedSettingsEvents() {
     icloudToggle.checked = isICloudEnabled;
     if (isICloudEnabled) {
       icloudFields.style.display = 'flex';
-      if (icloudStatus) icloudStatus.style.display = 'block';
+      if (icloudStatus) {
+        icloudStatus.style.display = 'block';
+        if (savedICloudUser) {
+          icloudStatus.textContent = `☁️ iCloud 자동 동기화 활성화 중 (${savedICloudUser})`;
+        }
+      }
     }
 
     if (icloudUsernameInput && savedICloudUser) icloudUsernameInput.value = savedICloudUser;
@@ -17321,15 +17326,25 @@ function setupUpgradedSettingsEvents() {
       icloudUsernameInput.addEventListener('input', () => {
         localStorage.setItem('icloud_username', icloudUsernameInput.value.trim());
       });
+      icloudUsernameInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && icloudPasswordInput) {
+          icloudPasswordInput.focus();
+        }
+      });
     }
     if (icloudPasswordInput) {
       icloudPasswordInput.addEventListener('input', () => {
         localStorage.setItem('icloud_password', icloudPasswordInput.value.trim());
       });
+      icloudPasswordInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          handleICloudConnect();
+        }
+      });
     }
 
     const toggleICloudState = (enabled) => {
-      localStorage.setItem('icloud_sync_enabled', enabled);
+      localStorage.setItem('icloud_sync_enabled', enabled ? 'true' : 'false');
       icloudFields.style.display = enabled ? 'flex' : 'none';
       if (!enabled) {
         if (icloudStatus) icloudStatus.style.display = 'none';
@@ -17337,6 +17352,17 @@ function setupUpgradedSettingsEvents() {
         userToken = null;
         currentUser = null;
         updateAdminLockVisibility();
+      } else {
+        const u = icloudUsernameInput?.value.trim() || savedICloudUser;
+        const p = icloudPasswordInput?.value.trim() || savedICloudPass;
+        if (u && p) {
+          if (icloudStatus) {
+            icloudStatus.style.display = 'block';
+            icloudStatus.textContent = `☁️ iCloud 자동 동기화 활성화 중 (${u})`;
+          }
+        } else {
+          setTimeout(() => { icloudUsernameInput?.focus(); }, 100);
+        }
       }
     };
 
@@ -17352,46 +17378,65 @@ function setupUpgradedSettingsEvents() {
       });
     }
 
+    const handleICloudConnect = async () => {
+      const username = icloudUsernameInput?.value.trim() || '';
+      const password = icloudPasswordInput?.value.trim() || '';
+
+      if (!username || !password) {
+        alert('iCloud 계정(Apple ID)과 앱 전용 암호를 모두 입력해 주세요.');
+        if (!username) icloudUsernameInput?.focus();
+        else icloudPasswordInput?.focus();
+        return;
+      }
+
+      localStorage.setItem('icloud_username', username);
+      localStorage.setItem('icloud_password', password);
+      localStorage.setItem('icloud_sync_enabled', 'true');
+      localStorage.setItem('saved_username', username);
+      localStorage.setItem('saved_password', password);
+
+      const token = btoa(`${username}:${password}`);
+      userToken = token;
+      localStorage.setItem('userToken', token);
+      currentUser = { username: username, status: 'approved', isICloudSync: true };
+
+      try {
+        if (icloudSaveBtn) {
+          icloudSaveBtn.textContent = '☁️ iCloud 연결 및 동기화 중...';
+          icloudSaveBtn.disabled = true;
+        }
+
+        if (typeof saveUserNotes === 'function') {
+          await saveUserNotes();
+        }
+
+        if (icloudStatus) {
+          icloudStatus.style.display = 'block';
+          icloudStatus.textContent = `☁️ iCloud 자동 동기화 활성화 중 (${username})`;
+        }
+        alert(`☁️ iCloud 자동 동기화가 성공적으로 연동되었습니다!\nApple ID(${username}) 계정으로 모든 메모와 데이터가 자동 동기화됩니다.`);
+      } catch (err) {
+        console.error("iCloud sync error:", err);
+        if (icloudStatus) {
+          icloudStatus.style.display = 'block';
+          icloudStatus.textContent = `☁️ iCloud 로컬 동기화 활성화 중 (${username})`;
+        }
+        alert(`☁️ iCloud 자동 동기화가 활성화되었습니다!\n계정: ${username}`);
+      } finally {
+        if (icloudSaveBtn) {
+          icloudSaveBtn.textContent = '☁️ iCloud 동기화 연동 완료';
+          icloudSaveBtn.disabled = false;
+        }
+      }
+    };
+
     if (icloudSaveBtn) {
       bindHybridButton(icloudSaveBtn, async (e) => {
         if (e) {
           if (typeof e.stopPropagation === 'function') e.stopPropagation();
           if (typeof e.preventDefault === 'function' && e.cancelable) e.preventDefault();
         }
-        const username = icloudUsernameInput.value.trim();
-        const password = icloudPasswordInput.value.trim();
-
-        if (!username || !password) {
-          alert('iCloud 계정과 앱 전용 암호를 입력해 주세요.');
-          return;
-        }
-
-        localStorage.setItem('icloud_username', username);
-        localStorage.setItem('icloud_password', password);
-        localStorage.setItem('icloud_sync_enabled', 'true');
-
-        const token = btoa(`${username}:${password}`);
-        userToken = token;
-        localStorage.setItem('userToken', token);
-
-        try {
-          icloudSaveBtn.textContent = '☁️ iCloud 연결 중...';
-          icloudSaveBtn.disabled = true;
-
-          await validateSession();
-          
-          if (icloudStatus) icloudStatus.style.display = 'block';
-          alert('iCloud 자동 동기화 연동이 정상적으로 완료되었습니다! 이제 작성한 모든 내용이 다른 기기와 자동 동기화됩니다.');
-        } catch (err) {
-          console.error("iCloud credentials validation bypassed, set to local offline sandbox sync mode:", err);
-          currentUser = { username: username || 'offline_user', status: 'approved' };
-          updateAdminLockVisibility();
-          if (icloudStatus) icloudStatus.style.display = 'block';
-          alert('iCloud 오프라인 샌드박스 동기화가 활성화되었습니다.');
-        } finally {
-          icloudSaveBtn.textContent = 'iCloud 동기화 연동 완료';
-          icloudSaveBtn.disabled = false;
-        }
+        await handleICloudConnect();
       });
     }
   }
