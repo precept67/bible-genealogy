@@ -17140,31 +17140,147 @@ function repositionHistoryButtons() {
   // 브라우저 flex 레이아웃에 직접 내장되어 스페이스 배치가 자동화되므로, 절대좌표 JS 계산 불필요
 }
 
-// Upgraded Settings Panel Handlers: Lang, Theme, and iCloud Sync
+// Upgraded Settings Panel Handlers: Lang, Theme, Layers, Backup/Restore, and iCloud Sync
 function setupUpgradedSettingsEvents() {
   const langBtn = document.getElementById('settings-lang-toggle');
   const themeBtn = document.getElementById('settings-theme-toggle');
-  
+  const backupBtn = document.getElementById('bottom-backup-btn');
+  const restoreBtn = document.getElementById('bottom-restore-btn');
+  const fileInput = document.getElementById('user-notes-file-input');
+
+  // 1. Language Toggle with Hybrid Touch
   if (langBtn) {
-    langBtn.addEventListener('click', () => {
+    bindHybridButton(langBtn, (e) => {
+      if (e) {
+        if (typeof e.stopPropagation === 'function') e.stopPropagation();
+        if (typeof e.preventDefault === 'function' && e.cancelable) e.preventDefault();
+      }
       currentLang = currentLang === 'ko' ? 'en' : 'ko';
       localStorage.setItem('bible_genealogy_lang', currentLang);
       applyLocalization();
       renderTree();
+      if (typeof renderEvents === 'function') renderEvents();
+      if (typeof renderLocations === 'function') renderLocations();
+      if (typeof renderCustomPolygons === 'function') renderCustomPolygons();
     });
   }
 
+  // 2. Theme Toggle with Hybrid Touch
   if (themeBtn) {
-    themeBtn.addEventListener('click', () => {
+    bindHybridButton(themeBtn, (e) => {
+      if (e) {
+        if (typeof e.stopPropagation === 'function') e.stopPropagation();
+        if (typeof e.preventDefault === 'function' && e.cancelable) e.preventDefault();
+      }
       const currentTheme = document.body.getAttribute('data-theme') || 'light';
       const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
       document.body.setAttribute('data-theme', newTheme);
       localStorage.setItem('bible_genealogy_theme', newTheme);
       updateThemeIcon(newTheme);
+      renderTree();
     });
   }
 
-  // iCloud Automatic Synchronization Setup
+  // 3. Layer Toggles with Persistence and Instant Sync
+  const layerToggles = [
+    { id: 'toggle-layer-people', key: 'bible_layer_people', defaultVal: true },
+    { id: 'toggle-layer-events', key: 'bible_layer_events', defaultVal: true },
+    { id: 'toggle-layer-locations', key: 'bible_layer_locations', defaultVal: true },
+    { id: 'toggle-layer-polygons', key: 'bible_layer_polygons', defaultVal: true },
+    { id: 'toggle-layer-prophets', key: 'bible_layer_prophets', defaultVal: false },
+  ];
+
+  layerToggles.forEach(({ id, key, defaultVal }) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const saved = localStorage.getItem(key);
+    if (saved !== null) {
+      el.checked = (saved === 'true');
+    } else {
+      el.checked = defaultVal;
+    }
+
+    const onLayerToggleChange = () => {
+      localStorage.setItem(key, el.checked ? 'true' : 'false');
+      applyFilters();
+      updateLayersVisibility();
+    };
+
+    el.addEventListener('change', onLayerToggleChange);
+  });
+
+  // 4. Backup & Restore Buttons with Hybrid Touch
+  if (backupBtn) {
+    bindHybridButton(backupBtn, async (e) => {
+      if (e) {
+        if (typeof e.stopPropagation === 'function') e.stopPropagation();
+        if (typeof e.preventDefault === 'function' && e.cancelable) e.preventDefault();
+      }
+      
+      const isTauri = window.location.protocol.startsWith('tauri') || 
+                      window.location.hostname === 'tauri.localhost' || 
+                      window.location.protocol.startsWith('file') ||
+                      window.location.protocol.startsWith('asset') ||
+                      (window.__TAURI__ && window.__TAURI__.fs);
+      const isCapacitor = window.Capacitor && window.Capacitor.isNativePlatform();
+
+      if (isCapacitor) {
+        try {
+          const { Filesystem, Share } = window.Capacitor.Plugins || {};
+          if (!Filesystem || !Share) throw new Error("Capacitor plugins not loaded");
+          
+          const fileName = 'bible_genealogy_notes_backup.json';
+          const fileContent = JSON.stringify(userNotes, null, 2);
+          
+          const writeResult = await Filesystem.writeFile({
+            path: fileName,
+            data: fileContent,
+            directory: 'CACHE',
+            encoding: 'utf8'
+          });
+          
+          await Share.share({
+            title: '열린족보이야기 메모 백업',
+            url: writeResult.uri
+          });
+        } catch (err) {
+          alert('모바일 메모 백업 중 오류가 발생했습니다: ' + err.message);
+        }
+      } else if (isTauri && window.__TAURI__ && window.__TAURI__.fs && window.__TAURI__.path) {
+        try {
+          const docDir = await window.__TAURI__.path.documentDir();
+          const backupPath = await window.__TAURI__.path.join(docDir, 'bible_genealogy_notes_autobackup.json');
+          await window.__TAURI__.fs.writeTextFile(backupPath, JSON.stringify(userNotes, null, 2));
+          alert('내 문서(Documents) 폴더에 전체 메모 백업 파일이 저장되었습니다.\n파일명: bible_genealogy_notes_autobackup.json');
+        } catch (err) {
+          alert('자동 저장 중 오류가 발생했습니다: ' + err.message);
+        }
+      } else {
+        try {
+          const dataStr = JSON.stringify(userNotes, null, 2);
+          const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+          const linkElement = document.createElement('a');
+          linkElement.setAttribute('href', dataUri);
+          linkElement.setAttribute('download', 'bible_genealogy_notes_backup.json');
+          linkElement.click();
+        } catch (err) {
+          alert('메모 백업 중 오류가 발생했습니다: ' + err.message);
+        }
+      }
+    });
+  }
+
+  if (restoreBtn && fileInput) {
+    bindHybridButton(restoreBtn, (e) => {
+      if (e) {
+        if (typeof e.stopPropagation === 'function') e.stopPropagation();
+        if (typeof e.preventDefault === 'function' && e.cancelable) e.preventDefault();
+      }
+      fileInput.click();
+    });
+  }
+
+  // 5. iCloud Automatic Synchronization Setup
   const icloudToggle = document.getElementById('setting-icloud-sync');
   const icloudFields = document.getElementById('icloud-account-fields');
   const icloudUsernameInput = document.getElementById('settings-icloud-username');
@@ -17187,7 +17303,6 @@ function setupUpgradedSettingsEvents() {
     if (icloudUsernameInput && savedICloudUser) icloudUsernameInput.value = savedICloudUser;
     if (icloudPasswordInput && savedICloudPass) icloudPasswordInput.value = savedICloudPass;
 
-    // iCloud 텍스트 입력 실시간 자동 저장 (Auto-save)
     if (icloudUsernameInput) {
       icloudUsernameInput.addEventListener('input', () => {
         localStorage.setItem('icloud_username', icloudUsernameInput.value.trim());
@@ -17213,7 +17328,11 @@ function setupUpgradedSettingsEvents() {
     });
 
     if (icloudSaveBtn) {
-      icloudSaveBtn.addEventListener('click', async () => {
+      bindHybridButton(icloudSaveBtn, async (e) => {
+        if (e) {
+          if (typeof e.stopPropagation === 'function') e.stopPropagation();
+          if (typeof e.preventDefault === 'function' && e.cancelable) e.preventDefault();
+        }
         const username = icloudUsernameInput.value.trim();
         const password = icloudPasswordInput.value.trim();
 
@@ -17222,12 +17341,10 @@ function setupUpgradedSettingsEvents() {
           return;
         }
 
-        // Save iCloud configurations locally
         localStorage.setItem('icloud_username', username);
         localStorage.setItem('icloud_password', password);
         localStorage.setItem('icloud_sync_enabled', 'true');
 
-        // Emulate iCloud Sync Login via internal auth API
         const token = btoa(`${username}:${password}`);
         userToken = token;
         localStorage.setItem('userToken', token);
@@ -17236,7 +17353,6 @@ function setupUpgradedSettingsEvents() {
           icloudSaveBtn.textContent = '☁️ iCloud 연결 중...';
           icloudSaveBtn.disabled = true;
 
-          // Call session validator to verify iCloud credentials against sync server
           await validateSession();
           
           if (icloudStatus) icloudStatus.style.display = 'block';
