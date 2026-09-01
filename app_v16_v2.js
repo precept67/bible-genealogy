@@ -1636,35 +1636,64 @@ function updateHistoryButtonsState() {
   }
 }
 
+function positionToastContainer(container) {
+  if (!container) container = document.getElementById('toast-container');
+  if (!container) return;
+  const banner = document.getElementById('add-person-instruction');
+  const bar = document.getElementById('admin-actions-bar');
+  
+  let topPos = 80;
+  if (banner && banner.style.display === 'flex') {
+    const bannerRect = banner.getBoundingClientRect();
+    topPos = Math.round(bannerRect.bottom + 5);
+  } else if (bar && bar.style.display !== 'none') {
+    const barRect = bar.getBoundingClientRect();
+    topPos = Math.round(barRect.bottom + 5);
+  } else {
+    topPos = 80;
+  }
+  
+  container.style.position = 'fixed';
+  container.style.top = `${topPos}px`;
+  container.style.bottom = 'auto';
+  container.style.left = '50%';
+  container.style.transform = 'translateX(-50%)';
+  container.style.zIndex = '13000';
+  container.style.pointerEvents = 'none';
+}
+
 function showToast(message) {
   let container = document.getElementById('toast-container');
   if (!container) {
     container = document.createElement('div');
     container.id = 'toast-container';
-    container.style.position = 'fixed';
-    container.style.bottom = '20px';
-    container.style.left = '50%';
-    container.style.transform = 'translateX(-50%)';
-    container.style.zIndex = '9999';
     container.style.display = 'flex';
     container.style.flexDirection = 'column';
-    container.style.gap = '8px';
+    container.style.gap = '6px';
+    container.style.alignItems = 'center';
     document.body.appendChild(container);
   }
+  
+  positionToastContainer(container);
   
   const toast = document.createElement('div');
   toast.className = 'toast-notification';
   toast.textContent = message;
-  toast.style.background = 'rgba(15, 23, 42, 0.9)';
+  toast.style.background = 'rgba(15, 23, 42, 0.92)';
+  toast.style.backdropFilter = 'blur(6px)';
+  toast.style.webkitBackdropFilter = 'blur(6px)';
   toast.style.color = '#fff';
-  toast.style.padding = '10px 20px';
-  toast.style.borderRadius = '8px';
-  toast.style.fontSize = '14px';
+  toast.style.padding = '8px 18px';
+  toast.style.borderRadius = '9999px';
+  toast.style.fontSize = '12px';
   toast.style.fontWeight = '500';
-  toast.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+  toast.style.border = '1px solid rgba(255, 255, 255, 0.15)';
+  toast.style.boxShadow = '0 4px 14px rgba(0, 0, 0, 0.2)';
   toast.style.opacity = '0';
-  toast.style.transform = 'translateY(10px)';
-  toast.style.transition = 'all 0.3s ease';
+  toast.style.transform = 'translateY(-6px)';
+  toast.style.transition = 'all 0.25s ease';
+  toast.style.pointerEvents = 'none';
+  toast.style.whiteSpace = 'nowrap';
   
   container.appendChild(toast);
   
@@ -1676,11 +1705,14 @@ function showToast(message) {
   
   setTimeout(() => {
     toast.style.opacity = '0';
-    toast.style.transform = 'translateY(-10px)';
+    toast.style.transform = 'translateY(-6px)';
     setTimeout(() => {
       toast.remove();
-    }, 300);
-  }, 2500);
+      if (container.children.length === 0) {
+        container.remove();
+      }
+    }, 250);
+  }, 2200);
 }
 
 // Global shortcut keydown listener for Admin Mode Undo/Redo
@@ -11595,6 +11627,11 @@ function positionAddInstructionBanner() {
   }
   banner.style.left = '50%';
   banner.style.transform = 'translateX(-50%)';
+
+  const toastContainer = document.getElementById('toast-container');
+  if (toastContainer && typeof positionToastContainer === 'function') {
+    positionToastContainer(toastContainer);
+  }
 }
 
 window.addEventListener('resize', () => {
@@ -11665,6 +11702,11 @@ function deactivateAddAnnotationMode() {
 
   const banner = document.getElementById('add-person-instruction');
   if (banner) banner.style.display = 'none';
+
+  const toastContainer = document.getElementById('toast-container');
+  if (toastContainer && typeof positionToastContainer === 'function') {
+    positionToastContainer(toastContainer);
+  }
 }
 
 function activateAddPersonMode() {
@@ -11693,6 +11735,11 @@ function deactivateAddPersonMode() {
   
   const banner = document.getElementById('add-person-instruction');
   if (banner) banner.style.display = 'none';
+
+  const toastContainer = document.getElementById('toast-container');
+  if (toastContainer && typeof positionToastContainer === 'function') {
+    positionToastContainer(toastContainer);
+  }
 }
 
 function activateAddLinkMode() {
@@ -11725,6 +11772,11 @@ function deactivateAddLinkMode() {
   }
   const banner = document.getElementById('add-person-instruction');
   if (banner) banner.style.display = 'none';
+
+  const toastContainer = document.getElementById('toast-container');
+  if (toastContainer && typeof positionToastContainer === 'function') {
+    positionToastContainer(toastContainer);
+  }
   document.querySelectorAll('.link-source-highlight').forEach(el => el.classList.remove('link-source-highlight'));
 }
 
@@ -11740,6 +11792,11 @@ function deactivateAddPolygonMode() {
   }
   const banner = document.getElementById('add-person-instruction');
   if (banner) banner.style.display = 'none';
+
+  const toastContainer = document.getElementById('toast-container');
+  if (toastContainer && typeof positionToastContainer === 'function') {
+    positionToastContainer(toastContainer);
+  }
 }
 
 function activateAddPolygonMode() {
