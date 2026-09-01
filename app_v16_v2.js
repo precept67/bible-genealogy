@@ -10452,8 +10452,11 @@ function setupSearch() {
 
   const handleGlobalOutsideClick = (e) => {
     // 0. Search Focus / Results Panel auto close when clicking/touching outside
+    if (window.lastSearchOpenTime && Date.now() - window.lastSearchOpenTime < 450) {
+      return;
+    }
     const searchWrapper = document.getElementById('floating-search-wrapper');
-    const searchInput = document.getElementById('search-input');
+    const searchInput = document.getElementById('searchInput') || document.getElementById('search-input');
     const searchResults = document.getElementById('search-results');
     
     if (document.body.classList.contains('search-focused') || (searchResults && searchResults.style.display !== 'none')) {
@@ -10461,12 +10464,17 @@ function setupSearch() {
         (searchWrapper && searchWrapper.contains(e.target)) || 
         (searchResults && searchResults.contains(e.target)) ||
         e.target.closest('#floating-search-wrapper') ||
+        e.target.closest('#floating-search-toggle-btn') ||
         e.target.closest('#search-results');
         
       if (!isClickInsideSearch) {
-        document.body.classList.remove('search-focused');
-        if (searchResults) searchResults.style.display = 'none';
-        if (searchInput) searchInput.blur();
+        if (window.closeSearchWrapper) {
+          window.closeSearchWrapper();
+        } else {
+          document.body.classList.remove('search-focused');
+          if (searchResults) searchResults.style.display = 'none';
+          if (searchInput) searchInput.blur();
+        }
       }
     }
 
@@ -17029,35 +17037,41 @@ function setupFloatingHeaderEvents() {
 
   if (floatSearchBtn && searchPanel && searchInput) {
     let isSearchOpen = false;
-    let lastToggleTime = 0; // 더블 탭으로 인한 중복 연쇄 반전 버그 방지용 쿨다운 타이머
-    let searchViewportInterval = null; // iOS 키보드 높이 감지 씹힘 방지용 실시간 타이머 폴러
+    let searchViewportInterval = null;
     const searchWrapper = document.getElementById('floating-search-wrapper');
-    const originalWindowHeight = window.innerHeight;
 
     const handleVisualViewportChange = () => {
-      if (window.visualViewport && document.body.classList.contains('search-focused') && searchWrapper) {
-        const currentHeight = window.innerHeight;
-        const keyboardHeight = window.innerHeight - window.visualViewport.height;
-        
-        // 세로/가로 공통으로 자판 57px 상단 정밀 연동 실시 (기존 50px에서 7px 상향 조정)
-        // [1단계] Overlay 키보드 모드 감지 (비주얼 뷰포트 격차가 100px 초과 시)
-        if (keyboardHeight > 100) {
-          searchWrapper.style.bottom = `${keyboardHeight + 57}px`;
-          searchWrapper.style.top = 'auto'; // 수직 중앙 top 해제
-        } 
-        // [2단계] Resize 키보드 모드 감지 (웹뷰 자체가 150px 이상 축소되었을 시)
-        else if (originalWindowHeight - currentHeight > 150) {
-          searchWrapper.style.bottom = '57px'; // 축소된 웹뷰의 바닥(키보드 윗선) 기준 57px 띄움
-          searchWrapper.style.top = 'auto';
-        } 
-        // [3단계] 물리 키보드가 장착되어 가상 키보드는 없으나 포커스 상태인 경우 (줌조절바 상단 80px 위에 위치하게 조율 - 60px 추가 상향)
-        else if (document.activeElement === searchInput) {
-          searchWrapper.style.bottom = 'calc(121px + env(safe-area-inset-bottom))'; // 줌 조절바 상단(41px + safe-area) + 80px = 121px + safe-area
-          searchWrapper.style.top = 'auto';
-        }
-        // [4단계] 평상시 대기 상태 (키보드가 없거나 포커스가 풀린 기본 상태)
-        else {
-          searchWrapper.style.bottom = 'calc(1px + env(safe-area-inset-bottom))';
+      if (document.body.classList.contains('search-focused') && searchWrapper) {
+        const isLandscape = window.matchMedia('(orientation: landscape)').matches;
+        if (window.visualViewport) {
+          const currentHeight = window.innerHeight;
+          const keyboardHeight = window.innerHeight - window.visualViewport.height;
+          
+          if (isLandscape) {
+            // 가로 모드 (Landscape): 콤팩트한 화면 높이를 감안하여 키보드 위 안전 영역에 정박
+            if (keyboardHeight > 40) {
+              const safeBottom = Math.max(6, Math.min(keyboardHeight + 6, currentHeight - 48));
+              searchWrapper.style.bottom = `${safeBottom}px`;
+              searchWrapper.style.top = 'auto';
+            } else {
+              searchWrapper.style.bottom = 'calc(4px + env(safe-area-inset-bottom))';
+              searchWrapper.style.top = 'auto';
+            }
+          } else {
+            // 세로 모드 (Portrait)
+            if (keyboardHeight > 100) {
+              searchWrapper.style.bottom = `${keyboardHeight + 57}px`;
+              searchWrapper.style.top = 'auto';
+            } else if (document.activeElement === searchInput) {
+              searchWrapper.style.bottom = 'calc(121px + env(safe-area-inset-bottom))';
+              searchWrapper.style.top = 'auto';
+            } else {
+              searchWrapper.style.bottom = 'calc(1px + env(safe-area-inset-bottom))';
+              searchWrapper.style.top = 'auto';
+            }
+          }
+        } else {
+          searchWrapper.style.bottom = 'calc(4px + env(safe-area-inset-bottom))';
           searchWrapper.style.top = 'auto';
         }
       }
@@ -17072,8 +17086,8 @@ function setupFloatingHeaderEvents() {
         searchViewportInterval = null;
       }
       if (searchWrapper) {
-        searchWrapper.style.top = 'auto'; // 수직 정렬 top 해제
-        searchWrapper.style.bottom = 'calc(1px + env(safe-area-inset-bottom))'; // 원래 우측 하단 정박선 복구!
+        searchWrapper.style.top = 'auto';
+        searchWrapper.style.bottom = 'calc(1px + env(safe-area-inset-bottom))';
       }
       searchInput.value = '';
       const resultsDropdown = document.getElementById('search-results');
@@ -17088,57 +17102,47 @@ function setupFloatingHeaderEvents() {
     // 전역 스코프에서 다른 검색 리스트 클릭 및 키 바인딩 시 복구할 수 있도록 노출
     window.closeSearchWrapper = closeSearchWrapper;
 
-    // 🔍 검색 토글 버튼 클릭 핸들러
-    const handleSearchToggle = (e) => {
-      e.stopPropagation();
-      if (e.cancelable) e.preventDefault();
-      
-      const now = Date.now();
-      if (now - lastToggleTime < 250) return; // 250ms 이내 중복 터치/클릭 연쇄 발동 강제 무력화
-      lastToggleTime = now;
-      
-      // 상태 기준 동기화 분기: search-focused 클래스가 없으면 활성화, 있으면 닫기
+    const toggleSearch = () => {
+      window.lastSearchOpenTime = Date.now();
       const isCurrentlyOpen = document.body.classList.contains('search-focused');
       isSearchOpen = !isCurrentlyOpen;
-      
+
       if (isSearchOpen) {
         if (searchWrapper) {
           document.body.classList.add('search-focused');
-          searchWrapper.style.top = 'auto'; // 키보드 연동을 위해 top 해제
-          searchWrapper.style.bottom = 'calc(1px + env(safe-area-inset-bottom))'; // 초기 하단 대기선
+          searchWrapper.style.top = 'auto';
+          searchWrapper.style.bottom = 'calc(1px + env(safe-area-inset-bottom))';
         }
 
-        // 포커싱과 동시에 50ms 실시간 폴러 감시 타이머 구동
         setTimeout(() => {
           searchInput.focus();
-          
           if (searchViewportInterval) clearInterval(searchViewportInterval);
           searchViewportInterval = setInterval(handleVisualViewportChange, 50);
-          
+
           if (window.visualViewport) {
             window.visualViewport.addEventListener('resize', handleVisualViewportChange);
             window.visualViewport.addEventListener('scroll', handleVisualViewportChange);
             handleVisualViewportChange();
           }
-        }, 150);
+        }, 100);
       } else {
         closeSearchWrapper();
       }
     };
 
-    floatSearchBtn.addEventListener('click', handleSearchToggle);
-    floatSearchBtn.addEventListener('touchend', handleSearchToggle, { passive: false });
-    floatSearchBtn.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
+    bindHybridButton(floatSearchBtn, () => {
+      toggleSearch();
+    });
 
-    // 포커스 아웃(blur) 시 100ms 안심 복구 감지 필터를 통해 검색창 안전 복원 및 돋보기 강제 복구
+    // 포커스 아웃(blur) 시 150ms 안심 복구 감지 필터
     searchInput.addEventListener('blur', () => {
       setTimeout(() => {
+        if (Date.now() - (window.lastSearchOpenTime || 0) < 400) return;
         const activeEl = document.activeElement;
-        // 포커스가 완전히 검색창 영역(searchWrapper) 외부로 탈출했을 때만 복원 함수를 강제 작동!
         if (isSearchOpen && searchWrapper && !searchWrapper.contains(activeEl)) {
           closeSearchWrapper();
         }
-      }, 100);
+      }, 150);
     });
   }
 }
