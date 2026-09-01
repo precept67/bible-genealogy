@@ -14527,8 +14527,12 @@ function renderEvents() {
         el.isDraggingFinished = false;
         return;
       }
-      openLayerDetails(ev, 'event');
-      highlightRelatedElements(ev.id, 'event');
+      if (isAdminMode) {
+        editLayerItem(ev, 'event');
+      } else {
+        openLayerDetails(ev, 'event');
+        highlightRelatedElements(ev.id, 'event');
+      }
     };
     el.addEventListener('click', handleEventActivate);
     el.addEventListener('touchend', (e) => {
@@ -14541,13 +14545,6 @@ function renderEvents() {
       handleEventActivate(e);
       e.preventDefault(); // iOS/iPadOS click 시뮬레이션 중복 발동 방지 차단
     }, { passive: false });
-    
-    el.addEventListener('dblclick', (e) => {
-      e.stopPropagation();
-      if (isAdminMode) {
-        editLayerItem(ev, 'event');
-      }
-    });
     
     layer.appendChild(el);
   });
@@ -14581,8 +14578,12 @@ function renderLocations() {
         el.isDraggingFinished = false;
         return;
       }
-      openLayerDetails(loc, 'location');
-      highlightRelatedElements(loc.id, 'location');
+      if (isAdminMode) {
+        editLayerItem(loc, 'location');
+      } else {
+        openLayerDetails(loc, 'location');
+        highlightRelatedElements(loc.id, 'location');
+      }
     };
     el.addEventListener('click', handleLocationActivate);
     el.addEventListener('touchend', (e) => {
@@ -14596,18 +14597,12 @@ function renderLocations() {
       e.preventDefault(); // iOS/iPadOS click 시뮬레이션 중복 발동 방지 차단
     }, { passive: false });
     
-    el.addEventListener('dblclick', (e) => {
-      e.stopPropagation();
-      if (isAdminMode) {
-        editLayerItem(loc, 'location');
-      }
-    });
-    
     layer.appendChild(el);
   });
 }
 
 function makeLayerDraggable(el, item, type) {
+  // Mouse Drag
   el.addEventListener('mousedown', (e) => {
     if (!isAdminMode) return;
     e.stopPropagation();
@@ -14660,6 +14655,66 @@ function makeLayerDraggable(el, item, type) {
     window.addEventListener('mousemove', onMouseMove);
     window.addEventListener('mouseup', onMouseUp);
   });
+
+  // Touch Drag
+  el.addEventListener('touchstart', (e) => {
+    if (!isAdminMode || e.touches.length > 1) return;
+    
+    let isDragging = false;
+    const touch = e.touches[0];
+    let startX = touch.clientX;
+    let startY = touch.clientY;
+    let originalX = item.x;
+    let originalY = item.y;
+    
+    el.style.zIndex = 30;
+    
+    const onTouchMove = (moveEvent) => {
+      if (moveEvent.touches.length > 1) return;
+      const currentTouch = moveEvent.touches[0];
+      const dx_pixels = currentTouch.clientX - startX;
+      const dy_pixels = currentTouch.clientY - startY;
+      
+      if (Math.abs(dx_pixels) > 6 || Math.abs(dy_pixels) > 6) {
+        if (!isDragging) {
+          pushHistoryState();
+          isDragging = true;
+        }
+        if (moveEvent.cancelable) {
+          moveEvent.preventDefault();
+        }
+      }
+      
+      if (isDragging) {
+        const dx = dx_pixels / currentScale;
+        const dy = dy_pixels / currentScale;
+        item.x = Math.round(originalX + dx);
+        item.y = Math.round(originalY + dy);
+        
+        el.style.left = `${item.x * currentScale}px`;
+        el.style.top = `${item.y * currentScale}px`;
+      }
+    };
+    
+    const onTouchEnd = (endEvent) => {
+      window.removeEventListener('touchmove', onTouchMove);
+      window.removeEventListener('touchend', onTouchEnd);
+      window.removeEventListener('touchcancel', onTouchEnd);
+      
+      el.style.zIndex = '';
+      
+      if (isDragging) {
+        if (type === 'event') saveEvents();
+        else saveLocations();
+        autoSaveToServer();
+        el.isDraggingFinished = true;
+      }
+    };
+    
+    window.addEventListener('touchmove', onTouchMove, { passive: false });
+    window.addEventListener('touchend', onTouchEnd);
+    window.addEventListener('touchcancel', onTouchEnd);
+  }, { passive: true });
 }
 
 function openLayerDetails(data, type) {
