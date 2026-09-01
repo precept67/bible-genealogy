@@ -3694,10 +3694,18 @@ svg.history-custom-icon {
 /* ==========================================================================
    🎨 모든 버튼 배경색 RGB(255, 255, 255) 및 선/아이콘 RGB(100, 116, 139) 100% 대통합
    ========================================================================== */
-/* 1. 흰색 배경 버튼들의 백그라운드 RGB(255, 255, 255) 고정 */
-#admin-actions-bar,
-.admin-action-btn-circle,
+/* 1. 래퍼 컨테이너의 사각형 외곽 테두리 선(Border) 및 박스 완벽 삭제 */
 #floating-search-wrapper,
+.search-wrapper,
+#bottom-controls-wrapper {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* 2. 모든 원형 버튼들: 100% 완전한 원형(50%) 유지 및 바깥 사각형 선(border/outline) 완전 제거 */
+.admin-action-btn-circle,
 #floating-search-toggle-btn,
 #floating-settings-btn,
 #bottom-settings-btn,
@@ -3706,18 +3714,32 @@ svg.history-custom-icon {
 #zoom-in,
 #zoom-out,
 .zoom-btn,
-#slide-lock-container,
 #slide-lock-handle,
-#style-editor-toggle-btn,
-.close-btn {
+#style-editor-toggle-btn {
   background: rgb(255, 255, 255) !important; /* 순수 백색 RGB(255, 255, 255) 100% 통일 */
-  border: 1px solid rgba(0, 0, 0, 0.08) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+  border: none !important; /* 원 바깥의 사각형 테두리선 완전 삭제 */
+  outline: none !important;
+  border-radius: 50% !important; /* 100% 동그란 원형 고정 */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
 
-/* 2. 모든 버튼 내부 아이콘 SVG / 스판 / 텍스트의 선 및 글자 RGB(100, 116, 139) 통일 */
+#admin-actions-bar {
+  background: rgb(255, 255, 255) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  border-radius: 30px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+}
+
+.close-btn {
+  background: rgb(255, 255, 255) !important;
+  border: none !important;
+  outline: none !important;
+  border-radius: 50% !important;
+}
+
+/* 3. 모든 버튼 내부 아이콘 SVG / 스판 / 텍스트의 선 및 글자 RGB(100, 116, 139) 통일 */
 .admin-action-btn-circle svg,
 #floating-settings-btn svg,
 #floating-search-toggle-btn svg,
@@ -3738,7 +3760,7 @@ svg.history-custom-icon {
   filter: none !important;
 }
 
-/* 3. SVG 내부의 path, circle, polyline, line 등의 선 색상 지정 */
+/* 4. SVG 내부의 path, circle, polyline, line 등의 선 색상 지정 */
 .admin-action-btn-circle svg path,
 .admin-action-btn-circle svg circle,
 .admin-action-btn-circle svg polyline,
