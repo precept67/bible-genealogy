@@ -1095,9 +1095,13 @@ header .subtitle {
 
 .form-group input, 
 .form-group select, 
-.form-group textarea {
+.form-group textarea,
+.relation-search,
+.modal-content input,
+.modal-content textarea,
+.modal-content select {
   font-family: var(--font-family);
-  font-size: 13px;
+  font-size: 14px;
   padding: 8px 12px;
   background: rgba(148, 163, 184, 0.08);
   border: 1px solid var(--border-panel);
@@ -1105,11 +1109,29 @@ header .subtitle {
   color: var(--text-main);
   outline: none;
   transition: border-color 0.2s ease;
+  -webkit-user-select: text !important;
+  user-select: text !important;
+  -webkit-touch-callout: default !important;
+  touch-action: manipulation !important;
+  pointer-events: auto !important;
+}
+
+@media screen and (max-width: 768px) {
+  .form-group input, 
+  .form-group select, 
+  .form-group textarea,
+  .relation-search,
+  .modal-content input,
+  .modal-content textarea,
+  .modal-content select {
+    font-size: 16px !important; /* Prevents WebKit iOS unwanted zoom and keyboard suppression */
+  }
 }
 
 .form-group input:focus, 
 .form-group select:focus, 
-.form-group textarea:focus {
+.form-group textarea:focus,
+.relation-search:focus {
   border-color: var(--text-accent);
 }
 

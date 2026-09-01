@@ -12049,6 +12049,34 @@ function renderRelatedPeopleList(searchTerm = "") {
   });
 }
 
+function ensureModalInputsFocusable() {
+  const modalInputs = document.querySelectorAll('.modal-overlay input, .modal-overlay textarea, .modal-overlay select');
+  modalInputs.forEach(input => {
+    input.style.userSelect = 'text';
+    input.style.webkitUserSelect = 'text';
+    input.style.touchAction = 'manipulation';
+    input.style.pointerEvents = 'auto';
+
+    if (!input.dataset.touchBound) {
+      input.dataset.touchBound = 'true';
+      input.addEventListener('touchstart', (e) => {
+        e.stopPropagation();
+      }, { passive: true });
+      input.addEventListener('touchend', (e) => {
+        e.stopPropagation();
+        input.focus();
+      }, { passive: true });
+      input.addEventListener('pointerdown', (e) => {
+        e.stopPropagation();
+      });
+      input.addEventListener('click', (e) => {
+        e.stopPropagation();
+        input.focus();
+      });
+    }
+  });
+}
+
 function openAdminForm(personId) {
   editingPersonId = personId;
   const formEl = document.getElementById('admin-form');
@@ -12143,6 +12171,13 @@ function openAdminForm(personId) {
   
   renderRelatedPeopleList("");
   if (modalEl) modalEl.style.display = 'flex';
+  ensureModalInputsFocusable();
+  setTimeout(() => {
+    const focusTarget = document.getElementById('form-name') || document.getElementById('form-id');
+    if (focusTarget) {
+      focusTarget.focus();
+    }
+  }, 100);
 }
 
 function openAdminFormWithParent(parentId) {
@@ -14717,6 +14752,13 @@ function editLayerItem(data, type) {
   updateSelectedTags('locations');
   
   layerItemModal.style.display = 'flex';
+  ensureModalInputsFocusable();
+  setTimeout(() => {
+    const focusTarget = document.getElementById('layer-item-name');
+    if (focusTarget) {
+      focusTarget.focus();
+    }
+  }, 100);
 }
 
 function openLayerItemAddForm(type) {
@@ -14770,6 +14812,13 @@ function openLayerItemAddForm(type) {
   updateSelectedTags('locations');
   
   layerItemModal.style.display = 'flex';
+  ensureModalInputsFocusable();
+  setTimeout(() => {
+    const focusTarget = document.getElementById('layer-item-name');
+    if (focusTarget) {
+      focusTarget.focus();
+    }
+  }, 100);
 }
 
 function populateRelationChecklists(currentItemId, currentItemType) {
@@ -17133,9 +17182,9 @@ function setupGlobalKeyboardDismiss() {
   const dismissKeyboard = (e) => {
     const activeEl = document.activeElement;
     // 현재 포커스된 엘리먼트가 input 또는 textarea 이며 글을 쓰는 상태일 때
-    if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')) {
-      // 터치/클릭된 대상이 입력 창이나 입력 폼 컨테이너가 아닐 때 포커스 해제하여 키보드 닫기
-      const clickedInputOrPanel = e.target.closest('input, textarea, #study-panel, #settings-modal, #search-panel');
+    if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'SELECT')) {
+      // 터치/클릭된 대상이 입력 창이나 모달, 입력 폼 컨테이너가 아닐 때만 포커스 해제하여 키보드 닫기
+      const clickedInputOrPanel = e.target.closest('input, textarea, select, label, .modal-content, .modal-overlay, #admin-modal, #layer-item-modal, #study-panel, #settings-modal, #search-panel, #bottom-spawner-panel, form');
       if (!clickedInputOrPanel) {
         activeEl.blur();
       }
