@@ -17220,24 +17220,6 @@ function setupUpgradedSettingsEvents() {
     };
 
     el.addEventListener('change', onLayerToggleChange);
-
-    const parentLabel = el.closest('label');
-    if (parentLabel) {
-      parentLabel.addEventListener('click', (e) => {
-        if (e.target === el) return;
-        e.preventDefault();
-        e.stopPropagation();
-        el.checked = !el.checked;
-        onLayerToggleChange();
-      });
-      parentLabel.addEventListener('touchend', (e) => {
-        if (e.target === el) return;
-        e.preventDefault();
-        e.stopPropagation();
-        el.checked = !el.checked;
-        onLayerToggleChange();
-      }, { passive: false });
-    }
   });
 
   // 4. Backup & Restore Buttons with Hybrid Touch
@@ -17318,7 +17300,6 @@ function setupUpgradedSettingsEvents() {
   const icloudPasswordInput = document.getElementById('settings-icloud-password');
   const icloudSaveBtn = document.getElementById('settings-icloud-save-btn');
   const icloudStatus = document.getElementById('icloud-sync-status');
-  const icloudTitle = document.getElementById('settings-group-icloud-title');
 
   // Load existing iCloud settings from localStorage
   const savedICloudUser = localStorage.getItem('icloud_username');
@@ -17392,19 +17373,6 @@ function setupUpgradedSettingsEvents() {
       toggleICloudState(icloudToggle.checked);
     });
 
-    if (icloudTitle) {
-      icloudTitle.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        toggleICloudState(!icloudToggle.checked);
-      });
-      icloudTitle.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        toggleICloudState(!icloudToggle.checked);
-      }, { passive: false });
-    }
-
     const handleICloudConnect = async () => {
       const username = icloudUsernameInput?.value.trim() || '';
       const password = icloudPasswordInput?.value.trim() || '';
@@ -17470,7 +17438,6 @@ function setupUpgradedSettingsEvents() {
 
   // 6. Obsidian Markdown Sync Switch Handling
   const mdToggle = document.getElementById('setting-md-sync');
-  const mdTitle = document.getElementById('settings-md-sync-label');
   if (mdToggle) {
     const isMdEnabled = localStorage.getItem('bible_tree_md_sync') !== 'false';
     mdToggle.checked = isMdEnabled;
@@ -17485,18 +17452,6 @@ function setupUpgradedSettingsEvents() {
     mdToggle.addEventListener('change', () => {
       toggleMdState(mdToggle.checked);
     });
-    if (mdTitle) {
-      mdTitle.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        toggleMdState(!mdToggle.checked);
-      });
-      mdTitle.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        toggleMdState(!mdToggle.checked);
-      }, { passive: false });
-    }
   }
 }
 
