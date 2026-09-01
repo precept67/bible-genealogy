@@ -16831,17 +16831,22 @@ function setupSettingsListeners() {
     }
 
     const layerKeys = [
-      { id: 'toggle-layer-people', key: 'bible_layer_people', def: true },
-      { id: 'toggle-layer-events', key: 'bible_layer_events', def: true },
-      { id: 'toggle-layer-locations', key: 'bible_layer_locations', def: true },
-      { id: 'toggle-layer-polygons', key: 'bible_layer_polygons', def: true },
-      { id: 'toggle-layer-prophets', key: 'bible_layer_prophets', def: true },
+      { btnId: 'btn-layer-people', id: 'toggle-layer-people', key: 'bible_layer_people', def: true },
+      { btnId: 'btn-layer-events', id: 'toggle-layer-events', key: 'bible_layer_events', def: true },
+      { btnId: 'btn-layer-locations', id: 'toggle-layer-locations', key: 'bible_layer_locations', def: true },
+      { btnId: 'btn-layer-polygons', id: 'toggle-layer-polygons', key: 'bible_layer_polygons', def: true },
+      { btnId: 'btn-layer-prophets', id: 'toggle-layer-prophets', key: 'bible_layer_prophets', def: true },
     ];
-    layerKeys.forEach(({ id, key, def }) => {
+    layerKeys.forEach(({ btnId, id, key, def }) => {
       const el = document.getElementById(id);
+      const btn = document.getElementById(btnId);
       if (el) {
         const val = localStorage.getItem(key);
         el.checked = val !== null ? (val === 'true') : def;
+        if (btn) {
+          if (el.checked) btn.classList.add('checked');
+          else btn.classList.remove('checked');
+        }
       }
     });
 
@@ -17199,9 +17204,17 @@ function setupUpgradedSettingsEvents() {
     if (!el) return;
     const saved = localStorage.getItem(key);
     el.checked = (saved !== null) ? (saved === 'true') : defaultVal;
+    if (btn) {
+      if (el.checked) btn.classList.add('checked');
+      else btn.classList.remove('checked');
+    }
 
     const toggleThisLayer = () => {
       el.checked = !el.checked;
+      if (btn) {
+        if (el.checked) btn.classList.add('checked');
+        else btn.classList.remove('checked');
+      }
       localStorage.setItem(key, el.checked ? 'true' : 'false');
       if (id === 'toggle-layer-prophets') {
         activeFilters['prophets'] = el.checked;

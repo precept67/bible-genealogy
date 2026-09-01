@@ -3185,14 +3185,40 @@ svg path.prophets-aura {
   transform: translateX(20px);
 }
 
-/* Layer Box Button & Switch Button Touch Styling */
-.layer-box-btn {
-  transition: background-color 0.15s ease, transform 0.1s ease, border-color 0.15s ease !important;
+/* Unified Single Custom Checkbox */
+.custom-layer-chk {
+  width: 18px !important;
+  height: 18px !important;
+  border-radius: 4px !important;
+  border: 1.5px solid var(--border-panel) !important;
+  background: var(--bg-panel) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
   cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  box-sizing: border-box !important;
+  padding: 0 !important;
+  flex-shrink: 0 !important;
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent;
 }
-.layer-box-btn:active {
-  transform: scale(0.92) !important;
-  background: rgba(59, 130, 246, 0.2) !important;
+
+.custom-layer-chk .chk-icon {
+  display: none !important;
+}
+
+.custom-layer-chk.checked {
+  background: #0284c7 !important;
+  border-color: #0284c7 !important;
+}
+
+.custom-layer-chk.checked .chk-icon {
+  display: block !important;
+}
+
+.custom-layer-chk:active {
+  transform: scale(0.9) !important;
 }
 
 .switch-toggle-btn {
