@@ -5794,18 +5794,11 @@ function getLocationFilterClass(loc) {
 
 function isCharacterCardVisible(charId) {
   const showPeople = document.getElementById('toggle-layer-people')?.checked !== false;
-  const showProphets = document.getElementById('toggle-layer-prophets')?.checked === true;
+  const showProphets = document.getElementById('toggle-layer-prophets')?.checked !== false;
   
   const char = db.find(c => c.id === charId);
-  if (!char) {
-    if (charId === 'samuel') {
-      return showProphets;
-    }
-    return showPeople;
-  }
-  
   const isProphetChecked = isProphet(charId);
-  const isSamuelCard = charId === 'samuel' || (char.name && (char.name === '사무엘' || char.name.includes('사무엘')));
+  const isSamuelCard = charId === 'samuel' || (char && char.name && (char.name === '사무엘' || char.name.includes('사무엘')));
   
   if (isProphetChecked || isSamuelCard) {
     return showProphets;
@@ -5818,7 +5811,7 @@ function updateLayersVisibility() {
   const showEvents = document.getElementById('toggle-layer-events')?.checked !== false;
   const showLocations = document.getElementById('toggle-layer-locations')?.checked !== false;
   const showPolygons = document.getElementById('toggle-layer-polygons')?.checked !== false;
-  const showProphets = document.getElementById('toggle-layer-prophets')?.checked === true;
+  const showProphets = document.getElementById('toggle-layer-prophets')?.checked !== false;
 
   // 1. Person Cards
   const personCards = document.querySelectorAll('.person-card');
@@ -5916,18 +5909,16 @@ function applyFilters() {
   renderTree();
   updateTransform();
   
+  const toggleLayerProphets = document.getElementById('toggle-layer-prophets');
+  const showProphets = toggleLayerProphets ? (toggleLayerProphets.checked !== false) : true;
+  
   const treeBoard = document.getElementById('tree-board');
   if (treeBoard) {
-    if (activeFilters['prophets'] === true) {
+    if (showProphets || activeFilters['prophets'] === true) {
       treeBoard.classList.add('prophets-filter-active');
     } else {
       treeBoard.classList.remove('prophets-filter-active');
     }
-  }
-
-  const toggleLayerProphets = document.getElementById('toggle-layer-prophets');
-  if (toggleLayerProphets && activeFilters['prophets'] === true) {
-    toggleLayerProphets.checked = true;
   }
 
   updateLayersVisibility();
@@ -17187,7 +17178,7 @@ function setupUpgradedSettingsEvents() {
     { id: 'toggle-layer-events', key: 'bible_layer_events', defaultVal: true },
     { id: 'toggle-layer-locations', key: 'bible_layer_locations', defaultVal: true },
     { id: 'toggle-layer-polygons', key: 'bible_layer_polygons', defaultVal: true },
-    { id: 'toggle-layer-prophets', key: 'bible_layer_prophets', defaultVal: false },
+    { id: 'toggle-layer-prophets', key: 'bible_layer_prophets', defaultVal: true },
   ];
 
   layerToggles.forEach(({ id, key, defaultVal }) => {
@@ -17202,6 +17193,9 @@ function setupUpgradedSettingsEvents() {
 
     const onLayerToggleChange = () => {
       localStorage.setItem(key, el.checked ? 'true' : 'false');
+      if (id === 'toggle-layer-prophets') {
+        activeFilters['prophets'] = el.checked;
+      }
       applyFilters();
       updateLayersVisibility();
     };
@@ -17287,6 +17281,7 @@ function setupUpgradedSettingsEvents() {
   const icloudPasswordInput = document.getElementById('settings-icloud-password');
   const icloudSaveBtn = document.getElementById('settings-icloud-save-btn');
   const icloudStatus = document.getElementById('icloud-sync-status');
+  const icloudItem = document.getElementById('setting-icloud-item') || document.getElementById('settings-group-icloud-title');
 
   // Load existing iCloud settings from localStorage
   const savedICloudUser = localStorage.getItem('icloud_username');
@@ -17314,8 +17309,7 @@ function setupUpgradedSettingsEvents() {
       });
     }
 
-    icloudToggle.addEventListener('change', () => {
-      const enabled = icloudToggle.checked;
+    const toggleICloudState = (enabled) => {
       localStorage.setItem('icloud_sync_enabled', enabled);
       icloudFields.style.display = enabled ? 'flex' : 'none';
       if (!enabled) {
@@ -17325,7 +17319,19 @@ function setupUpgradedSettingsEvents() {
         currentUser = null;
         updateAdminLockVisibility();
       }
+    };
+
+    icloudToggle.addEventListener('change', () => {
+      toggleICloudState(icloudToggle.checked);
     });
+
+    if (icloudItem) {
+      icloudItem.addEventListener('click', (e) => {
+        if (e.target === icloudToggle || e.target.closest('.switch-toggle')) return;
+        icloudToggle.checked = !icloudToggle.checked;
+        toggleICloudState(icloudToggle.checked);
+      });
+    }
 
     if (icloudSaveBtn) {
       bindHybridButton(icloudSaveBtn, async (e) => {
@@ -17367,6 +17373,30 @@ function setupUpgradedSettingsEvents() {
           icloudSaveBtn.textContent = 'iCloud 동기화 연동 완료';
           icloudSaveBtn.disabled = false;
         }
+      });
+    }
+  }
+
+  // 6. Obsidian Markdown Sync Switch Handling
+  const mdToggle = document.getElementById('setting-md-sync');
+  const mdItem = document.getElementById('setting-md-item') || document.getElementById('settings-md-sync-label');
+  if (mdToggle) {
+    mdToggle.checked = localStorage.getItem('bible_tree_md_sync') !== 'false';
+    const toggleMdState = (checked) => {
+      localStorage.setItem('bible_tree_md_sync', checked ? 'true' : 'false');
+      console.log("[환경설정] 마크다운 연동 변경됨:", checked);
+      if (checked && typeof triggerAutoBackup === 'function') {
+        triggerAutoBackup();
+      }
+    };
+    mdToggle.addEventListener('change', () => {
+      toggleMdState(mdToggle.checked);
+    });
+    if (mdItem) {
+      mdItem.addEventListener('click', (e) => {
+        if (e.target === mdToggle || e.target.closest('.switch-toggle')) return;
+        mdToggle.checked = !mdToggle.checked;
+        toggleMdState(mdToggle.checked);
       });
     }
   }
