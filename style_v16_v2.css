@@ -3750,12 +3750,18 @@ svg.history-custom-icon {
 @media only screen and (device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3),
        only screen and (device-width: 852px) and (device-height: 393px) and (-webkit-device-pixel-ratio: 3) {
   body:not(.search-focused) #floating-search-wrapper {
-    right: 16px !important; /* 검색 버튼 우측 16px 간격 정박 */
+    right: calc(16px + env(safe-area-inset-right)) !important;
     left: auto !important;
     transform: none !important;
+    bottom: calc(8px + env(safe-area-inset-bottom)) !important;
   }
   #slide-lock-container {
-    left: 16px !important; /* 락버튼 좌측 16px 간격 정박 */
+    left: calc(16px + env(safe-area-inset-left)) !important;
+    bottom: calc(8px + env(safe-area-inset-bottom)) !important;
+  }
+  #floating-settings-btn {
+    right: calc(16px + env(safe-area-inset-right)) !important;
+    top: calc(12px + env(safe-area-inset-top)) !important;
   }
 }
 
@@ -3765,12 +3771,18 @@ svg.history-custom-icon {
 @media only screen and (device-width: 440px) and (device-height: 956px) and (-webkit-device-pixel-ratio: 3),
        only screen and (device-width: 956px) and (device-height: 440px) and (-webkit-device-pixel-ratio: 3) {
   body:not(.search-focused) #floating-search-wrapper {
-    right: 16px !important; /* 검색 버튼 우측 16px 간격 정박 */
+    right: calc(16px + env(safe-area-inset-right)) !important;
     left: auto !important;
     transform: none !important;
+    bottom: calc(8px + env(safe-area-inset-bottom)) !important;
   }
   #slide-lock-container {
-    left: 16px !important; /* 락버튼 좌측 16px 간격 정박 */
+    left: calc(16px + env(safe-area-inset-left)) !important;
+    bottom: calc(8px + env(safe-area-inset-bottom)) !important;
+  }
+  #floating-settings-btn {
+    right: calc(16px + env(safe-area-inset-right)) !important;
+    top: calc(12px + env(safe-area-inset-top)) !important;
   }
 }
 
