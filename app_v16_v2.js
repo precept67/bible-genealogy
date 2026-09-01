@@ -1643,9 +1643,13 @@ function positionToastContainer(container) {
   const bar = document.getElementById('admin-actions-bar');
   
   let topPos = 80;
+  let syncWidth = null;
   if (banner && banner.style.display === 'flex') {
     const bannerRect = banner.getBoundingClientRect();
     topPos = Math.round(bannerRect.bottom + 5);
+    if (bannerRect.width > 0) {
+      syncWidth = Math.round(bannerRect.width);
+    }
   } else if (bar && bar.style.display !== 'none') {
     const barRect = bar.getBoundingClientRect();
     topPos = Math.round(barRect.bottom + 5);
@@ -1660,6 +1664,15 @@ function positionToastContainer(container) {
   container.style.transform = 'translateX(-50%)';
   container.style.zIndex = '13000';
   container.style.pointerEvents = 'none';
+
+  if (syncWidth) {
+    container.querySelectorAll('.toast-notification').forEach(t => {
+      t.style.width = `${syncWidth}px`;
+      t.style.boxSizing = 'border-box';
+      t.style.justifyContent = 'center';
+      t.style.textAlign = 'center';
+    });
+  }
 }
 
 function showToast(message) {
@@ -1694,6 +1707,21 @@ function showToast(message) {
   toast.style.transition = 'all 0.25s ease';
   toast.style.pointerEvents = 'none';
   toast.style.whiteSpace = 'nowrap';
+  toast.style.overflow = 'hidden';
+  toast.style.textOverflow = 'ellipsis';
+
+  const banner = document.getElementById('add-person-instruction');
+  if (banner && banner.style.display === 'flex') {
+    const bannerRect = banner.getBoundingClientRect();
+    if (bannerRect.width > 0) {
+      toast.style.width = `${Math.round(bannerRect.width)}px`;
+      toast.style.boxSizing = 'border-box';
+      toast.style.justifyContent = 'center';
+      toast.style.textAlign = 'center';
+      toast.style.display = 'flex';
+      toast.style.alignItems = 'center';
+    }
+  }
   
   container.appendChild(toast);
   
