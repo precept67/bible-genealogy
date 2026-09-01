@@ -3223,27 +3223,32 @@ svg path.prophets-aura {
   z-index: 30000 !important;
 }
 
-/* 환경설정 창 너비를 선디자인 편집기(360px)와 매칭, 우측 하단 끝(bottom: 16px)까지 전체 연장 */
+/* 환경설정 창 너비 축소(250px) 및 100% 완전 불투명(Solid) 배경 적용 */
 #settings-modal .modal-content {
   position: absolute !important;
   top: 111px !important; /* 환경설정 창의 시작 상단을 화면 상단에서 111px 아래로 정박 */
   bottom: auto !important; /* 고정 높이 400px 동작을 위해 하단 구속 해제 */
   right: 0px !important; /* 화면 우측 끝 밀착 */
   left: auto !important;
-  width: 350px !important; /* 가로 너비 350px 통일 */
-  max-width: 90% !important;
+  width: 250px !important; /* 가로 너비 250px로 컴팩트하게 축소 */
+  max-width: 85vw !important;
   min-width: auto !important;
   height: 400px !important; /* 세로 높이 400px 고정 */
   max-height: 400px !important;
   overflow-y: auto !important;
   pointer-events: auto !important; /* 설정창 내부 요소 터치 조작 허용 */
   z-index: 13000 !important; /* 검색 토글보다 높은 레이어로 가림 */
-  background: var(--bg-panel) !important;
+  background: #ffffff !important; /* 100% 완전 불투명 화이트 */
   border: 1px solid var(--border-panel) !important;
   border-radius: 16px 0px 0px 16px !important; /* 우측 면은 화면 모서리에 딱 맞추고, 좌측 노출 면만 둥글게 가공 */
-  box-shadow: var(--shadow-panel) !important;
-  backdrop-filter: none !important; /* 뒤쪽 검색 토글 실루엣 투과를 없애기 위해 블러 필터 해제 */
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25) !important;
+  backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
+}
+
+[data-theme="dark"] #settings-modal .modal-content {
+  background: #0f172a !important; /* 다크모드 100% 완전 불투명 솔리드 다크 차콜 */
+  border-color: rgba(255, 255, 255, 0.15) !important;
 }
 
 /* History Undo/Redo Controls Float Styling */
@@ -3271,23 +3276,26 @@ svg path.prophets-aura {
     left: auto !important;
     right: 16px !important;
   }
-  /* 환경설정 창도 가로화면에서 선디자인 편집기와 동일하게 256px로 매칭 */
+  /* 환경설정 창도 가로화면에서 220px 및 100% 완전 불투명 */
   #settings-modal .modal-content {
     position: absolute !important;
-    top: 70px !important; /* 위로 10px 상향 조정 */
-    bottom: 20vh !important; /* 화면 전체 높이의 20% 만큼 바닥을 줄여 띄움 */
+    top: 70px !important;
+    bottom: 20vh !important;
     right: 16px !important;
     left: auto !important;
-    width: 256px !important;
-    max-width: 90% !important;
+    width: 220px !important;
+    max-width: 85vw !important;
     min-width: auto !important;
     height: auto !important;
-    max-height: calc(80vh - 70px) !important; /* 바닥 20%를 뺀 나머지 화면 안에서 최대 높이 제한 */
-    z-index: 13000 !important; /* 검색 토글(12000)을 완벽하게 덮는 최상위 레이어 */
+    max-height: calc(80vh - 70px) !important;
+    z-index: 13000 !important;
     overflow-y: auto !important;
-    background: var(--bg-panel) !important; /* 뒤쪽 검색 토글이 비치지 않게 솔리드 패널 배경 적용 */
-    box-shadow: var(--shadow-panel) !important;
-    border-radius: 16px !important; /* 하단이 공중에 뜨므로 사방 모서리를 다시 둥글게 원복 */
+    background: #ffffff !important;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25) !important;
+    border-radius: 16px !important;
+  }
+  [data-theme="dark"] #settings-modal .modal-content {
+    background: #0f172a !important;
   }
   
   /* 상세 정보창(네임박스 창) 가로화면 시 우측 30% 폭으로 조절하여 좌측 70% 가계도 캔버스 확보 */
