@@ -3739,7 +3739,19 @@ svg.history-custom-icon {
   border-radius: 50% !important;
 }
 
-/* 3. 모든 버튼 내부 아이콘 SVG / 스판 / 텍스트의 선 및 글자 RGB(100, 116, 139) 통일 */
+/* 3. 모든 버튼 내부 이미지 img 태그 100% 원본 색상 보존 */
+.admin-action-btn-circle img,
+#floating-settings-btn img,
+#floating-search-toggle-btn img,
+#bottom-settings-btn img,
+#admin-undo-btn img,
+#admin-redo-btn img {
+  filter: none !important;
+  opacity: 1 !important;
+  pointer-events: none;
+}
+
+/* 4. 버튼 내부 아이콘 및 텍스트 기본 스타일 */
 .admin-action-btn-circle svg,
 #floating-settings-btn svg,
 #floating-search-toggle-btn svg,
@@ -3754,13 +3766,10 @@ svg.history-custom-icon {
 .close-btn,
 .admin-action-btn-circle span,
 #floating-search-toggle-btn span {
-  color: rgb(100, 116, 139) !important; /* RGB(100, 116, 139) / #64748b */
-  stroke: rgb(100, 116, 139) !important;
   opacity: 1 !important;
   filter: none !important;
 }
 
-/* 4. SVG 내부의 path, circle, polyline, line 등의 선 색상 지정 */
 .admin-action-btn-circle svg path,
 .admin-action-btn-circle svg circle,
 .admin-action-btn-circle svg polyline,
@@ -3780,7 +3789,6 @@ svg.history-custom-icon {
 #zoom-out svg path,
 #slide-lock-icon-svg path,
 #slide-lock-icon-svg circle {
-  stroke: rgb(100, 116, 139) !important;
   fill: none !important;
   opacity: 1 !important;
 }
