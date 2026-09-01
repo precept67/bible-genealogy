@@ -17300,7 +17300,7 @@ function setupUpgradedSettingsEvents() {
   const icloudPasswordInput = document.getElementById('settings-icloud-password');
   const icloudSaveBtn = document.getElementById('settings-icloud-save-btn');
   const icloudStatus = document.getElementById('icloud-sync-status');
-  const icloudItem = document.getElementById('setting-icloud-item') || document.getElementById('settings-group-icloud-title');
+  const icloudTitle = document.getElementById('settings-group-icloud-title');
 
   // Load existing iCloud settings from localStorage
   const savedICloudUser = localStorage.getItem('icloud_username');
@@ -17310,13 +17310,15 @@ function setupUpgradedSettingsEvents() {
   if (icloudToggle && icloudFields) {
     icloudToggle.checked = isICloudEnabled;
     if (isICloudEnabled) {
-      icloudFields.style.display = 'flex';
+      icloudFields.style.setProperty('display', 'flex', 'important');
       if (icloudStatus) {
         icloudStatus.style.display = 'block';
         if (savedICloudUser) {
           icloudStatus.textContent = `☁️ iCloud 자동 동기화 활성화 중 (${savedICloudUser})`;
         }
       }
+    } else {
+      icloudFields.style.setProperty('display', 'none', 'important');
     }
 
     if (icloudUsernameInput && savedICloudUser) icloudUsernameInput.value = savedICloudUser;
@@ -17345,24 +17347,26 @@ function setupUpgradedSettingsEvents() {
 
     const toggleICloudState = (enabled) => {
       localStorage.setItem('icloud_sync_enabled', enabled ? 'true' : 'false');
-      icloudFields.style.display = enabled ? 'flex' : 'none';
-      if (!enabled) {
-        if (icloudStatus) icloudStatus.style.display = 'none';
-        localStorage.removeItem('userToken');
-        userToken = null;
-        currentUser = null;
-        updateAdminLockVisibility();
-      } else {
-        const u = icloudUsernameInput?.value.trim() || savedICloudUser;
-        const p = icloudPasswordInput?.value.trim() || savedICloudPass;
-        if (u && p) {
+      icloudToggle.checked = enabled;
+      if (enabled) {
+        icloudFields.style.setProperty('display', 'flex', 'important');
+        const u = icloudUsernameInput?.value.trim() || localStorage.getItem('icloud_username');
+        if (u) {
           if (icloudStatus) {
             icloudStatus.style.display = 'block';
             icloudStatus.textContent = `☁️ iCloud 자동 동기화 활성화 중 (${u})`;
           }
         } else {
-          setTimeout(() => { icloudUsernameInput?.focus(); }, 100);
+          if (icloudStatus) icloudStatus.style.display = 'none';
+          setTimeout(() => { icloudUsernameInput?.focus(); }, 150);
         }
+      } else {
+        icloudFields.style.setProperty('display', 'none', 'important');
+        if (icloudStatus) icloudStatus.style.display = 'none';
+        localStorage.removeItem('userToken');
+        userToken = null;
+        currentUser = null;
+        updateAdminLockVisibility();
       }
     };
 
@@ -17370,12 +17374,17 @@ function setupUpgradedSettingsEvents() {
       toggleICloudState(icloudToggle.checked);
     });
 
-    if (icloudItem) {
-      icloudItem.addEventListener('click', (e) => {
-        if (e.target === icloudToggle || e.target.closest('.switch-toggle')) return;
-        icloudToggle.checked = !icloudToggle.checked;
-        toggleICloudState(icloudToggle.checked);
+    if (icloudTitle) {
+      icloudTitle.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleICloudState(!icloudToggle.checked);
       });
+      icloudTitle.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleICloudState(!icloudToggle.checked);
+      }, { passive: false });
     }
 
     const handleICloudConnect = async () => {
@@ -17443,10 +17452,12 @@ function setupUpgradedSettingsEvents() {
 
   // 6. Obsidian Markdown Sync Switch Handling
   const mdToggle = document.getElementById('setting-md-sync');
-  const mdItem = document.getElementById('setting-md-item') || document.getElementById('settings-md-sync-label');
+  const mdTitle = document.getElementById('settings-md-sync-label');
   if (mdToggle) {
-    mdToggle.checked = localStorage.getItem('bible_tree_md_sync') !== 'false';
+    const isMdEnabled = localStorage.getItem('bible_tree_md_sync') !== 'false';
+    mdToggle.checked = isMdEnabled;
     const toggleMdState = (checked) => {
+      mdToggle.checked = checked;
       localStorage.setItem('bible_tree_md_sync', checked ? 'true' : 'false');
       console.log("[환경설정] 마크다운 연동 변경됨:", checked);
       if (checked && typeof triggerAutoBackup === 'function') {
@@ -17456,12 +17467,17 @@ function setupUpgradedSettingsEvents() {
     mdToggle.addEventListener('change', () => {
       toggleMdState(mdToggle.checked);
     });
-    if (mdItem) {
-      mdItem.addEventListener('click', (e) => {
-        if (e.target === mdToggle || e.target.closest('.switch-toggle')) return;
-        mdToggle.checked = !mdToggle.checked;
-        toggleMdState(mdToggle.checked);
+    if (mdTitle) {
+      mdTitle.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleMdState(!mdToggle.checked);
       });
+      mdTitle.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleMdState(!mdToggle.checked);
+      }, { passive: false });
     }
   }
 }
