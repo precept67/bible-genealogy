@@ -3389,6 +3389,11 @@ svg path.prophets-aura {
 /* ==========================================================================
    🔍 검색창 활성화 시 가로/세로 전체 무조건 X축 절대 정중앙 정밀 대칭 고정 락
    ========================================================================== */
+#floating-search-wrapper {
+  z-index: 16000 !important;
+  pointer-events: auto !important;
+}
+
 body.search-focused #floating-search-wrapper {
   position: fixed !important;
   left: 50% !important; /* 화면 가로폭의 정확히 50% 지점 */
@@ -3401,6 +3406,14 @@ body.search-focused #floating-search-wrapper {
   align-items: center !important;
   gap: 0px !important;
   pointer-events: auto !important;
+  z-index: 16000 !important;
+}
+
+/* 검색 활성화 시 하단 줌 컨트롤 바를 자연스럽게 숨겨 겹침 방지 */
+body.search-focused #bottom-controls-wrapper {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity 0.2s ease !important;
 }
 
 #floating-search-toggle-btn, #search-panel, #searchInput, #search-results {
@@ -3421,8 +3434,18 @@ body.search-focused #floating-search-toggle-btn {
 body.search-focused #search-panel {
   width: 240px !important;
   opacity: 1 !important;
+  visibility: visible !important;
+  display: flex !important;
   pointer-events: auto !important;
   margin: 0 !important; /* 쏠림을 방지하기 위해 잔여 마진을 완전히 제거 */
+}
+
+body:not(.search-focused) #search-panel {
+  width: 0px !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  overflow: hidden !important;
 }
 
 /* ==========================================================================

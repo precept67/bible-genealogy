@@ -17102,7 +17102,7 @@ function setupFloatingHeaderEvents() {
     // 전역 스코프에서 다른 검색 리스트 클릭 및 키 바인딩 시 복구할 수 있도록 노출
     window.closeSearchWrapper = closeSearchWrapper;
 
-    const toggleSearch = () => {
+    const toggleSearch = (e) => {
       window.lastSearchOpenTime = Date.now();
       const isCurrentlyOpen = document.body.classList.contains('search-focused');
       isSearchOpen = !isCurrentlyOpen;
@@ -17114,8 +17114,16 @@ function setupFloatingHeaderEvents() {
           searchWrapper.style.bottom = 'calc(1px + env(safe-area-inset-bottom))';
         }
 
-        setTimeout(() => {
+        // 1차 동기식 포커스 (iOS Safari 키보드 즉시 호출)
+        try {
           searchInput.focus();
+        } catch (err) {}
+
+        // 2차 비동기식 뷰포트 정렬 및 재포커스 보장
+        setTimeout(() => {
+          try {
+            searchInput.focus();
+          } catch (err) {}
           if (searchViewportInterval) clearInterval(searchViewportInterval);
           searchViewportInterval = setInterval(handleVisualViewportChange, 50);
 
@@ -17124,25 +17132,25 @@ function setupFloatingHeaderEvents() {
             window.visualViewport.addEventListener('scroll', handleVisualViewportChange);
             handleVisualViewportChange();
           }
-        }, 100);
+        }, 50);
       } else {
         closeSearchWrapper();
       }
     };
 
-    bindHybridButton(floatSearchBtn, () => {
-      toggleSearch();
+    bindHybridButton(floatSearchBtn, (e) => {
+      toggleSearch(e);
     });
 
-    // 포커스 아웃(blur) 시 150ms 안심 복구 감지 필터
+    // 포커스 아웃(blur) 시 200ms 안심 복구 감지 필터
     searchInput.addEventListener('blur', () => {
       setTimeout(() => {
-        if (Date.now() - (window.lastSearchOpenTime || 0) < 400) return;
+        if (Date.now() - (window.lastSearchOpenTime || 0) < 500) return;
         const activeEl = document.activeElement;
         if (isSearchOpen && searchWrapper && !searchWrapper.contains(activeEl)) {
           closeSearchWrapper();
         }
-      }, 150);
+      }, 200);
     });
   }
 }
