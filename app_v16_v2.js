@@ -15539,23 +15539,6 @@ function setupLayerItemModalEvents() {
 }
 
 // Layer Toggle Listeners
-document.getElementById('toggle-layer-people')?.addEventListener('change', () => {
-  applyFilters();
-});
-document.getElementById('toggle-layer-events')?.addEventListener('change', () => {
-  applyFilters();
-});
-document.getElementById('toggle-layer-locations')?.addEventListener('change', () => {
-  applyFilters();
-});
-document.getElementById('toggle-layer-polygons')?.addEventListener('change', () => {
-  applyFilters();
-});
-
-document.getElementById('toggle-layer-prophets')?.addEventListener('change', () => {
-  applyFilters();
-});
-
 document.getElementById('toggle-relationship-highlight')?.addEventListener('change', (e) => {
   if (!e.target.checked) {
     clearAllHighlights();
@@ -16818,6 +16801,32 @@ function setupSettingsListeners() {
     if (settingMdSync) {
       settingMdSync.checked = localStorage.getItem('bible_tree_md_sync') !== 'false';
     }
+
+    const icloudToggle = document.getElementById('setting-icloud-sync');
+    const icloudFields = document.getElementById('icloud-account-fields');
+    const icloudStatus = document.getElementById('icloud-sync-status');
+    if (icloudToggle) {
+      const isICloudEnabled = localStorage.getItem('icloud_sync_enabled') === 'true';
+      icloudToggle.checked = isICloudEnabled;
+      if (icloudFields) icloudFields.style.display = isICloudEnabled ? 'flex' : 'none';
+      if (icloudStatus) icloudStatus.style.display = isICloudEnabled ? 'block' : 'none';
+    }
+
+    const layerKeys = [
+      { id: 'toggle-layer-people', key: 'bible_layer_people', def: true },
+      { id: 'toggle-layer-events', key: 'bible_layer_events', def: true },
+      { id: 'toggle-layer-locations', key: 'bible_layer_locations', def: true },
+      { id: 'toggle-layer-polygons', key: 'bible_layer_polygons', def: true },
+      { id: 'toggle-layer-prophets', key: 'bible_layer_prophets', def: true },
+    ];
+    layerKeys.forEach(({ id, key, def }) => {
+      const el = document.getElementById(id);
+      if (el) {
+        const val = localStorage.getItem(key);
+        el.checked = val !== null ? (val === 'true') : def;
+      }
+    });
+
     if (settingsModal) {
       isJustOpened = true;
       setTimeout(() => { isJustOpened = false; }, 350);
@@ -16838,21 +16847,6 @@ function setupSettingsListeners() {
   };
 
   if (settingsModal) {
-    if (settingMdSync) {
-      const isMdSyncEnabled = localStorage.getItem('bible_tree_md_sync') !== 'false';
-      settingMdSync.checked = isMdSyncEnabled;
-
-      settingMdSync.addEventListener('change', () => {
-        const isChecked = settingMdSync.checked;
-        localStorage.setItem('bible_tree_md_sync', isChecked ? 'true' : 'false');
-        console.log("[환경설정] 마크다운 연동 변경됨:", isChecked);
-
-        if (isChecked) {
-          triggerAutoBackup();
-        }
-      });
-    }
-
     if (floatSettingsBtn) {
       bindHybridButton(floatSettingsBtn, openSettings);
     }
