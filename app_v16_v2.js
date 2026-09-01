@@ -1671,6 +1671,10 @@ function positionToastContainer(container) {
       t.style.boxSizing = 'border-box';
       t.style.justifyContent = 'center';
       t.style.textAlign = 'center';
+      t.style.whiteSpace = 'normal';
+      t.style.wordBreak = 'keep-all';
+      t.style.wordWrap = 'break-word';
+      t.style.height = 'auto';
     });
   }
 }
@@ -1696,19 +1700,22 @@ function showToast(message) {
   toast.style.backdropFilter = 'blur(6px)';
   toast.style.webkitBackdropFilter = 'blur(6px)';
   toast.style.color = '#fff';
-  toast.style.padding = '8px 18px';
-  toast.style.borderRadius = '9999px';
+  toast.style.padding = '8px 16px';
+  toast.style.borderRadius = '16px';
   toast.style.fontSize = '12px';
   toast.style.fontWeight = '500';
+  toast.style.lineHeight = '1.45';
   toast.style.border = '1px solid rgba(255, 255, 255, 0.15)';
   toast.style.boxShadow = '0 4px 14px rgba(0, 0, 0, 0.2)';
   toast.style.opacity = '0';
   toast.style.transform = 'translateY(-6px)';
   toast.style.transition = 'all 0.25s ease';
   toast.style.pointerEvents = 'none';
-  toast.style.whiteSpace = 'nowrap';
-  toast.style.overflow = 'hidden';
-  toast.style.textOverflow = 'ellipsis';
+  toast.style.whiteSpace = 'normal';
+  toast.style.wordBreak = 'keep-all';
+  toast.style.wordWrap = 'break-word';
+  toast.style.height = 'auto';
+  toast.style.textAlign = 'center';
 
   const banner = document.getElementById('add-person-instruction');
   if (banner && banner.style.display === 'flex') {
@@ -1717,7 +1724,6 @@ function showToast(message) {
       toast.style.width = `${Math.round(bannerRect.width)}px`;
       toast.style.boxSizing = 'border-box';
       toast.style.justifyContent = 'center';
-      toast.style.textAlign = 'center';
       toast.style.display = 'flex';
       toast.style.alignItems = 'center';
     }
