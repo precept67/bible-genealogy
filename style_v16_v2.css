@@ -3717,7 +3717,7 @@ svg.history-custom-icon {
    ========================================================================== */
 @media only screen and (device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2) {
   body:not(.search-focused) #floating-search-wrapper {
-    right: calc(4px + env(safe-area-inset-right)) !important;
+    right: calc(-6px + env(safe-area-inset-right)) !important;
     left: auto !important;
     transform: none !important;
     bottom: calc(4px + env(safe-area-inset-bottom)) !important;
@@ -3727,7 +3727,7 @@ svg.history-custom-icon {
     bottom: calc(4px + env(safe-area-inset-bottom)) !important;
   }
   #floating-settings-btn {
-    right: calc(4px + env(safe-area-inset-right)) !important;
+    right: calc(-6px + env(safe-area-inset-right)) !important;
     top: calc(4px + env(safe-area-inset-top)) !important;
   }
 }
@@ -3738,7 +3738,7 @@ svg.history-custom-icon {
 @media only screen and (device-width: 820px) and (device-height: 1180px) and (-webkit-device-pixel-ratio: 2),
        only screen and (device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2) {
   body:not(.search-focused) #floating-search-wrapper {
-    right: calc(4px + env(safe-area-inset-right)) !important;
+    right: calc(-6px + env(safe-area-inset-right)) !important;
     left: auto !important;
     transform: none !important;
     bottom: calc(4px + env(safe-area-inset-bottom)) !important;
@@ -3751,7 +3751,7 @@ svg.history-custom-icon {
     top: calc(4px + env(safe-area-inset-top)) !important;
   }
   #floating-settings-btn {
-    right: calc(4px + env(safe-area-inset-right)) !important;
+    right: calc(-6px + env(safe-area-inset-right)) !important;
     top: calc(4px + env(safe-area-inset-top)) !important;
   }
 }
@@ -3762,7 +3762,7 @@ svg.history-custom-icon {
 @media only screen and (device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3),
        only screen and (device-width: 852px) and (device-height: 393px) and (-webkit-device-pixel-ratio: 3) {
   body:not(.search-focused) #floating-search-wrapper {
-    right: calc(4px + env(safe-area-inset-right)) !important;
+    right: calc(-6px + env(safe-area-inset-right)) !important;
     left: auto !important;
     transform: none !important;
     bottom: calc(4px + env(safe-area-inset-bottom)) !important;
@@ -3772,7 +3772,7 @@ svg.history-custom-icon {
     bottom: calc(4px + env(safe-area-inset-bottom)) !important;
   }
   #floating-settings-btn {
-    right: calc(4px + env(safe-area-inset-right)) !important;
+    right: calc(-6px + env(safe-area-inset-right)) !important;
     top: calc(4px + env(safe-area-inset-top)) !important;
   }
   #admin-actions-bar {
@@ -3786,7 +3786,7 @@ svg.history-custom-icon {
 @media only screen and (device-width: 440px) and (device-height: 956px) and (-webkit-device-pixel-ratio: 3),
        only screen and (device-width: 956px) and (device-height: 440px) and (-webkit-device-pixel-ratio: 3) {
   body:not(.search-focused) #floating-search-wrapper {
-    right: calc(4px + env(safe-area-inset-right)) !important;
+    right: calc(-6px + env(safe-area-inset-right)) !important;
     left: auto !important;
     transform: none !important;
     bottom: calc(4px + env(safe-area-inset-bottom)) !important;
@@ -3796,7 +3796,7 @@ svg.history-custom-icon {
     bottom: calc(4px + env(safe-area-inset-bottom)) !important;
   }
   #floating-settings-btn {
-    right: calc(4px + env(safe-area-inset-right)) !important;
+    right: calc(-6px + env(safe-area-inset-right)) !important;
     top: calc(4px + env(safe-area-inset-top)) !important;
   }
   #admin-actions-bar {
