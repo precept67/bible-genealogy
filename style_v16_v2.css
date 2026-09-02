@@ -3723,7 +3723,7 @@ svg.history-custom-icon {
     bottom: calc(4px + env(safe-area-inset-bottom)) !important;
   }
   #slide-lock-container {
-    left: calc(4px + env(safe-area-inset-left)) !important;
+    left: calc(-6px + env(safe-area-inset-left)) !important;
     bottom: calc(4px + env(safe-area-inset-bottom)) !important;
   }
   #floating-settings-btn {
@@ -3744,7 +3744,7 @@ svg.history-custom-icon {
     bottom: calc(4px + env(safe-area-inset-bottom)) !important;
   }
   #slide-lock-container {
-    left: calc(4px + env(safe-area-inset-left)) !important;
+    left: calc(-6px + env(safe-area-inset-left)) !important;
     bottom: calc(4px + env(safe-area-inset-bottom)) !important;
   }
   #admin-actions-bar {
@@ -3768,7 +3768,7 @@ svg.history-custom-icon {
     bottom: calc(4px + env(safe-area-inset-bottom)) !important;
   }
   #slide-lock-container {
-    left: calc(4px + env(safe-area-inset-left)) !important;
+    left: calc(-6px + env(safe-area-inset-left)) !important;
     bottom: calc(4px + env(safe-area-inset-bottom)) !important;
   }
   #floating-settings-btn {
@@ -3792,7 +3792,7 @@ svg.history-custom-icon {
     bottom: calc(4px + env(safe-area-inset-bottom)) !important;
   }
   #slide-lock-container {
-    left: calc(4px + env(safe-area-inset-left)) !important;
+    left: calc(-6px + env(safe-area-inset-left)) !important;
     bottom: calc(4px + env(safe-area-inset-bottom)) !important;
   }
   #floating-settings-btn {
