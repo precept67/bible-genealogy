@@ -858,9 +858,14 @@ header .subtitle {
     width: 180px;
   }
   
-  /* 세로화면(모바일)에서 상단 데이터베이스 액션바 및 설정 버튼 5px 상향 배치 및 상하 중심 수평 일치 */
+  /* 세로화면(모바일)에서 상단 설정 버튼 및 하단 도구 모음 액션바 */
   #admin-actions-bar {
-    top: calc(-1px + env(safe-area-inset-top)) !important;
+    position: fixed !important;
+    top: auto !important;
+    bottom: calc(-4px + env(safe-area-inset-bottom)) !important;
+    left: 135px !important;
+    transform: none !important;
+    height: 40px !important;
   }
   #floating-settings-btn {
     top: calc(6px + env(safe-area-inset-top)) !important;
@@ -3697,9 +3702,13 @@ svg.history-custom-icon {
     bottom: -1px !important;
   }
 
-  /* 도구버튼모음박스와 환경설정을 상단화면끝에서 4px 간격을 두고 정박 */
+  /* 도구버튼모음박스를 하단 락버튼 우측에 수평 정박 */
   #admin-actions-bar {
-    top: -1px !important;
+    top: auto !important;
+    bottom: -1px !important;
+    left: 135px !important;
+    transform: none !important;
+    height: 40px !important;
   }
   #floating-settings-btn {
     top: 6px !important;
@@ -3720,6 +3729,13 @@ svg.history-custom-icon {
   #slide-lock-container {
     left: calc(-6px + env(safe-area-inset-left)) !important;
     bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
+  }
+  #admin-actions-bar {
+    top: auto !important;
+    bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
+    left: calc(113px + env(safe-area-inset-left)) !important;
+    transform: none !important;
+    height: 40px !important;
   }
   #floating-settings-btn {
     right: calc(-6px + env(safe-area-inset-right)) !important;
@@ -3744,7 +3760,11 @@ svg.history-custom-icon {
     bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
   }
   #admin-actions-bar {
-    top: calc(-1px + env(safe-area-inset-top)) !important;
+    top: auto !important;
+    bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
+    left: calc(113px + env(safe-area-inset-left)) !important;
+    transform: none !important;
+    height: 40px !important;
   }
   #floating-settings-btn {
     right: calc(-6px + env(safe-area-inset-right)) !important;
@@ -3773,7 +3793,11 @@ svg.history-custom-icon {
     top: calc(6px + env(safe-area-inset-top)) !important;
   }
   #admin-actions-bar {
-    top: calc(-1px + env(safe-area-inset-top)) !important;
+    top: auto !important;
+    bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
+    left: calc(113px + env(safe-area-inset-left)) !important;
+    transform: none !important;
+    height: 40px !important;
   }
 }
 
@@ -3798,7 +3822,11 @@ svg.history-custom-icon {
     top: calc(6px + env(safe-area-inset-top)) !important;
   }
   #admin-actions-bar {
-    top: calc(-1px + env(safe-area-inset-top)) !important;
+    top: auto !important;
+    bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
+    left: calc(113px + env(safe-area-inset-left)) !important;
+    transform: none !important;
+    height: 40px !important;
   }
 }
 
@@ -3839,8 +3867,14 @@ svg.history-custom-icon {
 #admin-actions-bar {
   background: rgb(255, 255, 255) !important;
   border: 1px solid rgba(0, 0, 0, 0.08) !important;
-  border-radius: 30px !important;
+  border-radius: 20px !important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+  height: 40px !important;
+  box-sizing: border-box !important;
+  padding: 0 4px !important;
+  gap: 4px !important;
+  display: flex !important;
+  align-items: center !important;
 }
 
 .close-btn {
