@@ -3672,16 +3672,17 @@ svg.history-custom-icon {
 /* 1. Portrait Mode (세로화면) */
 @media only screen and (device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait) {
   #bottom-controls-wrapper {
-    bottom: -1px !important;
+    bottom: -4px !important;
   }
   body:not(.search-focused) #floating-search-wrapper {
-    bottom: -1px !important;
+    bottom: -4px !important;
     right: 16px !important; /* 환경설정 세로모드 우측 여백 16px와 수평 일치 */
     left: auto !important;
     transform: none !important;
   }
   #slide-lock-container {
-    bottom: -1px !important;
+    left: 16px !important;
+    bottom: -4px !important;
   }
 }
 
