@@ -863,9 +863,14 @@ header .subtitle {
     position: fixed !important;
     top: auto !important;
     bottom: calc(-4px + env(safe-area-inset-bottom)) !important;
-    left: 135px !important;
+    right: 16px !important;
+    left: auto !important;
     transform: none !important;
     height: 40px !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
   }
   #floating-settings-btn {
     top: calc(6px + env(safe-area-inset-top)) !important;
@@ -3702,13 +3707,18 @@ svg.history-custom-icon {
     bottom: -1px !important;
   }
 
-  /* 도구버튼모음박스를 하단 락버튼 우측에 수평 정박 */
+  /* 도구버튼모음을 하단 우측에 수직 정박 */
   #admin-actions-bar {
     top: auto !important;
     bottom: -1px !important;
-    left: 135px !important;
+    right: 16px !important;
+    left: auto !important;
     transform: none !important;
     height: 40px !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
   }
   #floating-settings-btn {
     top: 6px !important;
@@ -3733,9 +3743,14 @@ svg.history-custom-icon {
   #admin-actions-bar {
     top: auto !important;
     bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
-    left: calc(113px + env(safe-area-inset-left)) !important;
+    right: calc(-6px + env(safe-area-inset-right)) !important;
+    left: auto !important;
     transform: none !important;
     height: 40px !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
   }
   #floating-settings-btn {
     right: calc(-6px + env(safe-area-inset-right)) !important;
@@ -3762,9 +3777,14 @@ svg.history-custom-icon {
   #admin-actions-bar {
     top: auto !important;
     bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
-    left: calc(113px + env(safe-area-inset-left)) !important;
+    right: calc(-6px + env(safe-area-inset-right)) !important;
+    left: auto !important;
     transform: none !important;
     height: 40px !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
   }
   #floating-settings-btn {
     right: calc(-6px + env(safe-area-inset-right)) !important;
@@ -3795,9 +3815,14 @@ svg.history-custom-icon {
   #admin-actions-bar {
     top: auto !important;
     bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
-    left: calc(113px + env(safe-area-inset-left)) !important;
+    right: calc(-6px + env(safe-area-inset-right)) !important;
+    left: auto !important;
     transform: none !important;
     height: 40px !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
   }
 }
 
@@ -3824,9 +3849,14 @@ svg.history-custom-icon {
   #admin-actions-bar {
     top: auto !important;
     bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
-    left: calc(113px + env(safe-area-inset-left)) !important;
+    right: calc(-6px + env(safe-area-inset-right)) !important;
+    left: auto !important;
     transform: none !important;
     height: 40px !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
   }
 }
 
@@ -3866,13 +3896,13 @@ svg.history-custom-icon {
 
 #admin-actions-bar {
   display: none; /* 잠금 상태(일반 모드)에서는 완전 비노출 */
-  background: rgb(255, 255, 255) !important;
-  border: 1px solid rgba(0, 0, 0, 0.08) !important;
-  border-radius: 20px !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+  background: transparent !important; /* 모음 박스 삭제 - 완전 투명 */
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
   height: 40px !important;
   box-sizing: border-box !important;
-  padding: 0 4px !important;
+  padding: 0 !important;
   gap: 4px !important;
   align-items: center !important;
 }
