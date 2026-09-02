@@ -8860,7 +8860,7 @@ function setupZoomPan() {
     const worldY = (mouseY - gestureStartPanY) / gestureStartScale;
     
     currentScale = nextScale;
-    zoomLevelText.textContent = `${Math.round(currentScale * 100)}%`;
+    if (zoomLevelText) zoomLevelText.textContent = `${Math.round(currentScale * 100)}%`;
     
     panX = mouseX - worldX * currentScale;
     panY = mouseY - worldY * currentScale;
@@ -9051,7 +9051,7 @@ function setupZoomPan() {
       const worldY = (touchCenterY - touchStartPanY) / touchStartScale;
       
       currentScale = nextScale;
-      zoomLevelText.textContent = `${Math.round(currentScale * 100)}%`;
+      if (zoomLevelText) zoomLevelText.textContent = `${Math.round(currentScale * 100)}%`;
       
       panX = touchCenterX - worldX * currentScale;
       panY = touchCenterY - worldY * currentScale;
@@ -9391,7 +9391,7 @@ function startZoomAnimation() {
       currentScale = targetScale;
       panX = targetPanX;
       panY = targetPanY;
-      zoomLevelText.textContent = `${Math.round(currentScale * 100)}%`;
+      if (zoomLevelText) zoomLevelText.textContent = `${Math.round(currentScale * 100)}%`;
       
       // Reset zoomWrapper's temporary scale factor (as updateTransform will draw elements at targetScale)
       zoomWrapper.style.transform = `translate3d(${panX}px, ${panY}px, 0)`;
@@ -9410,7 +9410,7 @@ function startZoomAnimation() {
     panX += dPanX * 0.5;
     panY += dPanY * 0.5;
     
-    zoomLevelText.textContent = `${Math.round(currentScale * 100)}%`;
+    if (zoomLevelText) zoomLevelText.textContent = `${Math.round(currentScale * 100)}%`;
     updateTransformLightweight();
     
     requestAnimationFrame(step);
