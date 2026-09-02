@@ -3917,3 +3917,22 @@ svg.history-custom-icon {
   fill: none !important;
   opacity: 1 !important;
 }
+
+/* 4. Zoom Control Panel & Buttons Pointer Interaction Guarantee */
+#control-panel {
+  pointer-events: auto !important;
+}
+
+#zoom-in,
+#zoom-out,
+#zoom-level {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  touch-action: manipulation !important;
+}
+
+#zoom-in *,
+#zoom-out * {
+  pointer-events: none !important;
+}
+

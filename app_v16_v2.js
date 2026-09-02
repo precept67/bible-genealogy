@@ -2141,12 +2141,12 @@ const labelSplitOffset = document.getElementById('label-split-offset');
 const labelSiblingGap = document.getElementById('label-sibling-gap');
 
 // Global Hybrid Event Helper (Touch + Click without drop/delay)
-function bindHybridButton(el, callback) {
+function bindHybridButton(el, callback, cooldown = 200) {
   if (!el) return;
   let lastTriggerTime = 0;
   const trigger = (e) => {
     const now = Date.now();
-    if (now - lastTriggerTime < 350) return;
+    if (now - lastTriggerTime < cooldown) return;
     lastTriggerTime = now;
     callback(e);
   };
@@ -8701,9 +8701,19 @@ function getCustomOrthogonalPath(x0, y0, x_child, y_child, points) {
 
 // Setup Zoom and Pan Interaction Handler
 function setupZoomPan() {
-  document.getElementById('zoom-in').addEventListener('click', () => applyZoom('in'));
-  document.getElementById('zoom-out').addEventListener('click', () => applyZoom('out'));
-  document.getElementById('zoom-reset')?.addEventListener('click', () => applyZoom('reset'));
+  const zoomInBtn = document.getElementById('zoom-in');
+  const zoomOutBtn = document.getElementById('zoom-out');
+  const zoomResetBtn = document.getElementById('zoom-reset');
+
+  if (zoomInBtn) {
+    bindHybridButton(zoomInBtn, () => applyZoom('in'), 120);
+  }
+  if (zoomOutBtn) {
+    bindHybridButton(zoomOutBtn, () => applyZoom('out'), 120);
+  }
+  if (zoomResetBtn) {
+    bindHybridButton(zoomResetBtn, () => applyZoom('reset'), 120);
+  }
   
   // Prevent any native browser scroll offset shifts inside viewerContainer (e.g. from element focus)
   viewerContainer.addEventListener('scroll', () => {
