@@ -1640,25 +1640,19 @@ function positionToastContainer(container) {
   if (!container) container = document.getElementById('toast-container');
   if (!container) return;
   const banner = document.getElementById('add-person-instruction');
-  const bar = document.getElementById('admin-actions-bar');
   
-  let topPos = 80;
   let syncWidth = null;
   if (banner && banner.style.display === 'flex') {
     const bannerRect = banner.getBoundingClientRect();
-    topPos = Math.round(bannerRect.bottom + 5);
+    container.style.top = `${Math.round(bannerRect.bottom + 8)}px`;
     if (bannerRect.width > 0) {
       syncWidth = Math.round(bannerRect.width);
     }
-  } else if (bar && bar.style.display !== 'none') {
-    const barRect = bar.getBoundingClientRect();
-    topPos = Math.round(barRect.bottom + 5);
   } else {
-    topPos = 80;
+    container.style.top = 'calc(10px + env(safe-area-inset-top))';
   }
   
   container.style.position = 'fixed';
-  container.style.top = `${topPos}px`;
   container.style.bottom = 'auto';
   container.style.left = '50%';
   container.style.transform = 'translateX(-50%)';
@@ -11666,17 +11660,14 @@ function setupAutocomplete() {
 
 function positionAddInstructionBanner() {
   const banner = document.getElementById('add-person-instruction');
-  const bar = document.getElementById('admin-actions-bar');
   if (!banner) return;
-  if (bar && bar.style.display !== 'none') {
-    const rect = bar.getBoundingClientRect();
-    const topPos = Math.round(rect.bottom + 5);
-    banner.style.top = `${topPos}px`;
-  } else {
-    banner.style.top = '79px';
-  }
+  
+  banner.style.position = 'fixed';
+  banner.style.top = 'calc(10px + env(safe-area-inset-top))';
+  banner.style.bottom = 'auto';
   banner.style.left = '50%';
   banner.style.transform = 'translateX(-50%)';
+  banner.style.zIndex = '12001';
 
   const toastContainer = document.getElementById('toast-container');
   if (toastContainer && typeof positionToastContainer === 'function') {
