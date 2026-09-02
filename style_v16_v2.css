@@ -858,12 +858,12 @@ header .subtitle {
     width: 180px;
   }
   
-  /* 세로화면(모바일)에서 상단 데이터베이스 액션바(⚙️설정 포함 7개 수평 정렬 바) 다이나믹아일랜드 4px 아래 하강 배치 */
+  /* 세로화면(모바일)에서 상단 데이터베이스 액션바 및 설정 버튼 다이나믹아일랜드 4px 아래 하강 배치 */
   #admin-actions-bar {
-    top: 55px !important; /* 화면 최상단 기준 정확히 55px 아래 고정 배치 */
+    top: calc(4px + env(safe-area-inset-top)) !important;
   }
   #floating-settings-btn {
-    top: 61px !important; /* 화면 최상단 기준 정확히 61px 아래 고정 배치 (액션바 패딩 균형 중심 매칭) */
+    top: calc(4px + env(safe-area-inset-top)) !important;
     right: 16px !important;
   }
 
@@ -3712,14 +3712,23 @@ svg.history-custom-icon {
 /* ==========================================================================
    💻 iPad Air 13-inch / iPad Pro 12.9-inch (1024x1366) Dedicated Margins
    ========================================================================== */
+/* ==========================================================================
+   💻 iPad Air 13-inch / iPad Pro 12.9-inch (1024x1366) Dedicated Margins
+   ========================================================================== */
 @media only screen and (device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2) {
   body:not(.search-focused) #floating-search-wrapper {
-    right: 16px !important; /* 환경설정 대화면(iPad) 우측 여백 16px와 수평 일치 */
+    right: calc(4px + env(safe-area-inset-right)) !important;
     left: auto !important;
     transform: none !important;
+    bottom: calc(4px + env(safe-area-inset-bottom)) !important;
   }
   #slide-lock-container {
-    left: 16px !important; /* 검색창 우측 여백(16px)과 수평 좌우 대칭 일치화 */
+    left: calc(4px + env(safe-area-inset-left)) !important;
+    bottom: calc(4px + env(safe-area-inset-bottom)) !important;
+  }
+  #floating-settings-btn {
+    right: calc(4px + env(safe-area-inset-right)) !important;
+    top: calc(4px + env(safe-area-inset-top)) !important;
   }
 }
 
@@ -3729,18 +3738,21 @@ svg.history-custom-icon {
 @media only screen and (device-width: 820px) and (device-height: 1180px) and (-webkit-device-pixel-ratio: 2),
        only screen and (device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2) {
   body:not(.search-focused) #floating-search-wrapper {
-    right: 16px !important; /* 환경설정 대화면(iPad 11) 우측 여백 16px와 수평 일치 */
+    right: calc(4px + env(safe-area-inset-right)) !important;
     left: auto !important;
     transform: none !important;
+    bottom: calc(4px + env(safe-area-inset-bottom)) !important;
   }
   #slide-lock-container {
-    left: 16px !important; /* 검색창 우측 여백(16px)과 수평 좌우 대칭 일치화 */
+    left: calc(4px + env(safe-area-inset-left)) !important;
+    bottom: calc(4px + env(safe-area-inset-bottom)) !important;
   }
   #admin-actions-bar {
-    top: 23px !important; /* 기본 20px에서 3px 아래로 인하 조정 */
+    top: calc(4px + env(safe-area-inset-top)) !important;
   }
   #floating-settings-btn {
-    top: 29px !important; /* 기본 26px에서 3px 아래로 인하 조정 (상하 중심선 49px 일치) */
+    right: calc(4px + env(safe-area-inset-right)) !important;
+    top: calc(4px + env(safe-area-inset-top)) !important;
   }
 }
 
@@ -3750,18 +3762,21 @@ svg.history-custom-icon {
 @media only screen and (device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3),
        only screen and (device-width: 852px) and (device-height: 393px) and (-webkit-device-pixel-ratio: 3) {
   body:not(.search-focused) #floating-search-wrapper {
-    right: calc(16px + env(safe-area-inset-right)) !important;
+    right: calc(4px + env(safe-area-inset-right)) !important;
     left: auto !important;
     transform: none !important;
-    bottom: calc(8px + env(safe-area-inset-bottom)) !important;
+    bottom: calc(4px + env(safe-area-inset-bottom)) !important;
   }
   #slide-lock-container {
-    left: calc(16px + env(safe-area-inset-left)) !important;
-    bottom: calc(8px + env(safe-area-inset-bottom)) !important;
+    left: calc(4px + env(safe-area-inset-left)) !important;
+    bottom: calc(4px + env(safe-area-inset-bottom)) !important;
   }
   #floating-settings-btn {
-    right: calc(16px + env(safe-area-inset-right)) !important;
-    top: calc(12px + env(safe-area-inset-top)) !important;
+    right: calc(4px + env(safe-area-inset-right)) !important;
+    top: calc(4px + env(safe-area-inset-top)) !important;
+  }
+  #admin-actions-bar {
+    top: calc(4px + env(safe-area-inset-top)) !important;
   }
 }
 
@@ -3771,18 +3786,21 @@ svg.history-custom-icon {
 @media only screen and (device-width: 440px) and (device-height: 956px) and (-webkit-device-pixel-ratio: 3),
        only screen and (device-width: 956px) and (device-height: 440px) and (-webkit-device-pixel-ratio: 3) {
   body:not(.search-focused) #floating-search-wrapper {
-    right: calc(16px + env(safe-area-inset-right)) !important;
+    right: calc(4px + env(safe-area-inset-right)) !important;
     left: auto !important;
     transform: none !important;
-    bottom: calc(8px + env(safe-area-inset-bottom)) !important;
+    bottom: calc(4px + env(safe-area-inset-bottom)) !important;
   }
   #slide-lock-container {
-    left: calc(16px + env(safe-area-inset-left)) !important;
-    bottom: calc(8px + env(safe-area-inset-bottom)) !important;
+    left: calc(4px + env(safe-area-inset-left)) !important;
+    bottom: calc(4px + env(safe-area-inset-bottom)) !important;
   }
   #floating-settings-btn {
-    right: calc(16px + env(safe-area-inset-right)) !important;
-    top: calc(12px + env(safe-area-inset-top)) !important;
+    right: calc(4px + env(safe-area-inset-right)) !important;
+    top: calc(4px + env(safe-area-inset-top)) !important;
+  }
+  #admin-actions-bar {
+    top: calc(4px + env(safe-area-inset-top)) !important;
   }
 }
 
