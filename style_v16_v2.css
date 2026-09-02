@@ -3865,6 +3865,7 @@ svg.history-custom-icon {
 }
 
 #admin-actions-bar {
+  display: none; /* 잠금 상태(일반 모드)에서는 완전 비노출 */
   background: rgb(255, 255, 255) !important;
   border: 1px solid rgba(0, 0, 0, 0.08) !important;
   border-radius: 20px !important;
@@ -3873,8 +3874,16 @@ svg.history-custom-icon {
   box-sizing: border-box !important;
   padding: 0 4px !important;
   gap: 4px !important;
-  display: flex !important;
   align-items: center !important;
+}
+
+body.admin-mode #admin-actions-bar,
+#admin-actions-bar.active {
+  display: flex !important; /* 오직 편집 모드일 때만 비로소 노출 */
+}
+
+body:not(.admin-mode) #admin-actions-bar:not(.active) {
+  display: none !important;
 }
 
 .close-btn {

@@ -11949,13 +11949,17 @@ function removeTempPolygonPreview() {
 
 function enterAdminMode() {
   isAdminMode = true;
+  document.body.classList.add('admin-mode');
   const lockBtn = document.getElementById('admin-lock-btn');
   if (lockBtn) {
     lockBtn.textContent = '🔓';
     lockBtn.title = UI_TEXTS[currentLang].admin_lock_title;
   }
   const actionsBar = document.getElementById('admin-actions-bar');
-  if (actionsBar) actionsBar.style.display = 'flex';
+  if (actionsBar) {
+    actionsBar.classList.add('active');
+    actionsBar.style.setProperty('display', 'flex', 'important');
+  }
 
   repositionHistoryButtons();
   
@@ -11985,6 +11989,7 @@ function enterAdminMode() {
 
 function exitAdminMode() {
   isAdminMode = false;
+  document.body.classList.remove('admin-mode');
   const lockBtn = document.getElementById('admin-lock-btn');
   if (lockBtn) {
     lockBtn.textContent = '🔒';
@@ -11992,7 +11997,10 @@ function exitAdminMode() {
   }
   if (typeof syncSlideLockUI === 'function') syncSlideLockUI(false);
   const actionsBar = document.getElementById('admin-actions-bar');
-  if (actionsBar) actionsBar.style.display = 'none';
+  if (actionsBar) {
+    actionsBar.classList.remove('active');
+    actionsBar.style.setProperty('display', 'none', 'important');
+  }
 
   // updateHistoryButtonsState() 가 syncSlideLockUI(false)를 통해 자동 제어함
   
