@@ -3924,15 +3924,32 @@ svg.history-custom-icon {
 }
 
 #zoom-in,
-#zoom-out,
-#zoom-level {
+#zoom-out {
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px !important;
+  min-height: 28px !important;
   pointer-events: auto !important;
   cursor: pointer !important;
   touch-action: manipulation !important;
+}
+
+#zoom-in svg,
+#zoom-out svg {
+  width: 16px !important;
+  height: 16px !important;
+  min-width: 16px !important;
+  min-height: 16px !important;
+  pointer-events: none !important;
+}
+
+#zoom-level {
+  pointer-events: auto !important;
 }
 
 #zoom-in *,
 #zoom-out * {
   pointer-events: none !important;
 }
+
 
