@@ -858,12 +858,12 @@ header .subtitle {
     width: 180px;
   }
   
-  /* 세로화면(모바일)에서 상단 데이터베이스 액션바 및 설정 버튼 다이나믹아일랜드 4px 아래 하강 배치 */
+  /* 세로화면(모바일)에서 상단 데이터베이스 액션바 다이나믹아일랜드 4px 아래 및 설정 버튼 상하 중심 수평 일치 */
   #admin-actions-bar {
     top: calc(4px + env(safe-area-inset-top)) !important;
   }
   #floating-settings-btn {
-    top: calc(4px + env(safe-area-inset-top)) !important;
+    top: calc(11px + env(safe-area-inset-top)) !important;
     right: 16px !important;
   }
 
@@ -3729,7 +3729,7 @@ svg.history-custom-icon {
   }
   #floating-settings-btn {
     right: calc(-6px + env(safe-area-inset-right)) !important;
-    top: calc(4px + env(safe-area-inset-top)) !important;
+    top: calc(11px + env(safe-area-inset-top)) !important;
   }
 }
 
@@ -3756,7 +3756,7 @@ svg.history-custom-icon {
   }
   #floating-settings-btn {
     right: calc(-6px + env(safe-area-inset-right)) !important;
-    top: calc(4px + env(safe-area-inset-top)) !important;
+    top: calc(11px + env(safe-area-inset-top)) !important;
   }
 }
 
@@ -3780,7 +3780,7 @@ svg.history-custom-icon {
   }
   #floating-settings-btn {
     right: calc(-6px + env(safe-area-inset-right)) !important;
-    top: calc(4px + env(safe-area-inset-top)) !important;
+    top: calc(11px + env(safe-area-inset-top)) !important;
   }
   #admin-actions-bar {
     top: calc(4px + env(safe-area-inset-top)) !important;
@@ -3807,7 +3807,7 @@ svg.history-custom-icon {
   }
   #floating-settings-btn {
     right: calc(-6px + env(safe-area-inset-right)) !important;
-    top: calc(4px + env(safe-area-inset-top)) !important;
+    top: calc(11px + env(safe-area-inset-top)) !important;
   }
   #admin-actions-bar {
     top: calc(4px + env(safe-area-inset-top)) !important;
