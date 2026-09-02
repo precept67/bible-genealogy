@@ -17054,7 +17054,7 @@ function setupFloatingHeaderEvents() {
               searchWrapper.style.bottom = `${safeBottom}px`;
               searchWrapper.style.top = 'auto';
             } else {
-              searchWrapper.style.bottom = 'calc(4px + env(safe-area-inset-bottom))';
+              searchWrapper.style.bottom = 'calc(-1px + env(safe-area-inset-bottom))';
               searchWrapper.style.top = 'auto';
             }
           } else {
@@ -17066,12 +17066,12 @@ function setupFloatingHeaderEvents() {
               searchWrapper.style.bottom = 'calc(121px + env(safe-area-inset-bottom))';
               searchWrapper.style.top = 'auto';
             } else {
-              searchWrapper.style.bottom = 'calc(1px + env(safe-area-inset-bottom))';
+              searchWrapper.style.bottom = 'calc(-1px + env(safe-area-inset-bottom))';
               searchWrapper.style.top = 'auto';
             }
           }
         } else {
-          searchWrapper.style.bottom = 'calc(4px + env(safe-area-inset-bottom))';
+          searchWrapper.style.bottom = 'calc(-1px + env(safe-area-inset-bottom))';
           searchWrapper.style.top = 'auto';
         }
       }
@@ -17087,7 +17087,7 @@ function setupFloatingHeaderEvents() {
       }
       if (searchWrapper) {
         searchWrapper.style.top = 'auto';
-        searchWrapper.style.bottom = 'calc(1px + env(safe-area-inset-bottom))';
+        searchWrapper.style.bottom = 'calc(-1px + env(safe-area-inset-bottom))';
       }
       searchInput.value = '';
       const resultsDropdown = document.getElementById('search-results');
@@ -17111,7 +17111,7 @@ function setupFloatingHeaderEvents() {
         if (searchWrapper) {
           document.body.classList.add('search-focused');
           searchWrapper.style.top = 'auto';
-          searchWrapper.style.bottom = 'calc(1px + env(safe-area-inset-bottom))';
+          searchWrapper.style.bottom = 'calc(-1px + env(safe-area-inset-bottom))';
         }
 
         // 1차 동기식 포커스 (iOS Safari 키보드 즉시 호출)

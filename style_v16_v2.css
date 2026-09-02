@@ -3672,32 +3672,32 @@ svg.history-custom-icon {
 /* 1. Portrait Mode (세로화면) */
 @media only screen and (device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait) {
   #bottom-controls-wrapper {
-    bottom: 4px !important;
+    bottom: -1px !important;
   }
   body:not(.search-focused) #floating-search-wrapper {
-    bottom: 4px !important;
+    bottom: -1px !important;
     right: 16px !important; /* 환경설정 세로모드 우측 여백 16px와 수평 일치 */
     left: auto !important;
     transform: none !important;
   }
   #slide-lock-container {
-    bottom: 4px !important;
+    bottom: -1px !important;
   }
 }
 
 /* 2. Landscape Mode (가로화면) */
 @media only screen and (device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape) {
   #bottom-controls-wrapper {
-    bottom: 4px !important;
+    bottom: -1px !important;
   }
   body:not(.search-focused) #floating-search-wrapper {
-    bottom: 4px !important;
+    bottom: -1px !important;
     right: 16px !important; /* 환경설정 가로모드 우측 여백 16px와 수평 일치 */
     left: auto !important;
     transform: none !important;
   }
   #slide-lock-container {
-    bottom: 4px !important;
+    bottom: -1px !important;
   }
 
   /* 도구버튼모음박스와 환경설정을 상단화면끝에서 4px 간격을 두고 정박 */
@@ -3712,19 +3712,19 @@ svg.history-custom-icon {
 /* ==========================================================================
    💻 iPad Air 13-inch / iPad Pro 12.9-inch (1024x1366) Dedicated Margins
    ========================================================================== */
-/* ==========================================================================
-   💻 iPad Air 13-inch / iPad Pro 12.9-inch (1024x1366) Dedicated Margins
-   ========================================================================== */
 @media only screen and (device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2) {
   body:not(.search-focused) #floating-search-wrapper {
     right: calc(-6px + env(safe-area-inset-right)) !important;
     left: auto !important;
     transform: none !important;
-    bottom: calc(4px + env(safe-area-inset-bottom)) !important;
+    bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
   }
   #slide-lock-container {
     left: calc(-6px + env(safe-area-inset-left)) !important;
-    bottom: calc(4px + env(safe-area-inset-bottom)) !important;
+    bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
+  }
+  #bottom-controls-wrapper {
+    bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
   }
   #floating-settings-btn {
     right: calc(-6px + env(safe-area-inset-right)) !important;
@@ -3741,11 +3741,14 @@ svg.history-custom-icon {
     right: calc(-6px + env(safe-area-inset-right)) !important;
     left: auto !important;
     transform: none !important;
-    bottom: calc(4px + env(safe-area-inset-bottom)) !important;
+    bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
   }
   #slide-lock-container {
     left: calc(-6px + env(safe-area-inset-left)) !important;
-    bottom: calc(4px + env(safe-area-inset-bottom)) !important;
+    bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
+  }
+  #bottom-controls-wrapper {
+    bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
   }
   #admin-actions-bar {
     top: calc(4px + env(safe-area-inset-top)) !important;
@@ -3765,11 +3768,14 @@ svg.history-custom-icon {
     right: calc(-6px + env(safe-area-inset-right)) !important;
     left: auto !important;
     transform: none !important;
-    bottom: calc(4px + env(safe-area-inset-bottom)) !important;
+    bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
   }
   #slide-lock-container {
     left: calc(-6px + env(safe-area-inset-left)) !important;
-    bottom: calc(4px + env(safe-area-inset-bottom)) !important;
+    bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
+  }
+  #bottom-controls-wrapper {
+    bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
   }
   #floating-settings-btn {
     right: calc(-6px + env(safe-area-inset-right)) !important;
@@ -3789,11 +3795,14 @@ svg.history-custom-icon {
     right: calc(-6px + env(safe-area-inset-right)) !important;
     left: auto !important;
     transform: none !important;
-    bottom: calc(4px + env(safe-area-inset-bottom)) !important;
+    bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
   }
   #slide-lock-container {
     left: calc(-6px + env(safe-area-inset-left)) !important;
-    bottom: calc(4px + env(safe-area-inset-bottom)) !important;
+    bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
+  }
+  #bottom-controls-wrapper {
+    bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
   }
   #floating-settings-btn {
     right: calc(-6px + env(safe-area-inset-right)) !important;
