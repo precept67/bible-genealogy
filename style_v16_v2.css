@@ -3671,13 +3671,11 @@ svg.history-custom-icon {
 
 /* 1. Portrait Mode (세로화면) */
 @media only screen and (device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait) {
-  #bottom-controls-wrapper {
-    bottom: -4px !important;
-  }
   body:not(.search-focused) #floating-search-wrapper {
-    bottom: -4px !important;
-    right: 16px !important; /* 환경설정 세로모드 우측 여백 16px와 수평 일치 */
-    left: auto !important;
+    top: 6px !important;
+    left: 16px !important;
+    right: auto !important;
+    bottom: auto !important;
     transform: none !important;
   }
   #slide-lock-container {
@@ -3688,13 +3686,11 @@ svg.history-custom-icon {
 
 /* 2. Landscape Mode (가로화면) */
 @media only screen and (device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape) {
-  #bottom-controls-wrapper {
-    bottom: -1px !important;
-  }
   body:not(.search-focused) #floating-search-wrapper {
-    bottom: -1px !important;
-    right: 16px !important; /* 환경설정 가로모드 우측 여백 16px와 수평 일치 */
-    left: auto !important;
+    top: 6px !important;
+    left: 16px !important;
+    right: auto !important;
+    bottom: auto !important;
     transform: none !important;
   }
   #slide-lock-container {
@@ -3703,10 +3699,10 @@ svg.history-custom-icon {
 
   /* 도구버튼모음박스와 환경설정을 상단화면끝에서 4px 간격을 두고 정박 */
   #admin-actions-bar {
-    top: 4px !important;
+    top: -1px !important;
   }
   #floating-settings-btn {
-    top: 4px !important;
+    top: 6px !important;
   }
 }
 
@@ -3715,16 +3711,14 @@ svg.history-custom-icon {
    ========================================================================== */
 @media only screen and (device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2) {
   body:not(.search-focused) #floating-search-wrapper {
-    right: calc(-6px + env(safe-area-inset-right)) !important;
-    left: auto !important;
+    left: calc(-6px + env(safe-area-inset-left)) !important;
+    right: auto !important;
+    top: calc(6px + env(safe-area-inset-top)) !important;
+    bottom: auto !important;
     transform: none !important;
-    bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
   }
   #slide-lock-container {
     left: calc(-6px + env(safe-area-inset-left)) !important;
-    bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
-  }
-  #bottom-controls-wrapper {
     bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
   }
   #floating-settings-btn {
@@ -3739,16 +3733,14 @@ svg.history-custom-icon {
 @media only screen and (device-width: 820px) and (device-height: 1180px) and (-webkit-device-pixel-ratio: 2),
        only screen and (device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2) {
   body:not(.search-focused) #floating-search-wrapper {
-    right: calc(-6px + env(safe-area-inset-right)) !important;
-    left: auto !important;
+    left: calc(-6px + env(safe-area-inset-left)) !important;
+    right: auto !important;
+    top: calc(6px + env(safe-area-inset-top)) !important;
+    bottom: auto !important;
     transform: none !important;
-    bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
   }
   #slide-lock-container {
     left: calc(-6px + env(safe-area-inset-left)) !important;
-    bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
-  }
-  #bottom-controls-wrapper {
     bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
   }
   #admin-actions-bar {
@@ -3766,16 +3758,14 @@ svg.history-custom-icon {
 @media only screen and (device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3),
        only screen and (device-width: 852px) and (device-height: 393px) and (-webkit-device-pixel-ratio: 3) {
   body:not(.search-focused) #floating-search-wrapper {
-    right: calc(-6px + env(safe-area-inset-right)) !important;
-    left: auto !important;
+    left: calc(-6px + env(safe-area-inset-left)) !important;
+    right: auto !important;
+    top: calc(6px + env(safe-area-inset-top)) !important;
+    bottom: auto !important;
     transform: none !important;
-    bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
   }
   #slide-lock-container {
     left: calc(-6px + env(safe-area-inset-left)) !important;
-    bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
-  }
-  #bottom-controls-wrapper {
     bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
   }
   #floating-settings-btn {
@@ -3793,16 +3783,14 @@ svg.history-custom-icon {
 @media only screen and (device-width: 440px) and (device-height: 956px) and (-webkit-device-pixel-ratio: 3),
        only screen and (device-width: 956px) and (device-height: 440px) and (-webkit-device-pixel-ratio: 3) {
   body:not(.search-focused) #floating-search-wrapper {
-    right: calc(-6px + env(safe-area-inset-right)) !important;
-    left: auto !important;
+    left: calc(-6px + env(safe-area-inset-left)) !important;
+    right: auto !important;
+    top: calc(6px + env(safe-area-inset-top)) !important;
+    bottom: auto !important;
     transform: none !important;
-    bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
   }
   #slide-lock-container {
     left: calc(-6px + env(safe-area-inset-left)) !important;
-    bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
-  }
-  #bottom-controls-wrapper {
     bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
   }
   #floating-settings-btn {

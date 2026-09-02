@@ -17052,38 +17052,8 @@ function setupFloatingHeaderEvents() {
 
     const handleVisualViewportChange = () => {
       if (document.body.classList.contains('search-focused') && searchWrapper) {
-        const isLandscape = window.matchMedia('(orientation: landscape)').matches;
-        if (window.visualViewport) {
-          const currentHeight = window.innerHeight;
-          const keyboardHeight = window.innerHeight - window.visualViewport.height;
-          
-          if (isLandscape) {
-            // 가로 모드 (Landscape): 콤팩트한 화면 높이를 감안하여 키보드 위 안전 영역에 정박
-            if (keyboardHeight > 40) {
-              const safeBottom = Math.max(6, Math.min(keyboardHeight + 6, currentHeight - 48));
-              searchWrapper.style.bottom = `${safeBottom}px`;
-              searchWrapper.style.top = 'auto';
-            } else {
-              searchWrapper.style.bottom = 'calc(-1px + env(safe-area-inset-bottom))';
-              searchWrapper.style.top = 'auto';
-            }
-          } else {
-            // 세로 모드 (Portrait)
-            if (keyboardHeight > 100) {
-              searchWrapper.style.bottom = `${keyboardHeight + 57}px`;
-              searchWrapper.style.top = 'auto';
-            } else if (document.activeElement === searchInput) {
-              searchWrapper.style.bottom = 'calc(121px + env(safe-area-inset-bottom))';
-              searchWrapper.style.top = 'auto';
-            } else {
-              searchWrapper.style.bottom = 'calc(-4px + env(safe-area-inset-bottom))';
-              searchWrapper.style.top = 'auto';
-            }
-          }
-        } else {
-          searchWrapper.style.bottom = 'calc(-4px + env(safe-area-inset-bottom))';
-          searchWrapper.style.top = 'auto';
-        }
+        searchWrapper.style.top = 'calc(6px + env(safe-area-inset-top))';
+        searchWrapper.style.bottom = 'auto';
       }
     };
 
@@ -17097,8 +17067,10 @@ function setupFloatingHeaderEvents() {
       }
       if (searchWrapper) {
         const isLandscape = window.matchMedia('(orientation: landscape)').matches;
-        searchWrapper.style.top = 'auto';
-        searchWrapper.style.bottom = isLandscape ? 'calc(-1px + env(safe-area-inset-bottom))' : 'calc(-4px + env(safe-area-inset-bottom))';
+        searchWrapper.style.top = 'calc(6px + env(safe-area-inset-top))';
+        searchWrapper.style.bottom = 'auto';
+        searchWrapper.style.left = isLandscape ? 'calc(-6px + env(safe-area-inset-left))' : '16px';
+        searchWrapper.style.right = 'auto';
       }
       searchInput.value = '';
       const resultsDropdown = document.getElementById('search-results');
@@ -17122,8 +17094,10 @@ function setupFloatingHeaderEvents() {
         if (searchWrapper) {
           const isLandscape = window.matchMedia('(orientation: landscape)').matches;
           document.body.classList.add('search-focused');
-          searchWrapper.style.top = 'auto';
-          searchWrapper.style.bottom = isLandscape ? 'calc(-1px + env(safe-area-inset-bottom))' : 'calc(-4px + env(safe-area-inset-bottom))';
+          searchWrapper.style.top = 'calc(6px + env(safe-area-inset-top))';
+          searchWrapper.style.bottom = 'auto';
+          searchWrapper.style.left = isLandscape ? 'calc(-6px + env(safe-area-inset-left))' : '16px';
+          searchWrapper.style.right = 'auto';
         }
 
         // 1차 동기식 포커스 (iOS Safari 키보드 즉시 호출)
