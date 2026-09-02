@@ -3921,6 +3921,7 @@ svg.history-custom-icon {
 /* 4. Zoom Control Panel & Buttons Pointer Interaction Guarantee */
 #control-panel {
   pointer-events: auto !important;
+  padding: 4px 11px !important;
 }
 
 #zoom-in,
