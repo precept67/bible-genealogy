@@ -17763,6 +17763,13 @@ function setupGlobalKeyboardDismiss() {
       console.warn('Capacitor keyboard listener setup note:', e);
     }
   }
+
+  // 모달 내부 폼 그리드(.form-grid) 및 오버레이 터치 이벤트가 캔버스 드래그/줌에 간섭받지 않도록 터치 독립 격리
+  document.querySelectorAll('.modal-overlay, .modal-content, .form-grid').forEach(el => {
+    el.addEventListener('touchstart', (e) => { e.stopPropagation(); }, { passive: true });
+    el.addEventListener('touchmove', (e) => { e.stopPropagation(); }, { passive: true });
+    el.addEventListener('touchend', (e) => { e.stopPropagation(); }, { passive: true });
+  });
 }
 
 if (document.readyState === 'loading') {

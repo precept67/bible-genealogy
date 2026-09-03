@@ -1041,6 +1041,8 @@ header .subtitle {
   padding-right: calc(env(safe-area-inset-right, 0px) + 8px);
   box-sizing: border-box;
   overflow: hidden;
+  touch-action: pan-y;
+  pointer-events: auto;
 }
 
 body.keyboard-open .modal-overlay {
@@ -1053,8 +1055,10 @@ body.keyboard-open .modal-overlay {
   border-radius: 16px;
   width: 520px;
   max-width: 96%;
-  height: auto;
+  height: 100%;
   max-height: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
   display: flex;
   flex-direction: column;
@@ -1062,12 +1066,14 @@ body.keyboard-open .modal-overlay {
   overflow: hidden;
   box-sizing: border-box;
   margin-top: 0 !important;
+  pointer-events: auto;
 }
 
 .modal-content form {
   display: flex;
   flex-direction: column;
-  flex: 1;
+  flex: 1 1 auto;
+  height: 100%;
   min-height: 0;
   overflow: hidden;
 }
@@ -1084,7 +1090,7 @@ body.keyboard-open .modal-overlay {
 }
 
 .modal-header {
-  padding: 18px 24px;
+  padding: 16px 20px;
   border-bottom: 1px solid var(--border-panel);
   display: flex;
   justify-content: space-between;
@@ -3638,8 +3644,10 @@ svg.history-custom-icon {
   /* 2. 모달 콘텐츠 높이를 뷰포트 내로 유연하게 제한 */
   .modal-content {
     margin: 0 auto !important;
-    height: auto !important;
+    height: 100% !important;
     max-height: 100% !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
     max-width: 96% !important;
     border-radius: 14px !important;
     overflow: hidden !important;
@@ -3648,14 +3656,15 @@ svg.history-custom-icon {
   .modal-content form {
     display: flex !important;
     flex-direction: column !important;
-    flex: 1 !important;
+    flex: 1 1 auto !important;
+    height: 100% !important;
     min-height: 0 !important;
     overflow: hidden !important;
   }
 
   /* 3. 모달의 헤더/바디/푸터 패딩을 밀도 있게 압축 */
   .modal-header {
-    padding: 12px 16px !important;
+    padding: 10px 16px !important;
     flex-shrink: 0 !important;
   }
   .modal-header h2 {
@@ -3663,15 +3672,15 @@ svg.history-custom-icon {
   }
 
   .form-grid {
-    padding: 12px 16px !important;
-    gap: 10px !important; /* 폼 요소 간격 다이어트 */
-    flex: 1 !important;
+    padding: 10px 14px !important;
+    gap: 10px !important;
+    flex: 1 1 auto !important;
     min-height: 0 !important;
     max-height: none !important;
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch !important;
     touch-action: pan-y !important;
-    overscroll-behavior: contain !important;
+    overscroll-behavior-y: contain !important;
   }
   .form-group label {
     font-size: 11px !important;
