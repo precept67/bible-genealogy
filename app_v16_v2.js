@@ -3596,6 +3596,86 @@ function applyAnnotationBorder(el, annot) {
   }
 }
 
+function startEditingAnnotation(annotId) {
+  const el = document.getElementById(`annot-${annotId}`);
+  const annot = annotations.find(a => a.id === annotId);
+  if (!el || !annot) return;
+  
+  if (el.classList.contains('editing')) return;
+  
+  const textDiv = el.querySelector('.annotation-text');
+  if (textDiv) textDiv.style.display = 'none';
+  
+  el.classList.add('editing');
+  
+  const existingTextarea = el.querySelector('.annotation-edit-textarea');
+  if (existingTextarea) existingTextarea.remove();
+  
+  const textarea = document.createElement('textarea');
+  textarea.className = 'annotation-edit-textarea';
+  textarea.value = (annot.text === "새 텍스트 상자\n(클릭하여 편집)") ? "" : (annot.text || '');
+  textarea.placeholder = "내용을 입력하세요...";
+  textarea.style.position = 'absolute';
+  textarea.style.top = '0';
+  textarea.style.left = '0';
+  textarea.style.width = '100%';
+  textarea.style.height = '100%';
+  textarea.style.border = '2px solid var(--text-accent, #3b82f6)';
+  textarea.style.borderRadius = '6px';
+  textarea.style.outline = 'none';
+  textarea.style.background = annot.bgColor || '#ffffff';
+  textarea.style.color = annot.color || '#1e293b';
+  textarea.style.fontSize = `${annot.fontSize || 14}px`;
+  textarea.style.fontWeight = annot.bold ? 'bold' : 'normal';
+  textarea.style.fontStyle = annot.italic ? 'italic' : 'normal';
+  textarea.style.textDecoration = annot.underline ? 'underline' : 'none';
+  textarea.style.textAlign = annot.align || 'center';
+  textarea.style.fontFamily = 'inherit';
+  textarea.style.boxSizing = 'border-box';
+  textarea.style.padding = '6px 8px';
+  textarea.style.resize = 'none';
+  textarea.style.overflow = 'auto';
+  textarea.style.zIndex = '120';
+  textarea.style.pointerEvents = 'auto';
+  
+  const saveAndClose = () => {
+    if (textarea.parentNode) {
+      const val = textarea.value.trim();
+      annot.text = val || "새 텍스트 상자\n(클릭하여 편집)";
+      if (textDiv) {
+        textDiv.innerText = getLocalizedAnnotationText(annot.text);
+        textDiv.style.display = 'flex';
+      }
+      textarea.remove();
+      el.classList.remove('editing');
+      saveAnnotations();
+      autoSaveToServer();
+    }
+  };
+  
+  textarea.addEventListener('blur', saveAndClose);
+  textarea.addEventListener('keydown', (evt) => {
+    if (evt.key === 'Escape') {
+      evt.stopPropagation();
+      saveAndClose();
+    }
+  });
+  
+  textarea.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
+  textarea.addEventListener('touchmove', (e) => e.stopPropagation(), { passive: true });
+  textarea.addEventListener('touchend', (e) => e.stopPropagation(), { passive: true });
+  textarea.addEventListener('mousedown', (e) => e.stopPropagation());
+  textarea.addEventListener('click', (e) => e.stopPropagation());
+  
+  el.appendChild(textarea);
+  setTimeout(() => {
+    textarea.focus();
+    if (textarea.value.length > 0) {
+      textarea.select();
+    }
+  }, 60);
+}
+
 function renderAnnotations() {
   // Clear existing annotation elements on the board
   document.querySelectorAll('.canvas-annotation').forEach(el => el.remove());
@@ -3667,6 +3747,17 @@ function renderAnnotations() {
     const toolbar = document.createElement('div');
     toolbar.className = 'annotation-toolbar';
     
+    // Direct Edit Button (✏️)
+    const editBtn = document.createElement('button');
+    editBtn.className = 'annot-btn';
+    editBtn.innerHTML = '✏️';
+    editBtn.title = '텍스트 직접 편집/입력';
+    editBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      startEditingAnnotation(annot.id);
+    });
+    toolbar.appendChild(editBtn);
+
     // Size input
     const sizeInput = document.createElement('input');
     sizeInput.type = 'number';
@@ -3847,7 +3938,7 @@ function renderAnnotations() {
       showToast(annot.auraEnabled ? "💡 이 상자의 아우라 강조가 활성화되었습니다." : "📴 이 상자의 아우라 강조가 비활성화되었습니다.");
     });
     toolbar.appendChild(auraBtn);
-    
+
     // Copy/Duplicate button
     const copyBtn = document.createElement('button');
     copyBtn.className = 'annot-btn';
@@ -3961,14 +4052,17 @@ function renderAnnotations() {
       el.appendChild(resizeHandle);
     }
     
-    // Click to highlight related elements & open study memo panel
+    // Click to select & open details or edit
     el.addEventListener('click', (e) => {
       if (e.target.closest('.annotation-toolbar') || e.target.closest('.annot-resize-handle')) return;
       
-      e.stopPropagation(); // Avoid triggering board deselection
+      e.stopPropagation();
       
       if (isAdminMode) {
-        // Just select, do not focus text edit yet (Figma style)
+        if (el.classList.contains('selected')) {
+          startEditingAnnotation(annot.id);
+          return;
+        }
         document.querySelectorAll('.canvas-annotation').forEach(n => n.classList.remove('selected'));
         el.classList.add('selected');
       } else {
@@ -3979,64 +4073,27 @@ function renderAnnotations() {
       openLayerDetails(annot, 'annotation');
     });
 
-    // Double-click to Edit (Figma style with a simple textarea)
+    // Double-click to Edit
     el.addEventListener('dblclick', (e) => {
       if (!isAdminMode) return;
       if (e.target.closest('.annotation-toolbar') || e.target.closest('.annot-resize-handle')) return;
       
       e.stopPropagation();
-      el.classList.add('editing');
-      textDiv.style.display = 'none';
-      
-      const textarea = document.createElement('textarea');
-      textarea.className = 'annotation-edit-textarea';
-      textarea.value = annot.text || '';
-      textarea.style.position = 'absolute';
-      textarea.style.top = '0';
-      textarea.style.left = '0';
-      textarea.style.width = '100%';
-      textarea.style.height = '100%';
-      textarea.style.border = 'none';
-      textarea.style.outline = 'none';
-      textarea.style.background = 'transparent';
-      textarea.style.color = annot.color || '#1e293b';
-      textarea.style.fontSize = `${annot.fontSize || 14}px`;
-      textarea.style.fontWeight = annot.bold ? 'bold' : 'normal';
-      textarea.style.fontStyle = annot.italic ? 'italic' : 'normal';
-      textarea.style.textDecoration = annot.underline ? 'underline' : 'none';
-      textarea.style.textAlign = annot.align || 'center';
-      textarea.style.fontFamily = 'inherit';
-      textarea.style.boxSizing = 'border-box';
-      textarea.style.padding = '8px';
-      textarea.style.resize = 'none';
-      textarea.style.overflow = 'hidden';
-      textarea.style.zIndex = '10';
-      
-      const saveAndClose = () => {
-        if (textarea.parentNode) {
-          annot.text = textarea.value;
-          textDiv.innerText = annot.text;
-          textarea.remove();
-          textDiv.style.display = 'flex';
-          el.classList.remove('editing');
-          saveAnnotations();
-        }
-      };
-      
-      textarea.addEventListener('blur', saveAndClose);
-      textarea.addEventListener('keydown', (evt) => {
-        if (evt.key === 'Escape') {
-          evt.stopPropagation();
-          saveAndClose();
-        }
-      });
-      
-      el.appendChild(textarea);
-      setTimeout(() => {
-        textarea.focus();
-        textarea.select();
-      }, 10);
+      startEditingAnnotation(annot.id);
     });
+
+    // Double-tap on mobile touch to Edit
+    let lastAnnotTouchTime = 0;
+    el.addEventListener('touchend', (e) => {
+      if (!isAdminMode) return;
+      if (e.target.closest('.annotation-toolbar') || e.target.closest('.annot-resize-handle')) return;
+      const now = Date.now();
+      if (now - lastAnnotTouchTime < 380) {
+        e.stopPropagation();
+        startEditingAnnotation(annot.id);
+      }
+      lastAnnotTouchTime = now;
+    }, { passive: true });
 
     // Drag handlers
     el.addEventListener('mousedown', (e) => {
@@ -9265,7 +9322,10 @@ function setupZoomPan() {
       renderAnnotations();
       deactivateAddAnnotationMode();
       autoSaveToServer();
-      showToast("📝 텍스트 상자가 성공적으로 생성되었습니다.");
+      showToast("📝 텍스트 상자가 생성되었습니다. 내용을 입력하세요.");
+      setTimeout(() => {
+        startEditingAnnotation(newNote.id);
+      }, 80);
       return;
     }
 
