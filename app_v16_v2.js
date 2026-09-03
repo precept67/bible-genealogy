@@ -17336,13 +17336,17 @@ function setupFloatingHeaderEvents() {
     window.closeSearchWrapper = closeSearchWrapper;
 
     const toggleSearch = (e) => {
+      if (e) {
+        e.stopPropagation();
+      }
       window.lastSearchOpenTime = Date.now();
       const isCurrentlyOpen = document.body.classList.contains('search-focused');
       isSearchOpen = !isCurrentlyOpen;
 
       if (isSearchOpen) {
+        document.body.classList.add('search-focused');
+
         if (searchWrapper) {
-          document.body.classList.add('search-focused');
           const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
           const offsetTop = (window.visualViewport ? window.visualViewport.offsetTop : 0) || 0;
           const keyboardH = Math.max(0, window.innerHeight - (vh + offsetTop));
@@ -17357,7 +17361,7 @@ function setupFloatingHeaderEvents() {
           searchWrapper.style.transform = 'none';
         }
 
-        // 1차 동기식 포커스 및 선택 (iOS 16 / iPhone 8 키보드 즉시 호출)
+        // 1차 동기식 포커스 및 캐럿 활성화 (iOS 16 / iPhone 8 제스처 체인 즉각 연결)
         try {
           searchInput.focus({ preventScroll: true });
           searchInput.click();
@@ -17367,7 +17371,7 @@ function setupFloatingHeaderEvents() {
           }
         } catch (err) {}
 
-        // Capacitor 네이티브 키보드 강제 팝업 명령 호출
+        // Capacitor 네이티브 키보드 강제 호출
         if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Keyboard) {
           try {
             window.Capacitor.Plugins.Keyboard.show();
@@ -17398,14 +17402,13 @@ function setupFloatingHeaderEvents() {
       }
     };
 
-    // iOS 16 (iPhone 8 / SE 등) 터치 제스처 신뢰 체인 직접 연동
-    floatSearchBtn.addEventListener('touchstart', (e) => {
-      try {
-        searchInput.focus({ preventScroll: true });
-      } catch (err) {}
-    }, { passive: true });
-
-    bindHybridButton(floatSearchBtn, (e) => {
+    // 돋보기 버튼 터치 시 e.preventDefault() 없이 바로 toggleSearch 실행하여 WebKit User Gesture 보존
+    floatSearchBtn.addEventListener('touchend', (e) => {
+      e.stopPropagation();
+      toggleSearch(e);
+    });
+    floatSearchBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
       toggleSearch(e);
     });
 
@@ -17803,7 +17806,7 @@ function setupGlobalKeyboardDismiss() {
     // 현재 포커스된 엘리먼트가 input 또는 textarea 이며 글을 쓰는 상태일 때
     if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'SELECT')) {
       // 터치/클릭된 대상이 입력 창이나 모달, 입력 폼 컨테이너가 아닐 때만 포커스 해제하여 키보드 닫기
-      const clickedInputOrPanel = e.target.closest('input, textarea, select, label, .modal-content, .modal-overlay, #admin-modal, #layer-item-modal, #study-panel, #settings-modal, #search-panel, #bottom-spawner-panel, form');
+      const clickedInputOrPanel = e.target.closest('input, textarea, select, label, .modal-content, .modal-overlay, #admin-modal, #layer-item-modal, #study-panel, #settings-modal, #search-panel, #floating-search-wrapper, #floating-search-toggle-btn, #bottom-spawner-panel, form');
       if (!clickedInputOrPanel) {
         activeEl.blur();
       }

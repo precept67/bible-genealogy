@@ -3568,9 +3568,8 @@ body.search-focused #search-results {
 body:not(.search-focused) #search-panel {
   width: 0px !important;
   opacity: 0 !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
   overflow: hidden !important;
+  pointer-events: none !important;
 }
 
 /* ==========================================================================
