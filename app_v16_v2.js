@@ -17357,16 +17357,33 @@ function setupFloatingHeaderEvents() {
           searchWrapper.style.transform = 'none';
         }
 
-        // 1차 동기식 포커스 (iOS Safari 키보드 즉시 호출)
+        // 1차 동기식 포커스 및 선택 (iOS 16 / iPhone 8 키보드 즉시 호출)
         try {
-          searchInput.focus();
+          searchInput.focus({ preventScroll: true });
+          searchInput.click();
+          if (searchInput.setSelectionRange) {
+            const valLen = (searchInput.value || '').length;
+            searchInput.setSelectionRange(valLen, valLen);
+          }
         } catch (err) {}
+
+        // Capacitor 네이티브 키보드 강제 팝업 명령 호출
+        if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Keyboard) {
+          try {
+            window.Capacitor.Plugins.Keyboard.show();
+          } catch (err) {}
+        }
 
         // 2차 비동기식 뷰포트 정렬 및 재포커스 보장
         setTimeout(() => {
           try {
-            searchInput.focus();
+            searchInput.focus({ preventScroll: true });
           } catch (err) {}
+          if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Keyboard) {
+            try {
+              window.Capacitor.Plugins.Keyboard.show();
+            } catch (err) {}
+          }
           if (searchViewportInterval) clearInterval(searchViewportInterval);
           searchViewportInterval = setInterval(handleVisualViewportChange, 50);
 
@@ -17380,6 +17397,13 @@ function setupFloatingHeaderEvents() {
         closeSearchWrapper();
       }
     };
+
+    // iOS 16 (iPhone 8 / SE 등) 터치 제스처 신뢰 체인 직접 연동
+    floatSearchBtn.addEventListener('touchstart', (e) => {
+      try {
+        searchInput.focus({ preventScroll: true });
+      } catch (err) {}
+    }, { passive: true });
 
     bindHybridButton(floatSearchBtn, (e) => {
       toggleSearch(e);
