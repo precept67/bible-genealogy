@@ -17181,6 +17181,8 @@ function setupSlideLockDragEvents() {
     let isDragging = false;
     let startX = 0;
     let currentX = 0;
+    let dragStartTime = 0;
+    let hasMoved = false;
 
     function getDynamicMaxSlide() {
       const containerWidth = slideContainer.getBoundingClientRect().width || 121;
@@ -17192,7 +17194,10 @@ function setupSlideLockDragEvents() {
       e.stopPropagation();
       if (e.cancelable) e.preventDefault();
       isDragging = true;
+      hasMoved = false;
+      dragStartTime = Date.now();
       startX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+      currentX = 0;
       slideHandle.style.transition = 'none';
       
       slideContainer.classList.add('dragging');
@@ -17212,6 +17217,9 @@ function setupSlideLockDragEvents() {
       
       const clientX = (e.touches && e.touches.length > 0) ? e.touches[0].clientX : e.clientX;
       const deltaX = clientX - startX;
+      if (Math.abs(deltaX) > 4) {
+        hasMoved = true;
+      }
       const maxSlide = getDynamicMaxSlide();
       currentX = Math.max(0, Math.min(maxSlide, deltaX));
       slideHandle.style.transform = `translateX(${currentX}px)`;
@@ -17228,6 +17236,7 @@ function setupSlideLockDragEvents() {
         if (e.cancelable) e.preventDefault();
       }
       isDragging = false;
+      const elapsed = Date.now() - dragStartTime;
 
       window.removeEventListener('touchmove', onDragMove, { passive: false });
       window.removeEventListener('touchend', onDragEnd, { passive: false });
@@ -17238,7 +17247,8 @@ function setupSlideLockDragEvents() {
       slideHandle.style.transition = 'transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1), background-color 0.2s ease';
       
       const maxSlide = getDynamicMaxSlide();
-      if (currentX >= maxSlide * 0.75) {
+      // If user tapped quickly (< 300ms) or slid past 40% of the bar, trigger toggle
+      if ((!hasMoved && elapsed < 350) || currentX >= maxSlide * 0.4) {
         if (originalLockBtn) {
           originalLockBtn.click();
         }
