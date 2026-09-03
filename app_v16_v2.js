@@ -8843,12 +8843,14 @@ function setupZoomPan() {
       return;
     }
     e.preventDefault();
-    const factor = e.scale;
+    const factor = e.scale || 1;
     const nextScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, gestureStartScale * factor));
     
     const rect = viewerContainer.getBoundingClientRect();
-    const mouseX = globalMouseX - rect.left;
-    const mouseY = globalMouseY - rect.top;
+    const clientX = (typeof e.clientX === 'number' && e.clientX > 0) ? e.clientX : (globalMouseX || (rect.left + rect.width / 2));
+    const clientY = (typeof e.clientY === 'number' && e.clientY > 0) ? e.clientY : (globalMouseY || (rect.top + rect.height / 2));
+    const mouseX = clientX - rect.left;
+    const mouseY = clientY - rect.top;
     
     const worldX = (mouseX - gestureStartPanX) / gestureStartScale;
     const worldY = (mouseY - gestureStartPanY) / gestureStartScale;
@@ -9032,30 +9034,42 @@ function setupZoomPan() {
   // Mobile Touch Support
   const onTouchMove = (e) => {
     const rect = viewerContainer.getBoundingClientRect();
-    if (isTouchZooming && e.touches.length === 2) {
+    if (e.touches.length === 2) {
       e.preventDefault();
+      if (!isTouchZooming || touchStartDistance <= 0) {
+        isTouchZooming = true;
+        isDragging = false;
+        touchStartDistance = getTouchDistance(e.touches[0], e.touches[1]);
+        touchStartScale = currentScale;
+        touchStartPanX = panX;
+        touchStartPanY = panY;
+        if (viewerContainer) viewerContainer.classList.add('zooming');
+      }
       const currentDist = getTouchDistance(e.touches[0], e.touches[1]);
-      const factor = currentDist / touchStartDistance;
-      const nextScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, touchStartScale * factor));
-      
-      const touchCenterX = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left;
-      const touchCenterY = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top;
-      
-      const worldX = (touchCenterX - touchStartPanX) / touchStartScale;
-      const worldY = (touchCenterY - touchStartPanY) / touchStartScale;
-      
-      currentScale = nextScale;
-      if (zoomLevelText) zoomLevelText.textContent = `${Math.round(currentScale * 100)}%`;
-      
-      panX = touchCenterX - worldX * currentScale;
-      panY = touchCenterY - worldY * currentScale;
-      
-      // Keep target coordinates synced for touch zooming (no LERP needed here as fingers do physical easing)
-      targetScale = currentScale;
-      targetPanX = panX;
-      targetPanY = panY;
-      
-      updateTransform();
+      if (touchStartDistance > 0) {
+        const factor = currentDist / touchStartDistance;
+        const nextScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, touchStartScale * factor));
+        
+        const touchCenterX = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left;
+        const touchCenterY = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top;
+        
+        const worldX = (touchCenterX - touchStartPanX) / touchStartScale;
+        const worldY = (touchCenterY - touchStartPanY) / touchStartScale;
+        
+        currentScale = nextScale;
+        if (zoomLevelText) zoomLevelText.textContent = `${Math.round(currentScale * 100)}%`;
+        
+        panX = touchCenterX - worldX * currentScale;
+        panY = touchCenterY - worldY * currentScale;
+        
+        // Keep target coordinates synced for touch zooming (no LERP needed here as fingers do physical easing)
+        targetScale = currentScale;
+        targetPanX = panX;
+        targetPanY = panY;
+        
+        updateTransform();
+      }
+      return;
     } else if (isDragging && e.touches.length === 1) {
       e.preventDefault(); // Stop mobile native elastic scrolling and bounce
       const currentX = e.touches[0].clientX;
@@ -9303,24 +9317,30 @@ function setupZoomPan() {
   };
   
   viewerContainer.addEventListener('touchstart', (e) => {
-    if (shouldIgnoreDrag(e.target)) return;
-    stopInertia();
-    isZoomAnimating = false; // Stop any ongoing zoom animation when touch starts
-    if (viewerContainer) {
-      if (e.touches.length === 2) {
-        viewerContainer.classList.add('zooming');
-      } else {
-        viewerContainer.classList.remove('zooming');
-      }
-    }
-    const rect = viewerContainer.getBoundingClientRect();
-    if (e.touches.length === 2) {
+    // 2개 이상의 터치(핀치 줌 제스처)는 인물 카드나 텍스트 위라도 무조건 최우선 처리!
+    if (e.touches.length >= 2) {
+      if (isScrollableOverlay(e.target)) return;
+      stopInertia();
+      isZoomAnimating = false;
+      isDragging = false;
       isTouchZooming = true;
+      if (viewerContainer) viewerContainer.classList.add('zooming');
       touchStartDistance = getTouchDistance(e.touches[0], e.touches[1]);
       touchStartScale = currentScale;
       touchStartPanX = panX;
       touchStartPanY = panY;
-    } else if (e.touches.length === 1) {
+      window.addEventListener('touchmove', onTouchMove, { passive: false });
+      window.addEventListener('touchend', onTouchEnd, { passive: false });
+      window.addEventListener('touchcancel', onTouchEnd, { passive: false });
+      return;
+    }
+
+    if (shouldIgnoreDrag(e.target)) return;
+    stopInertia();
+    isZoomAnimating = false;
+    if (viewerContainer) viewerContainer.classList.remove('zooming');
+
+    if (e.touches.length === 1) {
       isDragging = true;
       startX = e.touches[0].clientX;
       startY = e.touches[0].clientY;
