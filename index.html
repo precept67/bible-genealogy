@@ -183,6 +183,34 @@
       }
     }
 
+    /* 4. 아이폰 전 기종 락 버튼 비노출 및 작동 금지 */
+    body.is-iphone #slide-lock-container,
+    body.is-iphone #admin-lock-btn,
+    body.is-iphone #admin-actions-bar {
+      display: none !important;
+      pointer-events: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+    }
+
+    @media only screen and (max-device-width: 480px),
+           only screen and (device-width: 375px),
+           only screen and (device-width: 390px),
+           only screen and (device-width: 393px),
+           only screen and (device-width: 402px),
+           only screen and (device-width: 414px),
+           only screen and (device-width: 428px),
+           only screen and (device-width: 430px),
+           only screen and (device-width: 440px) {
+      #slide-lock-container,
+      #admin-lock-btn {
+        display: none !important;
+        pointer-events: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+      }
+    }
+
     #slide-lock-container {
       left: 16px !important;
       bottom: calc(14px + env(safe-area-inset-bottom)) !important;
@@ -786,7 +814,7 @@
        </button>
         <button id="admin-add-polygon-btn" class="admin-action-btn-circle has-tooltip tooltip-up" data-tooltip="영역(다각형) 추가" title="영역(다각형) 추가">
           <span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;">
-            <img src="add_polygon_btn.png?v=24740" alt="영역 추가" style="width: 24px; height: 24px; object-fit: contain; pointer-events: none; display: block;">
+            <img src="add_polygon_btn.png?v=24750" alt="영역 추가" style="width: 24px; height: 24px; object-fit: contain; pointer-events: none; display: block;">
           </span>
         </button>
 

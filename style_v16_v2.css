@@ -4060,6 +4060,34 @@ svg.history-custom-icon {
       padding: 0 !important;
     }
   }
+/* ==========================================================================
+   📱 iPhone 전 기종 락 버튼 비노출 및 작동 금지 (iPad/태블릿/PC에서만 락 버튼 사용)
+   ========================================================================== */
+body.is-iphone #slide-lock-container,
+body.is-iphone #admin-lock-btn,
+body.is-iphone #admin-actions-bar {
+  display: none !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+@media only screen and (max-device-width: 480px),
+       only screen and (device-width: 375px),
+       only screen and (device-width: 390px),
+       only screen and (device-width: 393px),
+       only screen and (device-width: 402px),
+       only screen and (device-width: 414px),
+       only screen and (device-width: 428px),
+       only screen and (device-width: 430px),
+       only screen and (device-width: 440px) {
+  #slide-lock-container,
+  #admin-lock-btn {
+    display: none !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+  }
 }
 
 /* ==========================================================================

@@ -11116,11 +11116,35 @@ function updateStats() {
   }
 }
 
+// Helper to detect all iPhone models (excluding iPad / Mac / PC / Android Tablets)
+function isIPhoneDevice() {
+  const ua = navigator.userAgent || navigator.vendor || window.opera || '';
+  const isIPhone = /iPhone|iPod/i.test(ua);
+  const isSmallPhone = (Math.max(window.screen.width, window.screen.height) <= 956 && Math.min(window.screen.width, window.screen.height) <= 450);
+  return isIPhone || (isSmallPhone && !/iPad/i.test(ua) && !/Macintosh/i.test(ua));
+}
+
 // ==========================================
 // Admin Mode Logic & CRUD Handlers
 // ==========================================
 
 function setupAdminMode() {
+  if (isIPhoneDevice()) {
+    document.body.classList.add('is-iphone');
+    document.documentElement.classList.add('is-iphone');
+    const slideContainer = document.getElementById('slide-lock-container');
+    if (slideContainer) {
+      slideContainer.style.setProperty('display', 'none', 'important');
+      slideContainer.style.setProperty('pointer-events', 'none', 'important');
+    }
+    const originalLockBtn = document.getElementById('admin-lock-btn');
+    if (originalLockBtn) {
+      originalLockBtn.style.setProperty('display', 'none', 'important');
+      originalLockBtn.style.setProperty('pointer-events', 'none', 'important');
+    }
+    return;
+  }
+
   const lockBtn = document.getElementById('admin-lock-btn');
   if (lockBtn) {
     lockBtn.addEventListener('click', async () => {
@@ -17176,6 +17200,18 @@ function setupSlideLockDragEvents() {
   const slideBg = document.getElementById('slide-lock-bg') || slideContainer;
   const originalLockBtn = document.getElementById('admin-lock-btn');
   const slideText = document.getElementById('slide-lock-text');
+
+  if (isIPhoneDevice()) {
+    if (slideContainer) {
+      slideContainer.style.setProperty('display', 'none', 'important');
+      slideContainer.style.setProperty('pointer-events', 'none', 'important');
+    }
+    if (originalLockBtn) {
+      originalLockBtn.style.setProperty('display', 'none', 'important');
+      originalLockBtn.style.setProperty('pointer-events', 'none', 'important');
+    }
+    return;
+  }
 
   if (slideHandle && slideContainer && slideBg) {
     let isDragging = false;
