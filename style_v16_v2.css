@@ -3818,7 +3818,7 @@ svg.history-custom-icon {
   }
   #slide-lock-container {
     left: 16px !important;
-    bottom: calc(16px + env(safe-area-inset-bottom)) !important;
+    bottom: calc(20px + env(safe-area-inset-bottom)) !important;
   }
 }
 
@@ -3832,13 +3832,13 @@ svg.history-custom-icon {
     transform: none !important;
   }
   #slide-lock-container {
-    bottom: calc(16px + env(safe-area-inset-bottom)) !important;
+    bottom: calc(20px + env(safe-area-inset-bottom)) !important;
   }
 
   /* 도구버튼모음을 하단 우측에 수직 정박 */
   #admin-actions-bar {
     top: auto !important;
-    bottom: calc(16px + env(safe-area-inset-bottom)) !important;
+    bottom: calc(20px + env(safe-area-inset-bottom)) !important;
     right: 16px !important;
     left: auto !important;
     transform: none !important;
@@ -3886,11 +3886,11 @@ svg.history-custom-icon {
   }
   #slide-lock-container {
     left: calc(16px + env(safe-area-inset-left)) !important;
-    bottom: calc(16px + env(safe-area-inset-bottom)) !important;
+    bottom: calc(20px + env(safe-area-inset-bottom)) !important;
   }
   #admin-actions-bar {
     top: auto !important;
-    bottom: calc(16px + env(safe-area-inset-bottom)) !important;
+    bottom: calc(20px + env(safe-area-inset-bottom)) !important;
     right: calc(16px + env(safe-area-inset-right)) !important;
     left: auto !important;
     transform: none !important;
@@ -3922,11 +3922,11 @@ svg.history-custom-icon {
   }
   #slide-lock-container {
     left: calc(16px + env(safe-area-inset-left)) !important;
-    bottom: calc(16px + env(safe-area-inset-bottom)) !important;
+    bottom: calc(20px + env(safe-area-inset-bottom)) !important;
   }
   #admin-actions-bar {
     top: auto !important;
-    bottom: calc(16px + env(safe-area-inset-bottom)) !important;
+    bottom: calc(20px + env(safe-area-inset-bottom)) !important;
     right: calc(16px + env(safe-area-inset-right)) !important;
     left: auto !important;
     transform: none !important;
@@ -3966,11 +3966,11 @@ svg.history-custom-icon {
     }
     #slide-lock-container {
       left: 16px !important;
-      bottom: calc(16px + env(safe-area-inset-bottom)) !important;
+      bottom: calc(20px + env(safe-area-inset-bottom)) !important;
     }
     #admin-actions-bar {
       right: 16px !important;
-      bottom: calc(16px + env(safe-area-inset-bottom)) !important;
+      bottom: calc(20px + env(safe-area-inset-bottom)) !important;
     }
   }
   @media (orientation: landscape) {
@@ -3994,7 +3994,7 @@ svg.history-custom-icon {
     }
     #admin-actions-bar {
       top: auto !important;
-      bottom: calc(16px + env(safe-area-inset-bottom)) !important;
+      bottom: calc(20px + env(safe-area-inset-bottom)) !important;
       right: calc(16px + env(safe-area-inset-right)) !important;
       left: auto !important;
       transform: none !important;
@@ -4027,11 +4027,11 @@ svg.history-custom-icon {
     }
     #slide-lock-container {
       left: 16px !important;
-      bottom: calc(16px + env(safe-area-inset-bottom)) !important;
+      bottom: calc(20px + env(safe-area-inset-bottom)) !important;
     }
     #admin-actions-bar {
       right: 16px !important;
-      bottom: calc(16px + env(safe-area-inset-bottom)) !important;
+      bottom: calc(20px + env(safe-area-inset-bottom)) !important;
     }
   }
   @media (orientation: landscape) {
@@ -4055,7 +4055,7 @@ svg.history-custom-icon {
     }
     #admin-actions-bar {
       top: auto !important;
-      bottom: calc(16px + env(safe-area-inset-bottom)) !important;
+      bottom: calc(20px + env(safe-area-inset-bottom)) !important;
       right: calc(16px + env(safe-area-inset-right)) !important;
       left: auto !important;
       transform: none !important;
