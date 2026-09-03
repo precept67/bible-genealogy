@@ -3181,7 +3181,7 @@ svg path.prophets-aura {
 
 /* Settings Modal Specific Styles */
 .settings-body {
-  padding: 24px;
+  padding: 17px 15px 6px 15px !important;
   max-height: 70vh;
   overflow-y: auto;
 }
