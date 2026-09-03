@@ -206,7 +206,7 @@
 
     #slide-lock-container {
       left: 16px !important;
-      bottom: calc(14px + env(safe-area-inset-bottom)) !important;
+      bottom: calc(21px + env(safe-area-inset-bottom)) !important;
       width: 121px !important;
       height: 40px !important;
       box-sizing: border-box !important;
@@ -215,7 +215,7 @@
       display: none;
       position: fixed !important;
       top: auto !important;
-      bottom: calc(14px + env(safe-area-inset-bottom)) !important; /* 락 버튼과 완벽한 수평 일치 */
+      bottom: calc(21px + env(safe-area-inset-bottom)) !important; /* 락 버튼과 완벽한 수평 일치 */
       right: 16px !important; /* 영역추가 버튼이 상단 환경설정(right: 16px)과 완벽한 수직 일치 */
       left: auto !important;
       transform: none !important;
@@ -252,13 +252,13 @@
       }
       #slide-lock-container {
         left: calc(16px + env(safe-area-inset-left)) !important;
-        bottom: calc(14px + env(safe-area-inset-bottom)) !important;
+        bottom: calc(21px + env(safe-area-inset-bottom)) !important;
         width: 121px !important;
       }
       #admin-actions-bar {
         position: fixed !important;
         top: auto !important;
-        bottom: calc(14px + env(safe-area-inset-bottom)) !important;
+        bottom: calc(21px + env(safe-area-inset-bottom)) !important;
         right: calc(16px + env(safe-area-inset-right)) !important; /* 가로화면 환경설정과 완벽한 수직 일치 */
         left: auto !important;
         transform: none !important;
@@ -562,7 +562,7 @@
     </div>
 
     <!-- 5. Left Bottom Slide-to-Unlock Edit Mode Slider (40px handle resized to match settings and search buttons) -->
-    <div id="slide-lock-container" style="position: fixed; left: 16px; bottom: calc(14px + env(safe-area-inset-bottom)); z-index: 15000; width: 121px; height: 40px; border-radius: 20px; display: flex; align-items: center; padding: 0; box-sizing: border-box; user-select: none; transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;">
+    <div id="slide-lock-container" style="position: fixed; left: 16px; bottom: calc(21px + env(safe-area-inset-bottom)); z-index: 15000; width: 121px; height: 40px; border-radius: 20px; display: flex; align-items: center; padding: 0; box-sizing: border-box; user-select: none; transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;">
       <div id="slide-lock-handle" style="width: 40px; height: 40px; background: #ffffff; border-radius: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; transform: translateX(0px); transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1), background-color 0.2s ease;">
         <span id="slide-lock-icon" style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;">
           <img id="slide-lock-icon-img" src="lock_btn.png?v=24570" alt="락 버튼" style="width: 24px; height: 24px; object-fit: contain; pointer-events: none; display: block;">
@@ -784,7 +784,7 @@
     
     <!-- Admin Database Action Panel (Visible only in Admin Mode) -->
         <!-- Admin Database Action Panel (Visible only in Admin Mode - Clean draw toolkit) -->
-    <div id="admin-actions-bar" style="display: none; position: fixed; bottom: calc(-1px + env(safe-area-inset-bottom)); right: 16px; left: auto; top: auto; transform: none; z-index: 12000; flex-direction: row; align-items: center; gap: 6px; background: transparent; border: none; padding: 0; box-shadow: none; height: 40px; box-sizing: border-box; pointer-events: auto;">
+    <div id="admin-actions-bar" style="display: none; position: fixed; bottom: calc(21px + env(safe-area-inset-bottom)); right: 16px; left: auto; top: auto; transform: none; z-index: 12000; flex-direction: row; align-items: center; gap: 6px; background: transparent; border: none; padding: 0; box-shadow: none; height: 40px; box-sizing: border-box; pointer-events: auto;">
        <button id="admin-add-btn" class="admin-action-btn-circle has-tooltip tooltip-up" data-tooltip="인물 추가" title="인물 추가">
          <span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;">
            <img src="add_person_btn.png?v=24570" alt="인물 추가" style="width: 24px; height: 24px; object-fit: contain; pointer-events: none; display: block;">
@@ -807,7 +807,7 @@
        </button>
         <button id="admin-add-polygon-btn" class="admin-action-btn-circle has-tooltip tooltip-up" data-tooltip="영역(다각형) 추가" title="영역(다각형) 추가">
           <span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;">
-            <img src="add_polygon_btn.png?v=24770" alt="영역 추가" style="width: 24px; height: 24px; object-fit: contain; pointer-events: none; display: block;">
+            <img src="add_polygon_btn.png?v=24780" alt="영역 추가" style="width: 24px; height: 24px; object-fit: contain; pointer-events: none; display: block;">
           </span>
         </button>
 
