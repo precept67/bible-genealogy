@@ -17308,6 +17308,7 @@ function setupFloatingHeaderEvents() {
         searchWrapper.style.bottom = 'auto';
         searchWrapper.style.left = isLandscape ? 'calc(16px + env(safe-area-inset-left))' : '16px';
         searchWrapper.style.right = 'auto';
+        searchWrapper.style.transform = 'none';
       }
       searchInput.value = '';
       const resultsDropdown = document.getElementById('search-results');
@@ -17333,8 +17334,9 @@ function setupFloatingHeaderEvents() {
           document.body.classList.add('search-focused');
           searchWrapper.style.top = getTopControlsTop(isLandscape);
           searchWrapper.style.bottom = 'auto';
-          searchWrapper.style.left = isLandscape ? 'calc(16px + env(safe-area-inset-left))' : '16px';
+          searchWrapper.style.left = '50%';
           searchWrapper.style.right = 'auto';
+          searchWrapper.style.transform = 'translateX(-50%)';
         }
 
         // 1차 동기식 포커스 (iOS Safari 키보드 즉시 호출)
