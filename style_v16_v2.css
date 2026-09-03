@@ -1587,6 +1587,59 @@ body.keyboard-open .modal-overlay {
   white-space: nowrap;
 }
 
+.annot-btn {
+  background: transparent;
+  border: none;
+  min-width: 28px;
+  height: 28px;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-main);
+  transition: background 0.2s ease, transform 0.1s ease;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.annot-btn:hover,
+.annot-btn:active {
+  background: var(--bg-hover, rgba(255, 255, 255, 0.15));
+  transform: scale(1.08);
+}
+
+.annot-resize-handle {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 32px;
+  height: 32px;
+  cursor: se-resize;
+  z-index: 120;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: 4px;
+  box-sizing: border-box;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.annot-resize-handle::after {
+  content: '';
+  width: 14px;
+  height: 14px;
+  border-bottom: 3.5px solid var(--text-accent, #3b82f6);
+  border-right: 3.5px solid var(--text-accent, #3b82f6);
+  border-bottom-right-radius: 3px;
+  display: block;
+  pointer-events: none;
+}
+
 .admin-mode-active .canvas-annotation:hover .annotation-toolbar,
 .admin-mode-active .canvas-annotation.selected .annotation-toolbar,
 .admin-mode-active .annotation-toolbar:hover {

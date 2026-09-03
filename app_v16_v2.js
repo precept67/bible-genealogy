@@ -3979,9 +3979,15 @@ function renderAnnotations() {
     
     // Delete button
     const delBtn = document.createElement('button');
-    delBtn.className = 'annot-btn';
+    delBtn.className = 'annot-btn annot-delete-btn';
     delBtn.innerHTML = '🗑️';
-    delBtn.addEventListener('click', () => {
+    delBtn.title = '이 텍스트 상자 삭제';
+    
+    const handleDeleteAnnotation = (e) => {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
       if (confirm('이 텍스트 상자를 삭제하시겠습니까?')) {
         pushHistoryState();
         annotations = annotations.filter(a => a.id !== annot.id);
@@ -3992,42 +3998,35 @@ function renderAnnotations() {
         
         el.remove();
         drawConnections();
+        autoSaveToServer();
+        showToast("🗑️ 텍스트 상자가 삭제되었습니다.");
       }
-    });
+    };
+    
+    delBtn.addEventListener('click', handleDeleteAnnotation);
+    delBtn.addEventListener('touchend', handleDeleteAnnotation, { passive: false });
     toolbar.appendChild(delBtn);
     
     el.appendChild(toolbar);
     
-    // Custom Resize Handle (Admin Mode)
+    // Custom Resize Handle (Admin Mode) - Supports both Mouse and Touch Drag
     if (isAdminMode) {
       const resizeHandle = document.createElement('div');
       resizeHandle.className = 'annot-resize-handle';
-      resizeHandle.style.position = 'absolute';
-      resizeHandle.style.bottom = '2px';
-      resizeHandle.style.right = '2px';
-      resizeHandle.style.width = '10px';
-      resizeHandle.style.height = '10px';
-      resizeHandle.style.cursor = 'se-resize';
-      resizeHandle.style.borderBottom = '2.5px solid var(--text-accent)';
-      resizeHandle.style.borderRight = '2.5px solid var(--text-accent)';
-      resizeHandle.style.zIndex = '110';
-      resizeHandle.title = '드래그하여 크기 조절';
+      resizeHandle.title = '드래그하여 크기 조절 (터치/마우스)';
       
-      resizeHandle.addEventListener('mousedown', (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        
-        const startX = e.clientX;
-        const startY = e.clientY;
+      const startResize = (clientX, clientY) => {
+        const startX = clientX;
+        const startY = clientY;
         const startWidth = annot.width || 120;
         const startHeight = annot.height || 60;
         
-        const onMouseMove = (moveEvt) => {
-          const dx = (moveEvt.clientX - startX) / currentScale;
-          const dy = (moveEvt.clientY - startY) / currentScale;
+        const onMove = (currentClientX, currentClientY) => {
+          const dx = (currentClientX - startX) / currentScale;
+          const dy = (currentClientY - startY) / currentScale;
           
-          annot.width = Math.max(10, Math.round(startWidth + dx));
-          annot.height = Math.max(10, Math.round(startHeight + dy));
+          annot.width = Math.max(40, Math.round(startWidth + dx));
+          annot.height = Math.max(30, Math.round(startHeight + dy));
           
           el.style.width = `${annot.width}px`;
           el.style.height = `${annot.height}px`;
@@ -4039,15 +4038,54 @@ function renderAnnotations() {
           }
         };
         
-        const onMouseUp = () => {
+        const onEnd = () => {
           document.removeEventListener('mousemove', onMouseMove);
           document.removeEventListener('mouseup', onMouseUp);
+          document.removeEventListener('touchmove', onTouchMove);
+          document.removeEventListener('touchend', onTouchEnd);
+          document.removeEventListener('touchcancel', onTouchEnd);
           autoSaveToServer();
+        };
+        
+        const onMouseMove = (moveEvt) => {
+          onMove(moveEvt.clientX, moveEvt.clientY);
+        };
+        const onMouseUp = () => {
+          onEnd();
+        };
+        const onTouchMove = (moveEvt) => {
+          if (moveEvt.touches && moveEvt.touches.length > 0) {
+            if (moveEvt.cancelable) moveEvt.preventDefault();
+            moveEvt.stopPropagation();
+            onMove(moveEvt.touches[0].clientX, moveEvt.touches[0].clientY);
+          }
+        };
+        const onTouchEnd = (endEvt) => {
+          if (endEvt && endEvt.cancelable) endEvt.preventDefault();
+          if (endEvt) endEvt.stopPropagation();
+          onEnd();
         };
         
         document.addEventListener('mousemove', onMouseMove);
         document.addEventListener('mouseup', onMouseUp);
+        document.addEventListener('touchmove', onTouchMove, { passive: false });
+        document.addEventListener('touchend', onTouchEnd, { passive: false });
+        document.addEventListener('touchcancel', onTouchEnd, { passive: false });
+      };
+      
+      resizeHandle.addEventListener('mousedown', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        startResize(e.clientX, e.clientY);
       });
+      
+      resizeHandle.addEventListener('touchstart', (e) => {
+        if (e.touches && e.touches.length > 0) {
+          e.stopPropagation();
+          if (e.cancelable) e.preventDefault();
+          startResize(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: false });
       
       el.appendChild(resizeHandle);
     }
