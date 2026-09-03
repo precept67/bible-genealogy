@@ -4292,4 +4292,19 @@ body:not(.admin-mode) #admin-actions-bar:not(.active) {
   pointer-events: none !important;
 }
 
-
+/* ==========================================================================
+   🌐 언어 전환 및 테마 모드 전환 버튼 높이 30% 상향 (+30% Height)
+   ========================================================================== */
+#settings-lang-toggle,
+#settings-theme-toggle {
+  min-height: 28px !important;
+  height: 28px !important;
+  padding: 5px 8px !important;
+  font-size: 11px !important;
+  border-radius: 6px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  box-sizing: border-box !important;
+}
