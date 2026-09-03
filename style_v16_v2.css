@@ -231,13 +231,11 @@ header .subtitle {
 
 /* Search Box Panel */
 #search-panel {
-  position: absolute;
-  top: 16px;
-  right: 16px;
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 8px;
   z-index: 3000;
+  width: 100%;
 }
 
 .search-box {
@@ -245,7 +243,7 @@ header .subtitle {
   border: 1px solid var(--border-panel);
   padding: 10px 16px;
   border-radius: 12px;
-  width: 250px;
+  width: 100%;
   font-family: var(--font-family);
   font-size: 14px;
   color: var(--text-main);
@@ -253,11 +251,12 @@ header .subtitle {
   backdrop-filter: var(--glass-blur);
   outline: none;
   transition: all 0.3s ease;
+  box-sizing: border-box;
 }
 
 .search-box:focus {
   border-color: var(--text-accent);
-  width: 300px;
+  width: 100%;
 }
 
 .search-box::placeholder {
@@ -845,17 +844,6 @@ header .subtitle {
   }
   header .subtitle {
     display: none;
-  }
-  #search-panel {
-    top: calc(8px + env(safe-area-inset-top));
-    right: calc(8px + env(safe-area-inset-right));
-  }
-  .search-box {
-    width: 140px;
-    padding: 8px 12px;
-  }
-  .search-box:focus {
-    width: 180px;
   }
   
   /* 세로화면(모바일)에서 상단 설정 버튼 및 하단 도구 모음 액션바 */
