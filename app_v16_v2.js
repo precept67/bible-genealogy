@@ -2159,8 +2159,59 @@ function bindHybridButton(el, callback, cooldown = 200) {
 // Node Coordinate Map
 let coordinates = {};
 
+// Disable all inline predictive text, autocomplete, autocorrect, and spellcheck on all inputs and textareas
+function disableAllPredictiveText() {
+  function applyNoPredictive(el) {
+    if (!el || !el.tagName) return;
+    const tag = el.tagName.toLowerCase();
+    if (tag === 'input' || tag === 'textarea') {
+      const type = el.type ? el.type.toLowerCase() : 'text';
+      if (['text', 'search', 'password', 'email', 'url', 'textarea'].includes(type) || tag === 'textarea') {
+        el.setAttribute('autocomplete', 'off');
+        el.setAttribute('autocorrect', 'off');
+        el.setAttribute('autocapitalize', 'off');
+        el.setAttribute('spellcheck', 'false');
+        el.setAttribute('data-form-type', 'other');
+        el.setAttribute('data-lpignore', 'true');
+      }
+    }
+  }
+
+  // Apply to existing elements
+  document.querySelectorAll('input, textarea').forEach(applyNoPredictive);
+
+  // Apply dynamically on focus/input
+  document.addEventListener('focusin', (e) => {
+    if (e.target) applyNoPredictive(e.target);
+  }, true);
+
+  // MutationObserver for modal popups and dynamically generated inputs
+  try {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+          if (node.nodeType === 1) {
+            applyNoPredictive(node);
+            if (node.querySelectorAll) {
+              node.querySelectorAll('input, textarea').forEach(applyNoPredictive);
+            }
+          }
+        });
+      });
+    });
+
+    observer.observe(document.body || document.documentElement, {
+      childList: true,
+      subtree: true
+    });
+  } catch (err) {
+    console.warn('Predictive observer error:', err);
+  }
+}
+
 // Initialize App
 window.addEventListener('DOMContentLoaded', () => {
+  disableAllPredictiveText();
   // Ensure layout version is synchronized without resetting any manual edits
   if (typeof LAYOUT_VERSION !== 'undefined') {
     localStorage.setItem('bible_tree_layout_version', LAYOUT_VERSION);
