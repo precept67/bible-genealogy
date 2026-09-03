@@ -12162,7 +12162,15 @@ function enterAdminMode() {
   const actionsBar = document.getElementById('admin-actions-bar');
   if (actionsBar) {
     actionsBar.classList.add('active');
-    actionsBar.style.setProperty('display', 'flex', 'important');
+    const isLandscape = window.matchMedia('(orientation: landscape)').matches;
+    const shortSide = Math.min(window.innerWidth, window.innerHeight);
+    const longSide = Math.max(window.innerWidth, window.innerHeight);
+    const isIPhone = (shortSide <= 550) && (longSide <= 1000);
+    if (!isLandscape || !isIPhone) {
+      actionsBar.style.setProperty('display', 'flex', 'important');
+    } else {
+      actionsBar.style.setProperty('display', 'none', 'important');
+    }
   }
 
   repositionHistoryButtons();
@@ -17968,6 +17976,45 @@ function setupGlobalKeyboardDismiss() {
   document.querySelectorAll('.form-grid').forEach(el => {
     el.addEventListener('touchmove', (e) => { e.stopPropagation(); }, { passive: true });
   });
+
+  // iPhone 전 기종 가로화면 전환 시 락 버튼 및 편집모드 5개 버튼 자동 은닉 및 락 자동 잠금
+  const handleOrientationControlsSync = () => {
+    const isLandscape = window.matchMedia('(orientation: landscape)').matches;
+    const shortSide = Math.min(window.innerWidth, window.innerHeight);
+    const longSide = Math.max(window.innerWidth, window.innerHeight);
+    const isIPhone = (shortSide <= 550) && (longSide <= 1000);
+
+    const slideLock = document.getElementById('slide-lock-container');
+    const actionsBar = document.getElementById('admin-actions-bar');
+
+    if (isLandscape && isIPhone) {
+      // 세로에서 가로로 전환 시: 락버튼과 편집모드 5개 버튼 모두 즉시 은닉 및 편집모드 안전 잠금
+      if (typeof exitAdminMode === 'function' && isAdminMode) {
+        exitAdminMode();
+      }
+      if (slideLock) {
+        slideLock.style.setProperty('display', 'none', 'important');
+      }
+      if (actionsBar) {
+        actionsBar.style.setProperty('display', 'none', 'important');
+      }
+    } else {
+      // 세로 모드이거나 아이패드일 때: 인라인 강제 display 제거하여 원래 CSS 규칙에 따라 복원
+      if (slideLock) {
+        slideLock.style.removeProperty('display');
+      }
+      if (actionsBar && !isAdminMode) {
+        actionsBar.style.removeProperty('display');
+      }
+    }
+  };
+
+  handleOrientationControlsSync();
+  window.addEventListener('orientationchange', () => {
+    setTimeout(handleOrientationControlsSync, 50);
+    setTimeout(handleOrientationControlsSync, 200);
+  });
+  window.addEventListener('resize', handleOrientationControlsSync);
 }
 
 if (document.readyState === 'loading') {

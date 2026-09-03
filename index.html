@@ -183,10 +183,12 @@
       }
     }
 
-    /* 4. 아이폰 전 기종 가로화면(Landscape)에서만 락 버튼 완전 은닉 */
-    @media only screen and (max-device-height: 480px) and (orientation: landscape),
-           only screen and (max-height: 480px) and (orientation: landscape) and (max-width: 960px),
+    /* 4. 아이폰 전 기종 가로화면(Landscape)에서 락 버튼 및 편집모드 5개 버튼 완전 은닉 */
+    @media (orientation: landscape) and (max-height: 550px),
+           only screen and (max-device-height: 550px) and (orientation: landscape),
+           only screen and (max-height: 550px) and (orientation: landscape) and (max-width: 1000px),
            only screen and (device-width: 667px) and (device-height: 375px),
+           only screen and (device-width: 736px) and (device-height: 414px),
            only screen and (device-width: 812px) and (device-height: 375px),
            only screen and (device-width: 844px) and (device-height: 390px),
            only screen and (device-width: 852px) and (device-height: 393px),
@@ -196,7 +198,10 @@
            only screen and (device-width: 932px) and (device-height: 430px),
            only screen and (device-width: 956px) and (device-height: 440px) {
       #slide-lock-container,
-      #admin-lock-btn {
+      #admin-lock-btn,
+      #admin-actions-bar,
+      body.admin-mode #admin-actions-bar,
+      #admin-actions-bar.active {
         display: none !important;
         pointer-events: none !important;
         visibility: hidden !important;
@@ -891,7 +896,7 @@
        </button>
         <button id="admin-add-polygon-btn" class="admin-action-btn-circle has-tooltip tooltip-up" data-tooltip="영역(다각형) 추가" title="영역(다각형) 추가">
           <span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;">
-            <img src="add_polygon_btn.png?v=24960" alt="영역 추가" style="width: 24px; height: 24px; object-fit: contain; pointer-events: none; display: block;">
+            <img src="add_polygon_btn.png?v=24970" alt="영역 추가" style="width: 24px; height: 24px; object-fit: contain; pointer-events: none; display: block;">
           </span>
         </button>
 
