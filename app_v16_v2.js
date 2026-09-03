@@ -17288,11 +17288,13 @@ function setupFloatingHeaderEvents() {
 
     const handleVisualViewportChange = () => {
       if (document.body.classList.contains('search-focused') && searchWrapper) {
+        searchWrapper.style.position = 'fixed';
         searchWrapper.style.top = '50%';
         searchWrapper.style.bottom = 'auto';
-        searchWrapper.style.left = '50%';
-        searchWrapper.style.right = 'auto';
-        searchWrapper.style.transform = 'translate(-50%, -50%)';
+        searchWrapper.style.left = '0px';
+        searchWrapper.style.right = '0px';
+        searchWrapper.style.margin = '0 auto';
+        searchWrapper.style.transform = 'translateY(-50%)';
       }
     };
 
@@ -17310,6 +17312,7 @@ function setupFloatingHeaderEvents() {
         searchWrapper.style.bottom = 'auto';
         searchWrapper.style.left = isLandscape ? 'calc(16px + env(safe-area-inset-left))' : '16px';
         searchWrapper.style.right = 'auto';
+        searchWrapper.style.margin = '0';
         searchWrapper.style.transform = 'none';
       }
       searchInput.value = '';
@@ -17333,11 +17336,13 @@ function setupFloatingHeaderEvents() {
       if (isSearchOpen) {
         if (searchWrapper) {
           document.body.classList.add('search-focused');
+          searchWrapper.style.position = 'fixed';
           searchWrapper.style.top = '50%';
           searchWrapper.style.bottom = 'auto';
-          searchWrapper.style.left = '50%';
-          searchWrapper.style.right = 'auto';
-          searchWrapper.style.transform = 'translate(-50%, -50%)';
+          searchWrapper.style.left = '0px';
+          searchWrapper.style.right = '0px';
+          searchWrapper.style.margin = '0 auto';
+          searchWrapper.style.transform = 'translateY(-50%)';
         }
 
         // 1차 동기식 포커스 (iOS Safari 키보드 즉시 호출)

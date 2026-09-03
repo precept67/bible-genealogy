@@ -3495,9 +3495,10 @@ body.search-focused #floating-search-wrapper {
   position: fixed !important;
   top: 50% !important; /* 상하 정중앙 */
   bottom: auto !important;
-  left: 50% !important; /* 좌우 정중앙 */
-  right: auto !important;
-  transform: translate(-50%, -50%) !important; /* 화면 정중앙 완벽 대칭 정렬 */
+  left: 0 !important; /* 좌측 0 */
+  right: 0 !important; /* 우측 0 */
+  margin: 0 auto !important; /* 좌우 마진 auto로 브라우저 차원의 완벽한 수평 정중앙 강제 */
+  transform: translateY(-50%) !important; /* 상하 50% 역보정 */
   width: min(340px, calc(100vw - 32px)) !important;
   max-width: calc(100vw - 32px) !important;
   height: 40px !important;
@@ -3506,7 +3507,6 @@ body.search-focused #floating-search-wrapper {
   align-items: center !important;
   gap: 0px !important;
   padding: 0 !important;
-  margin: 0 !important;
   pointer-events: auto !important;
   z-index: 16000 !important;
   transition: transform 0.1s ease, width 0.2s ease, opacity 0.2s ease !important;
