@@ -906,22 +906,18 @@ header .subtitle {
    Admin Mode & Modal UI Styles
    ========================================== */
 
-/* Floating Admin Database Action Panel (Top Left) */
+/* Floating Admin Database Action Panel (Clean borderless) */
 #admin-actions-bar {
-  position: absolute;
-  top: 210px; /* Positioned below the layer control panel */
-  left: 20px;
   display: flex;
-  flex-direction: column;
-  gap: 5px;
-  background: var(--bg-panel);
-  border: 1px solid var(--border-panel);
-  padding: 7px;
-  border-radius: 12px;
-  box-shadow: var(--shadow-panel);
-  backdrop-filter: var(--glass-blur);
-  z-index: 100;
-  transition: all 0.3s ease;
+  flex-direction: row;
+  gap: 4px;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  z-index: 12000;
 }
 
 .admin-action-btn {
@@ -3975,6 +3971,8 @@ svg.history-custom-icon {
   border: none !important;
   border-radius: 0 !important;
   box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   height: 40px !important;
   box-sizing: border-box !important;
   padding: 0 !important;
