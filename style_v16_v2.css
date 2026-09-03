@@ -1489,7 +1489,7 @@ body.keyboard-open .modal-overlay {
     width: 60% !important; /* 세로 화면 가로 너비의 정확히 60% 크기로 정밀 지정 */
     max-width: 60% !important; 
     min-width: auto !important;
-    top: 111px !important; /* 화면 상단 111px 정밀 여백 */
+    top: 96px !important; /* 화면 상단 96px 정밀 여백 (15px 위로 상향) */
     bottom: auto !important; /* 고정 높이 400px 렌더링을 위해 하단 구속 해제 */
     height: 400px !important; /* 세로 높이 400px 고정 */
     max-height: 400px !important;
@@ -3376,7 +3376,7 @@ svg path.prophets-aura {
 /* 환경설정 창 너비 축소(250px), 동적 높이 및 100% 완전 불투명(Solid) 배경 적용 */
 #settings-modal .modal-content {
   position: absolute !important;
-  top: 111px !important; /* 환경설정 창의 시작 상단을 화면 상단에서 111px 아래로 정박 */
+  top: 96px !important; /* 환경설정 창의 시작 상단을 화면 상단에서 96px 아래로 정박 (15px 위로 상향) */
   bottom: auto !important;
   right: calc(4px + env(safe-area-inset-right)) !important; /* 화면 우측 끝 4px 여백 */
   left: auto !important;
@@ -3384,7 +3384,7 @@ svg path.prophets-aura {
   max-width: 85vw !important;
   min-width: auto !important;
   height: auto !important; /* 동적 높이 확장 */
-  max-height: calc(100vh - 125px) !important;
+  max-height: calc(100vh - 110px) !important;
   overflow-y: auto !important;
   pointer-events: auto !important; /* 설정창 내부 요소 터치 조작 허용 */
   z-index: 13000 !important; /* 검색 토글보다 높은 레이어로 가림 */
@@ -3429,7 +3429,7 @@ svg path.prophets-aura {
   /* 환경설정 창도 가로화면에서 220px 및 100% 완전 불투명 */
   #settings-modal .modal-content {
     position: absolute !important;
-    top: 70px !important;
+    top: 55px !important; /* 가로화면에서도 15px 위로 상향 (70px -> 55px) */
     bottom: 20vh !important;
     right: calc(4px + env(safe-area-inset-right)) !important; /* 가로화면에서도 화면 우측 끝 4px 여백 */
     left: auto !important;
@@ -3437,7 +3437,7 @@ svg path.prophets-aura {
     max-width: 85vw !important;
     min-width: auto !important;
     height: auto !important;
-    max-height: calc(80vh - 70px) !important;
+    max-height: calc(80vh - 55px) !important;
     z-index: 13000 !important;
     overflow-y: auto !important;
     background: #ffffff !important;
