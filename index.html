@@ -183,25 +183,18 @@
       }
     }
 
-    /* 4. 아이폰 전 기종 락 버튼 비노출 및 작동 금지 */
-    body.is-iphone #slide-lock-container,
-    body.is-iphone #admin-lock-btn,
-    body.is-iphone #admin-actions-bar {
-      display: none !important;
-      pointer-events: none !important;
-      visibility: hidden !important;
-      opacity: 0 !important;
-    }
-
-    @media only screen and (max-device-width: 480px),
-           only screen and (device-width: 375px),
-           only screen and (device-width: 390px),
-           only screen and (device-width: 393px),
-           only screen and (device-width: 402px),
-           only screen and (device-width: 414px),
-           only screen and (device-width: 428px),
-           only screen and (device-width: 430px),
-           only screen and (device-width: 440px) {
+    /* 4. 아이폰 전 기종 가로화면(Landscape)에서만 락 버튼 완전 은닉 */
+    @media only screen and (max-device-height: 480px) and (orientation: landscape),
+           only screen and (max-height: 480px) and (orientation: landscape) and (max-width: 960px),
+           only screen and (device-width: 667px) and (device-height: 375px),
+           only screen and (device-width: 812px) and (device-height: 375px),
+           only screen and (device-width: 844px) and (device-height: 390px),
+           only screen and (device-width: 852px) and (device-height: 393px),
+           only screen and (device-width: 874px) and (device-height: 402px),
+           only screen and (device-width: 896px) and (device-height: 414px),
+           only screen and (device-width: 926px) and (device-height: 428px),
+           only screen and (device-width: 932px) and (device-height: 430px),
+           only screen and (device-width: 956px) and (device-height: 440px) {
       #slide-lock-container,
       #admin-lock-btn {
         display: none !important;
@@ -814,7 +807,7 @@
        </button>
         <button id="admin-add-polygon-btn" class="admin-action-btn-circle has-tooltip tooltip-up" data-tooltip="영역(다각형) 추가" title="영역(다각형) 추가">
           <span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;">
-            <img src="add_polygon_btn.png?v=24750" alt="영역 추가" style="width: 24px; height: 24px; object-fit: contain; pointer-events: none; display: block;">
+            <img src="add_polygon_btn.png?v=24760" alt="영역 추가" style="width: 24px; height: 24px; object-fit: contain; pointer-events: none; display: block;">
           </span>
         </button>
 
