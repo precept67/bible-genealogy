@@ -1033,21 +1033,33 @@ header .subtitle {
   align-items: center;
   justify-content: center;
   z-index: 30000;
+  padding: 16px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .modal-content {
   background: var(--bg-board);
   border: 1px solid var(--border-panel);
   border-radius: 16px;
-  width: 500px;
-  max-width: 90%;
-  max-height: 85vh; /* 화면의 85% 이상 늘어나지 않도록 구속 */
-  overflow-y: auto; /* 내용이 넘칠 때 내부 스크롤 허용 */
+  width: 520px;
+  max-width: 95%;
+  max-height: calc(100vh - 40px);
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
   display: flex;
   flex-direction: column;
   animation: modal-pop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-  transform: translateY(27px); /* 화면 아래로 27픽셀 다운 */
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.modal-content form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
 @keyframes modal-pop {
@@ -1062,11 +1074,12 @@ header .subtitle {
 }
 
 .modal-header {
-  padding: 20px 24px;
+  padding: 18px 24px;
   border-bottom: 1px solid var(--border-panel);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .modal-header h2 {
@@ -1075,12 +1088,17 @@ header .subtitle {
 }
 
 .form-grid {
-  padding: 24px;
+  padding: 20px 24px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
-  max-height: 70vh;
-  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+  max-height: none !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  touch-action: pan-y !important;
+  overscroll-behavior: contain;
 }
 
 .form-group {
@@ -1167,6 +1185,9 @@ header .subtitle {
   display: flex;
   gap: 12px;
   align-items: center;
+  flex-shrink: 0;
+  background: var(--bg-board);
+  box-sizing: border-box;
 }
 
 .modal-btn {
@@ -3587,24 +3608,35 @@ svg.history-custom-icon {
    📱 모바일 세로 화면/좁은 스크린 최적화 모달 보정 (텍스트 상자 추가 등 잘림 완치)
    ========================================================================== */
 @media (max-width: 768px) {
-  /* 1. 모달 오버레이를 상단 정렬 및 전체 스크롤이 가능하도록 강제 개선 */
+  /* 1. 모달 오버레이를 센터 정렬 및 전체 스크롤이 가능하도록 강제 개선 */
   .modal-overlay {
-    align-items: flex-start !important;
+    align-items: center !important;
     overflow-y: auto !important;
-    padding: 16px 8px !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding: 12px 8px !important;
   }
 
   /* 2. 모달 콘텐츠 높이를 기기 전체 높이 한도 내로 정밀 구속 */
   .modal-content {
-    margin: 8px auto !important;
-    max-height: calc(100vh - 32px) !important;
+    margin: 0 auto !important;
+    max-height: calc(100vh - 24px) !important;
     max-width: 96% !important;
-    border-radius: 12px !important;
+    border-radius: 14px !important;
+    overflow: hidden !important;
+  }
+
+  .modal-content form {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
   }
 
   /* 3. 모달의 헤더/바디/푸터 패딩을 밀도 있게 압축 */
   .modal-header {
     padding: 12px 16px !important;
+    flex-shrink: 0 !important;
   }
   .modal-header h2 {
     font-size: 16px !important;
@@ -3612,7 +3644,14 @@ svg.history-custom-icon {
 
   .form-grid {
     padding: 12px 16px !important;
-    gap: 8px !important; /* 폼 요소 간격 다이어트 */
+    gap: 10px !important; /* 폼 요소 간격 다이어트 */
+    flex: 1 !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    touch-action: pan-y !important;
+    overscroll-behavior: contain !important;
   }
   .form-group label {
     font-size: 11px !important;
@@ -3622,7 +3661,12 @@ svg.history-custom-icon {
   .form-group select,
   .form-group textarea {
     padding: 6px 8px !important;
-    font-size: 12px !important;
+    font-size: 13px !important;
+  }
+
+  .modal-footer {
+    padding: 12px 16px !important;
+    flex-shrink: 0 !important;
   }
 
   /* 4. 긴 관계 체크리스트 박스의 높이를 축소하여 레이아웃 부담 대폭 경감 */

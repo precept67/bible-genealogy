@@ -8798,6 +8798,9 @@ function setupZoomPan() {
            target.closest('.layer-control-panel') || 
            target.closest('#search-panel') || 
            target.closest('.modal-content') || 
+           target.closest('.modal-overlay') || 
+           target.closest('#admin-modal') || 
+           target.closest('#layer-item-modal') || 
            target.closest('#style-editor-panel') ||
            target.closest('#help-guide-modal') ||
            target.closest('#install-guide-modal') ||
@@ -8815,6 +8818,9 @@ function setupZoomPan() {
       target.closest('#search-panel') ||
       target.closest('#admin-actions-bar') ||
       target.closest('.modal-content') ||
+      target.closest('.modal-overlay') ||
+      target.closest('#admin-modal') ||
+      target.closest('#layer-item-modal') ||
       target.closest('#style-editor-panel') ||
       target.closest('.canvas-annotation') ||
       target.closest('.layer-marker') ||
