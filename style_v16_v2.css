@@ -1493,8 +1493,8 @@ body.keyboard-open .modal-overlay {
     bottom: auto !important; /* 고정 높이 400px 렌더링을 위해 하단 구속 해제 */
     height: 400px !important; /* 세로 높이 400px 고정 */
     max-height: 400px !important;
-    right: 0px !important; /* 화면 우측 끝 밀착 */
-    border-radius: 16px 0px 0px 16px !important; /* 우측 모서리는 화면에 맞춤 정렬 */
+    right: calc(4px + env(safe-area-inset-right)) !important; /* 화면 우측 끝 4px 여백 */
+    border-radius: 16px !important;
     z-index: 30000 !important; /* 모바일에서도 검색 토글보다 앞쪽(레이어 위)에 오게 강제 */
   }
   #filter-panel {
@@ -3378,7 +3378,7 @@ svg path.prophets-aura {
   position: absolute !important;
   top: 111px !important; /* 환경설정 창의 시작 상단을 화면 상단에서 111px 아래로 정박 */
   bottom: auto !important;
-  right: 0px !important; /* 화면 우측 끝 밀착 */
+  right: calc(4px + env(safe-area-inset-right)) !important; /* 화면 우측 끝 4px 여백 */
   left: auto !important;
   width: 250px !important; /* 가로 너비 250px로 컴팩트하게 축소 */
   max-width: 85vw !important;
@@ -3390,7 +3390,7 @@ svg path.prophets-aura {
   z-index: 13000 !important; /* 검색 토글보다 높은 레이어로 가림 */
   background: #ffffff !important; /* 100% 완전 불투명 화이트 */
   border: 1px solid var(--border-panel) !important;
-  border-radius: 16px 0px 0px 16px !important; /* 우측 면은 화면 모서리에 딱 맞추고, 좌측 노출 면만 둥글게 가공 */
+  border-radius: 16px !important; /* 우측 4px 여백에 맞추어 4면 모두 둥글게 가공 */
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25) !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
@@ -3431,7 +3431,7 @@ svg path.prophets-aura {
     position: absolute !important;
     top: 70px !important;
     bottom: 20vh !important;
-    right: 16px !important;
+    right: calc(4px + env(safe-area-inset-right)) !important; /* 가로화면에서도 화면 우측 끝 4px 여백 */
     left: auto !important;
     width: 220px !important;
     max-width: 85vw !important;
