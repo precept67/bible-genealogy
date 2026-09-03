@@ -3878,20 +3878,20 @@ svg.history-custom-icon {
 @media only screen and (device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2),
        only screen and (device-width: 1366px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2) {
   body:not(.search-focused) #floating-search-wrapper {
-    left: calc(-6px + env(safe-area-inset-left)) !important;
+    left: calc(16px + env(safe-area-inset-left)) !important;
     right: auto !important;
     top: calc(5px + env(safe-area-inset-top)) !important;
     bottom: auto !important;
     transform: none !important;
   }
   #slide-lock-container {
-    left: calc(-6px + env(safe-area-inset-left)) !important;
+    left: calc(16px + env(safe-area-inset-left)) !important;
     bottom: calc(14px + env(safe-area-inset-bottom)) !important;
   }
   #admin-actions-bar {
     top: auto !important;
     bottom: calc(14px + env(safe-area-inset-bottom)) !important;
-    right: calc(-6px + env(safe-area-inset-right)) !important;
+    right: calc(16px + env(safe-area-inset-right)) !important;
     left: auto !important;
     transform: none !important;
     height: 40px !important;
@@ -3901,7 +3901,7 @@ svg.history-custom-icon {
     padding: 0 !important;
   }
   #floating-settings-btn {
-    right: calc(-6px + env(safe-area-inset-right)) !important;
+    right: calc(16px + env(safe-area-inset-right)) !important;
     top: calc(5px + env(safe-area-inset-top)) !important;
   }
 }
@@ -3914,20 +3914,20 @@ svg.history-custom-icon {
        only screen and (device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2),
        only screen and (device-width: 1194px) and (device-height: 834px) and (-webkit-device-pixel-ratio: 2) {
   body:not(.search-focused) #floating-search-wrapper {
-    left: calc(-6px + env(safe-area-inset-left)) !important;
+    left: calc(16px + env(safe-area-inset-left)) !important;
     right: auto !important;
     top: calc(5px + env(safe-area-inset-top)) !important;
     bottom: auto !important;
     transform: none !important;
   }
   #slide-lock-container {
-    left: calc(-6px + env(safe-area-inset-left)) !important;
+    left: calc(16px + env(safe-area-inset-left)) !important;
     bottom: calc(14px + env(safe-area-inset-bottom)) !important;
   }
   #admin-actions-bar {
     top: auto !important;
     bottom: calc(14px + env(safe-area-inset-bottom)) !important;
-    right: calc(-6px + env(safe-area-inset-right)) !important;
+    right: calc(16px + env(safe-area-inset-right)) !important;
     left: auto !important;
     transform: none !important;
     height: 40px !important;
@@ -3937,7 +3937,7 @@ svg.history-custom-icon {
     padding: 0 !important;
   }
   #floating-settings-btn {
-    right: calc(-6px + env(safe-area-inset-right)) !important;
+    right: calc(16px + env(safe-area-inset-right)) !important;
     top: calc(5px + env(safe-area-inset-top)) !important;
   }
 }
@@ -3975,14 +3975,14 @@ svg.history-custom-icon {
   }
   @media (orientation: landscape) {
     body:not(.search-focused) #floating-search-wrapper {
-      left: calc(-6px + env(safe-area-inset-left)) !important;
+      left: calc(16px + env(safe-area-inset-left)) !important;
       right: auto !important;
       top: calc(6px + env(safe-area-inset-top)) !important;
       bottom: auto !important;
       transform: none !important;
     }
     #floating-settings-btn {
-      right: calc(-6px + env(safe-area-inset-right)) !important;
+      right: calc(16px + env(safe-area-inset-right)) !important;
       top: calc(6px + env(safe-area-inset-top)) !important;
     }
     #slide-lock-container,
@@ -3995,7 +3995,7 @@ svg.history-custom-icon {
     #admin-actions-bar {
       top: auto !important;
       bottom: calc(14px + env(safe-area-inset-bottom)) !important;
-      right: calc(-6px + env(safe-area-inset-right)) !important;
+      right: calc(16px + env(safe-area-inset-right)) !important;
       left: auto !important;
       transform: none !important;
       height: 40px !important;
@@ -4036,14 +4036,14 @@ svg.history-custom-icon {
   }
   @media (orientation: landscape) {
     body:not(.search-focused) #floating-search-wrapper {
-      left: calc(-6px + env(safe-area-inset-left)) !important;
+      left: calc(16px + env(safe-area-inset-left)) !important;
       right: auto !important;
       top: calc(6px + env(safe-area-inset-top)) !important;
       bottom: auto !important;
       transform: none !important;
     }
     #floating-settings-btn {
-      right: calc(-6px + env(safe-area-inset-right)) !important;
+      right: calc(16px + env(safe-area-inset-right)) !important;
       top: calc(6px + env(safe-area-inset-top)) !important;
     }
     #slide-lock-container,
@@ -4056,7 +4056,7 @@ svg.history-custom-icon {
     #admin-actions-bar {
       top: auto !important;
       bottom: calc(14px + env(safe-area-inset-bottom)) !important;
-      right: calc(-6px + env(safe-area-inset-right)) !important;
+      right: calc(16px + env(safe-area-inset-right)) !important;
       left: auto !important;
       transform: none !important;
       height: 40px !important;

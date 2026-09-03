@@ -17306,7 +17306,7 @@ function setupFloatingHeaderEvents() {
         const isLandscape = window.matchMedia('(orientation: landscape)').matches;
         searchWrapper.style.top = getTopControlsTop(isLandscape);
         searchWrapper.style.bottom = 'auto';
-        searchWrapper.style.left = isLandscape ? 'calc(-6px + env(safe-area-inset-left))' : '16px';
+        searchWrapper.style.left = isLandscape ? 'calc(16px + env(safe-area-inset-left))' : '16px';
         searchWrapper.style.right = 'auto';
       }
       searchInput.value = '';
@@ -17333,7 +17333,7 @@ function setupFloatingHeaderEvents() {
           document.body.classList.add('search-focused');
           searchWrapper.style.top = getTopControlsTop(isLandscape);
           searchWrapper.style.bottom = 'auto';
-          searchWrapper.style.left = isLandscape ? 'calc(-6px + env(safe-area-inset-left))' : '16px';
+          searchWrapper.style.left = isLandscape ? 'calc(16px + env(safe-area-inset-left))' : '16px';
           searchWrapper.style.right = 'auto';
         }
 
