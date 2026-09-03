@@ -871,7 +871,7 @@ header .subtitle {
     border: none !important;
     box-shadow: none !important;
     padding: 0 !important;
-    gap: 5px !important;
+    gap: 6px !important;
   }
   #floating-settings-btn {
     top: calc(-1px + env(safe-area-inset-top)) !important;
@@ -911,7 +911,7 @@ header .subtitle {
 #admin-actions-bar {
   display: flex;
   flex-direction: row;
-  gap: 5px;
+  gap: 6px;
   background: transparent !important;
   border: none !important;
   padding: 0 !important;
@@ -3977,7 +3977,7 @@ svg.history-custom-icon {
   height: 40px !important;
   box-sizing: border-box !important;
   padding: 0 !important;
-  gap: 5px !important;
+  gap: 6px !important;
   align-items: center !important;
 }
 
