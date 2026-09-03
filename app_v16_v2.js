@@ -17288,13 +17288,20 @@ function setupFloatingHeaderEvents() {
 
     const handleVisualViewportChange = () => {
       if (document.body.classList.contains('search-focused') && searchWrapper) {
+        const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+        const offsetTop = (window.visualViewport ? window.visualViewport.offsetTop : 0) || 0;
+        const keyboardH = Math.max(0, window.innerHeight - (vh + offsetTop));
+        
+        // 각 기종별 키보드 높이의 5% 높은 곳 (키보드 높이 * 1.05)
+        const bottomOffset = keyboardH > 0 ? Math.round(keyboardH * 1.05) : 30;
+
         searchWrapper.style.position = 'fixed';
-        searchWrapper.style.top = '50%';
-        searchWrapper.style.bottom = 'auto';
+        searchWrapper.style.top = 'auto';
+        searchWrapper.style.bottom = `${bottomOffset}px`;
         searchWrapper.style.left = '0px';
         searchWrapper.style.right = '0px';
         searchWrapper.style.margin = '0 auto';
-        searchWrapper.style.transform = 'translateY(-50%)';
+        searchWrapper.style.transform = 'none';
       }
     };
 
@@ -17336,13 +17343,18 @@ function setupFloatingHeaderEvents() {
       if (isSearchOpen) {
         if (searchWrapper) {
           document.body.classList.add('search-focused');
+          const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+          const offsetTop = (window.visualViewport ? window.visualViewport.offsetTop : 0) || 0;
+          const keyboardH = Math.max(0, window.innerHeight - (vh + offsetTop));
+          const bottomOffset = keyboardH > 0 ? Math.round(keyboardH * 1.05) : 30;
+
           searchWrapper.style.position = 'fixed';
-          searchWrapper.style.top = '50%';
-          searchWrapper.style.bottom = 'auto';
+          searchWrapper.style.top = 'auto';
+          searchWrapper.style.bottom = `${bottomOffset}px`;
           searchWrapper.style.left = '0px';
           searchWrapper.style.right = '0px';
           searchWrapper.style.margin = '0 auto';
-          searchWrapper.style.transform = 'translateY(-50%)';
+          searchWrapper.style.transform = 'none';
         }
 
         // 1차 동기식 포커스 (iOS Safari 키보드 즉시 호출)

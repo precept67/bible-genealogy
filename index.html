@@ -238,15 +238,18 @@
       display: none !important;
     }
 
-    /* 🔍 전 기종 검색창 활성화 시 상하 좌우 정확한 50% 절대 중앙 정렬 (데칼코마니 대칭) */
+    /* 🔍 전 기종 검색창 활성화 시 키보드 높이 5% 위 정배치 및 완벽한 수평 정중앙 정렬 */
     body.search-focused #floating-search-wrapper {
       position: fixed !important;
-      top: 50% !important; /* 상하 정중앙 */
-      bottom: auto !important;
-      left: 0 !important; /* 좌측 0 */
-      right: 0 !important; /* 우측 0 */
-      margin: 0 auto !important; /* 좌우 마진 auto로 브라우저 차원의 완벽한 수평 정중앙 강제 */
-      transform: translateY(-50%) !important; /* 상하 50% 역보정 */
+      top: auto !important;
+      bottom: calc(var(--keyboard-height, 0px) * 1.05) !important;
+      left: 0 !important;
+      right: 0 !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
+      margin-top: 0 !important;
+      margin-bottom: 0 !important;
+      transform: none !important;
       width: min(340px, calc(100vw - 32px)) !important;
       max-width: calc(100vw - 32px) !important;
       height: 40px !important;
@@ -257,7 +260,7 @@
       padding: 0 !important;
       pointer-events: auto !important;
       z-index: 16000 !important;
-      transition: transform 0.1s ease, width 0.2s ease, opacity 0.2s ease !important;
+      transition: bottom 0.15s ease, opacity 0.2s ease !important;
     }
     body.search-focused #floating-search-toggle-btn {
       display: none !important;
@@ -288,16 +291,16 @@
     body.search-focused #search-results {
       width: 100% !important;
       max-width: 100% !important;
-      top: 48px !important; /* 검색창 바로 아래로 펼쳐짐 */
-      bottom: auto !important;
+      top: auto !important;
+      bottom: 48px !important;
       left: 0 !important;
       right: 0 !important;
-      max-height: 250px !important;
+      max-height: min(250px, calc(100vh - (var(--keyboard-height, 0px) * 1.05) - 60px)) !important;
       overflow-y: auto !important;
       box-sizing: border-box !important;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important;
-      margin-top: 4px !important;
-      margin-bottom: 0 !important;
+      box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.15) !important;
+      margin-top: 0 !important;
+      margin-bottom: 4px !important;
     }
 
     /* 💻 iPad / Tablet Dedicated 12px Margins */
@@ -888,7 +891,7 @@
        </button>
         <button id="admin-add-polygon-btn" class="admin-action-btn-circle has-tooltip tooltip-up" data-tooltip="영역(다각형) 추가" title="영역(다각형) 추가">
           <span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;">
-            <img src="add_polygon_btn.png?v=24930" alt="영역 추가" style="width: 24px; height: 24px; object-fit: contain; pointer-events: none; display: block;">
+            <img src="add_polygon_btn.png?v=24940" alt="영역 추가" style="width: 24px; height: 24px; object-fit: contain; pointer-events: none; display: block;">
           </span>
         </button>
 

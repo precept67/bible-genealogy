@@ -3481,12 +3481,15 @@ svg path.prophets-aura {
 
 body.search-focused #floating-search-wrapper {
   position: fixed !important;
-  top: 50% !important; /* 상하 정중앙 */
-  bottom: auto !important;
+  top: auto !important;
+  bottom: calc(var(--keyboard-height, 0px) * 1.05) !important; /* 키보드 높이에서 5% 높은 위치 */
   left: 0 !important; /* 좌측 0 */
   right: 0 !important; /* 우측 0 */
-  margin: 0 auto !important; /* 좌우 마진 auto로 브라우저 차원의 완벽한 수평 정중앙 강제 */
-  transform: translateY(-50%) !important; /* 상하 50% 역보정 */
+  margin-left: auto !important;
+  margin-right: auto !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  transform: none !important;
   width: min(340px, calc(100vw - 32px)) !important;
   max-width: calc(100vw - 32px) !important;
   height: 40px !important;
@@ -3497,7 +3500,7 @@ body.search-focused #floating-search-wrapper {
   padding: 0 !important;
   pointer-events: auto !important;
   z-index: 16000 !important;
-  transition: transform 0.1s ease, width 0.2s ease, opacity 0.2s ease !important;
+  transition: bottom 0.15s ease, opacity 0.2s ease !important;
 }
 
 /* 검색 활성화 시 하단 줌 컨트롤 바를 자연스럽게 숨겨 겹침 방지 */
@@ -3543,22 +3546,22 @@ body.search-focused #searchInput {
 body.search-focused #search-results {
   width: 100% !important;
   max-width: 100% !important;
-  top: 48px !important; /* 검색창 바로 아래로 펼쳐짐 */
-  bottom: auto !important;
+  top: auto !important;
+  bottom: 48px !important; /* 검색창 바로 위로 펼쳐짐 (키보드 가림 방지) */
   left: 0 !important;
   right: 0 !important;
-  max-height: 250px !important;
+  max-height: min(250px, calc(100vh - (var(--keyboard-height, 0px) * 1.05) - 60px)) !important;
   overflow-y: auto !important;
   box-sizing: border-box !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important;
-  margin-top: 4px !important;
-  margin-bottom: 0 !important;
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.15) !important;
+  margin-top: 0 !important;
+  margin-bottom: 4px !important;
 }
 
 /* 모든 기종 공통: 가로화면(Landscape)일 때 검색 결과 드롭다운 최대 높이 제한 축소 보정 */
 @media (orientation: landscape) {
   body.search-focused #search-results {
-    max-height: 140px !important;
+    max-height: min(130px, calc(100vh - (var(--keyboard-height, 0px) * 1.05) - 50px)) !important;
   }
 }
 
