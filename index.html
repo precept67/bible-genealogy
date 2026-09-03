@@ -238,14 +238,14 @@
       display: none !important;
     }
 
-    /* 🔍 전 기종 검색창 활성화 시 X축 정확한 50% 절대 중앙 정렬 및 키보드 40px 위 배치 */
+    /* 🔍 전 기종 검색창 활성화 시 상하 좌우 정확한 50% 절대 중앙 정렬 (데칼코마니 대칭) */
     body.search-focused #floating-search-wrapper {
       position: fixed !important;
-      top: auto !important;
-      bottom: calc(40px + var(--keyboard-height, 0px)) !important;
-      left: 50% !important;
+      top: 50% !important; /* 상하 정중앙 */
+      bottom: auto !important;
+      left: 50% !important; /* 좌우 정중앙 */
       right: auto !important;
-      transform: translateX(-50%) !important;
+      transform: translate(-50%, -50%) !important; /* 화면 정중앙 완벽 대칭 정렬 */
       width: min(340px, calc(100vw - 32px)) !important;
       max-width: calc(100vw - 32px) !important;
       height: 40px !important;
@@ -288,16 +288,16 @@
     body.search-focused #search-results {
       width: 100% !important;
       max-width: 100% !important;
-      top: auto !important;
-      bottom: 48px !important;
+      top: 48px !important; /* 검색창 바로 아래로 펼쳐짐 */
+      bottom: auto !important;
       left: 0 !important;
       right: 0 !important;
-      max-height: min(250px, calc(100vh - var(--keyboard-height, 0px) - 120px)) !important;
+      max-height: 250px !important;
       overflow-y: auto !important;
       box-sizing: border-box !important;
-      box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.15) !important;
-      margin-top: 0 !important;
-      margin-bottom: 4px !important;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important;
+      margin-top: 4px !important;
+      margin-bottom: 0 !important;
     }
 
     /* 💻 iPad / Tablet Dedicated 12px Margins */
@@ -888,7 +888,7 @@
        </button>
         <button id="admin-add-polygon-btn" class="admin-action-btn-circle has-tooltip tooltip-up" data-tooltip="영역(다각형) 추가" title="영역(다각형) 추가">
           <span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;">
-            <img src="add_polygon_btn.png?v=24860" alt="영역 추가" style="width: 24px; height: 24px; object-fit: contain; pointer-events: none; display: block;">
+            <img src="add_polygon_btn.png?v=24870" alt="영역 추가" style="width: 24px; height: 24px; object-fit: contain; pointer-events: none; display: block;">
           </span>
         </button>
 

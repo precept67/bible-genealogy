@@ -17288,16 +17288,11 @@ function setupFloatingHeaderEvents() {
 
     const handleVisualViewportChange = () => {
       if (document.body.classList.contains('search-focused') && searchWrapper) {
-        const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-        const offsetTop = (window.visualViewport ? window.visualViewport.offsetTop : 0) || 0;
-        const keyboardH = Math.max(0, window.innerHeight - (vh + offsetTop));
-        const bottomOffset = keyboardH > 0 ? (keyboardH + 40) : 40;
-
-        searchWrapper.style.top = 'auto';
-        searchWrapper.style.bottom = `${bottomOffset}px`;
+        searchWrapper.style.top = '50%';
+        searchWrapper.style.bottom = 'auto';
         searchWrapper.style.left = '50%';
         searchWrapper.style.right = 'auto';
-        searchWrapper.style.transform = 'translateX(-50%)';
+        searchWrapper.style.transform = 'translate(-50%, -50%)';
       }
     };
 
@@ -17338,16 +17333,11 @@ function setupFloatingHeaderEvents() {
       if (isSearchOpen) {
         if (searchWrapper) {
           document.body.classList.add('search-focused');
-          const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-          const offsetTop = (window.visualViewport ? window.visualViewport.offsetTop : 0) || 0;
-          const keyboardH = Math.max(0, window.innerHeight - (vh + offsetTop));
-          const bottomOffset = keyboardH > 0 ? (keyboardH + 40) : 40;
-
-          searchWrapper.style.top = 'auto';
-          searchWrapper.style.bottom = `${bottomOffset}px`;
+          searchWrapper.style.top = '50%';
+          searchWrapper.style.bottom = 'auto';
           searchWrapper.style.left = '50%';
           searchWrapper.style.right = 'auto';
-          searchWrapper.style.transform = 'translateX(-50%)';
+          searchWrapper.style.transform = 'translate(-50%, -50%)';
         }
 
         // 1차 동기식 포커스 (iOS Safari 키보드 즉시 호출)
