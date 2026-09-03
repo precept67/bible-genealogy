@@ -3493,11 +3493,14 @@ svg path.prophets-aura {
 
 body.search-focused #floating-search-wrapper {
   position: fixed !important;
+  top: auto !important;
+  bottom: calc(40px + var(--keyboard-height, 0px)) !important;
   left: 50% !important; /* 화면 가로폭의 정확히 50% 지점 */
   right: auto !important;
   transform: translateX(-50%) !important; /* 50% 지점에서 검색창 자체 절반 크기만큼 역인출하여 완벽한 데칼코마니 대칭 실현 */
-  width: min(320px, calc(100vw - 32px)) !important;
+  width: min(340px, calc(100vw - 32px)) !important;
   max-width: calc(100vw - 32px) !important;
+  height: 40px !important;
   display: flex !important;
   justify-content: center !important;
   align-items: center !important;
@@ -3506,6 +3509,7 @@ body.search-focused #floating-search-wrapper {
   margin: 0 !important;
   pointer-events: auto !important;
   z-index: 16000 !important;
+  transition: transform 0.1s ease, width 0.2s ease, opacity 0.2s ease !important;
 }
 
 /* 검색 활성화 시 하단 줌 컨트롤 바를 자연스럽게 숨겨 겹침 방지 */
@@ -3517,13 +3521,6 @@ body.search-focused #bottom-controls-wrapper {
 
 #floating-search-toggle-btn, #search-panel, #searchInput, #search-results {
   pointer-events: auto !important; /* 부모 wrapper가 pointer-events none이어도 본인들은 터치를 획득하게 수립 */
-}
-
-/* 모든 기종 공통: 가로화면(Landscape)일 때 검색 결과 드롭다운 최대 높이 제한 축소 보정 */
-@media (orientation: landscape) {
-  #search-results {
-    max-height: 90px !important; /* 화면 가림 방지 및 키보드 위 잔여공간에 최적화 */
-  }
 }
 
 body.search-focused #floating-search-toggle-btn {
@@ -3547,16 +3544,34 @@ body.search-focused #searchInput {
   width: 100% !important;
   max-width: 100% !important;
   min-width: 0 !important;
+  height: 40px !important;
+  border-radius: 20px !important;
+  padding: 0 16px !important;
   margin: 0 !important;
   box-sizing: border-box !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15) !important;
 }
 
 body.search-focused #search-results {
   width: 100% !important;
   max-width: 100% !important;
+  top: auto !important;
+  bottom: 48px !important; /* 검색창 바로 위로 펼쳐짐 */
   left: 0 !important;
   right: 0 !important;
+  max-height: min(250px, calc(100vh - var(--keyboard-height, 0px) - 120px)) !important;
+  overflow-y: auto !important;
   box-sizing: border-box !important;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.15) !important;
+  margin-top: 0 !important;
+  margin-bottom: 4px !important;
+}
+
+/* 모든 기종 공통: 가로화면(Landscape)일 때 검색 결과 드롭다운 최대 높이 제한 축소 보정 */
+@media (orientation: landscape) {
+  body.search-focused #search-results {
+    max-height: min(140px, calc(100vh - var(--keyboard-height, 0px) - 90px)) !important;
+  }
 }
 
 body:not(.search-focused) #search-panel {
