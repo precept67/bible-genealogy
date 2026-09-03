@@ -11196,10 +11196,26 @@ function setupAdminMode() {
     });
   }
 
+  const modalCloseBtn = document.getElementById('modal-close');
   const modalCancelBtn = document.getElementById('modal-cancel');
-  if (modalClose) bindHybridButton(modalClose, closeAdminForm);
-  if (modalCancel) bindHybridButton(modalCancel, closeAdminForm);
-  if (modalCancelBtn) bindHybridButton(modalCancelBtn, closeAdminForm);
+  const modalSubmitBtn = document.getElementById('modal-submit');
+
+  const handleAdminModalClose = (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    closeAdminForm();
+  };
+
+  if (modalCloseBtn) {
+    modalCloseBtn.onclick = handleAdminModalClose;
+    modalCloseBtn.ontouchend = handleAdminModalClose;
+  }
+  if (modalCancelBtn) {
+    modalCancelBtn.onclick = handleAdminModalClose;
+    modalCancelBtn.ontouchend = handleAdminModalClose;
+  }
 
   const adminModalEl = document.getElementById('admin-modal');
   if (adminModalEl) {
@@ -11217,21 +11233,43 @@ function setupAdminMode() {
     }, { passive: false });
   }
 
-  adminForm.addEventListener('submit', (e) => {
-    e.preventDefault();
+  const handleAdminFormSubmit = (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     saveAdminForm();
-  });
+  };
 
-  const modalSubmitBtn = document.getElementById('modal-submit');
-  if (modalSubmitBtn) {
-    bindHybridButton(modalSubmitBtn, () => {
-      saveAdminForm();
-    });
+  if (adminForm) {
+    adminForm.onsubmit = handleAdminFormSubmit;
   }
 
-  formDeleteBtn.addEventListener('click', () => {
-    deletePerson(editingPersonId);
-  });
+  if (modalSubmitBtn) {
+    modalSubmitBtn.onclick = (e) => {
+      e.stopPropagation();
+      if (adminForm && typeof adminForm.requestSubmit === 'function') {
+        adminForm.requestSubmit();
+      } else {
+        handleAdminFormSubmit(e);
+      }
+    };
+    modalSubmitBtn.ontouchend = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (adminForm && typeof adminForm.requestSubmit === 'function') {
+        adminForm.requestSubmit();
+      } else {
+        handleAdminFormSubmit(e);
+      }
+    };
+  }
+
+  if (formDeleteBtn) {
+    formDeleteBtn.addEventListener('click', () => {
+      deletePerson(editingPersonId);
+    });
+  }
 
   const presetChildBtn = document.getElementById('preset-child-btn');
   const presetSpouseBtn = document.getElementById('preset-spouse-btn');
@@ -17764,11 +17802,9 @@ function setupGlobalKeyboardDismiss() {
     }
   }
 
-  // 모달 내부 폼 그리드(.form-grid) 및 오버레이 터치 이벤트가 캔버스 드래그/줌에 간섭받지 않도록 터치 독립 격리
-  document.querySelectorAll('.modal-overlay, .modal-content, .form-grid').forEach(el => {
-    el.addEventListener('touchstart', (e) => { e.stopPropagation(); }, { passive: true });
+  // 모달 내부 폼 그리드(.form-grid) 스크롤 제스처가 뒷배경 캔버스 줌/팬에 간섭받지 않도록 touchmove만 격리
+  document.querySelectorAll('.form-grid').forEach(el => {
     el.addEventListener('touchmove', (e) => { e.stopPropagation(); }, { passive: true });
-    el.addEventListener('touchend', (e) => { e.stopPropagation(); }, { passive: true });
   });
 }
 
