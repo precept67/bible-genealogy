@@ -17189,61 +17189,68 @@ function setupSlideLockDragEvents() {
     }
 
     function onDragStart(e) {
-      e.stopPropagation(); // 뒷판 가계도 패닝 버블링 차단
+      e.stopPropagation();
       if (e.cancelable) e.preventDefault();
       isDragging = true;
       startX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
       slideHandle.style.transition = 'none';
       
-      // 드래그가 시작되면 락 컨테이너에 dragging 클래스를 부여하여 가이드 선/배경을 부드럽게 띄움
       slideContainer.classList.add('dragging');
-      slideText.style.opacity = '1';
+      if (slideText) slideText.style.opacity = '1';
+
+      window.addEventListener('touchmove', onDragMove, { passive: false });
+      window.addEventListener('touchend', onDragEnd, { passive: false });
+      window.addEventListener('touchcancel', onDragEnd, { passive: false });
+      window.addEventListener('mousemove', onDragMove);
+      window.addEventListener('mouseup', onDragEnd);
     }
 
     function onDragMove(e) {
-      e.stopPropagation(); // 뒷판 가계도 패닝 버블링 차단
-      if (e.cancelable) e.preventDefault(); // 아이패드 등 태블릿/모바일 OS의 기본 제스처 간섭 원천 배제 차단
       if (!isDragging) return;
-      const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+      e.stopPropagation();
+      if (e.cancelable) e.preventDefault();
+      
+      const clientX = (e.touches && e.touches.length > 0) ? e.touches[0].clientX : e.clientX;
       const deltaX = clientX - startX;
       const maxSlide = getDynamicMaxSlide();
       currentX = Math.max(0, Math.min(maxSlide, deltaX));
       slideHandle.style.transform = `translateX(${currentX}px)`;
       
-      // 슬라이딩 진척도에 따라 가이드 텍스트 투명도를 페이드아웃 처리
-      slideText.style.opacity = Math.max(0.1, 1 - (currentX / maxSlide) * 0.9);
+      if (slideText) {
+        slideText.style.opacity = Math.max(0.1, 1 - (currentX / maxSlide) * 0.9);
+      }
     }
 
     function onDragEnd(e) {
+      if (!isDragging) return;
       if (e) {
         e.stopPropagation();
         if (e.cancelable) e.preventDefault();
       }
-      if (!isDragging) return;
       isDragging = false;
+
+      window.removeEventListener('touchmove', onDragMove, { passive: false });
+      window.removeEventListener('touchend', onDragEnd, { passive: false });
+      window.removeEventListener('touchcancel', onDragEnd, { passive: false });
+      window.removeEventListener('mousemove', onDragMove);
+      window.removeEventListener('mouseup', onDragEnd);
+
       slideHandle.style.transition = 'transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1), background-color 0.2s ease';
       
       const maxSlide = getDynamicMaxSlide();
-      if (currentX >= maxSlide * 0.9) {
+      if (currentX >= maxSlide * 0.75) {
         if (originalLockBtn) {
           originalLockBtn.click();
         }
       }
       
       slideHandle.style.transform = 'translateX(0px)';
-      
-      // 드래그가 해제되면 dragging 클래스를 제거하여 가이드 선/배경을 스무스하게 은닉
       slideContainer.classList.remove('dragging');
-      slideText.style.opacity = '0';
+      if (slideText) slideText.style.opacity = '0';
     }
 
     slideHandle.addEventListener('touchstart', onDragStart, { passive: false });
-    window.addEventListener('touchmove', onDragMove, { passive: false });
-    window.addEventListener('touchend', onDragEnd, { passive: false });
-
     slideHandle.addEventListener('mousedown', onDragStart);
-    window.addEventListener('mousemove', onDragMove);
-    window.addEventListener('mouseup', onDragEnd);
   }
 }
 
