@@ -1025,18 +1025,26 @@ header .subtitle {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: var(--visual-viewport-height, 100vh);
+  max-height: var(--visual-viewport-height, 100vh);
   background: rgba(15, 23, 42, 0.7);
   backdrop-filter: blur(6px);
   display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
   align-items: center;
-  justify-content: center;
   z-index: 30000;
-  padding: 16px;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 4px) !important;
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 4px);
+  padding-left: calc(env(safe-area-inset-left, 0px) + 8px);
+  padding-right: calc(env(safe-area-inset-right, 0px) + 8px);
   box-sizing: border-box;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  overflow: hidden;
+}
+
+body.keyboard-open .modal-overlay {
+  padding-bottom: 0px !important;
 }
 
 .modal-content {
@@ -1044,14 +1052,16 @@ header .subtitle {
   border: 1px solid var(--border-panel);
   border-radius: 16px;
   width: 520px;
-  max-width: 95%;
-  max-height: calc(100vh - 40px);
+  max-width: 96%;
+  height: auto;
+  max-height: 100%;
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
   display: flex;
   flex-direction: column;
   animation: modal-pop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
   overflow: hidden;
   box-sizing: border-box;
+  margin-top: 0 !important;
 }
 
 .modal-content form {
@@ -3608,18 +3618,28 @@ svg.history-custom-icon {
    📱 모바일 세로 화면/좁은 스크린 최적화 모달 보정 (텍스트 상자 추가 등 잘림 완치)
    ========================================================================== */
 @media (max-width: 768px) {
-  /* 1. 모달 오버레이를 센터 정렬 및 전체 스크롤이 가능하도록 강제 개선 */
+  /* 1. 모달 오버레이 상단을 다이나믹 아일랜드 4px 아래에 정확히 배치하고 키보드 대응 뷰포트 높이 제한 */
   .modal-overlay {
+    justify-content: flex-start !important;
     align-items: center !important;
-    overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch !important;
-    padding: 12px 8px !important;
+    padding-top: calc(env(safe-area-inset-top, 0px) + 4px) !important;
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 4px) !important;
+    padding-left: calc(env(safe-area-inset-left, 0px) + 8px) !important;
+    padding-right: calc(env(safe-area-inset-right, 0px) + 8px) !important;
+    height: var(--visual-viewport-height, 100vh) !important;
+    max-height: var(--visual-viewport-height, 100vh) !important;
+    overflow: hidden !important;
   }
 
-  /* 2. 모달 콘텐츠 높이를 기기 전체 높이 한도 내로 정밀 구속 */
+  body.keyboard-open .modal-overlay {
+    padding-bottom: 0px !important;
+  }
+
+  /* 2. 모달 콘텐츠 높이를 뷰포트 내로 유연하게 제한 */
   .modal-content {
     margin: 0 auto !important;
-    max-height: calc(100vh - 24px) !important;
+    height: auto !important;
+    max-height: 100% !important;
     max-width: 96% !important;
     border-radius: 14px !important;
     overflow: hidden !important;

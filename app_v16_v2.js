@@ -17619,24 +17619,59 @@ function setupGlobalKeyboardDismiss() {
   // 각 패널의 포커싱 직전 원래 스크롤 위치 보관용 Map
   let lastScrollPositions = new Map();
 
-  // 가로 모드에서 텍스트 입력창 포커싱 시 창 내부 입력 영역으로 스크롤 이동
+  // Dynamic Visual Viewport & Virtual Keyboard Height Sync
+  const updateViewportDimensions = () => {
+    const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    const offsetTop = (window.visualViewport ? window.visualViewport.offsetTop : 0) || 0;
+    const keyboardH = Math.max(0, window.innerHeight - (vh + offsetTop));
+    
+    document.documentElement.style.setProperty('--visual-viewport-height', `${vh}px`);
+    document.documentElement.style.setProperty('--keyboard-height', `${keyboardH}px`);
+    document.documentElement.style.setProperty('--visual-viewport-offset-top', `${offsetTop}px`);
+    
+    if (keyboardH > 40) {
+      document.body.classList.add('keyboard-open');
+    } else {
+      document.body.classList.remove('keyboard-open');
+    }
+  };
+
+  // Initial sync
+  updateViewportDimensions();
+
+  // 텍스트 입력창 포커싱 시 창 내부 입력 영역으로 스크롤 이동
   const handleInputFocus = (e) => {
+    updateViewportDimensions();
     const isLandscape = window.matchMedia('(orientation: landscape)').matches;
-    if (isLandscape && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
-      document.body.classList.add('keyboard-open-landscape');
-      // 브라우저 뷰포트 전체 스크롤을 흔드는 scrollIntoView 대신,
-      // 패널 내부의 스크롤 컨테이너(.panel-body)의 scrollTop만 제어하여 창이 통째로 튕겨 날아가는 현상 완전 차단
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+      if (isLandscape) {
+        document.body.classList.add('keyboard-open-landscape');
+      }
+
+      // 1. 모달 내부 입력창 포커싱 시 form-grid 내부에서 스크롤하여 필드가 키보드에 가려지지 않게 조정
+      const formGrid = e.target.closest('.form-grid');
+      if (formGrid) {
+        setTimeout(() => {
+          const fieldGroup = e.target.closest('.form-group') || e.target;
+          const gridRect = formGrid.getBoundingClientRect();
+          const targetRect = fieldGroup.getBoundingClientRect();
+          
+          if (targetRect.bottom > gridRect.bottom || targetRect.top < gridRect.top) {
+            fieldGroup.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+          }
+        }, 120);
+        return;
+      }
+
+      // 2. 패널 내부 입력 영역 포커싱 시
       setTimeout(() => {
         const scrollParent = e.target.closest('.panel-body, .modal-content');
         if (scrollParent) {
-          // 포커싱 전의 원래 스크롤 오프셋을 안전하게 최초 기억
           if (!lastScrollPositions.has(scrollParent)) {
             lastScrollPositions.set(scrollParent, scrollParent.scrollTop);
           }
 
           let targetOffsetTop = e.target.offsetTop;
-          
-          // 포커스된 입력 필드의 위에 있는 소제목(H3)을 찾아 제목과 입력창이 화면 가장 천장(최상단)에 딱 붙게 정렬
           let titleEl = null;
           if (e.target.id === 'note-text') {
             titleEl = e.target.previousElementSibling;
@@ -17651,7 +17686,6 @@ function setupGlobalKeyboardDismiss() {
             targetOffsetTop = titleEl.offsetTop;
           }
           
-          // 마진 오프셋을 빼지 않고 소제목 시작점에 완전 밀착 밀어올리기
           scrollParent.scrollTo({
             top: targetOffsetTop,
             behavior: 'smooth'
@@ -17662,14 +17696,13 @@ function setupGlobalKeyboardDismiss() {
   };
 
   const handleInputBlur = () => {
-    // 딜레이를 두어 다른 입력창으로 포커스가 바로 이어지는 경우는 복귀를 방지하고,
-    // 포커스가 완전히 입력창 바깥으로 벗어났을 때만 확실히 100% 높이로 복귀시킴
     setTimeout(() => {
+      updateViewportDimensions();
       const activeEl = document.activeElement;
-      if (!activeEl || (activeEl.tagName !== 'INPUT' && activeEl.tagName !== 'TEXTAREA')) {
+      if (!activeEl || (activeEl.tagName !== 'INPUT' && activeEl.tagName !== 'TEXTAREA' && activeEl.tagName !== 'SELECT')) {
         document.body.classList.remove('keyboard-open-landscape');
+        document.body.classList.remove('keyboard-open');
         
-        // 키보드가 내려가면 패널 내부의 스크롤을 포커싱 직전에 기억해 둔 원래 위치로 안전 복원
         lastScrollPositions.forEach((originalScrollTop, scrollParent) => {
           if (scrollParent && document.body.contains(scrollParent)) {
             scrollParent.scrollTo({
@@ -17678,7 +17711,7 @@ function setupGlobalKeyboardDismiss() {
             });
           }
         });
-        lastScrollPositions.clear(); // 복원 완료 후 캐시 소거
+        lastScrollPositions.clear();
       }
     }, 100);
   };
@@ -17695,19 +17728,40 @@ function setupGlobalKeyboardDismiss() {
 
   if (window.visualViewport) {
     window.visualViewport.addEventListener('resize', () => {
+      updateViewportDimensions();
       window.scrollTo(0, 0);
       document.body.scrollTop = 0;
-      // 키보드가 내려가서 원래 뷰포트 크기로 돌아오면(키보드 닫힘 감지) 클래스 강제 제거하여 레이아웃 복원
       if (window.visualViewport.height >= window.innerHeight * 0.9) {
         document.body.classList.remove('keyboard-open-landscape');
+        document.body.classList.remove('keyboard-open');
       }
     });
     window.visualViewport.addEventListener('scroll', () => {
+      updateViewportDimensions();
       if (window.visualViewport.offsetTop > 0 || window.visualViewport.offsetLeft > 0) {
         window.scrollTo(0, 0);
         document.body.scrollTop = 0;
       }
     });
+  }
+
+  // Capacitor Keyboard plugin support if available
+  if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Keyboard) {
+    try {
+      window.Capacitor.Plugins.Keyboard.addListener('keyboardWillShow', (info) => {
+        if (info && info.keyboardHeight) {
+          document.documentElement.style.setProperty('--keyboard-height', `${info.keyboardHeight}px`);
+          document.body.classList.add('keyboard-open');
+        }
+      });
+      window.Capacitor.Plugins.Keyboard.addListener('keyboardWillHide', () => {
+        document.documentElement.style.setProperty('--keyboard-height', '0px');
+        document.body.classList.remove('keyboard-open');
+        document.body.classList.remove('keyboard-open-landscape');
+      });
+    } catch (e) {
+      console.warn('Capacitor keyboard listener setup note:', e);
+    }
   }
 }
 
