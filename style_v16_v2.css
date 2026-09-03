@@ -3875,7 +3875,8 @@ svg.history-custom-icon {
 /* ==========================================================================
    💻 iPad Air 13-inch / iPad Pro 12.9-inch (1024x1366) Dedicated Margins
    ========================================================================== */
-@media only screen and (device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2) {
+@media only screen and (device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2),
+       only screen and (device-width: 1366px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2) {
   body:not(.search-focused) #floating-search-wrapper {
     left: calc(-6px + env(safe-area-inset-left)) !important;
     right: auto !important;
@@ -3909,7 +3910,9 @@ svg.history-custom-icon {
    💻 iPad Air 11-inch (820x1180) & iPad Pro 11-inch (834x1194) Dedicated Margins
    ========================================================================== */
 @media only screen and (device-width: 820px) and (device-height: 1180px) and (-webkit-device-pixel-ratio: 2),
-       only screen and (device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2) {
+       only screen and (device-width: 1180px) and (device-height: 820px) and (-webkit-device-pixel-ratio: 2),
+       only screen and (device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2),
+       only screen and (device-width: 1194px) and (device-height: 834px) and (-webkit-device-pixel-ratio: 2) {
   body:not(.search-focused) #floating-search-wrapper {
     left: calc(-6px + env(safe-area-inset-left)) !important;
     right: auto !important;

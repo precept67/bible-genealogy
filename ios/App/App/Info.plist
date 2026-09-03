@@ -43,7 +43,7 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<key>UIRequiresFullScreen</key>
 	<true/>
 	<key>UIFileSharingEnabled</key>
 	<true/>
