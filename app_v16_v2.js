@@ -17049,9 +17049,17 @@ function setupFloatingHeaderEvents() {
     let searchViewportInterval = null;
     const searchWrapper = document.getElementById('floating-search-wrapper');
 
+    const getTopControlsTop = (isLandscape) => {
+      if (isLandscape) return 'calc(6px + env(safe-area-inset-top))';
+      // 다이나믹 아일랜드 기기 판별 (화면 높이 >= 840, 너비 >= 390, DPR >= 3)
+      const isDynamicIsland = (window.innerHeight >= 840 && window.innerWidth >= 390 && (window.devicePixelRatio || 1) >= 3);
+      return isDynamicIsland ? 'calc(-1px + env(safe-area-inset-top))' : 'calc(5px + env(safe-area-inset-top))';
+    };
+
     const handleVisualViewportChange = () => {
       if (document.body.classList.contains('search-focused') && searchWrapper) {
-        searchWrapper.style.top = 'calc(6px + env(safe-area-inset-top))';
+        const isLandscape = window.matchMedia('(orientation: landscape)').matches;
+        searchWrapper.style.top = getTopControlsTop(isLandscape);
         searchWrapper.style.bottom = 'auto';
       }
     };
@@ -17066,7 +17074,7 @@ function setupFloatingHeaderEvents() {
       }
       if (searchWrapper) {
         const isLandscape = window.matchMedia('(orientation: landscape)').matches;
-        searchWrapper.style.top = 'calc(6px + env(safe-area-inset-top))';
+        searchWrapper.style.top = getTopControlsTop(isLandscape);
         searchWrapper.style.bottom = 'auto';
         searchWrapper.style.left = isLandscape ? 'calc(-6px + env(safe-area-inset-left))' : '16px';
         searchWrapper.style.right = 'auto';
@@ -17093,7 +17101,7 @@ function setupFloatingHeaderEvents() {
         if (searchWrapper) {
           const isLandscape = window.matchMedia('(orientation: landscape)').matches;
           document.body.classList.add('search-focused');
-          searchWrapper.style.top = 'calc(6px + env(safe-area-inset-top))';
+          searchWrapper.style.top = getTopControlsTop(isLandscape);
           searchWrapper.style.bottom = 'auto';
           searchWrapper.style.left = isLandscape ? 'calc(-6px + env(safe-area-inset-left))' : '16px';
           searchWrapper.style.right = 'auto';

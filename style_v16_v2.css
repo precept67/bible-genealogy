@@ -873,7 +873,7 @@ header .subtitle {
     padding: 0 !important;
   }
   #floating-settings-btn {
-    top: calc(6px + env(safe-area-inset-top)) !important;
+    top: calc(-1px + env(safe-area-inset-top)) !important;
     right: 16px !important;
   }
 
@@ -3676,17 +3676,21 @@ svg.history-custom-icon {
 }
 
 /* ==========================================================================
-   📱 iPhone 8 / 7 / 6s / 6 (375x667) Dedicated Precision Margins
+   📱 iPhone 8 / 7 / 6s / 6 / SE (375x667) Dedicated Precision Margins
    ========================================================================== */
 
-/* 1. Portrait Mode (세로화면) */
+/* 1. Portrait Mode (세로화면 - 시계/배터리 아래 5px 정박: 20px + 5px = 25px) */
 @media only screen and (device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait) {
   body:not(.search-focused) #floating-search-wrapper {
-    top: 6px !important;
+    top: 25px !important;
     left: 16px !important;
     right: auto !important;
     bottom: auto !important;
     transform: none !important;
+  }
+  #floating-settings-btn {
+    top: 25px !important;
+    right: 16px !important;
   }
   #slide-lock-container {
     left: 16px !important;
@@ -3726,13 +3730,32 @@ svg.history-custom-icon {
 }
 
 /* ==========================================================================
+   📱 iPhone Notch without Dynamic Island (iPhone X/11/12/13/14) Dedicated Margins
+   (상단 노치 상태바/시계/배터리 아래 5px 정박)
+   ========================================================================== */
+@media only screen and (device-width: 375px) and (device-height: 812px) and (orientation: portrait),
+       only screen and (device-width: 390px) and (device-height: 844px) and (orientation: portrait),
+       only screen and (device-width: 414px) and (device-height: 896px) and (orientation: portrait),
+       only screen and (device-width: 428px) and (device-height: 926px) and (orientation: portrait) {
+  body:not(.search-focused) #floating-search-wrapper {
+    top: calc(5px + env(safe-area-inset-top)) !important;
+    left: 16px !important;
+    right: auto !important;
+  }
+  #floating-settings-btn {
+    top: calc(5px + env(safe-area-inset-top)) !important;
+    right: 16px !important;
+  }
+}
+
+/* ==========================================================================
    💻 iPad Air 13-inch / iPad Pro 12.9-inch (1024x1366) Dedicated Margins
    ========================================================================== */
 @media only screen and (device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2) {
   body:not(.search-focused) #floating-search-wrapper {
     left: calc(-6px + env(safe-area-inset-left)) !important;
     right: auto !important;
-    top: calc(6px + env(safe-area-inset-top)) !important;
+    top: calc(5px + env(safe-area-inset-top)) !important;
     bottom: auto !important;
     transform: none !important;
   }
@@ -3754,7 +3777,7 @@ svg.history-custom-icon {
   }
   #floating-settings-btn {
     right: calc(-6px + env(safe-area-inset-right)) !important;
-    top: calc(6px + env(safe-area-inset-top)) !important;
+    top: calc(5px + env(safe-area-inset-top)) !important;
   }
 }
 
@@ -3766,7 +3789,7 @@ svg.history-custom-icon {
   body:not(.search-focused) #floating-search-wrapper {
     left: calc(-6px + env(safe-area-inset-left)) !important;
     right: auto !important;
-    top: calc(6px + env(safe-area-inset-top)) !important;
+    top: calc(5px + env(safe-area-inset-top)) !important;
     bottom: auto !important;
     transform: none !important;
   }
@@ -3788,75 +3811,127 @@ svg.history-custom-icon {
   }
   #floating-settings-btn {
     right: calc(-6px + env(safe-area-inset-right)) !important;
-    top: calc(6px + env(safe-area-inset-top)) !important;
+    top: calc(5px + env(safe-area-inset-top)) !important;
   }
 }
 
 /* ==========================================================================
-   📱 iPhone 15 & iPhone 15 Pro (393x852) Dedicated Margins
+   📱 iPhone 14 Pro, 15, 15 Pro, 16, 16 Pro (393x852 & 402x874) Dedicated Margins
+   (다이나믹 아일랜드 4px 아래 정박)
    ========================================================================== */
 @media only screen and (device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3),
-       only screen and (device-width: 852px) and (device-height: 393px) and (-webkit-device-pixel-ratio: 3) {
-  body:not(.search-focused) #floating-search-wrapper {
-    left: calc(-6px + env(safe-area-inset-left)) !important;
-    right: auto !important;
-    top: calc(6px + env(safe-area-inset-top)) !important;
-    bottom: auto !important;
-    transform: none !important;
+       only screen and (device-width: 852px) and (device-height: 393px) and (-webkit-device-pixel-ratio: 3),
+       only screen and (device-width: 402px) and (device-height: 874px) and (-webkit-device-pixel-ratio: 3),
+       only screen and (device-width: 874px) and (device-height: 402px) and (-webkit-device-pixel-ratio: 3),
+       only screen and (device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3),
+       only screen and (device-width: 932px) and (device-height: 430px) and (-webkit-device-pixel-ratio: 3) {
+  @media (orientation: portrait) {
+    body:not(.search-focused) #floating-search-wrapper {
+      left: 16px !important;
+      right: auto !important;
+      top: calc(-1px + env(safe-area-inset-top)) !important;
+      bottom: auto !important;
+      transform: none !important;
+    }
+    #floating-settings-btn {
+      right: 16px !important;
+      top: calc(-1px + env(safe-area-inset-top)) !important;
+    }
+    #slide-lock-container {
+      left: 16px !important;
+      bottom: calc(-4px + env(safe-area-inset-bottom)) !important;
+    }
+    #admin-actions-bar {
+      right: 16px !important;
+      bottom: calc(-4px + env(safe-area-inset-bottom)) !important;
+    }
   }
-  #slide-lock-container {
-    left: calc(-6px + env(safe-area-inset-left)) !important;
-    bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
-  }
-  #floating-settings-btn {
-    right: calc(-6px + env(safe-area-inset-right)) !important;
-    top: calc(6px + env(safe-area-inset-top)) !important;
-  }
-  #admin-actions-bar {
-    top: auto !important;
-    bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
-    right: calc(-6px + env(safe-area-inset-right)) !important;
-    left: auto !important;
-    transform: none !important;
-    height: 40px !important;
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    padding: 0 !important;
+  @media (orientation: landscape) {
+    body:not(.search-focused) #floating-search-wrapper {
+      left: calc(-6px + env(safe-area-inset-left)) !important;
+      right: auto !important;
+      top: calc(6px + env(safe-area-inset-top)) !important;
+      bottom: auto !important;
+      transform: none !important;
+    }
+    #floating-settings-btn {
+      right: calc(-6px + env(safe-area-inset-right)) !important;
+      top: calc(6px + env(safe-area-inset-top)) !important;
+    }
+    #slide-lock-container {
+      left: calc(-6px + env(safe-area-inset-left)) !important;
+      bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
+    }
+    #admin-actions-bar {
+      top: auto !important;
+      bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
+      right: calc(-6px + env(safe-area-inset-right)) !important;
+      left: auto !important;
+      transform: none !important;
+      height: 40px !important;
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+    }
   }
 }
 
 /* ==========================================================================
    📱 iPhone 16 Pro Max & iPhone 17 Pro Max (440x956) Dedicated Margins
+   (다이나믹 아일랜드 4px 아래 정박)
    ========================================================================== */
 @media only screen and (device-width: 440px) and (device-height: 956px) and (-webkit-device-pixel-ratio: 3),
        only screen and (device-width: 956px) and (device-height: 440px) and (-webkit-device-pixel-ratio: 3) {
-  body:not(.search-focused) #floating-search-wrapper {
-    left: calc(-6px + env(safe-area-inset-left)) !important;
-    right: auto !important;
-    top: calc(6px + env(safe-area-inset-top)) !important;
-    bottom: auto !important;
-    transform: none !important;
+  @media (orientation: portrait) {
+    body:not(.search-focused) #floating-search-wrapper {
+      left: 16px !important;
+      right: auto !important;
+      top: calc(-1px + env(safe-area-inset-top)) !important;
+      bottom: auto !important;
+      transform: none !important;
+    }
+    #floating-settings-btn {
+      right: 16px !important;
+      top: calc(-1px + env(safe-area-inset-top)) !important;
+    }
+    #slide-lock-container {
+      left: 16px !important;
+      bottom: calc(-4px + env(safe-area-inset-bottom)) !important;
+    }
+    #admin-actions-bar {
+      right: 16px !important;
+      bottom: calc(-4px + env(safe-area-inset-bottom)) !important;
+    }
   }
-  #slide-lock-container {
-    left: calc(-6px + env(safe-area-inset-left)) !important;
-    bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
-  }
-  #floating-settings-btn {
-    right: calc(-6px + env(safe-area-inset-right)) !important;
-    top: calc(6px + env(safe-area-inset-top)) !important;
-  }
-  #admin-actions-bar {
-    top: auto !important;
-    bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
-    right: calc(-6px + env(safe-area-inset-right)) !important;
-    left: auto !important;
-    transform: none !important;
-    height: 40px !important;
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    padding: 0 !important;
+  @media (orientation: landscape) {
+    body:not(.search-focused) #floating-search-wrapper {
+      left: calc(-6px + env(safe-area-inset-left)) !important;
+      right: auto !important;
+      top: calc(6px + env(safe-area-inset-top)) !important;
+      bottom: auto !important;
+      transform: none !important;
+    }
+    #floating-settings-btn {
+      right: calc(-6px + env(safe-area-inset-right)) !important;
+      top: calc(6px + env(safe-area-inset-top)) !important;
+    }
+    #slide-lock-container {
+      left: calc(-6px + env(safe-area-inset-left)) !important;
+      bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
+    }
+    #admin-actions-bar {
+      top: auto !important;
+      bottom: calc(-1px + env(safe-area-inset-bottom)) !important;
+      right: calc(-6px + env(safe-area-inset-right)) !important;
+      left: auto !important;
+      transform: none !important;
+      height: 40px !important;
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+    }
   }
 }
 
