@@ -31,29 +31,29 @@
 }
 
 [data-theme="dark"] {
-  /* Dark Mode Palette */
-  --bg-app: #0f172a;
-  --bg-board: #1e293b;
-  --bg-card-male: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
-  --border-card-male: rgba(59, 130, 246, 0.5);
-  --bg-card-female: linear-gradient(135deg, #831843 0%, #0f172a 100%);
-  --border-card-female: rgba(236, 72, 153, 0.5);
-  --bg-card-prophet: linear-gradient(135deg, #8028ca 0%, #470878 100%);
-  --border-card-prophet: rgba(216, 180, 254, 0.75);
-  --bg-card-main: linear-gradient(135deg, #78350f 0%, #1e293b 100%);
+  /* Dark Mode Palette - Enhanced Contrast */
+  --bg-app: #090d16;
+  --bg-board: #0f172a;
+  --bg-card-male: linear-gradient(135deg, #1e3a8a 0%, #172554 100%);
+  --border-card-male: rgba(96, 165, 250, 0.7);
+  --bg-card-female: linear-gradient(135deg, #831843 0%, #500724 100%);
+  --border-card-female: rgba(244, 114, 182, 0.7);
+  --bg-card-prophet: linear-gradient(135deg, #581c87 0%, #3b0764 100%);
+  --border-card-prophet: rgba(192, 132, 252, 0.85);
+  --bg-card-main: linear-gradient(135deg, #78350f 0%, #451a03 100%);
   --border-card-main: #fbbf24;
-  --shadow-card-main: 0 0 20px rgba(251, 191, 36, 0.35);
+  --shadow-card-main: 0 0 20px rgba(251, 191, 36, 0.45);
   
   --text-main: #f8fafc;
-  --text-muted: #94a3b8;
+  --text-muted: #cbd5e1;
   --text-accent: #60a5fa;
   
-  --bg-panel: rgba(15, 23, 42, 0.60);
-  --border-panel: rgba(51, 65, 85, 0.8);
-  --shadow-panel: 0 10px 35px rgba(0, 0, 0, 0.3);
+  --bg-panel: rgba(15, 23, 42, 0.85);
+  --border-panel: rgba(71, 85, 105, 0.8);
+  --shadow-panel: 0 10px 35px rgba(0, 0, 0, 0.5);
 
-  --line-color: #f97316;
-  --line-main-color: #f97316;
+  --line-color: #fb923c;
+  --line-main-color: #fb923c;
   --spouse-line-color: #f87171;
 }
 
@@ -65,15 +65,58 @@
 }
 
 body, html {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
+  width: 100vw !important;
+  max-width: 100vw !important;
+  height: 100vh !important;
+  max-height: 100vh !important;
+  overflow: hidden !important;
+  overflow-x: hidden !important;
+  overflow-y: hidden !important;
   position: fixed;
   overscroll-behavior: none;
   font-family: var(--font-family);
   background-color: var(--bg-board);
   color: var(--text-main);
   transition: background-color 0.3s ease, color 0.3s ease;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+*, *::before, *::after {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+::-webkit-scrollbar,
+*::-webkit-scrollbar,
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+#app-container::-webkit-scrollbar,
+#viewer-container::-webkit-scrollbar,
+#zoom-wrapper::-webkit-scrollbar,
+#tree-board::-webkit-scrollbar,
+#svg-polygons-layer::-webkit-scrollbar,
+div::-webkit-scrollbar,
+main::-webkit-scrollbar,
+section::-webkit-scrollbar,
+aside::-webkit-scrollbar {
+  display: none !important;
+  width: 0px !important;
+  height: 0px !important;
+  background: transparent !important;
+  -webkit-appearance: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+::-webkit-scrollbar-track,
+*::-webkit-scrollbar-track,
+::-webkit-scrollbar-thumb,
+*::-webkit-scrollbar-thumb,
+::-webkit-scrollbar-corner,
+*::-webkit-scrollbar-corner {
+  display: none !important;
+  background: transparent !important;
 }
 
 /* Enable instant touch response and remove iOS gray tap highlight overlay */
@@ -153,23 +196,32 @@ header .subtitle {
 #control-panel {
   position: static !important;
   transform: none !important;
-  display: flex;
-  align-items: center;
-  gap: 4px;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  box-sizing: border-box !important;
   background: var(--bg-panel);
   border: 1px solid var(--border-panel);
-  padding: 4px 8px;
-  border-radius: 50px;
+  padding: 0 14px !important;
+  border-radius: 22px !important;
   box-shadow: var(--shadow-panel);
   backdrop-filter: var(--glass-blur);
+  opacity: 0.9 !important;
+  transition: all 0.3s ease, opacity 0.2s ease;
   z-index: 3000;
-  transition: all 0.3s ease;
+}
+
+#control-panel:hover {
+  opacity: 1 !important;
 }
 
 /* 래퍼 스타일을 명시적으로 선언하여 수직/수평 정렬을 일관성있게 통제 */
 #bottom-controls-wrapper {
   position: fixed;
-  bottom: calc(16px + env(safe-area-inset-bottom));
+  bottom: calc(31px + env(safe-area-inset-bottom));
   left: 50%;
   transform: translateX(-50%);
   z-index: 12000;
@@ -177,7 +229,7 @@ header .subtitle {
   align-items: center;
   gap: 12px;
   pointer-events: none;
-  height: 40px;
+  height: 44px;
   box-sizing: border-box;
 }
 
@@ -231,13 +283,11 @@ header .subtitle {
 
 /* Search Box Panel */
 #search-panel {
-  position: absolute;
-  top: 16px;
-  right: 16px;
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 8px;
   z-index: 3000;
+  width: 100%;
 }
 
 .search-box {
@@ -245,7 +295,7 @@ header .subtitle {
   border: 1px solid var(--border-panel);
   padding: 10px 16px;
   border-radius: 12px;
-  width: 250px;
+  width: 100%;
   font-family: var(--font-family);
   font-size: 14px;
   color: var(--text-main);
@@ -253,11 +303,12 @@ header .subtitle {
   backdrop-filter: var(--glass-blur);
   outline: none;
   transition: all 0.3s ease;
+  box-sizing: border-box;
 }
 
 .search-box:focus {
   border-color: var(--text-accent);
-  width: 300px;
+  width: 100%;
 }
 
 .search-box::placeholder {
@@ -272,9 +323,11 @@ header .subtitle {
   position: absolute !important;
   top: 0 !important;
   left: 0 !important;
-  overflow: hidden;
+  overflow: hidden !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
   z-index: 1 !important;
-  cursor: grab;
+  cursor: default;
   outline: none;
   touch-action: none;
   background-color: var(--bg-board);
@@ -282,8 +335,27 @@ header .subtitle {
   -webkit-user-select: none;
 }
 
+/* Edit Mode Background - K 20% (#cccccc) */
+body.admin-mode,
+body.admin-mode #app-container,
+body.admin-mode #viewer-container,
+body.admin-mode #zoom-wrapper,
+body.admin-mode #tree-board,
+body.admin-mode #canvas-container,
+[data-theme="dark"] body.admin-mode,
+[data-theme="dark"] body.admin-mode #app-container,
+[data-theme="dark"] body.admin-mode #viewer-container,
+[data-theme="dark"] body.admin-mode #zoom-wrapper,
+[data-theme="dark"] body.admin-mode #tree-board,
+[data-theme="dark"] body.admin-mode #canvas-container {
+  --bg-board: #cccccc !important;
+  --bg-app: #cccccc !important;
+  background-color: #cccccc !important;
+  transition: background-color 0.25s ease !important;
+}
+
 #viewer-container:active {
-  cursor: grabbing;
+  cursor: default;
 }
 
 #zoom-wrapper {
@@ -294,7 +366,6 @@ header .subtitle {
   left: 0;
   user-select: none;
   -webkit-user-select: none;
-  will-change: transform;
 }
 
 #tree-board {
@@ -313,8 +384,6 @@ header .subtitle {
   overflow: visible !important;
   pointer-events: none;
   z-index: 1; /* Render behind everything else, below locations */
-  will-change: transform;
-  transform: translateZ(0);
 }
 #svg-layer {
   position: absolute;
@@ -325,8 +394,6 @@ header .subtitle {
   overflow: visible !important;
   pointer-events: none;
   z-index: 3;
-  will-change: transform;
-  transform: translateZ(0);
 }
 
 .connector-line {
@@ -471,6 +538,9 @@ header .subtitle {
 [data-theme="dark"] .person-card.prophet .card-eng {
   color: #e9d5ff !important;
 }
+[data-theme="dark"] .person-card.prophet .card-desc {
+  color: #f3e8ff !important;
+}
 
 /* Card Inner Content */
 .card-name-row {
@@ -504,6 +574,81 @@ header .subtitle {
   opacity: 0.85;
 }
 
+/* Dark Mode Card High Contrast Text & Visibility */
+[data-theme="dark"] .person-card {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+}
+
+[data-theme="dark"] .person-card .card-title {
+  color: #ffffff !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+[data-theme="dark"] .person-card .card-eng {
+  color: #cbd5e1 !important;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="dark"] .person-card .card-desc {
+  color: #e2e8f0 !important;
+  opacity: 1 !important;
+  font-weight: 500;
+}
+
+[data-theme="dark"] .person-card.male {
+  background: linear-gradient(135deg, #1e3a8a 0%, #172554 100%);
+  border: 1.5px solid rgba(96, 165, 250, 0.7);
+}
+
+[data-theme="dark"] .person-card.male .card-title {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .person-card.male .card-eng {
+  color: #93c5fd !important;
+}
+
+[data-theme="dark"] .person-card.male .card-desc {
+  color: #dbeafe !important;
+}
+
+[data-theme="dark"] .person-card.female {
+  background: linear-gradient(135deg, #831843 0%, #500724 100%);
+  border: 1.5px solid rgba(244, 114, 182, 0.7);
+}
+
+[data-theme="dark"] .person-card.female .card-title {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .person-card.female .card-eng {
+  color: #f472b6 !important;
+}
+
+[data-theme="dark"] .person-card.female .card-desc {
+  color: #fce7f3 !important;
+}
+
+[data-theme="dark"] .person-card.male.main-line,
+[data-theme="dark"] .person-card.female.main-line {
+  background: linear-gradient(135deg, #78350f 0%, #451a03 100%);
+  border: 2px solid #fbbf24;
+  box-shadow: 0 0 18px rgba(251, 191, 36, 0.4);
+}
+
+[data-theme="dark"] .person-card.main-line .card-title {
+  color: #fef08a !important;
+}
+
+[data-theme="dark"] .person-card.main-line .card-eng {
+  color: #fde047 !important;
+}
+
+[data-theme="dark"] .person-card.main-line .card-desc {
+  color: #fef9c3 !important;
+}
+
 .card-gender-icon {
   font-size: 11px;
   font-weight: bold;
@@ -515,6 +660,14 @@ header .subtitle {
 
 .card-gender-icon.female {
   color: #db2777;
+}
+
+[data-theme="dark"] .card-gender-icon.male {
+  color: #60a5fa;
+}
+
+[data-theme="dark"] .card-gender-icon.female {
+  color: #f472b6;
 }
 
 .card-note-badge {
@@ -544,32 +697,45 @@ header .subtitle {
 
 
 #floating-settings-btn {
-  position: fixed !important;
-  top: 26px !important; /* 가로화면일 때 6개 버튼 박스의 상하 중심에 맞춤 */
-  right: 31px !important; /* 가로화면일 때 오른쪽 마진 31px */
-  z-index: 12000 !important;
+  display: none !important;
+  position: relative !important;
+  top: auto !important;
+  bottom: auto !important;
+  right: auto !important;
+  left: auto !important;
+  margin: 0 !important;
 }
 
-/* Study/Note Sidebar Panel */
-#study-panel {
-  position: absolute;
-  top: 80px;
-  right: -380px;
-  width: 360px;
-  height: calc(100% - 96px);
+body.admin-mode #floating-settings-btn {
+  display: flex !important;
+}
+
+/* Study/Note Sidebar Panel (Right Center) */
+#study-panel:not(.expanded) {
+  position: fixed !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  bottom: auto !important;
+  right: -450px !important;
+  left: auto !important;
+  width: 360px !important;
+  max-width: calc(100vw - 32px) !important;
+  height: auto !important;
+  max-height: min(90vh, calc(100vh - 64px)) !important;
   background: var(--bg-panel);
   border: 1px solid var(--border-panel);
   border-radius: 16px;
   box-shadow: var(--shadow-panel);
   backdrop-filter: var(--glass-blur);
   z-index: 30000;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
 }
 
-#study-panel.active {
-  right: 16px;
+#study-panel.active:not(.expanded) {
+  right: calc(16px + env(safe-area-inset-right)) !important;
+  left: auto !important;
 }
 
 .expand-btn {
@@ -593,24 +759,40 @@ header .subtitle {
   transform: scale(1.2);
 }
 
-@media (min-width: 769px) {
-  #study-panel.expanded {
-    position: fixed;
-    width: 800px;
-    height: 80%;
-    max-width: 92vw;
-    max-height: 85vh;
-    z-index: 5000;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
-  }
-  
-  #study-panel.expanded .panel-header {
-    cursor: move;
-  }
-  
-  #study-panel.expanded .note-textarea {
-    height: 350px;
-  }
+#study-panel.expanded,
+html.platform-macos #study-panel.expanded,
+body.platform-macos #study-panel.expanded,
+html.platform-ipad #study-panel.expanded,
+body.platform-ipad #study-panel.expanded,
+html.platform-iphone #study-panel.expanded,
+body.platform-iphone #study-panel.expanded,
+html.platform-android-pad #study-panel.expanded,
+body.platform-android-pad #study-panel.expanded,
+html.platform-android-phone #study-panel.expanded,
+body.platform-android-phone #study-panel.expanded {
+  position: fixed !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  width: min(800px, 92vw) !important;
+  max-width: 92vw !important;
+  height: 80vh !important;
+  max-height: 85vh !important;
+  z-index: 30005 !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+  border-radius: 16px !important;
+}
+
+#study-panel.expanded .panel-header,
+html.platform-macos #study-panel.expanded .panel-header,
+body.platform-macos #study-panel.expanded .panel-header {
+  cursor: move;
+}
+
+#study-panel.expanded .note-textarea,
+html.platform-macos #study-panel.expanded .note-textarea,
+body.platform-macos #study-panel.expanded .note-textarea {
+  height: 320px !important;
+  min-height: 200px !important;
 }
 
 .panel-header {
@@ -683,11 +865,12 @@ header .subtitle {
 
 .note-textarea {
   width: 100%;
-  height: 110px; /* 높이 제한 압축 (160px -> 110px) */
+  height: 300px !important;
+  min-height: 300px !important;
   background: rgba(148, 163, 184, 0.08);
   border: 1px solid var(--border-panel);
   border-radius: 8px;
-  padding: 6px 10px; /* 상하 패딩 50% 축소 (12px -> 6px) */
+  padding: 8px 10px;
   font-family: var(--font-family);
   font-size: 13.5px;
   color: var(--text-main);
@@ -846,25 +1029,79 @@ header .subtitle {
   header .subtitle {
     display: none;
   }
-  #search-panel {
-    top: calc(8px + env(safe-area-inset-top));
-    right: calc(8px + env(safe-area-inset-right));
-  }
-  .search-box {
-    width: 140px;
-    padding: 8px 12px;
-  }
-  .search-box:focus {
-    width: 180px;
-  }
   
-  /* 세로화면(모바일)에서 상단 데이터베이스 액션바(⚙️설정 포함 7개 수평 정렬 바) 다이나믹아일랜드 4px 아래 하강 배치 */
-  #admin-actions-bar {
-    top: 55px !important; /* 화면 최상단 기준 정확히 55px 아래 고정 배치 */
+  /* 세로화면(모바일)에서 상단 버튼군 및 검색바, 하단 도구 모음 액션바 반응형 크기 */
+  #floating-search-wrapper {
+    top: calc(clamp(6px, 1.8vw, 10px) + env(safe-area-inset-top, 0px)) !important;
+    width: clamp(110px, 34vw, 175px) !important;
+    height: clamp(36px, 9.5vw, 42px) !important;
+  }
+  #searchInput {
+    height: clamp(36px, 9.5vw, 42px) !important;
+    border-radius: clamp(18px, 4.75vw, 21px) !important;
+    font-size: clamp(11.5px, 3.2vw, 13.5px) !important;
+    padding: 0 clamp(8px, 2.2vw, 14px) !important;
+  }
+  #slide-lock-container {
+    top: calc(clamp(6px, 1.8vw, 10px) + env(safe-area-inset-top, 0px)) !important;
+    left: calc(clamp(8px, 2.5vw, 14px) + env(safe-area-inset-left, 0px)) !important;
+    width: clamp(100px, 28vw, 132px) !important;
+    height: clamp(36px, 9.5vw, 42px) !important;
+    border-radius: clamp(18px, 4.75vw, 21px) !important;
+  }
+  #slide-lock-handle {
+    width: clamp(36px, 9.5vw, 42px) !important;
+    height: clamp(36px, 9.5vw, 42px) !important;
+  }
+  #slide-lock-icon,
+  #slide-lock-icon-img {
+    width: clamp(20px, 5.5vw, 24px) !important;
+    height: clamp(20px, 5.5vw, 24px) !important;
   }
   #floating-settings-btn {
-    top: 61px !important; /* 화면 최상단 기준 정확히 61px 아래 고정 배치 (액션바 패딩 균형 중심 매칭) */
-    right: 16px !important;
+    top: calc(clamp(6px, 1.8vw, 10px) + env(safe-area-inset-top, 0px)) !important;
+    right: calc(clamp(8px, 2.5vw, 14px) + env(safe-area-inset-right, 0px)) !important;
+    width: clamp(36px, 9.5vw, 42px) !important;
+    height: clamp(36px, 9.5vw, 42px) !important;
+  }
+  #floating-settings-btn img,
+  #floating-settings-btn .emoji-icon {
+    width: clamp(20px, 5.5vw, 24px) !important;
+    height: clamp(20px, 5.5vw, 24px) !important;
+  }
+  #admin-actions-bar {
+    position: fixed !important;
+    top: auto !important;
+    bottom: calc(clamp(10px, 3vw, 16px) + env(safe-area-inset-bottom, 0px)) !important;
+    left: calc(clamp(10px, 3vw, 18px) + env(safe-area-inset-left, 0px)) !important;
+    right: calc(clamp(10px, 3vw, 18px) + env(safe-area-inset-right, 0px)) !important;
+    width: calc(100vw - 2 * clamp(10px, 3vw, 18px) - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)) !important;
+    max-width: calc(100vw - 2 * clamp(10px, 3vw, 18px) - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)) !important;
+    transform: none !important;
+    height: clamp(50px, 13vw, 58px) !important;
+    border-radius: clamp(25px, 6.5vw, 29px) !important;
+    background: rgba(255, 255, 255, 0.8) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(0, 0, 0, 0.12) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12) !important;
+    padding: 0 clamp(6px, 2vw, 12px) !important;
+    display: none !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+  }
+  body.admin-mode #admin-actions-bar,
+  #admin-actions-bar.active {
+    display: flex !important;
+  }
+  #admin-actions-bar .admin-action-btn-circle {
+    width: clamp(38px, 10.5vw, 44px) !important;
+    height: clamp(38px, 10.5vw, 44px) !important;
+  }
+  #admin-actions-bar .admin-action-btn-circle img,
+  #admin-actions-bar .admin-action-btn-circle .emoji-icon {
+    width: clamp(20px, 5.5vw, 24px) !important;
+    height: clamp(20px, 5.5vw, 24px) !important;
   }
 
   .panel-header {
@@ -896,22 +1133,18 @@ header .subtitle {
    Admin Mode & Modal UI Styles
    ========================================== */
 
-/* Floating Admin Database Action Panel (Top Left) */
+/* Floating Admin Database Action Panel (Clean borderless) */
 #admin-actions-bar {
-  position: absolute;
-  top: 210px; /* Positioned below the layer control panel */
-  left: 20px;
   display: flex;
-  flex-direction: column;
-  gap: 5px;
-  background: var(--bg-panel);
-  border: 1px solid var(--border-panel);
-  padding: 7px;
-  border-radius: 12px;
-  box-shadow: var(--shadow-panel);
-  backdrop-filter: var(--glass-blur);
-  z-index: 100;
-  transition: all 0.3s ease;
+  flex-direction: row;
+  gap: 6px;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  z-index: 12000;
 }
 
 .admin-action-btn {
@@ -1018,28 +1251,64 @@ header .subtitle {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(15, 23, 42, 0.7);
-  backdrop-filter: blur(6px);
+  width: 100vw;
+  height: var(--visual-viewport-height, 100vh);
+  max-height: var(--visual-viewport-height, 100vh);
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: row;
+  justify-content: flex-end; /* 화면 우측으로 배치 */
+  align-items: center; /* 세로 중앙 정렬 */
   z-index: 30000;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 16px) !important;
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 16px) !important;
+  padding-left: calc(env(safe-area-inset-left, 0px) + 16px) !important;
+  padding-right: calc(env(safe-area-inset-right, 0px) + 16px) !important;
+  box-sizing: border-box;
+  overflow: hidden;
+  touch-action: pan-y;
+  pointer-events: auto;
+}
+
+.modal-overlay[style*="display: none"],
+.modal-overlay[style*="display:none"],
+.modal-overlay.hidden {
+  display: none !important;
+}
+
+body.keyboard-open .modal-overlay {
+  padding-bottom: 0px !important;
 }
 
 .modal-content {
   background: var(--bg-board);
   border: 1px solid var(--border-panel);
   border-radius: 16px;
-  width: 500px;
-  max-width: 90%;
-  max-height: 85vh; /* 화면의 85% 이상 늘어나지 않도록 구속 */
-  overflow-y: auto; /* 내용이 넘칠 때 내부 스크롤 허용 */
+  width: 520px;
+  max-width: min(96vw, 650px);
+  height: auto;
+  max-height: min(90vh, calc(100vh - 48px));
+  flex: 0 1 auto;
+  min-height: 0;
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
   display: flex;
   flex-direction: column;
   animation: modal-pop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  overflow: hidden;
+  box-sizing: border-box;
+  margin: 0 !important;
+  pointer-events: auto;
+}
+
+.modal-content form {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
 }
 
 @keyframes modal-pop {
@@ -1054,11 +1323,12 @@ header .subtitle {
 }
 
 .modal-header {
-  padding: 20px 24px;
+  padding: 16px 20px;
   border-bottom: 1px solid var(--border-panel);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .modal-header h2 {
@@ -1067,12 +1337,17 @@ header .subtitle {
 }
 
 .form-grid {
-  padding: 24px;
+  padding: 20px 24px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
-  max-height: 70vh;
-  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+  max-height: none !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  touch-action: pan-y !important;
+  overscroll-behavior: contain;
 }
 
 .form-group {
@@ -1094,9 +1369,13 @@ header .subtitle {
 
 .form-group input, 
 .form-group select, 
-.form-group textarea {
+.form-group textarea,
+.relation-search,
+.modal-content input,
+.modal-content textarea,
+.modal-content select {
   font-family: var(--font-family);
-  font-size: 13px;
+  font-size: 14px;
   padding: 8px 12px;
   background: rgba(148, 163, 184, 0.08);
   border: 1px solid var(--border-panel);
@@ -1104,11 +1383,29 @@ header .subtitle {
   color: var(--text-main);
   outline: none;
   transition: border-color 0.2s ease;
+  -webkit-user-select: text !important;
+  user-select: text !important;
+  -webkit-touch-callout: default !important;
+  touch-action: manipulation !important;
+  pointer-events: auto !important;
+}
+
+@media screen and (max-width: 768px) {
+  .form-group input, 
+  .form-group select, 
+  .form-group textarea,
+  .relation-search,
+  .modal-content input,
+  .modal-content textarea,
+  .modal-content select {
+    font-size: 16px !important; /* Prevents WebKit iOS unwanted zoom and keyboard suppression */
+  }
 }
 
 .form-group input:focus, 
 .form-group select:focus, 
-.form-group textarea:focus {
+.form-group textarea:focus,
+.relation-search:focus {
   border-color: var(--text-accent);
 }
 
@@ -1137,6 +1434,9 @@ header .subtitle {
   display: flex;
   gap: 12px;
   align-items: center;
+  flex-shrink: 0;
+  background: var(--bg-board);
+  box-sizing: border-box;
 }
 
 .modal-btn {
@@ -1197,19 +1497,20 @@ header .subtitle {
 /* Left Sliding Design Style Editor Panel */
 #style-editor-panel {
   position: absolute;
-  top: 80px;
+  top: calc(76px + env(safe-area-inset-top));
+  bottom: calc(76px + env(safe-area-inset-bottom)) !important;
   right: -380px; /* Hide on the right instead of left */
   left: auto !important;
-  width: 360px;
+  width: 320px;
   height: auto;
-  max-height: 480px; /* Compact height to avoid overlap with bottom controls */
+  max-height: calc(100vh - 152px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important; /* 상단 간격(76px)과 동일하게 하단도 76px 여백 유지 */
   overflow-y: auto;
   background: var(--bg-panel);
   border: 1px solid var(--border-panel);
   border-radius: 16px;
   box-shadow: var(--shadow-panel);
   backdrop-filter: var(--glass-blur);
-  z-index: 30000;
+  z-index: 25000;
   transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
@@ -1225,6 +1526,20 @@ header .subtitle {
   gap: 8px !important;
   display: flex;
   flex-direction: column;
+}
+
+.style-action-btn {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  line-height: 1.3 !important;
+  word-break: keep-all !important;
+  min-height: 38px !important;
+}
+.style-action-btn:disabled {
+  opacity: 0.45 !important;
+  cursor: not-allowed !important;
 }
 
 .style-section {
@@ -1403,13 +1718,15 @@ header .subtitle {
 
 @media (max-width: 768px) {
   #style-editor-panel {
+    top: calc(72px + env(safe-area-inset-top)) !important;
+    bottom: calc(72px + env(safe-area-inset-bottom)) !important;
     width: 256px !important; /* 가로화면/모바일 너비 20% 축소 (320px -> 256px) */
     max-width: 90% !important;
     left: auto !important;
     right: -280px !important;
     transform: none !important;
     height: auto !important;
-    max-height: 400px !important; /* 모바일에서도 줌 조작바를 가리지 않게 축소 */
+    max-height: calc(100vh - 144px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important; /* 상단 간격(72px)과 대칭되게 하단 72px 여백 유지 */
     border-radius: 16px !important;
     border: 1px solid var(--border-panel) !important;
   }
@@ -1417,17 +1734,17 @@ header .subtitle {
     left: auto !important;
     right: 16px !important;
   }
-  /* 환경설정 창도 모바일에서 세로 화면 전체 가로 너비의 정확히 60% 영역을 정박하도록 맞춤 튜닝 */
+  /* 환경설정 창도 모바일에서 세로 화면 전체 가로 너비의 정확히 66% 영역을 정박하도록 맞춤 튜닝 (10% 확대: 60% -> 66%) */
   #settings-modal .modal-content {
-    width: 60% !important; /* 세로 화면 가로 너비의 정확히 60% 크기로 정밀 지정 */
-    max-width: 60% !important; 
+    width: 66% !important; /* 세로 화면 가로 너비의 10% 확대 (60% -> 66%) */
+    max-width: 66% !important; 
     min-width: auto !important;
-    top: 111px !important; /* 화면 상단 111px 정밀 여백 */
+    top: 96px !important; /* 화면 상단 96px 정밀 여백 (15px 위로 상향) */
     bottom: auto !important; /* 고정 높이 400px 렌더링을 위해 하단 구속 해제 */
-    height: 400px !important; /* 세로 높이 400px 고정 */
-    max-height: 400px !important;
-    right: 0px !important; /* 화면 우측 끝 밀착 */
-    border-radius: 16px 0px 0px 16px !important; /* 우측 모서리는 화면에 맞춤 정렬 */
+    height: auto !important; /* 동적 높이 확장 */
+    max-height: calc(100vh - 100px) !important;
+    right: calc(4px + env(safe-area-inset-right)) !important; /* 화면 우측 끝 4px 여백 */
+    border-radius: 16px !important;
     z-index: 30000 !important; /* 모바일에서도 검색 토글보다 앞쪽(레이어 위)에 오게 강제 */
   }
   #filter-panel {
@@ -1502,22 +1819,108 @@ header .subtitle {
   cursor: move !important;
 }
 
+[data-theme="dark"] .canvas-annotation {
+  background: rgba(30, 41, 59, 0.88);
+  border: 1px dashed rgba(148, 163, 184, 0.5);
+  color: #f8fafc;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+}
+
+[data-theme="dark"] .annotation-text {
+  color: #f8fafc !important;
+}
+
 /* Floating Toolbar for Editing Annotation properties */
 .annotation-toolbar {
   display: none;
   position: absolute;
-  top: -40px;
+  bottom: calc(100% + 8px);
+  top: auto;
   left: 50%;
   transform: translateX(-50%);
   background: var(--bg-panel);
   border: 1px solid var(--border-panel);
   border-radius: 8px;
-  padding: 4px 8px;
-  gap: 8px;
+  padding: 6px; /* 좌우 여백과 상하 여백을 6px로 동일하게 설정 */
+  gap: 5px; /* 1열과 2열 사이의 간격 */
   align-items: center;
+  justify-content: center;
   box-shadow: var(--shadow-panel);
   z-index: 150;
-  white-space: nowrap;
+  box-sizing: border-box;
+  flex-direction: column; /* 항상 2열 횡대로 고정 배치 */
+  width: max-content;
+  max-width: 96vw;
+}
+
+.annot-toolbar-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
+  width: 100%;
+}
+
+.annot-btn {
+  background: transparent;
+  border: none;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 4px;
+  cursor: pointer;
+  font-size: 13px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-main);
+  transition: background 0.2s ease, transform 0.1s ease;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  box-sizing: border-box;
+}
+
+.annot-btn:hover,
+.annot-btn:active {
+  background: var(--bg-hover, rgba(255, 255, 255, 0.15));
+  transform: scale(1.06);
+}
+
+.annot-btn.active {
+  background: var(--text-accent, #3b82f6);
+  color: #ffffff;
+}
+
+.annot-resize-handle {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 32px;
+  height: 32px;
+  cursor: se-resize;
+  z-index: 120;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: 4px;
+  box-sizing: border-box;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.annot-resize-handle::after {
+  content: '';
+  width: 14px;
+  height: 14px;
+  border-bottom: 3.5px solid var(--text-accent, #3b82f6);
+  border-right: 3.5px solid var(--text-accent, #3b82f6);
+  border-bottom-right-radius: 3px;
+  display: block;
+  pointer-events: none;
 }
 
 .admin-mode-active .canvas-annotation:hover .annotation-toolbar,
@@ -1527,7 +1930,7 @@ header .subtitle {
 }
 
 .annot-size-input {
-  width: 50px;
+  width: 44px;
   height: 24px;
   border: 1px solid var(--border-panel);
   border-radius: 4px;
@@ -1536,31 +1939,8 @@ header .subtitle {
   text-align: center;
   font-size: 12px;
   outline: none;
-}
-
-.annot-btn {
-  background: transparent;
-  border: none;
-  width: 24px;
-  height: 24px;
-  cursor: pointer;
-  font-size: 13px;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-main);
-  transition: background 0.2s ease;
-}
-
-.annot-btn:hover {
-  background: var(--bg-board);
-  color: var(--text-accent);
-}
-
-.annot-btn.active {
-  background: var(--text-accent);
-  color: #ffffff;
+  padding: 0 2px;
+  box-sizing: border-box;
 }
 
 .annot-color-wrapper {
@@ -1670,16 +2050,20 @@ header .subtitle {
   top: -12px;
   left: 20px;
   background: var(--bg-card-main, #ffffff);
-  padding: 2px 12px;
+  padding: 3px 14px;
   border-radius: 20px;
   font-size: 15px;
   font-weight: 700;
   color: var(--text-muted, #64748b);
   border: 1px solid var(--border-panel, #e2e8f0);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
   letter-spacing: 0.5px;
   white-space: nowrap;
-  z-index: 4;
+  z-index: 1004;
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .family-group-panel.cain { background-color: rgba(239, 68, 68, 0.03); border-color: rgba(239, 68, 68, 0.15); }
@@ -1729,40 +2113,17 @@ header .subtitle {
   letter-spacing: 0.5px;
 }
 
-/* Autocomplete suggestions dropdown styling */
-.autocomplete-suggestions {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  width: 100%;
-  max-height: 150px;
-  overflow-y: auto;
-  background: var(--bg-card-main, #ffffff);
-  border: 1px solid var(--border-panel, #cbd5e1);
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 1001;
-  display: none;
-}
-
-.suggestion-item {
-  padding: 8px 12px;
-  font-size: 12px;
-  cursor: pointer;
-  color: var(--text-color, #1e293b);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-.suggestion-item:last-child {
-  border-bottom: none;
-}
-
-.suggestion-item:hover {
-  background: var(--primary-color, #ff7800);
-  color: white !important;
+/* Autocomplete suggestions dropdown styling - Completely disabled */
+.autocomplete-suggestions,
+.suggestion-item,
+datalist {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  width: 0 !important;
+  overflow: hidden !important;
 }
 
 .suggestion-item span.sug-id {
@@ -2125,21 +2486,31 @@ header .subtitle {
 /* Custom Polygon Vertex Handles (Admin Mode Only) */
 .poly-vertex-handle {
   position: absolute;
-  width: 10px;
-  height: 10px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   background: #ea580c;
   border: 2px solid #ffffff;
   cursor: move;
   transform: translate(-50%, -50%);
   z-index: 1003;
-  box-shadow: 0 1.5px 4px rgba(0,0,0,0.3);
-  transition: background-color 0.2s, transform 0.2s;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+  transition: background-color 0.2s, transform 0.15s;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-.poly-vertex-handle:hover {
+.poly-vertex-handle:hover,
+.poly-vertex-handle:active {
   background: #c2410c;
-  transform: translate(-50%, -50%) scale(1.3);
+  transform: translate(-50%, -50%) scale(1.35);
+}
+
+.poly-vertex-handle.selected {
+  border-color: #ff7800 !important;
+  box-shadow: 0 0 0 4px rgba(255, 120, 0, 0.5) !important;
+  background: #c2410c !important;
 }
 
 /* Custom Polygon selection highlighting */
@@ -2295,6 +2666,20 @@ header .subtitle {
   border: 1px solid rgba(245, 158, 11, 0.3);
 }
 
+[data-theme="dark"] .marker-event .marker-icon {
+  background: linear-gradient(135deg, #d97706, #92400e);
+  color: #fef08a;
+  border-color: #fbbf24;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+[data-theme="dark"] .marker-event .marker-label {
+  background: rgba(30, 41, 59, 0.95);
+  color: #fde047;
+  border: 1px solid rgba(245, 158, 11, 0.6);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  font-weight: 600;
+}
+
 /* Location Marker */
 .marker-location .marker-icon {
   background: linear-gradient(135deg, #bbf7d0, #22c55e);
@@ -2304,6 +2689,20 @@ header .subtitle {
   background: rgba(187, 247, 208, 0.9);
   color: #14532d;
   border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+[data-theme="dark"] .marker-location .marker-icon {
+  background: linear-gradient(135deg, #16a34a, #14532d);
+  color: #bbf7d0;
+  border-color: #4ade80;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+[data-theme="dark"] .marker-location .marker-label {
+  background: rgba(30, 41, 59, 0.95);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.6);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  font-weight: 600;
 }
 
 .marker-label {
@@ -3061,7 +3460,7 @@ svg path.prophets-aura {
 
 /* Settings Modal Specific Styles */
 .settings-body {
-  padding: 24px;
+  padding: 17px 15px 6px 15px !important;
   max-height: 70vh;
   overflow-y: auto;
 }
@@ -3112,17 +3511,27 @@ svg path.prophets-aura {
   width: 44px;
   height: 24px;
   flex-shrink: 0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .switch-toggle input {
-  opacity: 0;
-  width: 0;
-  height: 0;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  opacity: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  z-index: 5 !important;
+  cursor: pointer !important;
+  display: block !important;
 }
 
 .slider-round {
   position: absolute;
-  cursor: pointer;
+  pointer-events: none;
   top: 0;
   left: 0;
   right: 0;
@@ -3150,6 +3559,49 @@ svg path.prophets-aura {
 
 .switch-toggle input:checked + .slider-round:before {
   transform: translateX(20px);
+}
+
+/* Unified Single Custom Checkbox */
+.custom-layer-chk {
+  width: 18px !important;
+  height: 18px !important;
+  border-radius: 4px !important;
+  border: 1.5px solid var(--border-panel) !important;
+  background: var(--bg-panel) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  box-sizing: border-box !important;
+  padding: 0 !important;
+  flex-shrink: 0 !important;
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.custom-layer-chk .chk-icon {
+  display: none !important;
+}
+
+.custom-layer-chk.checked {
+  background: #0284c7 !important;
+  border-color: #0284c7 !important;
+}
+
+.custom-layer-chk.checked .chk-icon {
+  display: block !important;
+}
+
+.custom-layer-chk:active {
+  transform: scale(0.9) !important;
+}
+
+.switch-toggle-btn {
+  transition: transform 0.1s ease !important;
+}
+.switch-toggle-btn:active {
+  transform: scale(0.92) !important;
 }
 
 /* Settings Modal Button Styles */
@@ -3191,37 +3643,148 @@ svg path.prophets-aura {
   margin-top: 0 !important;
 }
 
-/* 환경설정 모달 전체 오버레이 페이드아웃(흐려짐/블러) 제거, 완전투명화 및 바깥 클릭 감지 복구 */
+/* 환경설정 모달 전체 오버레이 페이드아웃(흐려짐/블러) 제거, 완전투명화 및 하단 컨트롤 가림 방지 */
 #settings-modal {
   background: transparent !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
-  pointer-events: auto !important; /* 빈 화면 터치 시 창이 닫히도록 클릭 이벤트 감지 복구 */
-  z-index: 30000 !important;
+  pointer-events: none !important; /* 모달 바깥 영역의 클릭 및 락버튼 등 하단 컨트롤이 가려지지 않도록 설정 */
+  z-index: 25000 !important;
+  align-items: flex-start !important;
+  justify-content: flex-end !important;
+  padding: 0 !important;
 }
 
-/* 환경설정 창 너비를 선디자인 편집기(360px)와 매칭, 우측 하단 끝(bottom: 16px)까지 전체 연장 */
+/* 환경설정 창 너비 2배 확대 (161px -> 322px), 동적 높이 및 설정 버튼 바로 아래 5px 배치 */
 #settings-modal .modal-content {
-  position: absolute !important;
-  top: 111px !important; /* 환경설정 창의 시작 상단을 화면 상단에서 111px 아래로 정박 */
-  bottom: auto !important; /* 고정 높이 400px 동작을 위해 하단 구속 해제 */
-  right: 0px !important; /* 화면 우측 끝 밀착 */
+  position: fixed !important;
+  margin: 0 !important;
+  transform: none !important;
+  top: calc(27px + env(safe-area-inset-top, 0px)) !important;
+  bottom: auto !important;
+  right: calc(16px + env(safe-area-inset-right, 0px)) !important; /* 화면 우측 여백 */
   left: auto !important;
-  width: 350px !important; /* 가로 너비 350px 통일 */
-  max-width: 90% !important;
+  width: 322px !important; /* 가로 너비 2배 확대 (161px -> 322px) */
+  max-width: calc(100vw - 32px) !important;
   min-width: auto !important;
-  height: 400px !important; /* 세로 높이 400px 고정 */
-  max-height: 400px !important;
+  height: auto !important; /* 동적 높이 확장 */
+  max-height: calc(100vh - 80px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
   overflow-y: auto !important;
   pointer-events: auto !important; /* 설정창 내부 요소 터치 조작 허용 */
-  z-index: 13000 !important; /* 검색 토글보다 높은 레이어로 가림 */
-  background: var(--bg-panel) !important;
+  z-index: 25000 !important;
+  background: #ffffff !important; /* 100% 완전 불투명 화이트 */
   border: 1px solid var(--border-panel) !important;
-  border-radius: 16px 0px 0px 16px !important; /* 우측 면은 화면 모서리에 딱 맞추고, 좌측 노출 면만 둥글게 가공 */
-  box-shadow: var(--shadow-panel) !important;
-  backdrop-filter: none !important; /* 뒤쪽 검색 토글 실루엣 투과를 없애기 위해 블러 필터 해제 */
+  border-radius: 16px !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25) !important;
+  backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
+
+#settings-modal .settings-body {
+  padding: 17px 15px 8px 15px !important;
+}
+
+#settings-modal .layer-toggles-grid {
+  grid-template-columns: 1fr 1fr !important;
+  gap: 5px 8px !important;
+}
+
+#settings-modal .settings-btn {
+  font-size: 12px !important;
+  padding: 6px 8px !important;
+}
+
+[data-theme="dark"] #settings-modal .modal-content {
+  background: #0f172a !important; /* 다크모드 100% 완전 불투명 솔리드 다크 차콜 */
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* macOS 데스크톱 환경에서 모든 창(편집 추가 모달, 스타일 패널, 연구 패널)이 상단 검색바 및 6버튼 박스와 겹치지 않도록 60px 아래에 배치 */
+.modal-overlay,
+html.platform-macos .modal-overlay,
+body.platform-macos .modal-overlay {
+  justify-content: center !important;
+  align-items: center !important;
+  padding-top: calc(40px + env(safe-area-inset-top)) !important;
+  padding-bottom: calc(40px + env(safe-area-inset-bottom)) !important;
+  padding-right: 16px !important;
+  padding-left: 16px !important;
+  box-sizing: border-box !important;
+}
+
+.modal-content,
+#admin-modal .modal-content,
+#layer-item-modal .modal-content,
+#admin-dashboard-modal .modal-content,
+html.platform-macos #admin-modal .modal-content,
+body.platform-macos #admin-modal .modal-content,
+html.platform-macos #layer-item-modal .modal-content,
+body.platform-macos #layer-item-modal .modal-content {
+  width: 650px !important;
+  max-width: 90vw !important;
+  height: auto !important;
+  max-height: calc(100vh - 80px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
+  margin: auto !important;
+  overflow-y: auto !important;
+}
+
+#style-editor-panel,
+html.platform-macos #style-editor-panel,
+body.platform-macos #style-editor-panel {
+  position: fixed !important;
+  top: calc(40px + env(safe-area-inset-top)) !important;
+  bottom: calc(40px + env(safe-area-inset-bottom)) !important;
+  right: 16px !important;
+  transform: translateX(calc(100% + 50px)) !important;
+  width: 380px !important;
+  max-height: calc(100vh - 80px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
+  height: calc(100vh - 80px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
+  overflow-y: auto !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s !important;
+  z-index: 15000 !important;
+}
+#style-editor-panel.active,
+html.platform-macos #style-editor-panel.active,
+body.platform-macos #style-editor-panel.active {
+  transform: translateX(0) !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+#study-panel,
+html.platform-macos #study-panel,
+body.platform-macos #study-panel {
+  position: fixed !important;
+  top: calc(40px + env(safe-area-inset-top)) !important;
+  bottom: calc(40px + env(safe-area-inset-bottom)) !important;
+  right: 16px !important;
+  transform: translateX(calc(100% + 50px)) !important;
+  width: 380px !important;
+  max-height: calc(100vh - 80px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
+  height: calc(100vh - 80px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
+  overflow-y: auto !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s !important;
+  z-index: 15000 !important;
+}
+#study-panel.active:not(.expanded),
+html.platform-macos #study-panel.active:not(.expanded),
+body.platform-macos #study-panel.active:not(.expanded) {
+  transform: translateX(0) !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+#study-panel.expanded,
+html.platform-macos #study-panel.expanded,
+body.platform-macos #study-panel.expanded {
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+
 
 /* History Undo/Redo Controls Float Styling */
 .history-control-btn {
@@ -3236,35 +3799,44 @@ svg path.prophets-aura {
   transform: translateY(0px) scale(0.96);
 }
 
-/* Landscape Mode layout width 20% reduction adjustment for style-editor-panel */
+/* Landscape Mode layout adjustment */
 @media (orientation: landscape) {
   #style-editor-panel {
-    width: 256px !important; /* 20% reduction (320px -> 256px) */
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    bottom: auto !important;
+    width: 280px !important;
     max-width: 90% !important;
     left: auto !important;
-    right: -280px !important;
+    right: -320px !important;
+    height: auto !important;
+    max-height: min(88vh, calc(100vh - 40px)) !important;
   }
   #style-editor-panel.active {
     left: auto !important;
-    right: 16px !important;
+    right: calc(16px + env(safe-area-inset-right)) !important;
   }
-  /* 환경설정 창도 가로화면에서 선디자인 편집기와 동일하게 256px로 매칭 */
+  /* 환경설정 창도 가로화면에서 화면 우측 중앙 배치 */
   #settings-modal .modal-content {
-    position: absolute !important;
-    top: 70px !important; /* 위로 10px 상향 조정 */
-    bottom: 20vh !important; /* 화면 전체 높이의 20% 만큼 바닥을 줄여 띄움 */
-    right: 16px !important;
+    position: fixed !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    bottom: auto !important;
+    right: calc(16px + env(safe-area-inset-right)) !important;
     left: auto !important;
-    width: 256px !important;
-    max-width: 90% !important;
+    width: 260px !important;
+    max-width: 85vw !important;
     min-width: auto !important;
     height: auto !important;
-    max-height: calc(80vh - 70px) !important; /* 바닥 20%를 뺀 나머지 화면 안에서 최대 높이 제한 */
-    z-index: 13000 !important; /* 검색 토글(12000)을 완벽하게 덮는 최상위 레이어 */
+    max-height: min(88vh, calc(100vh - 40px)) !important;
+    z-index: 13500 !important;
     overflow-y: auto !important;
-    background: var(--bg-panel) !important; /* 뒤쪽 검색 토글이 비치지 않게 솔리드 패널 배경 적용 */
-    box-shadow: var(--shadow-panel) !important;
-    border-radius: 16px !important; /* 하단이 공중에 뜨므로 사방 모서리를 다시 둥글게 원복 */
+    background: #ffffff !important;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25) !important;
+    border-radius: 16px !important;
+  }
+  [data-theme="dark"] #settings-modal .modal-content {
+    background: #0f172a !important;
   }
   
   /* 상세 정보창(네임박스 창) 가로화면 시 우측 30% 폭으로 조절하여 좌측 70% 가계도 캔버스 확보 */
@@ -3303,49 +3875,109 @@ svg path.prophets-aura {
 }
 
 /* ==========================================================================
-   🔍 검색창 활성화 시 가로/세로 전체 무조건 X축 절대 정중앙 정밀 대칭 고정 락
+   🔍 상단 타이틀바 바로 아래 검색바 (검색 버튼 제거 & 상단 상시 노출)
    ========================================================================== */
-body.search-focused #floating-search-wrapper {
+#floating-search-wrapper {
   position: fixed !important;
-  left: 50% !important; /* 화면 가로폭의 정확히 50% 지점 */
+  top: calc(-18px + env(safe-area-inset-top)) !important;
+  bottom: auto !important;
+  left: 50% !important;
   right: auto !important;
-  transform: translateX(-50%) !important; /* 50% 지점에서 검색창 자체 절반 크기만큼 역인출하여 완벽한 데칼코마니 대칭 실현 */
-  width: 268px !important; /* 패널 크기(220px input + 8px gap + 40px btn)에 타이트하게 일치화하여 중앙 데칼코마니 대칭 실현 */
-  max-width: 268px !important;
+  transform: translateX(-50%) !important;
+  width: min(360px, calc(100vw - 32px)) !important;
+  max-width: calc(100vw - 32px) !important;
+  height: 40px !important;
   display: flex !important;
   justify-content: center !important;
   align-items: center !important;
   gap: 0px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  z-index: 16000 !important;
   pointer-events: auto !important;
 }
 
-#floating-search-toggle-btn, #search-panel, #searchInput, #search-results {
-  pointer-events: auto !important; /* 부모 wrapper가 pointer-events none이어도 본인들은 터치를 획득하게 수립 */
+#floating-search-toggle-btn {
+  display: none !important; /* 검색 버튼 영구 제거 */
+  pointer-events: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+#search-panel {
+  position: relative !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  pointer-events: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+#searchInput {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  height: 40px !important;
+  border-radius: 20px !important;
+  padding: 0 18px !important;
+  font-size: 15px !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(0, 0, 0, 0.12) !important;
+  color: #0f172a !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12) !important;
+  outline: none !important;
+}
+
+[data-theme="dark"] #searchInput {
+  background: rgba(30, 41, 59, 0.95) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  color: #f8fafc !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
+}
+
+#search-results {
+  width: 100% !important;
+  max-width: 100% !important;
+  top: 46px !important; /* 상단 검색창 바로 아래로 펼쳐짐 */
+  bottom: auto !important;
+  left: 0 !important;
+  right: 0 !important;
+  max-height: min(320px, calc(100vh - (20px + env(safe-area-inset-top)) - 80px)) !important;
+  overflow-y: auto !important;
+  box-sizing: border-box !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18) !important;
+  border-radius: 14px !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
 }
 
 /* 모든 기종 공통: 가로화면(Landscape)일 때 검색 결과 드롭다운 최대 높이 제한 축소 보정 */
 @media (orientation: landscape) {
-  #search-results {
-    max-height: 90px !important; /* 화면 가림 방지 및 키보드 위 잔여공간에 최적화 */
+  body.search-focused #search-results {
+    max-height: min(130px, calc(100vh - (var(--keyboard-height, 0px) * 1.05) - 50px)) !important;
   }
 }
 
-body.search-focused #floating-search-toggle-btn {
-  display: none !important; /* 활성화 시 돋보기 버튼 물리 영역 완전 제거 */
-}
-
-body.search-focused #search-panel {
-  width: 240px !important;
-  opacity: 1 !important;
-  pointer-events: auto !important;
-  margin: 0 !important; /* 쏠림을 방지하기 위해 잔여 마진을 완전히 제거 */
-}
 
 /* ==========================================================================
    🎨 락 버튼 및 헤더/컨트롤 모든 버튼 내부 이모지/아이콘 회색 톤 및 크기 규격화 통일
    ========================================================================== */
 /* 1. 락 버튼 컨테이너를 다른 버튼들과 동일한 프리미엄 흰색 테마로 단정히 격상 */
 #slide-lock-container {
+  width: 165px !important;
+  height: 55px !important;
+  border-radius: 27.5px !important;
   background: transparent !important; /* 평소에는 가이드 배경을 투명하게 숨김 */
   border: 1px solid transparent !important; /* 평소에는 가이드 선을 투명하게 숨김 */
   box-shadow: none !important; /* 평소에는 그림자 숨김 */
@@ -3356,23 +3988,48 @@ body.search-focused #search-panel {
 /* 사용자가 슬라이더 동그라미를 손가락으로 붙잡고 미는(dragging) 찰나의 순간에만 가이드 선과 배경이 스르륵 등장 */
 #slide-lock-container.dragging {
   background: rgba(255, 255, 255, 0.95) !important;
-  border: 1px solid rgba(0, 0, 0, 0.08) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+  border: 1px solid rgba(0, 0, 0, 0.12) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
 }
 
-/* 2. 락 슬라이더 텍스트 색상을 흰색 배경에 맞춰 어두운 슬레이트 그레이로 가시성 확보 */
+[data-theme="dark"] #slide-lock-container.dragging {
+  background: rgba(30, 41, 59, 0.95) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* 2. 락 슬라이더 텍스트를 트랙의 상하 정중앙(Vertical Center) 및 가로 중앙에 완벽하게 정렬 */
 #slide-lock-text {
-  color: #475569 !important;
+  position: absolute !important;
+  left: 55px !important;
+  right: 6px !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #334155 !important;
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.2px !important;
+  line-height: 1 !important;
+  pointer-events: none !important;
+  z-index: 1 !important;
+  white-space: nowrap !important;
 }
 
-/* 3. 락 버튼 내부 자물쇠 아이콘 색상을 설정 톱니바퀴처럼 차분한 회색으로 통일 */
+[data-theme="dark"] #slide-lock-text {
+  color: #f1f5f9 !important;
+}
+
+/* 3. 락 버튼 내부 자물쇠 아이콘 100% 원본 색상 보존 */
 #slide-lock-icon {
   font-size: 18px !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  /* 밝기를 75%로 높여 진한 검은색을 걷어내고 밝고 부드러운 실버 회색 톤으로 보정 */
-  filter: grayscale(100%) brightness(75%) contrast(100%) !important;
+  filter: none !important;
 }
 
 /* 3-1. 락 슬라이더 원형 손잡이의 입체적인 동그란 윤곽을 흰색 캡슐 위에서 부각시킴 */
@@ -3386,14 +4043,16 @@ body.search-focused #search-panel {
   max-width: 40px !important;
   min-height: 40px !important;
   max-height: 40px !important;
-  border-radius: 20px !important;
+  border-radius: 50% !important;
   flex-shrink: 0 !important;
   flex-grow: 0 !important;
   box-sizing: border-box !important;
   touch-action: none !important; /* iOS/iPadOS 스와이프 제스처 간섭 차단 */
+  position: relative !important;
+  top: 0px !important;
 }
 
-/* 4. 헤더/줌 컨트롤 등 모든 원형 버튼들 내부 이모지 및 SVG 아이콘의 크기/색조 일괄 통일 */
+/* 4. 헤더/줌 컨트롤 등 모든 원형 버튼들 내부 이모지 및 SVG 아이콘의 크기/색조 일괄 통일 (K80 #333333) */
 .admin-action-btn-circle span,
 .admin-action-btn-circle svg,
 #floating-settings-btn svg,
@@ -3405,16 +4064,13 @@ body.search-focused #search-panel {
 #text-box-custom-icon,
 #search-custom-icon,
 #slide-lock-handle svg {
-  /* 크기는 HTML 인라인 스타일 및 SVG 속성을 직접 따르도록 규격 해제 */
   line-height: 1 !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  color: #64748b !important; /* 차분한 그레이 */
-  fill: #64748b !important;
-  
-  /* 이모지(📜, 📍, 📝, 🎨, 🔍 등)를 밝고 화사한 실버 회색 톤으로 grayscale 및 밝기 75% 적용 보정 */
-  filter: grayscale(100%) brightness(75%) contrast(100%) !important;
+  color: #333333 !important; /* K80 통일 */
+  fill: #333333 !important;
+  filter: none !important;
 }
 
 /* 5. 줌 바 내부의 육각형 아이콘 등 SVG 스트로크 컬러도 설정 그레이로 통일 */
@@ -3422,13 +4078,17 @@ body.search-focused #search-panel {
 .admin-action-btn-circle svg circle,
 .admin-action-btn-circle svg polygon,
 .admin-action-btn-circle svg rect {
-  stroke: #64748b !important;
+  stroke: #333333 !important;
   fill: none !important;
 }
 
 /* 6. + (더하기) 및 - (빼기) 텍스트 기호의 색상과 폰트 크기 정밀 락 */
 .admin-action-btn-circle {
-  color: #64748b !important;
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
+  min-height: 40px !important;
+  color: #333333 !important;
   font-size: 18px !important;
   font-weight: bold !important;
 }
@@ -3465,7 +4125,7 @@ body.search-focused #search-panel {
 /* 역사 제어 벡터 화살표 아이콘 면 채우기(fill)를 방지하여 선명한 라인만 표출 (토끼귀 찌그러짐 해소) */
 svg.history-custom-icon {
   fill: none !important;
-  stroke: #64748b !important;
+  stroke: #475569 !important;
   stroke-width: 2.5 !important;
 }
 
@@ -3473,32 +4133,63 @@ svg.history-custom-icon {
    📱 모바일 세로 화면/좁은 스크린 최적화 모달 보정 (텍스트 상자 추가 등 잘림 완치)
    ========================================================================== */
 @media (max-width: 768px) {
-  /* 1. 모달 오버레이를 상단 정렬 및 전체 스크롤이 가능하도록 강제 개선 */
+  /* 1. 모달 오버레이 상단을 다이나믹 아일랜드 4px 아래에 정확히 배치하고 키보드 대응 뷰포트 높이 제한 */
   .modal-overlay {
-    align-items: flex-start !important;
-    overflow-y: auto !important;
-    padding: 16px 8px !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    padding-top: calc(env(safe-area-inset-top, 0px) + 4px) !important;
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 4px) !important;
+    padding-left: calc(env(safe-area-inset-left, 0px) + 8px) !important;
+    padding-right: calc(env(safe-area-inset-right, 0px) + 8px) !important;
+    height: var(--visual-viewport-height, 100vh) !important;
+    max-height: var(--visual-viewport-height, 100vh) !important;
+    overflow: hidden !important;
   }
 
-  /* 2. 모달 콘텐츠 높이를 기기 전체 높이 한도 내로 정밀 구속 */
+  body.keyboard-open .modal-overlay {
+    padding-bottom: 0px !important;
+  }
+
+  /* 2. 모달 콘텐츠 높이를 뷰포트 내로 유연하게 제한 */
   .modal-content {
-    margin: 8px auto !important;
-    max-height: calc(100vh - 32px) !important;
+    margin: 0 auto !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
     max-width: 96% !important;
-    border-radius: 12px !important;
+    border-radius: 14px !important;
+    overflow: hidden !important;
+  }
+
+  .modal-content form {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 1 auto !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
   }
 
   /* 3. 모달의 헤더/바디/푸터 패딩을 밀도 있게 압축 */
   .modal-header {
-    padding: 12px 16px !important;
+    padding: 10px 16px !important;
+    flex-shrink: 0 !important;
   }
   .modal-header h2 {
     font-size: 16px !important;
   }
 
   .form-grid {
-    padding: 12px 16px !important;
-    gap: 8px !important; /* 폼 요소 간격 다이어트 */
+    padding: 10px 14px !important;
+    gap: 10px !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    touch-action: pan-y !important;
+    overscroll-behavior-y: contain !important;
   }
   .form-group label {
     font-size: 11px !important;
@@ -3508,7 +4199,12 @@ svg.history-custom-icon {
   .form-group select,
   .form-group textarea {
     padding: 6px 8px !important;
-    font-size: 12px !important;
+    font-size: 13px !important;
+  }
+
+  .modal-footer {
+    padding: 12px 16px !important;
+    flex-shrink: 0 !important;
   }
 
   /* 4. 긴 관계 체크리스트 박스의 높이를 축소하여 레이아웃 부담 대폭 경감 */
@@ -3529,10 +4225,7 @@ svg.history-custom-icon {
     font-size: 11px !important;
   }
 
-  /* 5. 세로 화면 시 락 토글의 폭을 20px 축소하여 우측의 되돌리기 버튼에 닿지 않도록 방어 */
-  #slide-lock-container {
-    width: 91px !important;
-  }
+
 }
 
 /* 6. 락 토글 및 신규 선화 아이콘들의 뭉개짐(fill 간섭) 완전 차단 2중 수호자 룰 */
@@ -3543,12 +4236,16 @@ svg.history-custom-icon {
 .custom-add-person-icon circle,
 .custom-add-person-icon path,
 .custom-add-event-icon,
+.custom-add-event-icon rect,
 .custom-add-event-icon path,
 .custom-add-location-icon,
 .custom-add-location-icon circle,
 .custom-add-location-icon path,
 #text-box-custom-icon,
 #text-box-custom-icon path,
+#text-box-custom-icon polyline,
+.custom-add-polygon-icon,
+.custom-add-polygon-icon path,
 .custom-style-editor-icon,
 .custom-style-editor-icon circle,
 .custom-style-editor-icon path,
@@ -3560,60 +4257,73 @@ svg.history-custom-icon {
 }
 
 /* ==========================================================================
-   📱 iPhone 8 / 7 / 6s / 6 (375x667) Dedicated Precision Margins
+   📱 iPhone 8 / 7 / 6s / 6 / SE (375x667) Dedicated Precision Margins
    ========================================================================== */
 
-/* 1. Portrait Mode (세로화면) */
+/* 1. Portrait Mode & Landscape Base */
 @media only screen and (device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait) {
-  #bottom-controls-wrapper {
-    bottom: 4px !important;
-  }
-  body:not(.search-focused) #floating-search-wrapper {
-    bottom: 4px !important;
-    right: 16px !important; /* 환경설정 세로모드 우측 여백 16px와 수평 일치 */
-    left: auto !important;
-    transform: none !important;
-  }
   #slide-lock-container {
-    bottom: 4px !important;
+    left: 16px !important;
+    bottom: calc(8px + env(safe-area-inset-bottom)) !important;
   }
 }
 
 /* 2. Landscape Mode (가로화면) */
 @media only screen and (device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape) {
-  #bottom-controls-wrapper {
-    bottom: 4px !important;
+  #slide-lock-container {
+    bottom: calc(8px + env(safe-area-inset-bottom)) !important;
   }
-  body:not(.search-focused) #floating-search-wrapper {
-    bottom: 4px !important;
-    right: 16px !important; /* 환경설정 가로모드 우측 여백 16px와 수평 일치 */
+  #admin-actions-bar {
+    top: auto !important;
+    bottom: calc(8px + env(safe-area-inset-bottom)) !important;
+    right: calc(16px + env(safe-area-inset-right)) !important;
     left: auto !important;
     transform: none !important;
+    height: 55px !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
   }
-  #slide-lock-container {
-    bottom: 4px !important;
-  }
+}
 
-  /* 도구버튼모음박스와 환경설정을 상단화면끝에서 4px 간격을 두고 정박 */
-  #admin-actions-bar {
-    top: 4px !important;
+/* ==========================================================================
+   📱 iPhone Notch without Dynamic Island (iPhone X/11/12/13/14) Dedicated Margins
+   ========================================================================== */
+@media only screen and (device-width: 375px) and (device-height: 812px) and (orientation: portrait),
+       only screen and (device-width: 390px) and (device-height: 844px) and (orientation: portrait),
+       only screen and (device-width: 414px) and (device-height: 896px) and (orientation: portrait),
+       only screen and (device-width: 428px) and (device-height: 926px) and (orientation: portrait) {
+  #slide-lock-container {
+    left: 16px !important;
+    bottom: calc(8px + env(safe-area-inset-bottom)) !important;
   }
-  #floating-settings-btn {
-    top: 4px !important;
+  #admin-actions-bar {
+    right: 16px !important;
+    bottom: calc(8px + env(safe-area-inset-bottom)) !important;
   }
 }
 
 /* ==========================================================================
    💻 iPad Air 13-inch / iPad Pro 12.9-inch (1024x1366) Dedicated Margins
    ========================================================================== */
-@media only screen and (device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2) {
-  body:not(.search-focused) #floating-search-wrapper {
-    right: 16px !important; /* 환경설정 대화면(iPad) 우측 여백 16px와 수평 일치 */
+@media only screen and (device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2),
+       only screen and (device-width: 1366px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2) {
+  #slide-lock-container {
+    left: calc(16px + env(safe-area-inset-left)) !important;
+    bottom: calc(12px + env(safe-area-inset-bottom)) !important;
+  }
+  #admin-actions-bar {
+    top: auto !important;
+    bottom: calc(12px + env(safe-area-inset-bottom)) !important;
+    right: calc(16px + env(safe-area-inset-right)) !important;
     left: auto !important;
     transform: none !important;
-  }
-  #slide-lock-container {
-    left: 16px !important; /* 검색창 우측 여백(16px)과 수평 좌우 대칭 일치화 */
+    height: 55px !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
   }
 }
 
@@ -3621,35 +4331,66 @@ svg.history-custom-icon {
    💻 iPad Air 11-inch (820x1180) & iPad Pro 11-inch (834x1194) Dedicated Margins
    ========================================================================== */
 @media only screen and (device-width: 820px) and (device-height: 1180px) and (-webkit-device-pixel-ratio: 2),
-       only screen and (device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2) {
-  body:not(.search-focused) #floating-search-wrapper {
-    right: 16px !important; /* 환경설정 대화면(iPad 11) 우측 여백 16px와 수평 일치 */
-    left: auto !important;
-    transform: none !important;
-  }
+       only screen and (device-width: 1180px) and (device-height: 820px) and (-webkit-device-pixel-ratio: 2),
+       only screen and (device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2),
+       only screen and (device-width: 1194px) and (device-height: 834px) and (-webkit-device-pixel-ratio: 2) {
   #slide-lock-container {
-    left: 16px !important; /* 검색창 우측 여백(16px)과 수평 좌우 대칭 일치화 */
+    left: calc(16px + env(safe-area-inset-left)) !important;
+    bottom: calc(12px + env(safe-area-inset-bottom)) !important;
   }
   #admin-actions-bar {
-    top: 23px !important; /* 기본 20px에서 3px 아래로 인하 조정 */
-  }
-  #floating-settings-btn {
-    top: 29px !important; /* 기본 26px에서 3px 아래로 인하 조정 (상하 중심선 49px 일치) */
+    top: auto !important;
+    bottom: calc(12px + env(safe-area-inset-bottom)) !important;
+    right: calc(16px + env(safe-area-inset-right)) !important;
+    left: auto !important;
+    transform: none !important;
+    height: 55px !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
   }
 }
 
 /* ==========================================================================
-   📱 iPhone 15 & iPhone 15 Pro (393x852) Dedicated Margins
+   📱 iPhone 14 Pro, 15, 15 Pro, 16, 16 Pro (393x852 & 402x874) Dedicated Margins
    ========================================================================== */
 @media only screen and (device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3),
-       only screen and (device-width: 852px) and (device-height: 393px) and (-webkit-device-pixel-ratio: 3) {
-  body:not(.search-focused) #floating-search-wrapper {
-    right: 16px !important; /* 검색 버튼 우측 16px 간격 정박 */
-    left: auto !important;
-    transform: none !important;
+       only screen and (device-width: 852px) and (device-height: 393px) and (-webkit-device-pixel-ratio: 3),
+       only screen and (device-width: 402px) and (device-height: 874px) and (-webkit-device-pixel-ratio: 3),
+       only screen and (device-width: 874px) and (device-height: 402px) and (-webkit-device-pixel-ratio: 3),
+       only screen and (device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3),
+       only screen and (device-width: 932px) and (device-height: 430px) and (-webkit-device-pixel-ratio: 3) {
+  @media (orientation: portrait) {
+    #slide-lock-container {
+      left: 16px !important;
+      bottom: calc(8px + env(safe-area-inset-bottom)) !important;
+    }
+    #admin-actions-bar {
+      right: 16px !important;
+      bottom: calc(8px + env(safe-area-inset-bottom)) !important;
+    }
   }
-  #slide-lock-container {
-    left: 16px !important; /* 락버튼 좌측 16px 간격 정박 */
+  @media (orientation: landscape) {
+    #slide-lock-container,
+    #admin-lock-btn {
+      display: none !important;
+      pointer-events: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+    }
+    #admin-actions-bar {
+      top: auto !important;
+      bottom: calc(8px + env(safe-area-inset-bottom)) !important;
+      right: calc(16px + env(safe-area-inset-right)) !important;
+      left: auto !important;
+      transform: none !important;
+      height: 55px !important;
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+    }
   }
 }
 
@@ -3658,12 +4399,1184 @@ svg.history-custom-icon {
    ========================================================================== */
 @media only screen and (device-width: 440px) and (device-height: 956px) and (-webkit-device-pixel-ratio: 3),
        only screen and (device-width: 956px) and (device-height: 440px) and (-webkit-device-pixel-ratio: 3) {
-  body:not(.search-focused) #floating-search-wrapper {
-    right: 16px !important; /* 검색 버튼 우측 16px 간격 정박 */
-    left: auto !important;
-    transform: none !important;
+  @media (orientation: portrait) {
+    #slide-lock-container {
+      left: 16px !important;
+      bottom: calc(8px + env(safe-area-inset-bottom)) !important;
+    }
+    #admin-actions-bar {
+      right: 16px !important;
+      bottom: calc(8px + env(safe-area-inset-bottom)) !important;
+    }
   }
-  #slide-lock-container {
-    left: 16px !important; /* 락버튼 좌측 16px 간격 정박 */
+  @media (orientation: landscape) {
+    #slide-lock-container,
+    #admin-lock-btn {
+      display: none !important;
+      pointer-events: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+    }
+    #admin-actions-bar {
+      top: auto !important;
+      bottom: calc(8px + env(safe-area-inset-bottom)) !important;
+      right: calc(16px + env(safe-area-inset-right)) !important;
+      left: auto !important;
+      transform: none !important;
+      height: 55px !important;
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+    }
   }
 }
+
+/* ==========================================================================
+   📱 iPhone 전 기종 가로화면(Landscape)에서 락 버튼 및 편집모드 5개 버튼 완전 은닉
+   ========================================================================== */
+@media (orientation: landscape) and (max-height: 550px),
+       only screen and (max-device-height: 550px) and (orientation: landscape),
+       only screen and (max-height: 550px) and (orientation: landscape) and (max-width: 1000px),
+       only screen and (device-width: 667px) and (device-height: 375px),
+       only screen and (device-width: 736px) and (device-height: 414px),
+       only screen and (device-width: 812px) and (device-height: 375px),
+       only screen and (device-width: 844px) and (device-height: 390px),
+       only screen and (device-width: 852px) and (device-height: 393px),
+       only screen and (device-width: 874px) and (device-height: 402px),
+       only screen and (device-width: 896px) and (device-height: 414px),
+       only screen and (device-width: 926px) and (device-height: 428px),
+       only screen and (device-width: 932px) and (device-height: 430px),
+       only screen and (device-width: 956px) and (device-height: 440px) {
+  #slide-lock-container,
+  #admin-lock-btn,
+  #admin-actions-bar,
+  body.admin-mode #admin-actions-bar,
+  #admin-actions-bar.active {
+    display: none !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+  }
+}
+
+/* ==========================================================================
+   🎨 모든 버튼 배경색 RGB(255, 255, 255) 및 선/아이콘 RGB(100, 116, 139) 100% 대통합
+   ========================================================================== */
+/* 1. 래퍼 컨테이너의 사각형 외곽 테두리 선(Border) 및 박스 완벽 삭제 */
+#floating-search-wrapper,
+.search-wrapper,
+#bottom-controls-wrapper {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* 2. 모든 원형 버튼들: 100% 완전한 원형(50%) 유지 및 바깥 사각형 선(border/outline/selection) 완전 제거 */
+.admin-action-btn-circle,
+#floating-search-toggle-btn,
+#floating-settings-btn,
+#bottom-settings-btn,
+#admin-undo-btn,
+#admin-redo-btn,
+#zoom-in,
+#zoom-out,
+.zoom-btn,
+#slide-lock-handle,
+#style-editor-toggle-btn {
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
+  min-height: 40px !important;
+  background: rgb(255, 255, 255) !important; /* 순수 백색 RGB(255, 255, 255) 100% 통일 */
+  border: none !important; /* 원 바깥의 사각형 테두리선 완전 삭제 */
+  outline: none !important;
+  border-radius: 50% !important; /* 100% 동그란 원형 고정 */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+  -webkit-touch-callout: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+.admin-action-btn-circle:focus,
+.admin-action-btn-circle:focus-visible,
+.admin-action-btn-circle:active,
+#floating-search-toggle-btn:focus,
+#floating-search-toggle-btn:focus-visible,
+#floating-search-toggle-btn:active,
+#floating-settings-btn:focus,
+#floating-settings-btn:focus-visible,
+#floating-settings-btn:active {
+  outline: none !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+}
+
+#admin-actions-bar {
+  display: none; /* 잠금 상태(일반 모드)에서는 완전 비노출 */
+  background: transparent !important; /* 모음 박스 삭제 - 완전 투명 */
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  height: 40px !important;
+  box-sizing: border-box !important;
+  padding: 0 !important;
+  gap: 10px !important;
+  align-items: center !important;
+}
+
+body.admin-mode #admin-actions-bar,
+#admin-actions-bar.active {
+  display: flex !important; /* 오직 편집 모드일 때만 비로소 노출 */
+}
+
+body:not(.admin-mode) #admin-actions-bar:not(.active) {
+  display: none !important;
+}
+
+.close-btn {
+  background: rgb(255, 255, 255) !important;
+  border: none !important;
+  outline: none !important;
+  border-radius: 50% !important;
+}
+
+/* 3. 모든 버튼 내부 이미지 img 태그 100% 원본 색상 보존 및 크기 26.5px (+30%) 지정 */
+.admin-action-btn-circle img,
+#floating-settings-btn img,
+#floating-search-toggle-btn img,
+#bottom-settings-btn img,
+#admin-undo-btn img,
+#admin-redo-btn img,
+#slide-lock-icon img,
+#slide-lock-handle img {
+  width: 26.5px !important;
+  height: 26.5px !important;
+  object-fit: contain !important;
+  filter: none !important;
+  opacity: 1 !important;
+  pointer-events: none !important;
+  -webkit-user-drag: none !important;
+  user-drag: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+  -webkit-touch-callout: none !important;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* 버튼 내부 선택(selection) 시 파란색 사각형 하이라이트 배경 방지 */
+.admin-action-btn-circle ::selection,
+.admin-action-btn-circle *::selection,
+#floating-search-toggle-btn ::selection,
+#floating-search-toggle-btn *::selection,
+#floating-settings-btn ::selection,
+#floating-settings-btn *::selection,
+#slide-lock-container ::selection,
+#slide-lock-container *::selection,
+#admin-actions-bar ::selection,
+#admin-actions-bar *::selection {
+  background: transparent !important;
+  color: inherit !important;
+}
+
+/* 4. 버튼 내부 아이콘 및 텍스트 기본 스타일 */
+.admin-action-btn-circle svg,
+#floating-settings-btn svg,
+#floating-search-toggle-btn svg,
+#bottom-settings-btn svg,
+#admin-undo-btn svg,
+#admin-redo-btn svg,
+#zoom-in svg,
+#zoom-out svg,
+.zoom-btn svg,
+#slide-lock-icon-svg,
+#style-editor-toggle-btn svg,
+.close-btn,
+.admin-action-btn-circle span,
+#floating-search-toggle-btn span {
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+.admin-action-btn-circle svg path,
+.admin-action-btn-circle svg circle,
+.admin-action-btn-circle svg polyline,
+.admin-action-btn-circle svg line,
+.admin-action-btn-circle svg rect,
+#floating-settings-btn svg path,
+#floating-settings-btn svg circle,
+#floating-search-toggle-btn svg path,
+#floating-search-toggle-btn svg circle,
+#bottom-settings-btn svg path,
+#bottom-settings-btn svg circle,
+#admin-undo-btn svg path,
+#admin-redo-btn svg path,
+#zoom-in svg line,
+#zoom-in svg path,
+#zoom-out svg line,
+#zoom-out svg path,
+#slide-lock-icon-svg path,
+#slide-lock-icon-svg circle {
+  fill: none !important;
+  opacity: 1 !important;
+}
+
+/* 4. Zoom Control Panel & Buttons Pointer Interaction Guarantee */
+#control-panel {
+  pointer-events: auto !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  box-sizing: border-box !important;
+  padding: 0 14px !important;
+  border-radius: 22px !important;
+  opacity: 0.9 !important;
+  transition: opacity 0.2s ease !important;
+}
+
+#control-panel:hover {
+  opacity: 1 !important;
+}
+
+#zoom-in,
+#zoom-out {
+  width: 34px !important;
+  height: 34px !important;
+  min-width: 34px !important;
+  min-height: 34px !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  touch-action: manipulation !important;
+}
+
+#zoom-in svg,
+#zoom-out svg {
+  width: 18px !important;
+  height: 18px !important;
+  min-width: 18px !important;
+  min-height: 18px !important;
+  pointer-events: none !important;
+}
+
+#zoom-level {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  min-width: 52px !important;
+  text-align: center !important;
+  pointer-events: auto !important;
+  cursor: default !important;
+}
+
+#zoom-in *,
+#zoom-out * {
+  pointer-events: none !important;
+}
+
+/* ==========================================================================
+   🌐 언어 전환 및 테마 모드 전환 버튼 높이 15% 상향 (+15% Height: 28px -> 32px)
+   ========================================================================== */
+#settings-lang-toggle,
+#settings-theme-toggle {
+  min-height: 32px !important;
+  height: 32px !important;
+  padding: 6.5px 8px !important;
+  font-size: 11px !important;
+  border-radius: 6px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  box-sizing: border-box !important;
+}
+
+#settings-icloud-save-btn {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  width: 100% !important;
+  min-height: 32px !important;
+  box-sizing: border-box !important;
+}
+
+#settings-icloud-save-btn-text {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  line-height: 1.2 !important;
+  text-align: center !important;
+  width: 100% !important;
+}
+
+/* ==========================================================================
+   🚫 macOS/WebKit 네이티브 오버레이 스크롤바 완전 숨김 (캔버스 및 뷰어 가림 방지)
+   ========================================================================== */
+html,
+body,
+#app-container,
+#viewer-container,
+#zoom-wrapper,
+#tree-board,
+#svg-polygons-layer {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+#app-container::-webkit-scrollbar,
+#viewer-container::-webkit-scrollbar,
+#zoom-wrapper::-webkit-scrollbar,
+#tree-board::-webkit-scrollbar,
+#svg-polygons-layer::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+  -webkit-appearance: none !important;
+}
+
+/* 하단 버튼 및 컨트롤 바 최상위 레이어 보장 */
+#bottom-controls-wrapper,
+#slide-lock-container,
+#admin-actions-bar,
+#floating-search-wrapper,
+#floating-settings-btn,
+#floating-search-toggle-btn {
+  z-index: 20000 !important;
+}
+
+
+
+
+
+/* 락 슬라이더 복구 (40px 원형 손잡이, 상단 좌측 -18px 정렬) */
+#slide-lock-container {
+  position: fixed !important;
+  left: 20px !important;
+  top: calc(-18px + env(safe-area-inset-top)) !important;
+  bottom: auto !important;
+  z-index: 20000 !important;
+  width: 140px !important;
+  height: 40px !important;
+  border-radius: 20px !important;
+  display: flex !important;
+  align-items: center !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+  user-select: none !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+html.platform-macos #slide-lock-container,
+body.platform-macos #slide-lock-container,
+html:not(.platform-ios):not(.platform-android) #slide-lock-container,
+body:not(.platform-ios):not(.platform-android) #slide-lock-container {
+  display: none !important;
+}
+
+/* 5개 버튼 통합 박스: 상단 오른쪽 -20px, 44px 높이, 좌우 6px 여백, 20px 간격(기존 5px의 4배), 데스크톱 10% 확대 */
+#admin-actions-bar,
+html.platform-macos #admin-actions-bar,
+body.platform-macos #admin-actions-bar {
+  position: fixed !important;
+  top: calc(-20px + env(safe-area-inset-top)) !important;
+  bottom: auto !important;
+  right: 16px !important;
+  left: auto !important;
+  transform: none !important;
+  height: 44px !important;
+  box-sizing: border-box !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(0, 0, 0, 0.12) !important;
+  border-radius: 22px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12) !important;
+  padding: 0 6px !important;
+  gap: 20px !important; /* 편집버튼 5개 간격 4배 (5px -> 20px) */
+  flex-direction: row !important;
+  align-items: center !important;
+  z-index: 16000 !important;
+  pointer-events: auto !important;
+}
+
+html.platform-macos #admin-actions-bar,
+body.platform-macos #admin-actions-bar {
+  right: 76px !important;
+}
+
+body.admin-mode #admin-actions-bar,
+#admin-actions-bar.active {
+  display: flex !important;
+}
+
+body:not(.admin-mode) #admin-actions-bar:not(.active) {
+  display: none !important;
+}
+
+[data-theme="dark"] #admin-actions-bar,
+[data-theme="dark"] html.platform-macos #admin-actions-bar,
+[data-theme="dark"] body.platform-macos #admin-actions-bar {
+  background: rgba(30, 41, 59, 0.95) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
+}
+
+html.platform-macos #floating-search-wrapper,
+body.platform-macos #floating-search-wrapper {
+  display: none !important;
+}
+  #searchInput {
+    height: 44px !important;
+    border-radius: 22px !important;
+    font-size: 16px !important;
+    padding: 0 18px !important;
+  }
+  #floating-settings-btn {
+    top: calc(-20px + env(safe-area-inset-top)) !important;
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
+    max-width: 44px !important;
+    max-height: 44px !important;
+    border-radius: 50% !important;
+  }
+  #floating-settings-btn img,
+  #floating-settings-btn .emoji-icon {
+    width: 29px !important;
+    height: 29px !important;
+  }
+  #admin-actions-bar {
+    top: calc(-20px + env(safe-area-inset-top)) !important;
+    height: 44px !important;
+    border-radius: 22px !important;
+    padding: 0 6px !important;
+    gap: 20px !important;
+  }
+  #admin-actions-bar .admin-action-btn-circle {
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
+    max-width: 44px !important;
+    max-height: 44px !important;
+    border-radius: 50% !important;
+  }
+  #admin-actions-bar .admin-action-btn-circle img,
+  #admin-actions-bar .admin-action-btn-circle .emoji-icon {
+    width: 29px !important;
+    height: 29px !important;
+  }
+  .zoom-btn,
+  #zoom-in,
+  #zoom-out {
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
+  }
+}
+
+/* 버튼 클릭 시 나타나는 안내 메시지 배너 및 토스트 알림창이 메뉴바 바로 아래에 위치하도록 지정 */
+#add-person-instruction,
+html.platform-macos #add-person-instruction,
+body.platform-macos #add-person-instruction {
+  position: fixed !important;
+  top: calc(50px + env(safe-area-inset-top)) !important;
+  bottom: auto !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 17000 !important;
+}
+
+#toast-container,
+html.platform-macos #toast-container,
+body.platform-macos #toast-container {
+  position: fixed !important;
+  top: calc(56px + env(safe-area-inset-top)) !important;
+  bottom: auto !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 18000 !important;
+  pointer-events: none !important;
+}
+
+/* 생성되는 모든 모달창 및 사이드 패널(스타일, 연구, 필터 등)이 상단 검색바 및 6버튼 박스 아래(56px)에서 시작 */
+.modal-overlay[style*="display: none"],
+.modal-overlay[style*="display:none"],
+.modal-overlay.hidden {
+  display: none !important;
+}
+
+.modal-overlay,
+html.platform-macos .modal-overlay,
+body.platform-macos .modal-overlay {
+  justify-content: center !important;
+  align-items: center !important;
+  padding-top: calc(40px + env(safe-area-inset-top)) !important;
+  padding-bottom: calc(40px + env(safe-area-inset-bottom)) !important;
+  padding-right: 16px !important;
+  padding-left: 16px !important;
+  box-sizing: border-box !important;
+}
+
+.modal-content,
+#admin-modal .modal-content,
+#layer-item-modal .modal-content,
+#settings-modal .modal-content,
+#admin-dashboard-modal .modal-content,
+html.platform-macos #admin-modal .modal-content,
+body.platform-macos #admin-modal .modal-content,
+html.platform-macos #layer-item-modal .modal-content,
+body.platform-macos #layer-item-modal .modal-content {
+  width: 650px !important;
+  max-width: 90vw !important;
+  height: auto !important;
+  max-height: calc(100vh - 80px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
+  margin: auto !important;
+  overflow-y: auto !important;
+}
+
+#style-editor-panel,
+html.platform-macos #style-editor-panel,
+body.platform-macos #style-editor-panel {
+  position: fixed !important;
+  top: calc(40px + env(safe-area-inset-top)) !important;
+  bottom: calc(40px + env(safe-area-inset-bottom)) !important;
+  right: 16px !important;
+  transform: translateX(calc(100% + 50px)) !important;
+  width: 380px !important;
+  max-height: calc(100vh - 80px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
+  height: calc(100vh - 80px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
+  overflow-y: auto !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s !important;
+  z-index: 15000 !important;
+}
+#style-editor-panel.active,
+html.platform-macos #style-editor-panel.active,
+body.platform-macos #style-editor-panel.active {
+  transform: translateX(0) !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+#study-panel,
+html.platform-macos #study-panel,
+body.platform-macos #study-panel {
+  position: fixed !important;
+  top: calc(40px + env(safe-area-inset-top)) !important;
+  bottom: calc(40px + env(safe-area-inset-bottom)) !important;
+  right: 16px !important;
+  transform: translateX(calc(100% + 50px)) !important;
+  width: 380px !important;
+  max-height: calc(100vh - 80px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
+  height: calc(100vh - 80px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
+  overflow-y: auto !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s !important;
+  z-index: 15000 !important;
+}
+#study-panel.active:not(.expanded),
+html.platform-macos #study-panel.active:not(.expanded),
+body.platform-macos #study-panel.active:not(.expanded) {
+  transform: translateX(0) !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+#study-panel.expanded,
+html.platform-macos #study-panel.expanded,
+body.platform-macos #study-panel.expanded {
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+.note-textarea,
+#note-text,
+textarea#note-text {
+  height: 300px !important;
+  min-height: 300px !important;
+}
+
+#filter-panel,
+html.platform-macos #filter-panel,
+body.platform-macos #filter-panel {
+  position: fixed !important;
+  top: calc(40px + env(safe-area-inset-top)) !important;
+  bottom: calc(40px + env(safe-area-inset-bottom)) !important;
+  left: 16px !important;
+  transform: translateX(calc(-100% - 50px)) !important;
+  width: 380px !important;
+  max-height: calc(100vh - 80px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
+  height: calc(100vh - 80px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
+  overflow-y: auto !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s !important;
+  z-index: 15000 !important;
+}
+#filter-panel.active,
+html.platform-macos #filter-panel.active,
+body.platform-macos #filter-panel.active {
+  transform: translateX(0) !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+/* 별도 타이틀바 영역 0픽셀 처리 (타이틀바 배경 완전 제거) */
+#main-titlebar,
+.macos-app-titlebar,
+header#main-titlebar,
+html.platform-macos #main-titlebar,
+body.platform-macos #main-titlebar {
+  display: none !important;
+  height: 0px !important;
+  min-height: 0px !important;
+  max-height: 0px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* ==========================================================================
+   📍 인물 고향 및 사역/활동지 (Hometown & Activity Locations) 스타일
+   ========================================================================== */
+#panel-location-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.panel-subsection {
+  background: rgba(148, 163, 184, 0.05);
+  border: 1px solid var(--border-panel);
+  border-radius: 8px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.panel-subsection-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.panel-subsec-badge {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.hometown-inputs-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 6px;
+}
+
+.location-input {
+  min-width: 0;
+  background: rgba(148, 163, 184, 0.08);
+  border: 1px solid var(--border-panel);
+  border-radius: 6px;
+  padding: 5px 8px;
+  font-family: var(--font-family);
+  font-size: 12px;
+  color: var(--text-main);
+  outline: none;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.location-input:focus {
+  border-color: var(--text-accent);
+  background: rgba(148, 163, 184, 0.12);
+}
+
+.map-link-btn {
+  background: rgba(59, 130, 246, 0.12);
+  color: #3b82f6;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 6px;
+  padding: 2px 7px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  line-height: 1.2;
+}
+
+.map-link-btn:hover {
+  background: #3b82f6;
+  color: #ffffff;
+  border-color: #3b82f6;
+}
+
+.activities-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.activity-item-card {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 6px;
+  background: rgba(148, 163, 184, 0.08);
+  border: 1px solid var(--border-panel);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 12px;
+}
+
+.activity-item-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.activity-item-title-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.activity-item-name {
+  font-weight: 700;
+  color: var(--text-main);
+  font-size: 12.5px;
+}
+
+.activity-item-coords {
+  font-family: monospace;
+  font-size: 10.5px;
+  color: var(--text-muted);
+  background: rgba(0, 0, 0, 0.06);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.activity-item-desc {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  line-height: 1.35;
+}
+
+.activity-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.activity-delete-btn {
+  background: transparent;
+  border: none;
+  color: #ef4444;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  line-height: 1;
+  transition: background 0.2s ease;
+}
+
+.activity-delete-btn:hover {
+  background: rgba(239, 68, 68, 0.15);
+}
+
+.activity-add-form {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 4px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--border-panel);
+}
+
+.activity-add-row {
+  display: flex;
+  gap: 6px;
+}
+
+.activity-add-btn {
+  background: var(--text-accent);
+  color: #ffffff;
+  border: none;
+  padding: 0 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 11.5px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  height: 28px;
+  transition: opacity 0.2s ease;
+}
+
+.activity-add-btn:hover {
+  opacity: 0.9;
+}
+
+.admin-activities-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 140px;
+  overflow-y: auto;
+  margin-top: 4px;
+}
+
+.admin-activity-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(0, 0, 0, 0.04);
+  padding: 5px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border-panel);
+  font-size: 11.5px;
+  gap: 6px;
+}
+
+.admin-activity-item .act-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-activity-item .act-title {
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.admin-activity-item .act-desc {
+  color: var(--text-muted);
+  font-size: 10.5px;
+}
+
+/* =========================================================
+   macOS Style In-App Desktop System Menu Bar
+   ========================================================= */
+#desktop-mac-menubar {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 38px;
+  background: rgba(255, 255, 255, 0.90);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  z-index: 25000;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  box-sizing: border-box;
+  font-family: var(--font-family);
+  font-size: 13.5px;
+  color: #1d1d1f;
+  user-select: none;
+  -webkit-user-select: none;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+html.platform-macos #desktop-mac-menubar,
+body.platform-macos #desktop-mac-menubar,
+#desktop-mac-menubar {
+  display: flex !important;
+}
+
+html.platform-iphone:not(.platform-macos) #desktop-mac-menubar,
+html.platform-android-phone:not(.platform-macos) #desktop-mac-menubar,
+html.platform-ipad:not(.platform-macos) #desktop-mac-menubar,
+html.platform-android-pad:not(.platform-macos) #desktop-mac-menubar {
+  display: none !important;
+}
+
+[data-theme="dark"] #desktop-mac-menubar {
+  background: rgba(36, 36, 38, 0.90);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  color: #f5f5f7;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+}
+
+.mac-menubar-left {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 100%;
+}
+
+.mac-menubar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 100%;
+  margin-left: auto;
+}
+
+.mac-menubar-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 260px;
+  height: 28px;
+  background: rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.14);
+  border-radius: 14px;
+  padding: 0 10px;
+  transition: all 0.2s ease;
+}
+
+[data-theme="dark"] .mac-menubar-search {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #f5f5f7;
+}
+
+.mac-menubar-search:focus-within {
+  width: 320px;
+  background: #ffffff;
+  border-color: #007aff;
+  box-shadow: 0 0 0 2.5px rgba(0, 122, 255, 0.25);
+}
+
+[data-theme="dark"] .mac-menubar-search:focus-within {
+  background: #1c1c1e;
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 2.5px rgba(56, 189, 248, 0.25);
+}
+
+.mac-menubar-search .search-icon-svg {
+  color: var(--text-muted);
+  margin-right: 6px;
+  flex-shrink: 0;
+}
+
+.mac-menubar-search input,
+.mac-menubar-search #searchInput,
+.mac-menubar-search .mac-search-input {
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  height: 100% !important;
+  max-height: none !important;
+  min-height: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+  font-size: 13px !important;
+  font-family: inherit !important;
+  color: inherit !important;
+  padding: 0 4px !important;
+  margin: 0 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-radius: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.mac-menubar-search input::placeholder,
+.mac-menubar-search #searchInput::placeholder,
+.mac-menubar-search .mac-search-input::placeholder {
+  color: var(--text-muted) !important;
+  opacity: 0.85 !important;
+}
+
+.mac-search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 6px;
+  max-height: 400px;
+  overflow-y: auto;
+  border-radius: 8px;
+  z-index: 26000;
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+}
+
+[data-theme="dark"] .mac-search-results {
+  background: rgba(36, 36, 38, 0.98);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+/* Hide standalone floating search on desktop */
+html.platform-macos #floating-search-wrapper,
+body.platform-macos #floating-search-wrapper {
+  display: none !important;
+}
+
+@media (min-width: 900px) and (pointer: fine) {
+  #floating-search-wrapper {
+    display: none !important;
+  }
+}
+
+.mac-menu-item {
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mac-menu-title {
+  padding: 4px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: var(--font-family) !important;
+  font-weight: 600 !important;
+  font-size: 13.5px !important;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  transition: background 0.12s ease;
+  white-space: nowrap;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mac-menu-item:hover .mac-menu-title,
+.mac-menu-item.active .mac-menu-title {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="dark"] .mac-menu-item:hover .mac-menu-title,
+[data-theme="dark"] .mac-menu-item.active .mac-menu-title {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.mac-dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 230px;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(25px) saturate(190%);
+  -webkit-backdrop-filter: blur(25px) saturate(190%);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 6px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.18), 0 2px 6px rgba(0,0,0,0.08);
+  padding: 4px;
+  margin-top: 1px;
+  z-index: 26000;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+[data-theme="dark"] .mac-dropdown-menu {
+  background: rgba(45, 45, 48, 0.96);
+  border-color: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+}
+
+.mac-menu-item:hover .mac-dropdown-menu,
+.mac-menu-item.active .mac-dropdown-menu {
+  display: block;
+}
+
+.mac-menu-entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-family: var(--font-family) !important;
+  font-size: 13px;
+  font-weight: 400;
+  color: #1d1d1f;
+  cursor: pointer;
+  line-height: 1.35;
+  transition: background 0.1s ease, color 0.1s ease;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+[data-theme="dark"] .mac-menu-entry {
+  color: #f5f5f7;
+}
+
+.mac-menu-entry:hover {
+  background: #007aff !important;
+  color: #ffffff !important;
+}
+
+.mac-menu-entry .label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mac-menu-entry .shortcut {
+  font-size: 11.5px;
+  opacity: 0.6;
+  margin-left: 16px;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+}
+
+.mac-menu-entry:hover .shortcut {
+  opacity: 0.95;
+  color: #ffffff !important;
+}
+
+.mac-menu-entry.highlight {
+  font-weight: 600;
+  color: #007aff;
+}
+
+[data-theme="dark"] .mac-menu-entry.highlight {
+  color: #38bdf8;
+}
+
+.mac-menu-divider {
+  height: 1px;
+  background: rgba(0, 0, 0, 0.1);
+  margin: 4px 6px;
+}
+
+[data-theme="dark"] .mac-menu-divider {
+  background: rgba(255, 255, 255, 0.12);
+}
+

@@ -2,9 +2,70 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>열린족보이야기</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=overlays-content">
+  <title>열린 족보이야기</title>
   <script>
+    (function() {
+      var isTauri = !!window.__TAURI__;
+      var ua = navigator.userAgent || '';
+      var isRealMobile = /iPhone|iPod|Android/i.test(ua);
+      var isRealIPad = /iPad/i.test(ua) || (ua.includes('Macintosh') && navigator.maxTouchPoints > 1 && !window.__TAURI__ && !window.chrome && !window.safari);
+      
+      var isMac = (ua.includes('Macintosh') || (navigator.platform && navigator.platform.toUpperCase().indexOf('MAC') >= 0)) && !isRealMobile && !isRealIPad;
+      if (isTauri) isMac = true;
+
+      var isIOS = (isRealMobile && /iPhone|iPod/.test(ua)) || (isRealIPad && !isTauri);
+      var isIPad = isRealIPad && !isTauri;
+      var isIPhone = isRealMobile && /iPhone|iPod/.test(ua) && !isIPad;
+
+      var isAndroid = /Android/i.test(ua) && !isTauri;
+      var isAndroidPad = isAndroid && (!/Mobile/i.test(ua) || Math.min(window.screen.width, window.screen.height) >= 600);
+      var isAndroidPhone = isAndroid && !isAndroidPad;
+
+      if (isMac || isTauri) {
+        document.documentElement.classList.add('platform-macos');
+      } else if (isIOS) {
+        document.documentElement.classList.add('platform-ios');
+        if (isIPad) {
+          document.documentElement.classList.add('platform-ipad');
+        } else {
+          document.documentElement.classList.add('platform-iphone');
+        }
+      } else if (isAndroid) {
+        document.documentElement.classList.add('platform-android');
+        if (isAndroidPad) {
+          document.documentElement.classList.add('platform-android-pad');
+          document.documentElement.classList.add('platform-ipad');
+        } else {
+          document.documentElement.classList.add('platform-android-phone');
+          document.documentElement.classList.add('platform-iphone');
+        }
+      }
+
+      function applyBodyClasses() {
+        if (!document.body) return;
+        if (isMac || isTauri) {
+          document.body.classList.add('platform-macos');
+          document.body.classList.remove('platform-ipad', 'platform-iphone', 'platform-ios');
+        } else if (isIOS) {
+          document.body.classList.add('platform-ios');
+          if (isIPad) document.body.classList.add('platform-ipad');
+          else document.body.classList.add('platform-iphone');
+        } else if (isAndroid) {
+          document.body.classList.add('platform-android');
+          if (isAndroidPad) {
+            document.body.classList.add('platform-android-pad');
+            document.body.classList.add('platform-ipad');
+          } else {
+            document.body.classList.add('platform-android-phone');
+            document.body.classList.add('platform-iphone');
+          }
+        }
+      }
+
+      if (document.body) applyBodyClasses();
+      else document.addEventListener('DOMContentLoaded', applyBodyClasses);
+    })();
     window.onerror = function(message, source, lineno, colno, error) {
       setTimeout(function() {
         const stats = document.getElementById('stats');
@@ -46,118 +107,1321 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
   
   <!-- Main Stylesheet -->
-  <link rel="stylesheet" href="style_v16_v2.css?v=2300">
+  <link rel="stylesheet" href="style_v16_v2.css?v=25745">
+
+  <!-- Upgraded Admin Toolkit Styling (40px circle, white background, crisp icons) -->
+  <style>
+    .admin-action-btn-circle {
+      width: 40px !important;
+      height: 40px !important;
+      min-width: 40px !important;
+      min-height: 40px !important;
+      max-width: 40px !important;
+      max-height: 40px !important;
+      border-radius: 50% !important;
+      background: #ffffff !important;
+      border: none !important;
+      outline: none !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      cursor: pointer !important;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1) !important;
+      transition: background-color 0.2s ease, transform 0.1s ease !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      position: relative !important;
+    }
+    .admin-action-btn-circle:hover {
+      background: #f8fafc !important;
+      transform: translateY(-2px) !important;
+    }
+    .admin-action-btn-circle img,
+    .admin-action-btn-circle svg {
+      width: 26.5px !important;
+      height: 26.5px !important;
+      object-fit: contain !important;
+    }
+    .admin-action-btn-circle .emoji-icon {
+      width: 26.5px !important;
+      height: 26.5px !important;
+      font-size: 18px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      opacity: 1 !important; /* 100% full crisp opacity for all PNG icon images */
+    }
+    
+    /* Interactive Custom Hover Tooltips (Generic Class Support - Font +10%) */
+    .has-tooltip {
+      position: relative !important;
+    }
+    .has-tooltip::after {
+      content: attr(data-tooltip) !important;
+      position: absolute !important;
+      left: 50% !important;
+      transform: translateX(-50%) scale(0.85) !important;
+      background: rgba(15, 23, 42, 0.9) !important;
+      backdrop-filter: blur(4px) !important;
+      -webkit-backdrop-filter: blur(4px) !important;
+      color: #ffffff !important;
+      font-size: 13px !important;
+      font-weight: 600 !important;
+      padding: 6px 11px !important;
+      border-radius: 6px !important;
+      white-space: nowrap !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+      transition: opacity 0.15s ease, transform 0.15s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important;
+      z-index: 18000 !important;
+    }
+    .has-tooltip:hover::after,
+    .has-tooltip.active-tooltip::after {
+      transform: translateX(-50%) scale(1) !important;
+    }
+
+    /* Direction: Downward tooltips (for top controls) */
+    .tooltip-down::after {
+      top: 50px !important;
+      bottom: auto !important;
+    }
+
+    /* Direction: Upward tooltips (for bottom controls) */
+    .tooltip-up::after {
+      bottom: 50px !important;
+      top: auto !important;
+    }
+
+    /* Top Action Bar Box (40px Height, Unified 5 Buttons, 4px left/right padding) */
+    #admin-actions-bar {
+      position: fixed !important;
+      top: calc(-18px + env(safe-area-inset-top)) !important;
+      bottom: auto !important;
+      right: 16px !important;
+      left: auto !important;
+      transform: none !important;
+      height: 40px !important;
+      box-sizing: border-box !important;
+      background: rgba(255, 255, 255, 0.95) !important;
+      backdrop-filter: blur(12px) !important;
+      -webkit-backdrop-filter: blur(12px) !important;
+      border: 1px solid rgba(0, 0, 0, 0.12) !important;
+      border-radius: 20px !important;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12) !important;
+      padding: 0 4px !important;
+      gap: 5px !important;
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: center !important;
+      z-index: 16000 !important;
+      pointer-events: auto !important;
+    }
+    [data-theme="dark"] #admin-actions-bar {
+      background: rgba(30, 41, 59, 0.95) !important;
+      border-color: rgba(255, 255, 255, 0.15) !important;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
+    }
+
+    body.admin-mode #admin-actions-bar,
+    #admin-actions-bar.active {
+      display: flex !important;
+    }
+    body:not(.admin-mode) #admin-actions-bar:not(.active) {
+      display: none !important;
+    }
+
+    /* Slide-to-Unlock Lock Button (Top-Left -18px, 40px handle, 153.5px pill, aligned with search and admin bars) */
+    #slide-lock-container {
+      position: fixed !important;
+      left: 20px !important;
+      top: calc(-18px + env(safe-area-inset-top)) !important;
+      bottom: auto !important;
+      z-index: 20000 !important;
+      width: 153.5px !important;
+      height: 40px !important;
+      border-radius: 20px !important;
+      display: flex !important;
+      align-items: center !important;
+      padding: 0 !important;
+      box-sizing: border-box !important;
+      user-select: none !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      pointer-events: auto !important;
+      background: transparent !important;
+      border: 1px solid transparent !important;
+      box-shadow: none !important;
+      transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease !important;
+    }
+    html.platform-macos #slide-lock-container,
+    body.platform-macos #slide-lock-container,
+    html:not(.platform-ios):not(.platform-android) #slide-lock-container,
+    body:not(.platform-ios):not(.platform-android) #slide-lock-container {
+      display: none !important;
+    }
+    #slide-lock-container.dragging {
+      background: rgba(255, 255, 255, 0.95) !important;
+      border: 1px solid rgba(0, 0, 0, 0.12) !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
+    }
+    [data-theme="dark"] #slide-lock-container.dragging {
+      background: rgba(30, 41, 59, 0.95) !important;
+      border: 1px solid rgba(255, 255, 255, 0.15) !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+    }
+    #slide-lock-handle {
+      width: 40px !important;
+      height: 40px !important;
+      min-width: 40px !important;
+      max-width: 40px !important;
+      min-height: 40px !important;
+      max-height: 40px !important;
+      background: #ffffff !important;
+      border-radius: 50% !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      cursor: pointer !important;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15) !important;
+      position: relative !important;
+      z-index: 2 !important;
+      transform: translateX(0px);
+      transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1), background-color 0.2s ease !important;
+    }
+    #admin-lock-btn {
+      display: none !important;
+    }
+
+    /* Top Controls Precision Alignment (Lock Slider, Settings, Edit Actions) */
+    /* 1. Default (Mobile / Base) */
+    #floating-settings-btn {
+      position: fixed !important;
+      top: calc(-18px + env(safe-area-inset-top)) !important;
+      right: 16px !important;
+      left: auto !important;
+      bottom: auto !important;
+      z-index: 20000 !important;
+      width: 40px !important;
+      height: 40px !important;
+      min-width: 40px !important;
+      min-height: 40px !important;
+      max-width: 40px !important;
+      max-height: 40px !important;
+      border-radius: 50% !important;
+      display: none !important;
+      align-items: center !important;
+      justify-content: center !important;
+      background: #ffffff !important;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15) !important;
+      cursor: pointer !important;
+      border: none !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+    body.admin-mode #floating-settings-btn {
+      display: flex !important;
+    }
+    [data-theme="dark"] #floating-settings-btn {
+      background: #1e293b !important;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4) !important;
+    }
+    #floating-search-wrapper {
+      position: fixed !important;
+      top: calc(-18px + env(safe-area-inset-top)) !important;
+      bottom: auto !important;
+      left: 50% !important;
+      right: auto !important;
+      transform: translateX(-50%) !important;
+      width: min(360px, calc(100vw - 32px)) !important;
+      max-width: calc(100vw - 32px) !important;
+      height: 40px !important;
+      box-sizing: border-box !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    #floating-search-toggle-btn {
+      display: none !important;
+      pointer-events: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      width: 0 !important;
+      height: 0 !important;
+    }
+    #search-panel {
+      width: 100% !important;
+      height: 100% !important;
+      display: flex !important;
+      align-items: center !important;
+      position: relative !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    #floating-search-wrapper #searchInput,
+    #floating-search-wrapper input {
+      width: 100% !important;
+      max-width: 100% !important;
+      min-width: 0 !important;
+      height: 40px !important;
+      border-radius: 20px !important;
+      padding: 0 16px !important;
+      font-size: 14px !important;
+      margin: 0 !important;
+      box-sizing: border-box !important;
+      background: rgba(255, 255, 255, 0.95) !important;
+      backdrop-filter: blur(12px) !important;
+      -webkit-backdrop-filter: blur(12px) !important;
+      border: 1px solid rgba(0, 0, 0, 0.12) !important;
+      color: #0f172a !important;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12) !important;
+      outline: none !important;
+    }
+    [data-theme="dark"] #floating-search-wrapper #searchInput,
+    [data-theme="dark"] #floating-search-wrapper input {
+      background: rgba(30, 41, 59, 0.95) !important;
+      border-color: rgba(255, 255, 255, 0.15) !important;
+      color: #f8fafc !important;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
+    }
+    #search-results {
+      width: 100% !important;
+      max-width: 100% !important;
+      top: 46px !important;
+      bottom: auto !important;
+      left: 0 !important;
+      right: 0 !important;
+      max-height: min(320px, calc(100vh - (20px + env(safe-area-inset-top)) - 80px)) !important;
+      overflow-y: auto !important;
+      box-sizing: border-box !important;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18) !important;
+      border-radius: 14px !important;
+      margin-top: 0 !important;
+      margin-bottom: 0 !important;
+    }
+
+    /* ==========================================================================
+       📱 iPhone & Android Phone Dedicated Layout (Responsive Proportional Scaling)
+       ========================================================================== */
+    html.platform-iphone #floating-search-wrapper,
+    body.platform-iphone #floating-search-wrapper,
+    html.platform-android-phone #floating-search-wrapper,
+    body.platform-android-phone #floating-search-wrapper,
+    html.platform-ios:not(.platform-ipad) #floating-search-wrapper,
+    body.platform-ios:not(.platform-ipad) #floating-search-wrapper {
+      position: fixed !important;
+      top: calc(clamp(6px, 1.8vw, 10px) + env(safe-area-inset-top, 0px)) !important;
+      bottom: auto !important;
+      left: 50% !important;
+      right: auto !important;
+      transform: translateX(-50%) !important;
+      width: clamp(110px, 34vw, 175px) !important;
+      height: clamp(36px, 9.5vw, 42px) !important;
+      z-index: 16000 !important;
+      margin: 0 !important;
+    }
+    html.platform-iphone #searchInput,
+    body.platform-iphone #searchInput,
+    html.platform-android-phone #searchInput,
+    body.platform-android-phone #searchInput,
+    html.platform-ios:not(.platform-ipad) #searchInput,
+    body.platform-ios:not(.platform-ipad) #searchInput {
+      height: clamp(36px, 9.5vw, 42px) !important;
+      border-radius: clamp(18px, 4.75vw, 21px) !important;
+      font-size: clamp(11.5px, 3.2vw, 13.5px) !important;
+      padding: 0 clamp(8px, 2.2vw, 14px) !important;
+    }
+    html.platform-iphone #search-results,
+    body.platform-iphone #search-results,
+    html.platform-android-phone #search-results,
+    body.platform-android-phone #search-results,
+    html.platform-ios #search-results,
+    body.platform-ios #search-results {
+      width: min(300px, calc(100vw - 32px)) !important;
+      left: 50% !important;
+      transform: translateX(-50%) !important;
+    }
+
+    html.platform-iphone #slide-lock-container,
+    body.platform-iphone #slide-lock-container,
+    html.platform-android-phone #slide-lock-container,
+    body.platform-android-phone #slide-lock-container,
+    html.platform-ios:not(.platform-ipad) #slide-lock-container,
+    body.platform-ios:not(.platform-ipad) #slide-lock-container {
+      position: fixed !important;
+      top: calc(clamp(6px, 1.8vw, 10px) + env(safe-area-inset-top, 0px)) !important;
+      bottom: auto !important;
+      left: calc(clamp(8px, 2.5vw, 14px) + env(safe-area-inset-left, 0px)) !important;
+      right: auto !important;
+      width: clamp(100px, 28vw, 132px) !important;
+      height: clamp(36px, 9.5vw, 42px) !important;
+      border-radius: clamp(18px, 4.75vw, 21px) !important;
+      z-index: 20000 !important;
+    }
+    html.platform-iphone #slide-lock-handle,
+    body.platform-iphone #slide-lock-handle,
+    html.platform-android-phone #slide-lock-handle,
+    body.platform-android-phone #slide-lock-handle,
+    html.platform-ios:not(.platform-ipad) #slide-lock-handle,
+    body.platform-ios:not(.platform-ipad) #slide-lock-handle {
+      width: clamp(36px, 9.5vw, 42px) !important;
+      height: clamp(36px, 9.5vw, 42px) !important;
+      min-width: clamp(36px, 9.5vw, 42px) !important;
+      max-width: clamp(36px, 9.5vw, 42px) !important;
+      min-height: clamp(36px, 9.5vw, 42px) !important;
+      max-height: clamp(36px, 9.5vw, 42px) !important;
+    }
+    html.platform-iphone #slide-lock-icon,
+    body.platform-iphone #slide-lock-icon,
+    html.platform-iphone #slide-lock-icon-img,
+    body.platform-iphone #slide-lock-icon-img,
+    html.platform-android-phone #slide-lock-icon,
+    body.platform-android-phone #slide-lock-icon,
+    html.platform-android-phone #slide-lock-icon-img,
+    body.platform-android-phone #slide-lock-icon-img,
+    html.platform-ios:not(.platform-ipad) #slide-lock-icon,
+    body.platform-ios:not(.platform-ipad) #slide-lock-icon,
+    html.platform-ios:not(.platform-ipad) #slide-lock-icon-img,
+    body.platform-ios:not(.platform-ipad) #slide-lock-icon-img {
+      width: clamp(20px, 5.5vw, 24px) !important;
+      height: clamp(20px, 5.5vw, 24px) !important;
+    }
+    html.platform-iphone #slide-lock-text,
+    body.platform-iphone #slide-lock-text,
+    html.platform-android-phone #slide-lock-text,
+    body.platform-android-phone #slide-lock-text,
+    html.platform-ios:not(.platform-ipad) #slide-lock-text,
+    body.platform-ios:not(.platform-ipad) #slide-lock-text {
+      left: clamp(36px, 9.5vw, 42px) !important;
+      font-size: clamp(10px, 2.8vw, 12px) !important;
+    }
+
+    html.platform-iphone #floating-settings-btn,
+    body.platform-iphone #floating-settings-btn,
+    html.platform-android-phone #floating-settings-btn,
+    body.platform-android-phone #floating-settings-btn,
+    html.platform-ios:not(.platform-ipad) #floating-settings-btn,
+    body.platform-ios:not(.platform-ipad) #floating-settings-btn {
+      position: fixed !important;
+      top: calc(clamp(6px, 1.8vw, 10px) + env(safe-area-inset-top, 0px)) !important;
+      bottom: auto !important;
+      right: calc(clamp(8px, 2.5vw, 14px) + env(safe-area-inset-right, 0px)) !important;
+      left: auto !important;
+      width: clamp(36px, 9.5vw, 42px) !important;
+      height: clamp(36px, 9.5vw, 42px) !important;
+      min-width: clamp(36px, 9.5vw, 42px) !important;
+      min-height: clamp(36px, 9.5vw, 42px) !important;
+      max-width: clamp(36px, 9.5vw, 42px) !important;
+      max-height: clamp(36px, 9.5vw, 42px) !important;
+      border-radius: 50% !important;
+      z-index: 20000 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+    html.platform-iphone #floating-settings-btn img,
+    body.platform-iphone #floating-settings-btn img,
+    html.platform-iphone #floating-settings-btn .emoji-icon,
+    body.platform-iphone #floating-settings-btn .emoji-icon,
+    html.platform-android-phone #floating-settings-btn img,
+    body.platform-android-phone #floating-settings-btn img,
+    html.platform-android-phone #floating-settings-btn .emoji-icon,
+    body.platform-android-phone #floating-settings-btn .emoji-icon,
+    html.platform-ios:not(.platform-ipad) #floating-settings-btn img,
+    body.platform-ios:not(.platform-ipad) #floating-settings-btn img,
+    html.platform-ios:not(.platform-ipad) #floating-settings-btn .emoji-icon,
+    body.platform-ios:not(.platform-ipad) #floating-settings-btn .emoji-icon {
+      width: clamp(20px, 5.5vw, 24px) !important;
+      height: clamp(20px, 5.5vw, 24px) !important;
+    }
+
+    html.platform-iphone #bottom-controls-wrapper,
+    body.platform-iphone #bottom-controls-wrapper,
+    html.platform-android-phone #bottom-controls-wrapper,
+    body.platform-android-phone #bottom-controls-wrapper,
+    html.platform-ios:not(.platform-ipad) #bottom-controls-wrapper,
+    body.platform-ios:not(.platform-ipad) #bottom-controls-wrapper {
+      display: none !important;
+    }
+
+    html.platform-iphone #admin-actions-bar,
+    body.platform-iphone #admin-actions-bar,
+    html.platform-android-phone #admin-actions-bar,
+    body.platform-android-phone #admin-actions-bar,
+    html.platform-ios:not(.platform-ipad) #admin-actions-bar,
+    body.platform-ios:not(.platform-ipad) #admin-actions-bar {
+      position: fixed !important;
+      top: auto !important;
+      bottom: calc(clamp(10px, 3vw, 16px) + env(safe-area-inset-bottom, 0px)) !important;
+      left: calc(clamp(10px, 3vw, 18px) + env(safe-area-inset-left, 0px)) !important;
+      right: calc(clamp(10px, 3vw, 18px) + env(safe-area-inset-right, 0px)) !important;
+      width: calc(100vw - 2 * clamp(10px, 3vw, 18px) - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)) !important;
+      max-width: calc(100vw - 2 * clamp(10px, 3vw, 18px) - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)) !important;
+      transform: none !important;
+      height: clamp(50px, 13vw, 58px) !important;
+      border-radius: clamp(25px, 6.5vw, 29px) !important;
+      background: rgba(255, 255, 255, 0.8) !important;
+      backdrop-filter: blur(12px) !important;
+      -webkit-backdrop-filter: blur(12px) !important;
+      border: 1px solid rgba(0, 0, 0, 0.12) !important;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12) !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      padding: 0 clamp(6px, 2vw, 12px) !important;
+      gap: 0 !important;
+      z-index: 15000 !important;
+    }
+    [data-theme="dark"] html.platform-iphone #admin-actions-bar,
+    [data-theme="dark"] body.platform-iphone #admin-actions-bar,
+    [data-theme="dark"] html.platform-android-phone #admin-actions-bar,
+    [data-theme="dark"] body.platform-android-phone #admin-actions-bar,
+    [data-theme="dark"] html.platform-ios:not(.platform-ipad) #admin-actions-bar,
+    [data-theme="dark"] body.platform-ios:not(.platform-ipad) #admin-actions-bar {
+      background: rgba(30, 41, 59, 0.8) !important;
+      border-color: rgba(255, 255, 255, 0.15) !important;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
+    }
+    body.admin-mode html.platform-iphone #admin-actions-bar,
+    body.admin-mode.platform-iphone #admin-actions-bar,
+    html.platform-iphone #admin-actions-bar.active,
+    body.admin-mode html.platform-android-phone #admin-actions-bar,
+    body.admin-mode.platform-android-phone #admin-actions-bar,
+    html.platform-android-phone #admin-actions-bar.active,
+    body.admin-mode html.platform-ios:not(.platform-ipad) #admin-actions-bar,
+    body.admin-mode.platform-ios:not(.platform-ipad) #admin-actions-bar,
+    html.platform-ios:not(.platform-ipad) #admin-actions-bar.active {
+      display: flex !important;
+    }
+    body:not(.admin-mode) html.platform-iphone #admin-actions-bar:not(.active),
+    body:not(.admin-mode).platform-iphone #admin-actions-bar:not(.active),
+    body:not(.admin-mode) html.platform-android-phone #admin-actions-bar:not(.active),
+    body:not(.admin-mode).platform-android-phone #admin-actions-bar:not(.active),
+    body:not(.admin-mode) html.platform-ios #admin-actions-bar:not(.active),
+    body:not(.admin-mode).platform-ios #admin-actions-bar:not(.active) {
+      display: none !important;
+    }
+
+    html.platform-iphone #admin-actions-bar .admin-action-btn-circle,
+    body.platform-iphone #admin-actions-bar .admin-action-btn-circle,
+    html.platform-android-phone #admin-actions-bar .admin-action-btn-circle,
+    body.platform-android-phone #admin-actions-bar .admin-action-btn-circle,
+    html.platform-ios:not(.platform-ipad) #admin-actions-bar .admin-action-btn-circle,
+    body.platform-ios:not(.platform-ipad) #admin-actions-bar .admin-action-btn-circle {
+      width: clamp(38px, 10.5vw, 44px) !important;
+      height: clamp(38px, 10.5vw, 44px) !important;
+      min-width: clamp(38px, 10.5vw, 44px) !important;
+      min-height: clamp(38px, 10.5vw, 44px) !important;
+      max-width: clamp(38px, 10.5vw, 44px) !important;
+      max-height: clamp(38px, 10.5vw, 44px) !important;
+      border-radius: 50% !important;
+    }
+    html.platform-iphone #admin-actions-bar .admin-action-btn-circle img,
+    body.platform-iphone #admin-actions-bar .admin-action-btn-circle img,
+    html.platform-iphone #admin-actions-bar .admin-action-btn-circle .emoji-icon,
+    body.platform-iphone #admin-actions-bar .admin-action-btn-circle .emoji-icon,
+    html.platform-android-phone #admin-actions-bar .admin-action-btn-circle img,
+    body.platform-android-phone #admin-actions-bar .admin-action-btn-circle img,
+    html.platform-android-phone #admin-actions-bar .admin-action-btn-circle .emoji-icon,
+    body.platform-android-phone #admin-actions-bar .admin-action-btn-circle .emoji-icon,
+    html.platform-ios:not(.platform-ipad) #admin-actions-bar .admin-action-btn-circle img,
+    body.platform-ios:not(.platform-ipad) #admin-actions-bar .admin-action-btn-circle img,
+    html.platform-ios:not(.platform-ipad) #admin-actions-bar .admin-action-btn-circle .emoji-icon,
+    body.platform-ios:not(.platform-ipad) #admin-actions-bar .admin-action-btn-circle .emoji-icon {
+      width: clamp(20px, 5.5vw, 24px) !important;
+      height: clamp(20px, 5.5vw, 24px) !important;
+    }
+
+    /* 📱 iPhone 및 Android 스마트폰 상세 정보창 (#study-panel) */
+    html.platform-iphone #study-panel,
+    body.platform-iphone #study-panel,
+    html.platform-android-phone #study-panel,
+    body.platform-android-phone #study-panel,
+    html.platform-ios:not(.platform-ipad) #study-panel,
+    body.platform-ios:not(.platform-ipad) #study-panel {
+      position: fixed !important;
+      top: calc(clamp(6px, 1.8vw, 10px) + env(safe-area-inset-top, 0px) + clamp(36px, 9.5vw, 42px) + 2px) !important;
+      bottom: calc(40px + env(safe-area-inset-bottom, 0px)) !important;
+      right: 12px !important;
+      left: auto !important;
+      width: min(60vh, calc(100vw - 24px)) !important;
+      max-width: calc(100vw - 24px) !important;
+      height: auto !important;
+      max-height: calc(100vh - (clamp(6px, 1.8vw, 10px) + env(safe-area-inset-top, 0px) + clamp(36px, 9.5vw, 42px) + 2px) - 40px - env(safe-area-inset-bottom, 0px)) !important;
+      transform: translateX(calc(100% + 40px)) !important;
+      border-radius: 16px !important;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25) !important;
+      overflow-y: auto !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s !important;
+      z-index: 25000 !important;
+    }
+    #study-panel.active:not(.expanded),
+    html.platform-iphone #study-panel.active:not(.expanded),
+    body.platform-iphone #study-panel.active:not(.expanded),
+    html.platform-android-phone #study-panel.active:not(.expanded),
+    body.platform-android-phone #study-panel.active:not(.expanded),
+    html.platform-ios:not(.platform-ipad) #study-panel.active:not(.expanded),
+    body.platform-ios:not(.platform-ipad) #study-panel.active:not(.expanded) {
+      transform: translateX(0) !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+    }
+    html.platform-iphone #study-panel .note-textarea,
+    body.platform-iphone #study-panel .note-textarea,
+    html.platform-android-phone #study-panel .note-textarea,
+    body.platform-android-phone #study-panel .note-textarea,
+    html.platform-ios:not(.platform-ipad) #study-panel .note-textarea,
+    body.platform-ios:not(.platform-ipad) #study-panel .note-textarea {
+      min-height: 140px !important;
+      height: 160px !important;
+      max-height: 240px !important;
+    }
+
+    /* 📱 iPhone 및 Android 스마트폰 설정창 (#settings-modal) */
+    html.platform-iphone #settings-modal .modal-content,
+    body.platform-iphone #settings-modal .modal-content,
+    html.platform-android-phone #settings-modal .modal-content,
+    body.platform-android-phone #settings-modal .modal-content,
+    html.platform-ios:not(.platform-ipad) #settings-modal .modal-content,
+    body.platform-ios:not(.platform-ipad) #settings-modal .modal-content {
+      position: fixed !important;
+      top: calc(clamp(6px, 1.8vw, 10px) + env(safe-area-inset-top, 0px) + clamp(36px, 9.5vw, 42px) + 4px) !important;
+      bottom: auto !important;
+      right: calc(clamp(8px, 2.5vw, 14px) + env(safe-area-inset-right, 0px)) !important;
+      left: auto !important;
+      width: min(248px, calc(100vw - 24px)) !important;
+      max-width: calc(100vw - 24px) !important;
+      max-height: calc(100vh - (clamp(6px, 1.8vw, 10px) + env(safe-area-inset-top, 0px) + clamp(36px, 9.5vw, 42px) + 4px) - 20px - env(safe-area-inset-bottom, 0px)) !important;
+      border-radius: 16px !important;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25) !important;
+      overflow-y: auto !important;
+      z-index: 25000 !important;
+    }
+
+    /* ==========================================================================
+       💻 iPad & Android Pad Dedicated Layout (Responsive Safe Area & Proportional Controls)
+       ========================================================================== */
+    html.platform-ipad #floating-search-wrapper,
+    body.platform-ipad #floating-search-wrapper,
+    html.platform-android-pad #floating-search-wrapper,
+    body.platform-android-pad #floating-search-wrapper {
+      position: fixed !important;
+      top: calc(clamp(8px, 1.5vw, 14px) + env(safe-area-inset-top, 0px)) !important;
+      bottom: auto !important;
+      left: 50% !important;
+      transform: translateX(-50%) !important;
+      width: clamp(180px, 24vw, 260px) !important;
+      max-width: 260px !important;
+      height: clamp(40px, 4.5vw, 46px) !important;
+    }
+    html.platform-ipad #searchInput,
+    body.platform-ipad #searchInput,
+    html.platform-android-pad #searchInput,
+    body.platform-android-pad #searchInput {
+      height: clamp(40px, 4.5vw, 46px) !important;
+      border-radius: clamp(20px, 2.25vw, 23px) !important;
+      padding: 0 clamp(12px, 1.5vw, 16px) !important;
+      font-size: clamp(13px, 1.5vw, 14.5px) !important;
+    }
+
+    html.platform-ipad #slide-lock-container,
+    body.platform-ipad #slide-lock-container,
+    html.platform-android-pad #slide-lock-container,
+    body.platform-android-pad #slide-lock-container {
+      position: fixed !important;
+      top: calc(clamp(8px, 1.5vw, 14px) + env(safe-area-inset-top, 0px)) !important;
+      bottom: auto !important;
+      left: calc(clamp(16px, 2.2vw, 24px) + env(safe-area-inset-left, 0px)) !important;
+      right: auto !important;
+      width: clamp(130px, 15vw, 155px) !important;
+      height: clamp(40px, 4.5vw, 46px) !important;
+      border-radius: clamp(20px, 2.25vw, 23px) !important;
+      z-index: 20000 !important;
+    }
+    html.platform-ipad #slide-lock-handle,
+    body.platform-ipad #slide-lock-handle,
+    html.platform-android-pad #slide-lock-handle,
+    body.platform-android-pad #slide-lock-handle {
+      width: clamp(40px, 4.5vw, 46px) !important;
+      height: clamp(40px, 4.5vw, 46px) !important;
+      min-width: clamp(40px, 4.5vw, 46px) !important;
+      max-width: clamp(40px, 4.5vw, 46px) !important;
+      min-height: clamp(40px, 4.5vw, 46px) !important;
+      max-height: clamp(40px, 4.5vw, 46px) !important;
+    }
+    html.platform-ipad #slide-lock-icon,
+    body.platform-ipad #slide-lock-icon,
+    html.platform-ipad #slide-lock-icon-img,
+    body.platform-ipad #slide-lock-icon-img,
+    html.platform-android-pad #slide-lock-icon,
+    body.platform-android-pad #slide-lock-icon,
+    html.platform-android-pad #slide-lock-icon-img,
+    body.platform-android-pad #slide-lock-icon-img {
+      width: clamp(22px, 2.5vw, 26px) !important;
+      height: clamp(22px, 2.5vw, 26px) !important;
+    }
+    html.platform-ipad #slide-lock-text,
+    body.platform-ipad #slide-lock-text,
+    html.platform-android-pad #slide-lock-text,
+    body.platform-android-pad #slide-lock-text {
+      left: clamp(40px, 4.5vw, 46px) !important;
+      font-size: clamp(11.5px, 1.3vw, 13px) !important;
+    }
+
+    html.platform-ipad #floating-settings-btn,
+    body.platform-ipad #floating-settings-btn,
+    html.platform-android-pad #floating-settings-btn,
+    body.platform-android-pad #floating-settings-btn {
+      position: fixed !important;
+      top: calc(clamp(8px, 1.5vw, 14px) + env(safe-area-inset-top, 0px)) !important;
+      bottom: auto !important;
+      right: calc(clamp(16px, 2.2vw, 24px) + env(safe-area-inset-right, 0px)) !important;
+      left: auto !important;
+      width: clamp(40px, 4.5vw, 46px) !important;
+      height: clamp(40px, 4.5vw, 46px) !important;
+      min-width: clamp(40px, 4.5vw, 46px) !important;
+      min-height: clamp(40px, 4.5vw, 46px) !important;
+      max-width: clamp(40px, 4.5vw, 46px) !important;
+      max-height: clamp(40px, 4.5vw, 46px) !important;
+      border-radius: 50% !important;
+      z-index: 20000 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+    html.platform-ipad #floating-settings-btn img,
+    body.platform-ipad #floating-settings-btn img,
+    html.platform-ipad #floating-settings-btn .emoji-icon,
+    body.platform-ipad #floating-settings-btn .emoji-icon,
+    html.platform-android-pad #floating-settings-btn img,
+    body.platform-android-pad #floating-settings-btn img,
+    html.platform-android-pad #floating-settings-btn .emoji-icon,
+    body.platform-android-pad #floating-settings-btn .emoji-icon {
+      width: clamp(22px, 2.5vw, 26px) !important;
+      height: clamp(22px, 2.5vw, 26px) !important;
+    }
+
+    html.platform-ipad #admin-actions-bar,
+    body.platform-ipad #admin-actions-bar,
+    html.platform-android-pad #admin-actions-bar,
+    body.platform-android-pad #admin-actions-bar {
+      position: fixed !important;
+      top: auto !important;
+      bottom: calc(clamp(20px, 3vw, 30px) + env(safe-area-inset-bottom, 0px)) !important;
+      left: 50% !important;
+      right: auto !important;
+      transform: translateX(-50%) !important;
+      height: clamp(54px, 6.2vw, 62px) !important;
+      border-radius: clamp(27px, 3.1vw, 31px) !important;
+      background: rgba(255, 255, 255, 0.8) !important;
+      backdrop-filter: blur(12px) !important;
+      -webkit-backdrop-filter: blur(12px) !important;
+      border: 1px solid rgba(0, 0, 0, 0.12) !important;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12) !important;
+      gap: clamp(12px, 2vw, 20px) !important;
+      padding: 0 clamp(10px, 1.5vw, 16px) !important;
+      z-index: 16000 !important;
+    }
+    [data-theme="dark"] html.platform-ipad #admin-actions-bar,
+    [data-theme="dark"] body.platform-ipad #admin-actions-bar,
+    [data-theme="dark"] html.platform-android-pad #admin-actions-bar,
+    [data-theme="dark"] body.platform-android-pad #admin-actions-bar {
+      background: rgba(30, 41, 59, 0.8) !important;
+      border-color: rgba(255, 255, 255, 0.15) !important;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
+    }
+    html.platform-ipad #admin-actions-bar .admin-action-btn-circle,
+    body.platform-ipad #admin-actions-bar .admin-action-btn-circle,
+    html.platform-android-pad #admin-actions-bar .admin-action-btn-circle,
+    body.platform-android-pad #admin-actions-bar .admin-action-btn-circle {
+      width: clamp(42px, 4.8vw, 48px) !important;
+      height: clamp(42px, 4.8vw, 48px) !important;
+      min-width: clamp(42px, 4.8vw, 48px) !important;
+      min-height: clamp(42px, 4.8vw, 48px) !important;
+      max-width: clamp(42px, 4.8vw, 48px) !important;
+      max-height: clamp(42px, 4.8vw, 48px) !important;
+      border-radius: 50% !important;
+    }
+    html.platform-ipad #admin-actions-bar .admin-action-btn-circle img,
+    body.platform-ipad #admin-actions-bar .admin-action-btn-circle img,
+    html.platform-ipad #admin-actions-bar .admin-action-btn-circle .emoji-icon,
+    body.platform-ipad #admin-actions-bar .admin-action-btn-circle .emoji-icon,
+    html.platform-android-pad #admin-actions-bar .admin-action-btn-circle img,
+    body.platform-android-pad #admin-actions-bar .admin-action-btn-circle img,
+    html.platform-android-pad #admin-actions-bar .admin-action-btn-circle .emoji-icon,
+    body.platform-android-pad #admin-actions-bar .admin-action-btn-circle .emoji-icon {
+      width: clamp(22px, 2.5vw, 26px) !important;
+      height: clamp(22px, 2.5vw, 26px) !important;
+    }
+    body.admin-mode html.platform-ipad #admin-actions-bar,
+    body.admin-mode.platform-ipad #admin-actions-bar,
+    html.platform-ipad #admin-actions-bar.active,
+    body.admin-mode html.platform-android-pad #admin-actions-bar,
+    body.admin-mode.platform-android-pad #admin-actions-bar,
+    html.platform-android-pad #admin-actions-bar.active {
+      display: flex !important;
+    }
+    body:not(.admin-mode) html.platform-ipad #admin-actions-bar:not(.active),
+    body:not(.admin-mode).platform-ipad #admin-actions-bar:not(.active),
+    body:not(.admin-mode) html.platform-android-pad #admin-actions-bar:not(.active),
+    body:not(.admin-mode).platform-android-pad #admin-actions-bar:not(.active) {
+      display: none !important;
+    }
+
+    /* 💻 iPad 및 Android 태블릿 상세 정보창 (#study-panel) */
+    html.platform-ipad #study-panel,
+    body.platform-ipad #study-panel,
+    html.platform-android-pad #study-panel,
+    body.platform-android-pad #study-panel {
+      position: fixed !important;
+      top: calc(clamp(8px, 1.5vw, 14px) + env(safe-area-inset-top, 0px) + clamp(40px, 4.5vw, 46px) + 2px) !important;
+      bottom: calc(40px + env(safe-area-inset-bottom, 0px)) !important;
+      right: 16px !important;
+      left: auto !important;
+      width: min(42vh, calc(100vw - 32px)) !important;
+      max-width: calc(100vw - 32px) !important;
+      height: auto !important;
+      max-height: calc(100vh - (clamp(8px, 1.5vw, 14px) + env(safe-area-inset-top, 0px) + clamp(40px, 4.5vw, 46px) + 2px) - 40px - env(safe-area-inset-bottom, 0px)) !important;
+      transform: translateX(calc(100% + 40px)) !important;
+      border-radius: 16px !important;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25) !important;
+      overflow-y: auto !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s !important;
+      z-index: 25000 !important;
+    }
+    html.platform-ipad #study-panel.active:not(.expanded),
+    body.platform-ipad #study-panel.active:not(.expanded),
+    html.platform-android-pad #study-panel.active:not(.expanded),
+    body.platform-android-pad #study-panel.active:not(.expanded) {
+      transform: translateX(0) !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+    }
+    html.platform-ipad #study-panel .note-textarea,
+    body.platform-ipad #study-panel .note-textarea,
+    html.platform-android-pad #study-panel .note-textarea,
+    body.platform-android-pad #study-panel .note-textarea {
+      min-height: 180px !important;
+      height: 220px !important;
+      max-height: 320px !important;
+    }
+
+    /* 💻 iPad 및 Android 태블릿 설정창 (#settings-modal) */
+    html.platform-ipad #settings-modal .modal-content,
+    body.platform-ipad #settings-modal .modal-content,
+    html.platform-android-pad #settings-modal .modal-content,
+    body.platform-android-pad #settings-modal .modal-content {
+      position: fixed !important;
+      top: calc(clamp(8px, 1.5vw, 14px) + env(safe-area-inset-top, 0px) + clamp(40px, 4.5vw, 46px) + 4px) !important;
+      bottom: auto !important;
+      right: calc(clamp(16px, 2.2vw, 24px) + env(safe-area-inset-right, 0px)) !important;
+      left: auto !important;
+      width: 248px !important;
+      max-width: calc(100vw - 32px) !important;
+      max-height: calc(100vh - (clamp(8px, 1.5vw, 14px) + env(safe-area-inset-top, 0px) + clamp(40px, 4.5vw, 46px) + 4px) - 20px - env(safe-area-inset-bottom, 0px)) !important;
+      border-radius: 16px !important;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25) !important;
+      overflow-y: auto !important;
+      z-index: 25000 !important;
+    }
+
+    html.platform-ipad #bottom-controls-wrapper,
+    body.platform-ipad #bottom-controls-wrapper,
+    html.platform-android-pad #bottom-controls-wrapper,
+    body.platform-android-pad #bottom-controls-wrapper,
+    html.platform-ios #bottom-controls-wrapper,
+    body.platform-ios #bottom-controls-wrapper,
+    html.platform-android #bottom-controls-wrapper,
+    body.platform-android #bottom-controls-wrapper {
+      display: none !important;
+    }
+
+    /* 🖥️ macOS / Desktop Dedicated */
+    @media (min-width: 1025px), screen and (min-width: 768px) and (hover: hover) and (pointer: fine) {
+      /* 데스크톱 전용 버튼 & 검색바 10% 확대 (40px -> 44px, 검색바 360px -> 396px) 및 편집버튼 간격 4배 (5px -> 20px) */
+      #floating-search-wrapper,
+      html.platform-macos #floating-search-wrapper,
+      body.platform-macos #floating-search-wrapper {
+        position: fixed !important;
+        top: calc(-20px + env(safe-area-inset-top)) !important;
+        bottom: auto !important;
+        left: 50% !important;
+        right: auto !important;
+        transform: translateX(-50%) !important;
+        width: min(396px, calc(100vw - 32px)) !important;
+        max-width: calc(100vw - 32px) !important;
+        height: 44px !important;
+      }
+      #floating-search-wrapper #searchInput,
+      html.platform-macos #floating-search-wrapper #searchInput,
+      body.platform-macos #floating-search-wrapper #searchInput {
+        height: 44px !important;
+        border-radius: 22px !important;
+        font-size: 16px !important;
+        padding: 0 18px !important;
+      }
+
+      #floating-settings-btn,
+      html.platform-macos #floating-settings-btn,
+      body.platform-macos #floating-settings-btn {
+        position: fixed !important;
+        top: calc(-20px + env(safe-area-inset-top)) !important;
+        bottom: auto !important;
+        right: 16px !important;
+        left: auto !important;
+        width: 44px !important;
+        height: 44px !important;
+        min-width: 44px !important;
+        min-height: 44px !important;
+        max-width: 44px !important;
+        max-height: 44px !important;
+        border-radius: 50% !important;
+        z-index: 20000 !important;
+      }
+      #floating-settings-btn img,
+      #floating-settings-btn .emoji-icon,
+      html.platform-macos #floating-settings-btn img,
+      html.platform-macos #floating-settings-btn .emoji-icon {
+        width: 29px !important;
+        height: 29px !important;
+      }
+
+      #admin-actions-bar,
+      html.platform-macos #admin-actions-bar,
+      body.platform-macos #admin-actions-bar {
+        position: fixed !important;
+        top: calc(-20px + env(safe-area-inset-top)) !important;
+        bottom: auto !important;
+        right: 76px !important;
+        left: auto !important;
+        transform: none !important;
+        height: 44px !important;
+        border-radius: 22px !important;
+        padding: 0 6px !important;
+        gap: 20px !important; /* 5개 편집버튼 간격 기존 5px의 4배인 20px 적용 */
+        z-index: 16000 !important;
+      }
+      #admin-actions-bar .admin-action-btn-circle,
+      html.platform-macos #admin-actions-bar .admin-action-btn-circle,
+      body.platform-macos #admin-actions-bar .admin-action-btn-circle {
+        width: 44px !important;
+        height: 44px !important;
+        min-width: 44px !important;
+        min-height: 44px !important;
+        max-width: 44px !important;
+        max-height: 44px !important;
+        border-radius: 50% !important;
+      }
+      #admin-actions-bar .admin-action-btn-circle img,
+      #admin-actions-bar .admin-action-btn-circle .emoji-icon,
+      html.platform-macos #admin-actions-bar .admin-action-btn-circle img,
+      html.platform-macos #admin-actions-bar .admin-action-btn-circle .emoji-icon {
+        width: 29px !important;
+        height: 29px !important;
+      }
+
+      .zoom-btn,
+      #zoom-in,
+      #zoom-out {
+        width: 44px !important;
+        height: 44px !important;
+        min-width: 44px !important;
+        min-height: 44px !important;
+      }
+
+      /* 편집 시 추가/수정 창 너비 25% 확대 (520px -> 650px) */
+      #admin-modal .modal-content,
+      #layer-item-modal .modal-content {
+        width: 650px !important;
+        max-width: 90vw !important;
+      }
+
+      /* 🖥️ Desktop / macOS 환경설정 창: 설정버튼 5px 아래 배치, 너비 2배 확대 (161px -> 322px) */
+      #settings-modal,
+      html.platform-macos #settings-modal,
+      body.platform-macos #settings-modal {
+        align-items: flex-start !important;
+        justify-content: flex-end !important;
+        padding: 0 !important;
+      }
+      #settings-modal .modal-content,
+      html.platform-macos #settings-modal .modal-content,
+      body.platform-macos #settings-modal .modal-content {
+        position: fixed !important;
+        margin: 0 !important;
+        transform: none !important;
+        top: calc(29px + env(safe-area-inset-top, 0px)) !important;
+        right: 16px !important;
+        left: auto !important;
+        bottom: auto !important;
+        width: 322px !important;
+        max-width: calc(100vw - 32px) !important;
+        max-height: calc(100vh - 70px) !important;
+        border-radius: 16px !important;
+      }
+      #settings-modal .settings-body,
+      html.platform-macos #settings-modal .settings-body,
+      body.platform-macos #settings-modal .settings-body {
+        padding: 17px 15px 8px 15px !important;
+      }
+      #settings-modal .layer-toggles-grid,
+      html.platform-macos #settings-modal .layer-toggles-grid,
+      body.platform-macos #settings-modal .layer-toggles-grid {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 5px 8px !important;
+      }
+      #settings-modal .settings-btn,
+      html.platform-macos #settings-modal .settings-btn,
+      body.platform-macos #settings-modal .settings-btn {
+        font-size: 12px !important;
+        padding: 6px 8px !important;
+      }
+
+      /* 편집 사이드 패널(영역/선 스타일) 너비 25% 확대 및 우측 중앙 정렬 */
+      #style-editor-panel {
+        top: 50% !important;
+        bottom: auto !important;
+        width: 400px !important;
+        right: 16px !important;
+        transform: translateY(-50%) translateX(calc(100% + 50px)) !important;
+        max-height: min(88vh, calc(100vh - 64px)) !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s !important;
+      }
+      #style-editor-panel.active {
+        transform: translateY(-50%) translateX(0) !important;
+        visibility: visible !important;
+        pointer-events: auto !important;
+      }
+    }
+
+    html.platform-macos #admin-actions-bar,
+    body.platform-macos #admin-actions-bar {
+      right: 76px !important;
+    }
+
+    /* macOS 데스크톱 환경 (타이틀바 배경 제거 및 상단 10px 마진) */
+    #main-titlebar,
+    .macos-app-titlebar,
+    header#main-titlebar,
+    html.platform-macos #main-titlebar,
+    body.platform-macos #main-titlebar {
+      display: none !important;
+      height: 0px !important;
+      min-height: 0px !important;
+      max-height: 0px !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      border: none !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+    }
+
+    html.platform-macos #floating-search-wrapper,
+    body.platform-macos #floating-search-wrapper {
+      position: fixed !important;
+      top: calc(-20px + env(safe-area-inset-top)) !important;
+      bottom: auto !important;
+      left: 50% !important;
+      right: auto !important;
+      transform: translateX(-50%) !important;
+      width: min(396px, calc(100vw - 32px)) !important;
+      max-width: calc(100vw - 32px) !important;
+      height: 44px !important;
+    }
+
+    /* 상단 중앙 안내 메시지 배너 및 토스트 알림창이 시스템 메뉴바(44px) 아래에 깔끔하게 위치하도록 56px 지정 */
+    #add-person-instruction,
+    html.platform-macos #add-person-instruction,
+    body.platform-macos #add-person-instruction {
+      position: fixed !important;
+      top: calc(56px + env(safe-area-inset-top)) !important;
+      bottom: auto !important;
+      left: 50% !important;
+      transform: translateX(-50%) !important;
+      z-index: 17000 !important;
+    }
+
+    #toast-container,
+    html.platform-macos #toast-container,
+    body.platform-macos #toast-container {
+      position: fixed !important;
+      top: calc(56px + env(safe-area-inset-top)) !important;
+      bottom: auto !important;
+      left: 50% !important;
+      transform: translateX(-50%) !important;
+      z-index: 18000 !important;
+      pointer-events: none !important;
+    }
+
+    /* 생성되는 모든 모달창 및 사이드 패널(스타일, 연구, 설정 등) 스타일 */
+    .modal-overlay[style*="display: none"],
+    .modal-overlay[style*="display:none"],
+    .modal-overlay.hidden {
+      display: none !important;
+    }
+
+    .modal-overlay,
+    html.platform-macos .modal-overlay,
+    body.platform-macos .modal-overlay {
+      justify-content: center !important;
+      align-items: center !important;
+      padding-top: calc(40px + env(safe-area-inset-top)) !important;
+      padding-bottom: calc(40px + env(safe-area-inset-bottom)) !important;
+      padding-right: 16px !important;
+      padding-left: 16px !important;
+      box-sizing: border-box !important;
+    }
+
+    .modal-content,
+    #admin-modal .modal-content,
+    #layer-item-modal .modal-content,
+    #admin-dashboard-modal .modal-content,
+    html.platform-macos #admin-modal .modal-content,
+    body.platform-macos #admin-modal .modal-content,
+    html.platform-macos #layer-item-modal .modal-content,
+    body.platform-macos #layer-item-modal .modal-content {
+      width: 650px !important;
+      max-width: 90vw !important;
+      height: auto !important;
+      max-height: calc(100vh - 80px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
+      margin: auto !important;
+      overflow-y: auto !important;
+    }
+
+    #style-editor-panel,
+    html.platform-macos #style-editor-panel,
+    body.platform-macos #style-editor-panel {
+      position: fixed !important;
+      top: calc(40px + env(safe-area-inset-top)) !important;
+      bottom: calc(40px + env(safe-area-inset-bottom)) !important;
+      right: 16px !important;
+      transform: translateX(calc(100% + 50px)) !important;
+      width: 380px !important;
+      max-height: calc(100vh - 80px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
+      height: calc(100vh - 80px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
+      overflow-y: auto !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s !important;
+      z-index: 15000 !important;
+    }
+    #style-editor-panel.active,
+    html.platform-macos #style-editor-panel.active,
+    body.platform-macos #style-editor-panel.active {
+      transform: translateX(0) !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+    }
+
+    #study-panel,
+    html.platform-macos #study-panel,
+    body.platform-macos #study-panel {
+      position: fixed !important;
+      top: calc(40px + env(safe-area-inset-top)) !important;
+      bottom: calc(40px + env(safe-area-inset-bottom)) !important;
+      right: 16px !important;
+      transform: translateX(calc(100% + 50px)) !important;
+      width: 380px !important;
+      max-height: calc(100vh - 80px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
+      height: calc(100vh - 80px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
+      overflow-y: auto !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s !important;
+      z-index: 15000 !important;
+    }
+    #study-panel.active:not(.expanded),
+    html.platform-macos #study-panel.active:not(.expanded),
+    body.platform-macos #study-panel.active:not(.expanded) {
+      transform: translateX(0) !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+    }
+    #study-panel.expanded,
+    html.platform-macos #study-panel.expanded,
+    body.platform-macos #study-panel.expanded,
+    html.platform-ipad #study-panel.expanded,
+    body.platform-ipad #study-panel.expanded,
+    html.platform-iphone #study-panel.expanded,
+    body.platform-iphone #study-panel.expanded,
+    html.platform-android-pad #study-panel.expanded,
+    body.platform-android-pad #study-panel.expanded,
+    html.platform-android-phone #study-panel.expanded,
+    body.platform-android-phone #study-panel.expanded {
+      position: fixed !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+      width: min(800px, 92vw) !important;
+      max-width: 92vw !important;
+      height: 80vh !important;
+      max-height: 85vh !important;
+      z-index: 30005 !important;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+      border-radius: 16px !important;
+    }
+    #study-panel.expanded .note-textarea,
+    html.platform-macos #study-panel.expanded .note-textarea,
+    body.platform-macos #study-panel.expanded .note-textarea {
+      height: 320px !important;
+      min-height: 200px !important;
+    }
+
+    .note-textarea,
+    #note-text,
+    textarea#note-text {
+      height: 300px !important;
+      min-height: 300px !important;
+    }
+
+    #filter-panel,
+    html.platform-macos #filter-panel,
+    body.platform-macos #filter-panel {
+      top: calc(40px + env(safe-area-inset-top)) !important;
+      bottom: calc(40px + env(safe-area-inset-bottom)) !important;
+      height: calc(100vh - 80px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
+      max-height: calc(100vh - 80px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
+    }
+
+    /* Bottom Zoom Controls Bar */
+    #bottom-controls-wrapper {
+      position: fixed !important;
+      bottom: calc(31px + env(safe-area-inset-bottom)) !important;
+      left: 50% !important;
+      transform: translateX(-50%) !important;
+      z-index: 12000 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      pointer-events: none !important;
+      height: 44px !important;
+      box-sizing: border-box !important;
+    }
+
+    #control-panel {
+      position: static !important;
+      transform: none !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 10px !important;
+      height: 44px !important;
+      min-height: 44px !important;
+      box-sizing: border-box !important;
+      background: var(--bg-panel, rgba(255, 255, 255, 0.95)) !important;
+      border: 1px solid var(--border-panel, rgba(0, 0, 0, 0.1)) !important;
+      padding: 0 14px !important;
+      border-radius: 22px !important;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12) !important;
+      backdrop-filter: var(--glass-blur, blur(10px)) !important;
+      -webkit-backdrop-filter: var(--glass-blur, blur(10px)) !important;
+      opacity: 0.9 !important;
+      pointer-events: auto !important;
+      user-select: none !important;
+      -webkit-user-select: none !important;
+      transition: opacity 0.2s ease !important;
+    }
+
+    #control-panel:hover {
+      opacity: 1 !important;
+    }
+
+    #control-panel .control-btn,
+    #zoom-in,
+    #zoom-out {
+      width: 34px !important;
+      height: 34px !important;
+      min-width: 34px !important;
+      min-height: 34px !important;
+      border-radius: 50% !important;
+      background: rgba(148, 163, 184, 0.12) !important;
+      border: none !important;
+      outline: none !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      cursor: pointer !important;
+      pointer-events: auto !important;
+      transition: background-color 0.2s ease, transform 0.1s ease !important;
+      color: var(--text-main, #334155) !important;
+      padding: 0 !important;
+    }
+
+    #control-panel .control-btn:hover,
+    #zoom-in:hover,
+    #zoom-out:hover {
+      background: rgba(148, 163, 184, 0.25) !important;
+      transform: scale(1.08) !important;
+    }
+
+    #control-panel .control-btn:active,
+    #zoom-in:active,
+    #zoom-out:active {
+      transform: scale(0.95) !important;
+    }
+
+    #control-panel svg {
+      width: 18px !important;
+      height: 18px !important;
+      stroke: var(--text-main, #334155) !important;
+      pointer-events: none !important;
+    }
+
+    .zoom-indicator,
+    #zoom-level {
+      font-size: 14px !important;
+      font-weight: 700 !important;
+      min-width: 50px !important;
+      text-align: center !important;
+      color: var(--text-main, #334155) !important;
+      user-select: none !important;
+      -webkit-user-select: none !important;
+      pointer-events: auto !important;
+      cursor: default !important;
+      padding: 0 4px !important;
+    }
+
+    /* Universal Scrollbar Elimination */
+    *, *::before, *::after {
+      scrollbar-width: none !important;
+      -ms-overflow-style: none !important;
+    }
+    ::-webkit-scrollbar, *::-webkit-scrollbar {
+      display: none !important;
+      width: 0px !important;
+      height: 0px !important;
+      background: transparent !important;
+      -webkit-appearance: none !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+    }
+    ::-webkit-scrollbar-track, *::-webkit-scrollbar-track,
+    ::-webkit-scrollbar-thumb, *::-webkit-scrollbar-thumb {
+      display: none !important;
+      background: transparent !important;
+    }
+  </style>
 </head>
 <body>
 
-  <!-- Premium Landing Page Overlay -->
-  <div id="landing-page" style="display: block; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); z-index: 9999; font-family: 'Inter', sans-serif; color: white; box-sizing: border-box; overflow-y: scroll; -webkit-overflow-scrolling: touch;">
-    <div style="max-width: 800px; width: 100%; text-align: center; margin: 0 auto; padding: 40px 20px 80px 20px;">
-      
-      <!-- Top Bar (No button here anymore) -->
-
+  <!-- Premium Landing Page Overlay (Simplified to Splash Screen - z-index boosted to block all overlays, size shrunk by 40%) -->
+  <div id="landing-page" style="display: block; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%); z-index: 999999; font-family: 'Inter', sans-serif; color: white; box-sizing: border-box; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+    <div style="text-align: center; padding: 20px;">
       <!-- Main Visual & Header -->
-      <div style="margin-bottom: 40px;">
-        <img src="/app_logo.png" alt="열린족보이야기 로고" style="height: 100px; width: 100px; border-radius: 24px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); object-fit: cover;">
-        <h1 id="landing-title" style="font-family: 'Outfit', sans-serif; font-size: 40px; font-weight: 800; letter-spacing: -0.03em; margin: 0 0 16px 0; background: linear-gradient(to right, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+      <div style="margin-bottom: 0;">
+        <img src="app_logo.png?v=25000" alt="열린족보이야기 로고" style="height: 66px; width: 66px; border-radius: 14px; margin-bottom: 12px; box-shadow: 0 6px 15px rgba(0,0,0,0.3); object-fit: cover;">
+        <h1 id="landing-title" style="font-family: 'Outfit', sans-serif; font-size: 20.4px; font-weight: 800; letter-spacing: -0.03em; margin: 0; background: linear-gradient(to right, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
           열린족보이야기
         </h1>
-        <p style="font-size: 18px; line-height: 1.6; color: #94a3b8; max-width: 600px; margin: 0 auto;">
-          아담부터 예수 그리스도에 이르는 성경의 전체 계보를<br>
-          자유로운 확대/축소와 함께 탐색하고 연구하는 시각화 플랫폼
-        </p>
       </div>
-
-      <!-- Features Brief -->
-      <div style="display: flex; gap: 20px; justify-content: center; margin-bottom: 25px; flex-wrap: wrap;">
-        <div id="landing-feature-messiah" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); padding: 12px 24px; border-radius: 12px; font-size: 14px; color: #f0f9ff; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(56, 189, 248, 0.15)'; this.style.borderColor='rgba(56, 189, 248, 0.4)';" onmouseout="this.style.background='rgba(255,255,255,0.04)'; this.style.borderColor='rgba(255,255,255,0.1)';" title="족보에서 어떻게 강조되는지 화면으로 보기">
-          ✨ 메시아 직계선 강조
-        </div>
-        <div id="landing-feature-memo" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); padding: 12px 24px; border-radius: 12px; font-size: 14px; color: #f0f9ff; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(56, 189, 248, 0.15)'; this.style.borderColor='rgba(56, 189, 248, 0.4)';" onmouseout="this.style.background='rgba(255,255,255,0.04)'; this.style.borderColor='rgba(255,255,255,0.1)';" title="인물 상세 메모 및 자료 연동 화면 보기">
-          📝 인물별 개인 연구 메모
-        </div>
-        <div id="landing-feature-filter" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); padding: 12px 24px; border-radius: 12px; font-size: 14px; color: #f0f9ff; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(56, 189, 248, 0.15)'; this.style.borderColor='rgba(56, 189, 248, 0.4)';" onmouseout="this.style.background='rgba(255,255,255,0.04)'; this.style.borderColor='rgba(255,255,255,0.1)';" title="특정 계보만 걸러서 보기 기능 체험하기">
-          📐 맞춤형 지파 필터
-        </div>
-      </div>
-
-      <!-- Demo Info Notice -->
-      <div style="font-size: 12px; color: #64748b; margin-bottom: 35px; text-align: center;">
-        ※ 위 버튼을 클릭하면 5분 동안 실제 프로그램을 웹에서 미리 체험해 보실 수 있습니다.
-      </div>
-
-      <!-- Anchor for smooth scrolling -->
-      <div id="install-guide-inline-anchor"></div>
-
-      <!-- Program Installation Security Warning Guide (Inline) -->
-      <div style="max-width: 600px; width: 100%; margin: 0 auto 25px auto; background: rgba(30, 41, 59, 0.75); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px; text-align: left; box-shadow: 0 15px 35px rgba(0,0,0,0.3); box-sizing: border-box;">
-        <h3 style="margin-top: 0; margin-bottom: 20px; font-size: 16px; color: #2c3e50; border-bottom: 2px solid #e67e22; padding-bottom: 10px; display: flex; align-items: center; gap: 6px; font-weight: 700; color: #f97316;">
-          <span>⚠️</span> 프로그램 설치 시 보안 경고 해결 안내
-        </h3>
-        
-        <div style="font-size: 12.5px; color: #1e293b; line-height: 1.6; margin-bottom: 20px; background: #fff3e0; border: 1px solid #ffe0b2; padding: 12px; border-radius: 8px; font-weight: 500;">
-          본 프로그램은 정식 서버에서 직접 빌드된 안전한 앱입니다. 대기업의 고가 유료 보안 서명을 거치지 않은 순수 배포용 파일이므로 운영체제가 차단 경고를 표시할 수 있으나 안심하고 실행하셔도 됩니다.
-        </div>
-
-        <!-- Windows Guide -->
-        <div style="margin-bottom: 20px;">
-          <h4 style="margin: 0 0 8px 0; color: #38bdf8; font-size: 14px; font-weight: 700;">🪟 Windows 설치 안내 (SmartScreen 우회)</h4>
-          <ol style="font-size: 12.5px; color: #cbd5e1; margin: 0; padding-left: 20px; line-height: 1.7;">
-            <li>다운로드받은 <b>msi</b> 파일을 실행합니다.</li>
-            <li>"Windows의 PC 보호" 파란색 차단 창이 뜨면 당황하지 마시고 창 본문의 <b>[추가 정보]</b> 링크를 클릭합니다.</li>
-            <li>그럼 화면 우측 하단에 나타나는 <b>[실행]</b>(Run anyway) 버튼을 누르면 정상적으로 설치가 시작됩니다!</li>
-          </ol>
-        </div>
-
-        <!-- macOS Guide -->
-        <div style="margin-bottom: 25px;">
-          <h4 style="margin: 0 0 8px 0; color: #c084fc; font-size: 14px; font-weight: 700;">🍎 macOS 설치 안내 (Gatekeeper 우회)</h4>
-          <ol style="font-size: 12.5px; color: #cbd5e1; margin: 0; padding-left: 20px; line-height: 1.7;">
-            <li>다운로드받은 <b>dmg</b> 파일을 열고 프로그램 아이콘을 <b>[응용 프로그램]</b>(Applications) 폴더로 끌어다 놓습니다.</li>
-            <li>응용 프로그램 폴더로 이동하여 해당 앱을 그냥 더블클릭하지 마시고, 마우스 <b>[우클릭]</b>(또는 Control + 클릭)을 합니다.</li>
-            <li>메뉴에서 <b>[열기]</b>를 선택한 뒤, 팝업 경고창이 나타나면 아래쪽의 <b>[열기]</b> 버튼을 누르면 즉시 실행됩니다. (최초 1회만 설정하시면 됩니다.)</li>
-            <li>또는 맥의 <b>[시스템 설정] ➡️ [개인정보 보호 및 보안]</b> 메뉴의 하단에서 <b>[확인 없이 열기]</b> 버튼을 누르셔도 실행 가능합니다.</li>
-          </ol>
-        </div>
-        
-        <button id="landing-guide-confirm-btn" style="width: 100%; padding: 12px; background: #e67e22; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; transition: all 0.2s; box-shadow: 0 4px 12px rgba(230,126,34,0.3); display: flex; align-items: center; justify-content: center; gap: 8px;">
-          확인
-        </button>
-      </div>
-
-      <!-- Download Lock Status / Notice -->
-      <div id="download-lock-notice" style="font-size: 12.5px; color: #f87171; margin-bottom: 15px; font-weight: 600; text-align: center; transition: all 0.3s;">
-        🔒 위 설치 안내를 읽고 [확인] 버튼을 클릭하시면 다운로드 버튼이 활성화됩니다.
-      </div>
-
-      <!-- Download Cards Container -->
-      <div id="download-cards-container" style="display: flex; gap: 24px; justify-content: center; margin-bottom: 30px; flex-wrap: wrap; opacity: 0.4; pointer-events: none; filter: grayscale(80%); transition: all 0.3s;">
-        
-        <!-- Windows Card -->
-        <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 16px 24px; width: 280px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-5px)';" onmouseout="this.style.transform='translateY(0)';">
-          <h3 style="margin: 0 0 4px 0; font-size: 16px; font-weight: 600;">Windows용 데스크톱</h3>
-          <p style="font-size: 12px; color: #64748b; margin: 0 0 12px 0;">Windows 10 / 11 지원 (x64)</p>
-          <a href="/downloads/BibleGenealogy_Setup_x64.msi" id="download-windows-link" style="display: block; width: 100%; padding: 10px; background: #0284c7; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 13px; transition: background 0.2s; box-shadow: 0 4px 12px rgba(2,132,199,0.3);" onmouseover="this.style.background='#0369a1';" onmouseout="this.style.background='#0284c7';" download>
-            Windows용 설치파일 다운로드
-          </a>
-        </div>
-
-        <!-- macOS Card -->
-        <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 16px 24px; width: 280px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-5px)';" onmouseout="this.style.transform='translateY(0)';">
-          <h3 style="margin: 0 0 4px 0; font-size: 16px; font-weight: 600;">macOS용 데스크톱</h3>
-          <p style="font-size: 12px; color: #64748b; margin: 0 0 12px 0;">Apple Silicon & Intel 지원 (Universal)</p>
-          <a href="/downloads/BibleGenealogy_macOS.dmg" id="download-macos-link" style="display: block; width: 100%; padding: 10px; background: #0284c7; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 13px; transition: background 0.2s; box-shadow: 0 4px 12px rgba(2,132,199,0.3);" onmouseover="this.style.background='#0369a1';" onmouseout="this.style.background='#0284c7';" download>
-            macOS용 설치파일 다운로드
-          </a>
-        </div>
-
-      </div>
-
-      <!-- Admin Login Link (below download boxes) -->
-      <div style="margin-top: 35px; font-size: 12px; opacity: 0.35; text-align: center;">
-        <a href="javascript:void(0)" id="landing-login-btn" style="color: #94a3b8; text-decoration: none; cursor: pointer; font-weight: 400; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.7';" onmouseout="this.style.opacity='1';">관리자 로그인</a>
-      </div>
-
     </div>
   </div>
 
@@ -165,7 +1429,7 @@
   <div id="auth-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 10000; justify-content: center; align-items: center;">
     <div style="background: white; padding: 40px; border-radius: 12px; width: 360px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); text-align: center; position: relative;">
       <span id="auth-close-btn" style="position: absolute; top: 15px; right: 20px; font-size: 28px; color: #999; cursor: pointer; font-weight: 300; line-height: 1;" onmouseover="this.style.color='#333'" onmouseout="this.style.color='#999'">&times;</span>
-      <img src="/app_logo.png" alt="로고" style="height: 60px; width: 60px; border-radius: 12px; margin: 0 auto 15px auto; display: block; object-fit: cover;">
+      <img src="app_logo.png?v=25000" alt="로고" style="height: 60px; width: 60px; border-radius: 12px; margin: 0 auto 15px auto; display: block; object-fit: cover;">
       <h2 id="auth-title" style="margin-top: 0; margin-bottom: 15px; font-size: 24px;">열린족보이야기</h2>
       
       <!-- 2-Device Synchronization Info Banner -->
@@ -220,79 +1484,177 @@
   </div>
 
   <!-- Help and Usage Guide Modal -->
-  <div id="help-guide-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); z-index: 25000; justify-content: center; align-items: flex-start; overflow-y: auto; padding: 20px; box-sizing: border-box; font-family: 'Inter', sans-serif; backdrop-filter: blur(4px);">
-    <div style="background: var(--bg-panel, white); color: var(--text-main, #1e293b); padding: 30px; border-radius: 16px; width: 550px; max-height: 85vh; overflow-y: auto; text-align: left; box-sizing: border-box; position: relative; border: 1px solid var(--border-panel, #e2e8f0); box-shadow: 0 20px 40px rgba(0,0,0,0.25); margin: auto;">
-      <span id="help-guide-close-btn" style="position: absolute; top: 15px; right: 20px; font-size: 28px; color: var(--text-muted, #94a3b8); cursor: pointer; font-weight: 300; line-height: 1;" onmouseover="this.style.color='var(--text-accent)'" onmouseout="this.style.color='var(--text-muted)'">&times;</span>
+  <div id="help-guide-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); z-index: 25000; justify-content: center; align-items: flex-start; overflow-y: auto; padding: 20px; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif; backdrop-filter: blur(5px);">
+    <div style="background: var(--bg-panel, #ffffff); color: var(--text-main, #1e293b); padding: 28px; border-radius: 16px; width: 660px; max-width: 94vw; max-height: 88vh; overflow-y: auto; text-align: left; box-sizing: border-box; position: relative; border: 1px solid var(--border-panel, #e2e8f0); box-shadow: 0 20px 45px rgba(0,0,0,0.3); margin: auto;">
+      <span id="help-guide-close-btn" style="position: absolute; top: 16px; right: 20px; font-size: 26px; color: var(--text-muted, #94a3b8); cursor: pointer; font-weight: 300; line-height: 1; transition: color 0.15s;" onmouseover="this.style.color='var(--text-accent, #3b82f6)'" onmouseout="this.style.color='var(--text-muted, #94a3b8)'">&times;</span>
       
-      <h3 style="margin-top: 0; margin-bottom: 20px; font-size: 18px; color: var(--text-accent, #3498db); border-bottom: 2px solid var(--border-panel, #e2e8f0); padding-bottom: 10px; display: flex; align-items: center; gap: 8px;">
-        <span>📖</span> 성경 족보 사용법 및 안내 가이드
-      </h3>
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 18px; border-bottom: 2px solid var(--border-panel, #e2e8f0); padding-bottom: 12px;">
+        <span style="font-size: 24px;">📖</span>
+        <div>
+          <h3 style="margin: 0; font-size: 19px; font-weight: 700; color: var(--text-accent, #3b82f6); letter-spacing: -0.3px;">
+            성경 족보 사용법 및 기능 가이드
+          </h3>
+          <span style="font-size: 12px; color: var(--text-muted, #64748b); font-weight: 500;">Bible Genealogy User & Feature Guide</span>
+        </div>
+      </div>
       
-      <div style="display: flex; flex-direction: column; gap: 20px; font-size: 14px; line-height: 1.6;">
-        <!-- Local Storage Notice -->
-        <div style="background: rgba(37, 99, 235, 0.08); border: 1px solid rgba(37, 99, 235, 0.2); padding: 14px 18px; border-radius: 8px; color: var(--text-main); font-weight: 500; display: flex; flex-direction: column; gap: 8px;">
-          <div style="display: flex; align-items: center; gap: 8px; font-size: 14px;">
+      <div style="display: flex; flex-direction: column; gap: 18px; font-size: 13.5px; line-height: 1.65;">
+        <!-- Local Storage & Sync Notice -->
+        <div style="background: rgba(37, 99, 235, 0.08); border: 1px solid rgba(37, 99, 235, 0.25); padding: 14px 16px; border-radius: 10px; color: var(--text-main, #1e293b);">
+          <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; color: #2563eb; margin-bottom: 6px;">
             <span>💡</span>
-            <span>이 프로그램은 개별 로컬 저장 방식으로 운영됩니다.</span>
+            <span>로컬 독립 저장 및 안전한 데이터 보존</span>
           </div>
-          <ul style="margin: 0; padding-left: 20px; color: var(--text-muted); font-size: 13px; font-weight: normal; line-height: 1.5; list-style-type: disc;">
-            <li style="margin-bottom: 4px;"><b>로컬 데이터 저장</b>: 모든 데이터는 사용자의 개인 컴퓨터에 안전하게 저장됩니다.</li>
-            <li><b>데이터 공유 지원</b>: 동일한 ID로 로그인 시 여러 기기에서 데이터를 함께 공유할 수 있습니다.</li>
+          <ul style="margin: 0; padding-left: 18px; color: var(--text-muted, #475569); font-size: 13px; line-height: 1.55; list-style-type: disc;">
+            <li style="margin-bottom: 3px;"><b>개별 로컬 영구 저장</b>: 모든 편집 작업(인물, 사건, 장소, 메모, 연결선 등)은 사용자 PC 로컬 스토리지에 즉시 안전하게 자동 보존됩니다.</li>
+            <li><b>멀티 디바이스 연동</b>: 동일한 라이선스 키/계정으로 로그인 시 iCloud 및 멀티 기기 간 데이터 공유를 지원합니다.</li>
           </ul>
         </div>
 
-        <!-- 1. Basic Operation -->
-        <div>
-          <h4 style="margin: 0 0 6px 0; font-size: 15px; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
-            <span>🔍</span> 기본 조작 및 인물/사건 검색
+        <!-- 1. Navigation & Search -->
+        <div style="background: var(--bg-hover, rgba(0,0,0,0.02)); border: 1px solid var(--border-panel, #e2e8f0); border-radius: 10px; padding: 14px 16px;">
+          <h4 style="margin: 0 0 8px 0; font-size: 14.5px; font-weight: 700; color: var(--text-main, #1e293b); display: flex; align-items: center; gap: 6px;">
+            <span>🔍</span> 1. 화면 탐색 및 통합 검색
           </h4>
-          <ul style="margin: 0; padding-left: 20px; color: var(--text-muted);">
-            <li><b>화면 조작</b>: 마우스 드래그로 화면 이동, 휠 또는 하단 컨트롤러(<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align: middle;"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg> / <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align: middle;"><line x1="5" y1="12" x2="19" y2="12" /></svg>) 버튼으로 확대/축소할 수 있습니다.</li>
-            <li><b>기본 홈(원점)</b>: 하단 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align: middle;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg> 버튼을 누르면 첫 화면(100% 비율)으로 돌아옵니다.</li>
-            <li><b>검색창</b>: 화면 상단 검색창에 이름, 장소, 사건을 입력하면 해당 인물이나 마커로 즉시 이동하며 하이라이트됩니다.</li>
+          <ul style="margin: 0; padding-left: 18px; color: var(--text-muted, #475569); font-size: 13px; line-height: 1.6;">
+            <li><b>화면 이동 (Pan)</b>: 마우스 좌클릭 후 드래그하거나 트랙패드 두 손가락으로 캔버스를 상하좌우 자유롭게 이동합니다.</li>
+            <li><b>확대/축소 (Zoom)</b>: 마우스 휠 스크롤, 트랙패드 핀치(Pinch), 또는 하단 컨트롤러의 <b>+</b> / <b>-</b> 버튼을 사용합니다.</li>
+            <li><b>100% 원점 화면 리셋</b>: 단축키 <b>⌘0</b> (Windows: <b>Ctrl+0</b>) 또는 하단 홈(🏠) 버튼을 누르면 첫 기본 크기(100%)로 돌아옵니다.</li>
+            <li><b>통합 검색창</b>: 상단 메뉴바 검색창에 인물 이름, 주요 사건, 지명/장소를 입력하면 해당 위치로 즉시 포커스 이동 및 하이라이트됩니다.</li>
           </ul>
         </div>
 
-        <!-- 2. Presentation -->
-        <div>
-          <h4 style="margin: 0 0 6px 0; font-size: 15px; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
-            <span>📺</span> 강의 및 설교 프레젠테이션 활용
+        <!-- 2. Edit Mode & Adding Boxes -->
+        <div style="background: var(--bg-hover, rgba(0,0,0,0.02)); border: 1px solid var(--border-panel, #e2e8f0); border-radius: 10px; padding: 14px 16px;">
+          <h4 style="margin: 0 0 8px 0; font-size: 14.5px; font-weight: 700; color: var(--text-main, #1e293b); display: flex; align-items: center; gap: 6px;">
+            <span>🔓</span> 2. 편집 모드 및 상자(Box) 추가
           </h4>
-          <p style="margin: 0; color: var(--text-muted); padding-left: 20px;">
-            성경을 가르치거나 설교할 때 <b>시각 자료로 아주 유용하게 사용</b>할 수 있습니다. 빔 프로젝터나 화면 공유를 통해 인물 간의 관계선(대조) 및 계보 흐름을 한눈에 명확하게 보여줄 수 있습니다.
+          <ul style="margin: 0; padding-left: 18px; color: var(--text-muted, #475569); font-size: 13px; line-height: 1.6;">
+            <li><b>편집 모드 전환</b>: 상단 메뉴 <b>편집 (Edit) ➡️ 🔓 편집 모드 전환</b> 또는 단축키 <b>⇧⌘E</b>(Shift+Cmd+E)를 누릅니다. 편집 모드 진입 시 배경에 미세한 정밀 방안 격자가 표시되어 정렬을 돕습니다.</li>
+            <li><b>👤 인물 카드 (Person)</b>: 새 인물을 추가하고 원하는 위치로 드래그 배치합니다. 인물 카드를 더블클릭하면 생몰년, 부모/배우자 관계, 성경 구절 등을 상세 편집할 수 있습니다.</li>
+            <li><b>📜 주요 사건 (Event)</b>: 역사적 사건 상자를 추가하여 연대표 및 타임라인에 배치합니다.</li>
+            <li><b>📍 장소/지명 (Location)</b>: 성경 속 도시, 산, 지역 상자를 생성하여 지리적 맥락을 연결합니다.</li>
+            <li><b>📝 메모 상자 (Note Box)</b>: 자유로운 해설, 묵상 메모, 성경 구절 텍스트 상자를 원하는 곳에 배치합니다.</li>
+            <li><b>🔷 영역 다각형 (Region)</b>: 다각형 영역을 그려 지파별 영토, 시대적 공간 등을 시각적으로 구분합니다.</li>
+          </ul>
+        </div>
+
+        <!-- 3. Copy, Paste & Duplicate -->
+        <div style="background: var(--bg-hover, rgba(0,0,0,0.02)); border: 1px solid var(--border-panel, #e2e8f0); border-radius: 10px; padding: 14px 16px;">
+          <h4 style="margin: 0 0 8px 0; font-size: 14.5px; font-weight: 700; color: var(--text-main, #1e293b); display: flex; align-items: center; gap: 6px;">
+            <span>📋</span> 3. 상자 복사, 붙여넣기 및 즉시 복제
+          </h4>
+          <ul style="margin: 0; padding-left: 18px; color: var(--text-muted, #475569); font-size: 13px; line-height: 1.6;">
+            <li><b>복사 (⌘C) & 붙여넣기 (⌘V)</b>: 인물, 사건, 장소, 메모 상자, 영역 다각형 등 복사할 상자를 클릭하여 선택한 후 <b>⌘C</b>를 누르고, 원하는 시점에 <b>⌘V</b>를 누르면 새로운 고유 ID가 부여된 복사본이 생성됩니다.</li>
+            <li><b>즉시 복제 (⌘D)</b>: 상자를 선택한 상태에서 <b>⌘D</b>를 누르면 그 자리에 즉시 복제본(+30px)이 생성됩니다.</li>
+            <li>상단 <b>편집 (Edit)</b> 메뉴의 <b>복사 (Copy)</b>, <b>붙여넣기 (Paste)</b>, <b>박스 즉시 복제 (Duplicate Box)</b> 메뉴 항목으로도 동일하게 조작할 수 있습니다.</li>
+          </ul>
+        </div>
+
+        <!-- 4. Character ID & Information Sync -->
+        <div style="background: var(--bg-hover, rgba(0,0,0,0.02)); border: 1px solid var(--border-panel, #e2e8f0); border-radius: 10px; padding: 14px 16px;">
+          <h4 style="margin: 0 0 8px 0; font-size: 14.5px; font-weight: 700; color: var(--text-main, #1e293b); display: flex; align-items: center; gap: 6px;">
+            <span>✏️</span> 4. 인물 이름 변경 및 고유 ID 자동 동기화
+          </h4>
+          <ul style="margin: 0; padding-left: 18px; color: var(--text-muted, #475569); font-size: 13px; line-height: 1.6;">
+            <li>인물 정보 수정 모달에서 이름을 수정하면 영문/한글 기반 고유 ID가 실시간으로 자동 제안 및 수정 가능하도록 지원됩니다.</li>
+            <li>ID가 변경되면 부모·배우자 관계, 스승·선지자 연결, 관련 사건/장소, 커스텀 시각 연결선, 굴절점, 개인 메모 등 <b>모든 연관 데이터가 누락 없이 완벽하게 자동 갱신</b>됩니다.</li>
+          </ul>
+        </div>
+
+        <!-- 5. Layers & Visual Control -->
+        <div style="background: var(--bg-hover, rgba(0,0,0,0.02)); border: 1px solid var(--border-panel, #e2e8f0); border-radius: 10px; padding: 14px 16px;">
+          <h4 style="margin: 0 0 8px 0; font-size: 14.5px; font-weight: 700; color: var(--text-main, #1e293b); display: flex; align-items: center; gap: 6px;">
+            <span>🎛️</span> 5. 레이어(Layers) 실시간 제어 및 시각화
+          </h4>
+          <ul style="margin: 0; padding-left: 18px; color: var(--text-muted, #475569); font-size: 13px; line-height: 1.6;">
+            <li>상단 <b>레이어 (Layers)</b> 메뉴에서 인물 족보(👤), 주요 사건(📜), 장소/지명(📍), 영역 다각형(🔷), 선지자 계보(👑) 레이어를 원클릭으로 켜고 끌 수 있습니다.</li>
+            <li>현재 화면에 표시 중인 활성 레이어는 메뉴 항목 옆에 실시간 체크마크(<b>✓</b>)로 표시됩니다.</li>
+            <li><b>자유 연결선 & 굴절점</b>: 상자 간 마우스 드래그로 관계선을 생성하고, 선을 더블클릭하여 굴절점(Bend points) 및 스타일(색상/굵기/점선)을 지정할 수 있습니다.</li>
+          </ul>
+        </div>
+
+        <!-- 6. Data Backup & Restore -->
+        <div style="background: var(--bg-hover, rgba(0,0,0,0.02)); border: 1px solid var(--border-panel, #e2e8f0); border-radius: 10px; padding: 14px 16px;">
+          <h4 style="margin: 0 0 8px 0; font-size: 14.5px; font-weight: 700; color: var(--text-main, #1e293b); display: flex; align-items: center; gap: 6px;">
+            <span>💾</span> 6. 데이터 백업 및 복원 (JSON Backup & Restore)
+          </h4>
+          <ul style="margin: 0; padding-left: 18px; color: var(--text-muted, #475569); font-size: 13px; line-height: 1.6;">
+            <li>상단 <b>파일 (File) ➡️ 연구 메모 백업 (JSON 저장)</b> 메뉴를 통해 전체 족보 데이터 및 연구 노트를 파일로 안전하게 백업할 수 있습니다.</li>
+            <li><b>연구 메모 복원 (JSON 불러오기)</b>을 통해 다른 기기나 백업 시점의 데이터를 손쉽게 복원할 수 있습니다.</li>
+          </ul>
+        </div>
+
+        <!-- 7. Keyboard Shortcuts Table -->
+        <div style="background: var(--bg-hover, rgba(0,0,0,0.02)); border: 1px solid var(--border-panel, #e2e8f0); border-radius: 10px; padding: 14px 16px;">
+          <h4 style="margin: 0 0 10px 0; font-size: 14.5px; font-weight: 700; color: var(--text-main, #1e293b); display: flex; align-items: center; gap: 6px;">
+            <span>⌨️</span> 7. 주요 단축키 안내표 (Keyboard Shortcuts)
+          </h4>
+          <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 12.5px; text-align: left;">
+              <thead>
+                <tr style="border-bottom: 2px solid var(--border-panel, #e2e8f0); color: var(--text-main, #1e293b);">
+                  <th style="padding: 6px 8px; width: 38%;">단축키 (Mac / Win)</th>
+                  <th style="padding: 6px 8px;">기능 및 동작 설명</th>
+                </tr>
+              </thead>
+              <tbody style="color: var(--text-muted, #475569);">
+                <tr style="border-bottom: 1px solid var(--border-panel, #f1f5f9);">
+                  <td style="padding: 6px 8px; font-family: monospace; font-weight: 600; color: var(--text-accent, #3b82f6);"><kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 5px;">⇧⌘E</kbd> / <kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 5px;">Shift+Ctrl+E</kbd></td>
+                  <td style="padding: 6px 8px;"><b>편집 모드 전환</b> (잠금 해제 / 편집 종료)</td>
+                </tr>
+                <tr style="border-bottom: 1px solid var(--border-panel, #f1f5f9);">
+                  <td style="padding: 6px 8px; font-family: monospace; font-weight: 600; color: var(--text-accent, #3b82f6);"><kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 5px;">⌘C</kbd> / <kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 5px;">Ctrl+C</kbd></td>
+                  <td style="padding: 6px 8px;">선택한 상자(인물/사건/장소/메모/영역) <b>복사</b></td>
+                </tr>
+                <tr style="border-bottom: 1px solid var(--border-panel, #f1f5f9);">
+                  <td style="padding: 6px 8px; font-family: monospace; font-weight: 600; color: var(--text-accent, #3b82f6);"><kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 5px;">⌘V</kbd> / <kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 5px;">Ctrl+V</kbd></td>
+                  <td style="padding: 6px 8px;">복사된 상자를 새 고유 ID로 <b>붙여넣기</b></td>
+                </tr>
+                <tr style="border-bottom: 1px solid var(--border-panel, #f1f5f9);">
+                  <td style="padding: 6px 8px; font-family: monospace; font-weight: 600; color: var(--text-accent, #3b82f6);"><kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 5px;">⌘D</kbd> / <kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 5px;">Ctrl+D</kbd></td>
+                  <td style="padding: 6px 8px;">선택한 상자 <b>즉시 복제</b> (Duplicate)</td>
+                </tr>
+                <tr style="border-bottom: 1px solid var(--border-panel, #f1f5f9);">
+                  <td style="padding: 6px 8px; font-family: monospace; font-weight: 600; color: var(--text-accent, #3b82f6);"><kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 5px;">⌘Z</kbd> / <kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 5px;">Ctrl+Z</kbd></td>
+                  <td style="padding: 6px 8px;"><b>실행 취소</b> (Undo)</td>
+                </tr>
+                <tr style="border-bottom: 1px solid var(--border-panel, #f1f5f9);">
+                  <td style="padding: 6px 8px; font-family: monospace; font-weight: 600; color: var(--text-accent, #3b82f6);"><kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 5px;">⇧⌘Z</kbd> / <kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 5px;">Ctrl+Y</kbd></td>
+                  <td style="padding: 6px 8px;"><b>다시 실행</b> (Redo)</td>
+                </tr>
+                <tr style="border-bottom: 1px solid var(--border-panel, #f1f5f9);">
+                  <td style="padding: 6px 8px; font-family: monospace; font-weight: 600; color: var(--text-accent, #3b82f6);"><kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 5px;">⌘0</kbd> / <kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 5px;">Ctrl+0</kbd></td>
+                  <td style="padding: 6px 8px;"><b>100% 기본 크기 화면 리셋</b></td>
+                </tr>
+                <tr>
+                  <td style="padding: 6px 8px; font-family: monospace; font-weight: 600; color: var(--text-accent, #3b82f6);"><kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 5px;">Esc</kbd></td>
+                  <td style="padding: 6px 8px;">팝업 모달 닫기 / 상자 선택 해제</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Updates / Download Card -->
+        <div style="background: rgba(148, 163, 184, 0.08); padding: 14px 16px; border-radius: 10px; border: 1px dashed var(--border-panel, #cbd5e1);">
+          <h4 style="margin: 0 0 6px 0; font-size: 13.5px; font-weight: 700; color: var(--text-main, #1e293b); display: flex; align-items: center; gap: 6px;">
+            <span>🔄</span> 프로그램 버전 및 최신 다운로드
+          </h4>
+          <p style="margin: 0 0 10px 0; font-size: 12.5px; color: var(--text-muted, #64748b);">
+            현재 사용 중인 버전: <b>v1.1.2 (Universal Desktop & Web)</b><br>
+            아래 버튼을 클릭하면 사용 중인 기기(Mac/Windows)에 최적화된 최신 설치 프로그램 파일이 즉시 다운로드됩니다.
           </p>
-        </div>
-
-        <!-- 3. Notes & Filter -->
-        <div>
-          <h4 style="margin: 0 0 6px 0; font-size: 15px; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
-            <span>🎛️</span> 계보 필터 및 묵상 메모 작성
-          </h4>
-          <ul style="margin: 0; padding-left: 20px; color: var(--text-muted);">
-            <li><b>계보 필터링</b>: 하단 조절기(<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align: middle;"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>) 버튼을 누르면 특정 계보(가인, 함, 마리아 계보 등)만 활성화하여 볼 수 있습니다.</li>
-            <li><b>메모 연동</b>: 필터를 체크하여 활성화하는 순간, 우측에 해당 계보에 관한 개인 묵상 메모와 링크를 기록할 수 있는 사이드바 패널이 자동으로 활성화됩니다.</li>
-          </ul>
-        </div>
-
-        <!-- 4. Updates -->
-        <div style="background: rgba(148, 163, 184, 0.08); padding: 15px; border-radius: 8px; border: 1px dashed var(--border-panel);">
-          <h4 style="margin: 0 0 6px 0; font-size: 14px; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
-            <span>🔄</span> 프로그램 업데이트 및 다운로드
-          </h4>
-          <p style="margin: 0 0 10px 0; font-size: 13px; color: var(--text-muted);">
-            현재 사용 중인 버전: <b>v1.0.35 (Universal)</b><br>
-            아래 버튼을 클릭하면 사용 중인 PC 기기(Mac/Windows)에 최적화된 최신 설치 프로그램 파일이 즉시 다운로드됩니다.
-          </p>
-          <button onclick="window.downloadLatestProgram()" style="display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 10px; background: var(--text-accent, #3498db); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; transition: background 0.2s;">
+          <button onclick="window.downloadLatestProgram()" style="display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 10px; background: var(--text-accent, #3b82f6); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; transition: opacity 0.15s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
             🌐 최신 설치 파일 즉시 다운로드
           </button>
-          <div style="margin-top: 10px; text-align: center;">
-            <a href="javascript:void(0)" id="show-install-guide-link" style="color: #f97316; text-decoration: underline; font-weight: 600; font-size: 12px; display: inline-block;">⚠️ 첫 설치 시 보안 차단 경고 해결 방법 (필독!)</a>
+          <div style="margin-top: 8px; text-align: center;">
+            <a href="javascript:void(0)" id="show-install-guide-link" style="color: #ea580c; text-decoration: underline; font-weight: 600; font-size: 12px; display: inline-block;">⚠️ 첫 설치 시 보안 차단 경고 해결 방법 (필독!)</a>
           </div>
         </div>
       </div>
 
-      <button id="help-guide-confirm-btn" style="width: 100%; padding: 12px; background: var(--border-panel, #2c3e50); color: var(--text-main, white); border: 1px solid var(--border-panel); border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; margin-top: 20px;">닫기</button>
+      <button id="help-guide-confirm-btn" style="width: 100%; padding: 12px; background: var(--text-accent, #3b82f6); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 14px; margin-top: 20px; transition: opacity 0.15s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">가이드 확인 및 닫기</button>
     </div>
   </div>
 
@@ -367,34 +1729,90 @@
   </div>
 
   <div id="app-container">
-    
-    <!-- Header Title Panel -->
-    <header id="main-header">
-      <img src="/app_logo.png" alt="로고" style="height: 24px; width: 24px; border-radius: 6px; object-fit: cover;">
-      <h1><span id="app-main-title">열린족보이야기</span> <small style="font-size: 11px; opacity: 0.5; vertical-align: middle;">v1.0</small></h1>
-      <span class="subtitle" id="stats">분석 중...</span>
-    </header>
-    
-    <!-- Search Panel -->
-    <div id="search-panel">
-      <input type="text" id="searchInput" class="search-box" placeholder="검색 (인물, 사건, 장소)..." autocomplete="off">
-      <ul id="search-results" class="search-results-dropdown"></ul>
-    </div>
-    
-    <!-- Layer Toggle Controls Panel -->
-    <div class="layer-control-panel" style="z-index: 3000;">
-      <div class="layer-bar-drag-handle" style="font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; cursor: move; user-select: none; display: flex; align-items: center; justify-content: space-between;">
-        <span id="layer-panel-title">레이어 표시 설정</span>
-        <span style="font-size: 10px; opacity: 0.5; margin-left: 8px;">⋮⋮</span>
+    <!-- macOS Native-Style Top System Menu Bar (Visible on Desktop / Virtual PC) -->
+    <header id="desktop-mac-menubar" class="desktop-top-menubar">
+      <div class="mac-menubar-left">
+        <!-- File Menu (Contains Info, Preferences, Fullscreen, Backup/Restore) -->
+        <div class="mac-menu-item" id="menu-item-file">
+          <span class="mac-menu-title" id="mac-menu-title-file">파일</span>
+          <div class="mac-dropdown-menu">
+            <div class="mac-menu-entry" id="mac-menu-pref"><span class="label">환경설정...</span><span class="shortcut">⌘,</span></div>
+            <div class="mac-menu-divider"></div>
+            <div class="mac-menu-entry" id="mac-menu-notes-export"><span class="label">연구 메모 백업</span></div>
+            <div class="mac-menu-entry" id="mac-menu-notes-import"><span class="label">연구 메모 복원</span></div>
+          </div>
+        </div>
+
+        <div class="mac-menu-item" id="menu-item-edit">
+          <span class="mac-menu-title" id="mac-menu-title-edit">편집</span>
+          <div class="mac-dropdown-menu">
+            <div class="mac-menu-entry highlight" id="mac-menu-toggle-edit">
+              <span class="label" id="mac-menu-toggle-edit-label">편집 모드 전환</span>
+              <span class="shortcut">⇧⌘E</span>
+            </div>
+            <div class="mac-menu-divider"></div>
+            <div class="mac-menu-entry" id="mac-menu-add-person"><span class="label">인물 추가</span><span class="shortcut">⌥P</span></div>
+            <div class="mac-menu-entry" id="mac-menu-add-event"><span class="label">사건 추가</span><span class="shortcut">⌥E</span></div>
+            <div class="mac-menu-entry" id="mac-menu-add-location"><span class="label">장소/지명 추가</span><span class="shortcut">⌥L</span></div>
+            <div class="mac-menu-entry" id="mac-menu-add-note"><span class="label">메모 상자 추가</span><span class="shortcut">⌥N</span></div>
+            <div class="mac-menu-entry" id="mac-menu-add-polygon"><span class="label">영역 추가</span><span class="shortcut">⌥G</span></div>
+            <div class="mac-menu-divider"></div>
+            <div class="mac-menu-entry" id="mac-menu-copy"><span class="label">복사</span><span class="shortcut">⌘C</span></div>
+            <div class="mac-menu-entry" id="mac-menu-paste"><span class="label">붙여넣기</span><span class="shortcut">⌘V</span></div>
+            <div class="mac-menu-entry" id="mac-menu-duplicate-box"><span class="label">박스 즉시 복제</span><span class="shortcut">⌘D</span></div>
+            <div class="mac-menu-divider"></div>
+            <div class="mac-menu-entry" id="mac-menu-undo"><span class="label">실행 취소</span><span class="shortcut">⌘Z</span></div>
+            <div class="mac-menu-entry" id="mac-menu-redo"><span class="label">다시 실행</span><span class="shortcut">⇧⌘Z</span></div>
+          </div>
+        </div>
+
+        <div class="mac-menu-item" id="menu-item-view">
+          <span class="mac-menu-title" id="mac-menu-title-view">보기</span>
+          <div class="mac-dropdown-menu">
+            <div class="mac-menu-entry" id="mac-menu-zoomin"><span class="label">확대</span><span class="shortcut">⌘+</span></div>
+            <div class="mac-menu-entry" id="mac-menu-zoomout"><span class="label">축소</span><span class="shortcut">⌘-</span></div>
+            <div class="mac-menu-entry" id="mac-menu-reset-zoom"><span class="label">100% 기본 크기</span><span class="shortcut">⌘0</span></div>
+            <div class="mac-menu-divider"></div>
+            <div class="mac-menu-entry" id="mac-menu-center-adam"><span class="label">시작 위치(아담)로 이동</span><span class="shortcut">⌥A</span></div>
+            <div class="mac-menu-entry" id="mac-menu-theme-toggle"><span class="label">다크 모드</span><span class="shortcut">⌥T</span></div>
+          </div>
+        </div>
+
+        <div class="mac-menu-item" id="menu-item-layers">
+          <span class="mac-menu-title" id="mac-menu-title-layers">레이어</span>
+          <div class="mac-dropdown-menu">
+            <div class="mac-menu-entry" id="mac-menu-layer-people"><span class="label"><span class="menu-check" style="display:inline-block; width:16px; font-weight:700; color:currentColor;">✓</span><span>인물 족보</span></span></div>
+            <div class="mac-menu-entry" id="mac-menu-layer-events"><span class="label"><span class="menu-check" style="display:inline-block; width:16px; font-weight:700; color:currentColor;">✓</span><span>주요 사건</span></span></div>
+            <div class="mac-menu-entry" id="mac-menu-layer-locations"><span class="label"><span class="menu-check" style="display:inline-block; width:16px; font-weight:700; color:currentColor;">✓</span><span>장소/지명</span></span></div>
+            <div class="mac-menu-entry" id="mac-menu-layer-polygons"><span class="label"><span class="menu-check" style="display:inline-block; width:16px; font-weight:700; color:currentColor;">✓</span><span>영역</span></span></div>
+            <div class="mac-menu-entry" id="mac-menu-layer-prophets"><span class="label"><span class="menu-check" style="display:inline-block; width:16px; font-weight:700; color:currentColor;">✓</span><span>선지자</span></span></div>
+          </div>
+        </div>
       </div>
-      <label><input type="checkbox" id="toggle-layer-people" checked> <span id="text-layer-people">인물 족보 (Genealogy)</span></label>
-      <label><input type="checkbox" id="toggle-layer-events"> <span id="text-layer-events">주요 사건 (Events)</span></label>
-      <label><input type="checkbox" id="toggle-layer-locations"> <span id="text-layer-locations">장소/지명 (Locations)</span></label>
-      <label><input type="checkbox" id="toggle-layer-polygons" checked> <span id="text-layer-polygons">영역 (Areas)</span></label>
-      <label><input type="checkbox" id="toggle-layer-prophets" checked> <span id="text-layer-prophets">선지자 (Prophets)</span></label>
-      <input type="checkbox" id="toggle-relationship-highlight" checked style="display: none;">
-    </div>
-    
+
+      <div class="mac-menubar-right">
+        <!-- Integrated Search Bar in Top System Menu Bar -->
+        <div class="mac-menubar-search" id="mac-menubar-search">
+          <svg class="search-icon-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="searchInput" class="mac-search-input" placeholder="검색 (인물, 사건, 장소)..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+          <ul id="search-results" class="search-results-dropdown mac-search-results"></ul>
+        </div>
+
+        <!-- Help menu item at the right of search bar -->
+        <div class="mac-menu-item" id="menu-item-help">
+          <span class="mac-menu-title" id="mac-menu-title-help">도움말</span>
+          <div class="mac-dropdown-menu" style="left: auto; right: 0;">
+            <div class="mac-menu-entry" id="mac-menu-manual"><span class="label">사용 가이드</span></div>
+            <div class="mac-menu-divider"></div>
+            <div class="mac-menu-entry" id="mac-menu-about-help">열린 족보이야기 정보</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
     <!-- Main Scroll/Pan Viewer Container -->
     <main id="viewer-container">
 
@@ -433,186 +1851,194 @@
           <!-- HTML Person Cards will be rendered here dynamically -->
           
           <!-- New Transparent Layers -->
-          <div id="layer-events" class="transparent-layer" style="display: none;"></div>
-          <div id="layer-locations" class="transparent-layer" style="display: none;"></div>
+          <div id="layer-events" class="transparent-layer"></div>
+          <div id="layer-locations" class="transparent-layer"></div>
         </div>
       </div>
     </main>
     
-    <div id="control-panel">
-      <button id="zoom-out" class="control-btn" title="축소">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12" /></svg>
-      </button>
-      <span id="zoom-level" class="zoom-indicator">100%</span>
-      <button id="zoom-in" class="control-btn" title="확대">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
-      </button>
-      <div class="control-divider"></div>
-      <button id="zoom-reset" class="control-btn" title="원본 크기">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-      </button>
-      <button id="lang-toggle" class="control-btn" title="언어 변경 / Change Language">
-        <span id="lang-toggle-text" style="font-size: 11px; font-weight: 800; font-family: 'Outfit', sans-serif;">KO</span>
-      </button>
-      <button id="filter-panel-toggle" class="control-btn" title="계보 필터 설정">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
-      </button>
-      <button id="theme-toggle" class="control-btn" title="테마 변경">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/><circle cx="12" cy="12" r="4"/></svg>
-      </button>
-      <button id="help-guide-btn" class="control-btn" title="도움말 및 사용 가이드">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M 13 10.5 L 11 16.5"></path><path d="M 11.8 11 L 13 10.5"></path><path d="M 10 17 L 11.5 16.5 C 12.5 16.5 13 16 13.5 15.5"></path><circle cx="13.8" cy="7.2" r="0.8" fill="currentColor"></circle></svg>
-      <button id="bottom-settings-btn" class="control-btn" title="환경 설정">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-      </button>
-      <input type="file" id="user-notes-file-input" accept=".json" style="display: none;">
-      <div id="admin-divider" class="control-divider" style="display: none;"></div>
-      <button id="admin-lock-btn" class="control-btn" title="관리자 편집 모드 토글" style="display: none;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-      </button>
-      <button id="user-logout-btn" class="control-btn" title="로그아웃" style="margin-left: 4px;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-      </button>
+    <!-- 3. Bottom Zoom Controls Bar (Centered) -->
+    <div id="bottom-controls-wrapper">
+      <div id="control-panel">
+        <button id="zoom-out" class="control-btn" title="축소">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </button>
+        <span id="zoom-level" class="zoom-indicator">100%</span>
+        <button id="zoom-in" class="control-btn" title="확대">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </button>
+      </div>
     </div>
+
+    <input type="file" id="user-notes-file-input" accept=".json" style="display: none;">
+    <button id="admin-lock-btn" class="control-btn" style="display: none !important;"></button>
+
+    <!-- 4. Mobile Floating Search Panel Wrapper (Mobile Only) -->
+    <div id="floating-search-wrapper" class="mobile-only-search" style="position: fixed; z-index: 16000; display: flex; align-items: center; justify-content: center; pointer-events: auto;">
+      <div id="search-panel" style="position: relative; display: flex; align-items: center; pointer-events: auto; margin: 0; width: 100%;">
+        <input type="text" id="mobileSearchInput" class="search-box" placeholder="검색 (인물, 사건, 장소)..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+        <ul id="mobile-search-results" class="search-results-dropdown"></ul>
+      </div>
+    </div>
+
+    <!-- 5. Left Top Slide-to-Unlock Edit Mode Slider (40px handle, top -18px) -->
+    <div id="slide-lock-container" style="position: fixed; left: 20px; top: calc(-18px + env(safe-area-inset-top)); bottom: auto; z-index: 20000; width: 153.5px; height: 40px; border-radius: 20px; display: flex; align-items: center; padding: 0; box-sizing: border-box; user-select: none; transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;">
+      <div id="slide-lock-handle" style="width: 40px; height: 40px; background: #ffffff; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transform: translateX(0px); transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1), background-color 0.2s ease; position: relative; z-index: 2;">
+        <span id="slide-lock-icon" style="display: flex; align-items: center; justify-content: center; width: 26.5px; height: 26.5px;">
+          <img id="slide-lock-icon-img" src="lock_btn.png" alt="락 버튼" draggable="false" style="width: 26.5px; height: 26.5px; object-fit: contain; pointer-events: none; display: block; -webkit-user-drag: none; user-select: none; -webkit-user-select: none;" />
+        </span>
+      </div>
+      <span id="slide-lock-text" style="position: absolute; left: 40px; right: 6px; top: 0; bottom: 0; height: 100%; display: flex; align-items: center; justify-content: center; line-height: 1; text-align: center; font-size: 13px; font-weight: 700; color: #333333; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; white-space: nowrap; z-index: 1;">편집모드</span>
+    </div>
+    
+    <!-- 6. Right Top Settings Button (Opposite to Lock Button) -->
+    <button id="floating-settings-btn" class="admin-action-btn-circle has-tooltip tooltip-down" data-tooltip="환경설정" title="환경설정" style="width: 40px; height: 40px; min-width: 40px; min-height: 40px;">
+      <span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 26.5px; height: 26.5px;">
+        <img class="custom-settings-icon" src="settings_btn.png" alt="환경설정" style="width: 26.5px; height: 26.5px; object-fit: contain; pointer-events: none;" />
+      </span>
+    </button>
     
     <!-- Left Sliding Design Style Editor Panel -->
     <aside id="style-editor-panel">
-      <div class="panel-header">
-        <div class="panel-title">
-          <h2>선 디자인 편집기</h2>
-          <p>연결선 스타일을 실시간 변경</p>
-        </div>
-        <button id="style-panel-close" class="close-btn" title="닫기">&times;</button>
-      </div>
+      <!-- Style editor panel header removed -->
       <div class="panel-body">
-        <!-- 1. Connection Type -->
-        <section class="style-section">
-          <h3 class="panel-sec-title">연결선 형태 선택</h3>
-          <div class="style-control-group">
-            <label for="style-line-type">연결선 스타일</label>
-            <select id="style-line-type" class="style-select">
-              <option value="orthogonal" selected>직각 및 곡선 (Orthogonal)</option>
-              <option value="diagonal">직선 (Diagonal)</option>
-            </select>
-          </div>
-        </section>
-
-        <!-- 2. Color Customizations -->
-        <section class="style-section">
-          <h3 class="panel-sec-title">선 색상 변경</h3>
-          <div class="style-control-group">
-            <label for="style-line-color">일반 연결선</label>
-            <input type="color" id="style-line-color" value="#cbd5e1">
-          </div>
-          <div class="style-control-group">
-            <label for="style-main-line-color">메시아 직계선</label>
-            <input type="color" id="style-main-line-color" value="#ff7800">
-          </div>
-          <div class="style-control-group">
-            <label for="style-spouse-line-color">배우자 연결선</label>
-            <input type="color" id="style-spouse-line-color" value="#ef4444">
-          </div>
-          <div class="style-control-group">
-            <label for="style-preacher-line-color">전도자 연결선</label>
-            <input type="color" id="style-preacher-line-color" value="#ff7800">
-          </div>
-        </section>
-        
-        <!-- 2. Curvature & Curving Controls -->
-        <section class="style-section">
-          <h3 class="panel-sec-title">두께 및 곡선 조절</h3>
-          <div class="style-control-group">
-            <div class="slider-label-row">
-              <label for="style-line-width">선 두께</label>
-              <span id="label-line-width">2px</span>
-            </div>
-            <input type="range" id="style-line-width" min="1" max="8" step="1" value="2">
-          </div>
-          <div class="style-control-group">
-            <div class="slider-label-row">
-              <label for="style-corner-radius">모서리 둥글기 (곡률)</label>
-              <span id="label-corner-radius">12px</span>
-            </div>
-            <input type="range" id="style-corner-radius" min="0" max="30" step="1" value="12">
-          </div>
-          <div class="style-control-group">
-            <div class="slider-label-row">
-              <label for="style-split-offset">분기선 높이 (선 이동)</label>
-              <span id="label-split-offset">45px</span>
-            </div>
-            <input type="range" id="style-split-offset" min="20" max="160" step="5" value="90">
-          </div>
-          <div class="style-control-group">
-            <div class="slider-label-row">
-              <label for="style-sibling-gap">아들들 간격 (픽셀)</label>
-              <span id="label-sibling-gap">7px</span>
-            </div>
-            <input type="range" id="style-sibling-gap" min="5" max="100" step="1" value="7">
-          </div>
-        </section>
-
-        <!-- 3. Line Editor (Custom Bends) -->
-        <section class="style-section" id="line-editor-section" style="display: none;">
-          <h3 class="panel-sec-title">선 개별 편집기</h3>
-          <div class="style-control-group" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-            <label for="style-line-edit-toggle" style="font-weight: 600; cursor: pointer;">선 편집 모드 활성화</label>
-            <input type="checkbox" id="style-line-edit-toggle" checked style="cursor: pointer; width: 16px; height: 16px; margin: 0;">
-          </div>
-          <div class="style-control-group" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-            <label for="style-grid-snap-toggle" style="font-weight: 600; cursor: pointer;">그리드 스냅 (10px)</label>
-            <input type="checkbox" id="style-grid-snap-toggle" checked style="cursor: pointer; width: 16px; height: 16px; margin: 0;">
-          </div>
-          <div style="display: flex; gap: 8px; margin-top: 12px;">
-            <button id="style-clear-selected-line-btn" class="style-action-btn danger" disabled style="flex: 1; padding: 8px; font-size: 11px; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid #ef4444; background: transparent; color: #ef4444; transition: all 0.2s ease;">선택선 초기화</button>
-            <button id="style-clear-all-lines-btn" class="style-action-btn danger" style="flex: 1; padding: 8px; font-size: 11px; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid #ef4444; background: #ef4444; color: #fff; transition: all 0.2s ease;">전체선 초기화</button>
-          </div>
-          <button id="style-delete-selected-line-btn" class="style-action-btn danger" disabled style="width: 100%; margin-top: 8px; padding: 8px; font-size: 11px; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid #ef4444; background: #ef4444; color: #fff; transition: all 0.2s ease; display: block;">선택한 연결선 삭제</button>
-          <div id="style-line-zorder-group" style="margin-top: 12px; display: none;">
-            <label style="font-weight: 600; font-size: 12px; color: var(--text-main); margin-bottom: 4px; display: block;">선 레이어 순서 (상하 관계)</label>
-            <div style="display: flex; gap: 8px;">
-              <button id="style-line-bring-front-btn" class="style-action-btn primary" style="flex: 1; padding: 6px; font-size: 11px; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid #7c3aed; background: #7c3aed; color: #fff;">맨 앞으로 보내기 ⬆️</button>
-              <button id="style-line-send-back-btn" class="style-action-btn secondary" style="flex: 1; padding: 6px; font-size: 11px; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid #cbd5e1; background: transparent; color: var(--text-main);">맨 뒤로 보내기 ⬇️</button>
-            </div>
-          </div>
-        </section>
-
-        <!-- 4. Area Editor (Custom Polygons) -->
+        <!-- 1. Area Editor (Custom Polygons) -->
         <section class="style-section" id="area-editor-section" style="display: none;">
-          <h3 class="panel-sec-title">영역(다각형) 편집기</h3>
+          <h3 class="panel-sec-title" id="area-editor-title">영역(다각형) 편집기</h3>
           <div class="style-control-group">
-            <label for="style-area-name">영역 이름</label>
+            <label id="label-area-name" for="style-area-name">영역 이름</label>
             <input type="text" id="style-area-name" class="style-input" style="width: 100%; padding: 8px; box-sizing: border-box; border-radius: 6px; border: 1px solid #cbd5e1; background: #f8fafc; font-size: 13px; font-family: inherit; font-weight: 500;" placeholder="영역 이름">
           </div>
           <div class="style-control-group">
-            <label for="style-area-color">영역 색상 (선 & 면)</label>
+            <label id="label-area-color" for="style-area-color">영역 색상 (선 & 면)</label>
             <input type="color" id="style-area-color" value="#f97316" style="width: 100%; height: 36px; border: 1px solid #cbd5e1; border-radius: 6px; padding: 2px; cursor: pointer; box-sizing: border-box; background: transparent;">
           </div>
           <div class="style-control-group">
             <div class="slider-label-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-              <label for="style-area-opacity">면 불투명도</label>
+              <label id="label-area-opacity-title" for="style-area-opacity">면 불투명도</label>
               <span id="label-area-opacity" style="font-size: 12px; font-weight: 600; color: #64748b;">0.03</span>
             </div>
             <input type="range" id="style-area-opacity" min="0" max="0.5" step="0.01" value="0.03" style="width: 100%; cursor: pointer;">
           </div>
           <div class="style-control-group">
             <div class="slider-label-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-              <label for="style-area-stroke-width">테두리 두께</label>
+              <label id="label-area-stroke-width-title" for="style-area-stroke-width">테두리 두께</label>
               <span id="label-area-stroke-width" style="font-size: 12px; font-weight: 600; color: #64748b;">2px</span>
             </div>
             <input type="range" id="style-area-stroke-width" min="1" max="10" step="1" value="2" style="width: 100%; cursor: pointer;">
           </div>
           <div class="style-control-group">
-            <label for="style-area-border">테두리 스타일</label>
+            <label id="label-area-border-title" for="style-area-border">테두리 스타일</label>
             <select id="style-area-border" class="style-select" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; background: #f8fafc; font-size: 13px; font-family: inherit; font-weight: 500; cursor: pointer;">
-              <option value="dashed">굵은 점선 (Dashed)</option>
-              <option value="dotted">촘촘한 점선 (Dotted)</option>
-              <option value="dashdot">일점쇄선 (Dash-Dot)</option>
-              <option value="solid">실선 (Solid)</option>
+              <option id="opt-area-border-dashed" value="dashed">굵은 점선 (Dashed)</option>
+              <option id="opt-area-border-dotted" value="dotted">촘촘한 점선 (Dotted)</option>
+              <option id="opt-area-border-dashdot" value="dashdot">일점쇄선 (Dash-Dot)</option>
+              <option id="opt-area-border-solid" value="solid">실선 (Solid)</option>
             </select>
           </div>
-          <div style="display: flex; gap: 8px; margin-top: 12px;">
-            <button id="style-reset-area-label-btn" class="style-action-btn" style="flex: 1; padding: 8px; font-size: 11px; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid #cbd5e1; background: #fff; color: #475569; transition: all 0.2s ease;">제목 위치 초기화</button>
-            <button id="style-delete-area-btn" class="style-action-btn danger" style="flex: 1; padding: 8px; font-size: 11px; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid #ef4444; background: #ef4444; color: #fff; transition: all 0.2s ease;">영역 삭제</button>
+          <div style="display: flex; gap: 8px; margin-top: 12px; align-items: stretch;">
+            <button id="style-delete-area-point-btn" class="style-action-btn danger" disabled style="flex: 1; padding: 6px 4px; font-size: 11px; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid #ef4444; background: #fff; color: #ef4444; transition: all 0.2s ease;">선택된<br>점 삭제</button>
+            <button id="style-reset-area-label-btn" class="style-action-btn" style="flex: 1; padding: 6px 4px; font-size: 11px; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid #cbd5e1; background: #fff; color: #475569; transition: all 0.2s ease;">제목 위치<br>초기화</button>
+            <button id="style-delete-area-btn" class="style-action-btn danger" style="flex: 1; padding: 6px 4px; font-size: 11px; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid #ef4444; background: #ef4444; color: #fff; transition: all 0.2s ease;">영역 삭제</button>
+          </div>
+        </section>
+
+        <!-- 2. Connection Type -->
+        <section class="style-section">
+          <h3 class="panel-sec-title" id="style-sec-connection-title">연결선 형태 선택</h3>
+          <div class="style-control-group">
+            <label id="style-label-line-type" for="style-line-type">연결선 스타일</label>
+            <select id="style-line-type" class="style-select">
+              <option id="opt-line-type-orthogonal" value="orthogonal" selected>직각 및 곡선 (Orthogonal)</option>
+              <option id="opt-line-type-diagonal" value="diagonal">직선 (Diagonal)</option>
+            </select>
+          </div>
+        </section>
+
+        <!-- 3. Color Customizations -->
+        <section class="style-section">
+          <h3 class="panel-sec-title" id="style-sec-colors-title">선 색상 변경</h3>
+          <div class="style-color-grid">
+            <div class="style-control-group compact-color-group">
+              <label id="style-label-line-color" for="style-line-color">일반 연결선</label>
+              <input type="color" id="style-line-color" class="compact-color-input" value="#cbd5e1">
+            </div>
+            <div class="style-control-group compact-color-group">
+              <label id="style-label-main-line-color" for="style-main-line-color">메시아 직계선</label>
+              <input type="color" id="style-main-line-color" class="compact-color-input" value="#ff7800">
+            </div>
+            <div class="style-control-group compact-color-group">
+              <label id="style-label-spouse-line-color" for="style-spouse-line-color">배우자 연결선</label>
+              <input type="color" id="style-spouse-line-color" class="compact-color-input" value="#ef4444">
+            </div>
+            <div class="style-control-group compact-color-group">
+              <label id="style-label-preacher-line-color" for="style-preacher-line-color">전도자 연결선</label>
+              <input type="color" id="style-preacher-line-color" class="compact-color-input" value="#ff7800">
+            </div>
+          </div>
+        </section>
+        
+        <!-- 4. Curvature & Curving Controls -->
+        <section class="style-section">
+          <h3 class="panel-sec-title" id="style-sec-curvature-title">두께 및 곡선 조절</h3>
+          <div class="style-control-group">
+            <div class="slider-label-row">
+              <label id="style-label-line-width" for="style-line-width">선 두께</label>
+              <span id="label-line-width">2px</span>
+            </div>
+            <input type="range" id="style-line-width" min="1" max="8" step="1" value="2">
+          </div>
+          <div class="style-control-group">
+            <div class="slider-label-row">
+              <label id="style-label-corner-radius" for="style-corner-radius">모서리 둥글기 (곡률)</label>
+              <span id="label-corner-radius">12px</span>
+            </div>
+            <input type="range" id="style-corner-radius" min="0" max="30" step="1" value="12">
+          </div>
+          <div class="style-control-group">
+            <div class="slider-label-row">
+              <label id="style-label-split-offset" for="style-split-offset">분기선 높이 (선 이동)</label>
+              <span id="label-split-offset">45px</span>
+            </div>
+            <input type="range" id="style-split-offset" min="20" max="160" step="5" value="90">
+          </div>
+          <div class="style-control-group">
+            <div class="slider-label-row">
+              <label id="style-label-sibling-gap" for="style-sibling-gap">아들들 간격 (픽셀)</label>
+              <span id="label-sibling-gap">7px</span>
+            </div>
+            <input type="range" id="style-sibling-gap" min="5" max="100" step="1" value="7">
+          </div>
+        </section>
+
+        <!-- 5. Line Editor (Custom Bends) -->
+        <section class="style-section" id="line-editor-section" style="display: none;">
+          <h3 class="panel-sec-title" id="style-sec-line-editor-title">선 개별 편집기</h3>
+          <div class="style-checkbox-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 6px;">
+            <div class="compact-checkbox-group" style="display: flex; align-items: center; justify-content: space-between; background: rgba(148, 163, 184, 0.08); padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border-panel);">
+              <label id="style-label-line-edit-toggle" for="style-line-edit-toggle" style="font-size: 10.5px; font-weight: 600; cursor: pointer; white-space: nowrap; margin-right: 4px;">선 편집 활성화</label>
+              <input type="checkbox" id="style-line-edit-toggle" checked style="cursor: pointer; width: 14px; height: 14px; margin: 0;">
+            </div>
+            <div class="compact-checkbox-group" style="display: flex; align-items: center; justify-content: space-between; background: rgba(148, 163, 184, 0.08); padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border-panel);">
+              <label id="style-label-grid-snap-toggle" for="style-grid-snap-toggle" style="font-size: 10.5px; font-weight: 600; cursor: pointer; white-space: nowrap; margin-right: 4px;">그리드 스냅</label>
+              <input type="checkbox" id="style-grid-snap-toggle" checked style="cursor: pointer; width: 14px; height: 14px; margin: 0;">
+            </div>
+          </div>
+          <div style="display: flex; gap: 8px; margin-top: 12px; align-items: stretch;">
+            <button id="style-delete-selected-point-btn" class="style-action-btn danger" disabled style="flex: 1; padding: 6px 4px; font-size: 11px; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid #ef4444; background: #fff; color: #ef4444; transition: all 0.2s ease;">선택된<br>점 삭제</button>
+            <button id="style-delete-selected-line-btn" class="style-action-btn danger" disabled style="flex: 1; padding: 6px 4px; font-size: 11px; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid #ef4444; background: #ef4444; color: #fff; transition: all 0.2s ease;">선택선 삭제</button>
+          </div>
+          <div id="style-line-zorder-group" style="margin-top: 12px; display: none;">
+            <label id="style-label-zorder" style="font-weight: 600; font-size: 12px; color: var(--text-main); margin-bottom: 4px; display: block;">선 레이어 순서 (상하 관계)</label>
+            <div style="display: flex; gap: 8px;">
+              <button id="style-line-bring-front-btn" class="style-action-btn primary" style="flex: 1; padding: 6px; font-size: 11px; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid #7c3aed; background: #7c3aed; color: #fff;">맨 앞으로 보내기 ⬆️</button>
+              <button id="style-line-send-back-btn" class="style-action-btn secondary" style="flex: 1; padding: 6px; font-size: 11px; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid #cbd5e1; background: transparent; color: var(--text-main);">맨 뒤로 보내기 ⬇️</button>
+            </div>
           </div>
         </section>
       </div>
@@ -625,62 +2051,62 @@
     <aside id="filter-panel">
       <div class="panel-header">
         <div class="panel-title">
-          <h2>계보 필터 설정</h2>
-          <p>지선 계보를 선택적으로 숨기거나 표시합니다</p>
+          <h2 id="filter-panel-title">계보 필터 설정</h2>
+          <p id="filter-panel-desc">지선 계보를 선택적으로 숨기거나 표시합니다</p>
         </div>
         <button id="filter-panel-close" class="close-btn" title="닫기">&times;</button>
       </div>
       <div class="panel-body">
         <section class="filter-section">
-          <h3 class="panel-sec-title">지선 계보 선택</h3>
+          <h3 class="panel-sec-title" id="filter-sec-title">지선 계보 선택</h3>
           <div class="filter-group">
             <label class="filter-item">
               <input type="checkbox" id="filter-cain" checked>
-              <span class="filter-label">가인 자손 계보 (Cain)</span>
+              <span id="text-filter-cain" class="filter-label">가인 자손 계보 (Cain)</span>
             </label>
             <label class="filter-item">
               <input type="checkbox" id="filter-japheth" checked>
-              <span class="filter-label">야벳 자손 계보 (Japheth)</span>
+              <span id="text-filter-japheth" class="filter-label">야벳 자손 계보 (Japheth)</span>
             </label>
             <label class="filter-item">
               <input type="checkbox" id="filter-ham" checked>
-              <span class="filter-label">함 자손 계보 (Ham)</span>
+              <span id="text-filter-ham" class="filter-label">함 자손 계보 (Ham)</span>
             </label>
             <label class="filter-item">
               <input type="checkbox" id="filter-joktan" checked>
-              <span class="filter-label">욕단 자손 계보 (Joktan)</span>
+              <span id="text-filter-joktan" class="filter-label">욕단 자손 계보 (Joktan)</span>
             </label>
             <label class="filter-item">
               <input type="checkbox" id="filter-keturah" checked>
-              <span class="filter-label">그두라 자손 계보 (Keturah)</span>
+              <span id="text-filter-keturah" class="filter-label">그두라 자손 계보 (Keturah)</span>
             </label>
             <label class="filter-item">
               <input type="checkbox" id="filter-ishmael" checked>
-              <span class="filter-label">이스마엘 자손 계보 (Ishmael)</span>
+              <span id="text-filter-ishmael" class="filter-label">이스마엘 자손 계보 (Ishmael)</span>
             </label>
             <label class="filter-item">
               <input type="checkbox" id="filter-esau" checked>
-              <span class="filter-label">에서(에돔) 자손 계보 (Esau)</span>
+              <span id="text-filter-esau" class="filter-label">에서(에돔) 자손 계보 (Esau)</span>
             </label>
             <label class="filter-item">
               <input type="checkbox" id="filter-north_kings" checked>
-              <span class="filter-label">북이스라엘 왕 계보 (North Israel Kings)</span>
+              <span id="text-filter-north_kings" class="filter-label">북이스라엘 왕 계보 (North Israel Kings)</span>
             </label>
             <label class="filter-item">
               <input type="checkbox" id="filter-independent_1chr4" checked>
-              <span class="filter-label">대상 4장 독립 족보 (1 Chr 4 Lineages)</span>
+              <span id="text-filter-independent_1chr4" class="filter-label">대상 4장 독립 족보 (1 Chr 4 Lineages)</span>
             </label>
             <label class="filter-item">
               <input type="checkbox" id="filter-levite_priests" checked>
-              <span class="filter-label">제사장 및 레위인 독립 족보 (Levite Priests)</span>
+              <span id="text-filter-levite_priests" class="filter-label">제사장 및 레위인 독립 족보 (Levite Priests)</span>
             </label>
             <label class="filter-item">
               <input type="checkbox" id="filter-horite_chiefs" checked>
-              <span class="filter-label">호리 족속의 족장들 (Horite Chiefs)</span>
+              <span id="text-filter-horite_chiefs" class="filter-label">호리 족속의 족장들 (Horite Chiefs)</span>
             </label>
             <label class="filter-item">
               <input type="checkbox" id="filter-reuben_simeon" checked>
-              <span class="filter-label">르우벤 및 시므온 독립 족보 (Reuben & Simeon)</span>
+              <span id="text-filter-reuben_simeon" class="filter-label">르우벤 및 시므온 독립 족보 (Reuben & Simeon)</span>
             </label>
           </div>
         </section>
@@ -688,45 +2114,40 @@
     </aside>
     
     
-    <!-- Admin Database Action Panel (Visible only in Admin Mode) -->
-    <div id="admin-actions-bar" style="display: none;">
-       <div class="admin-bar-drag-handle" style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-align: center; border-bottom: 1px dashed var(--border-panel); padding-bottom: 6px; margin-bottom: 4px; cursor: move; user-select: none; display: flex; align-items: center; justify-content: center; gap: 4px;">
-         <span>⋮⋮ 관리자 도구 상자</span>
-       </div>
-       <button id="admin-save-btn" class="admin-action-btn success" style="background: #10b981; border-color: #10b981; font-weight: bold; color: #ffffff; padding: 0 12px; border-radius: 6px; cursor: pointer;">💾 전체 저장</button>
-       <button id="admin-undo-btn" class="admin-action-btn primary" style="background: #4b5563; border-color: #4b5563; font-weight: bold; color: #ffffff; padding: 0 12px; border-radius: 6px; cursor: pointer; opacity: 0.5;" disabled>↩️ 되돌리기 (Ctrl+Z)</button>
-       <button id="admin-redo-btn" class="admin-action-btn primary" style="background: #4b5563; border-color: #4b5563; font-weight: bold; color: #ffffff; padding: 0 12px; border-radius: 6px; cursor: pointer; opacity: 0.5;" disabled>↪️ 다시 실행 (Ctrl+Y)</button>
-       <button id="admin-add-btn" class="admin-action-btn primary">➕ 인물 추가</button>
-       <button id="admin-add-event-btn" class="admin-action-btn primary" style="background: #eab308; border-color: #eab308;">📜 사건 추가</button>
-       <button id="admin-add-location-btn" class="admin-action-btn primary" style="background: #22c55e; border-color: #22c55e;">📍 장소 추가</button>
-       <button id="admin-add-note-btn" class="admin-action-btn primary">📝 텍스트 상자 추가</button>
-       <button id="admin-add-link-btn" class="admin-action-btn primary">🔗 시각적 연결 추가</button>
-       <button id="admin-add-junction-btn" class="admin-action-btn primary" style="background: #059669; border-color: #059669;">🟢 연결점(분기점) 추가</button>
-       <button id="admin-add-polygon-btn" class="admin-action-btn primary" style="background: #ea580c; border-color: #ea580c;">⬡ 영역(다각형) 추가</button>
-       <button id="style-editor-toggle" class="admin-action-btn primary" style="background: #7c3aed; border-color: #7c3aed; font-weight: bold; color: #ffffff; cursor: pointer;">🎨 선 디자인 편집기</button>
-       <div class="admin-dropdown-group" style="position: relative; width: 100%;">
-         <button id="admin-align-dropdown-toggle" class="admin-action-btn primary" style="background: #0284c7; border-color: #0284c7; font-weight: bold; color: #ffffff; cursor: pointer; width: 100%; justify-content: space-between;" title="선택한 카드들의 정렬 및 간격을 맞춥니다.">
-           <span>📏 간격맞춤</span>
-           <span style="font-size: 8px; margin-left: 4px;">▼</span>
-         </button>
-         <div id="admin-align-dropdown-menu" style="display: none; position: absolute; left: 105%; top: 0; background: var(--bg-panel); border: 1px solid var(--border-panel); border-radius: 8px; padding: 6px; box-shadow: var(--shadow-panel); backdrop-filter: var(--glass-blur); flex-direction: column; gap: 4px; min-width: 140px; z-index: 1000;">
-           <button id="admin-align-height-btn" class="admin-action-btn" style="border: none; background: transparent; width: 100%; cursor: pointer;" title="선택한 카드들의 가로 위치(세대)를 동일하게 맞춥니다.">📐 가로 맞춤</button>
-           <button id="admin-align-column-btn" class="admin-action-btn" style="border: none; background: transparent; width: 100%; cursor: pointer;" title="선택한 카드들의 세로 줄을 정렬합니다.">📏 세로 줄 맞춤</button>
-           <button id="admin-distribute-width-btn" class="admin-action-btn" style="border: none; background: transparent; width: 100%; cursor: pointer;" title="선택한 카드들 간의 가로 간격을 동일하게 정렬합니다.">↔️ 가로간격 맞춤</button>
-           <button id="admin-distribute-height-btn" class="admin-action-btn" style="border: none; background: transparent; width: 100%; cursor: pointer;" title="선택한 카드들 간의 세로 간격을 동일하게 정렬합니다.">↕️ 세로간격 맞춤</button>
-         </div>
-       </div>
-       <button id="admin-sync-btn" class="admin-action-btn" style="background-color: #27ae60; color: white;">💾 서버에 배포하기 (Sync)</button>
-       <button id="admin-users-btn" class="admin-action-btn" style="background-color: #8e44ad; color: white;">👥 사용자 가입 승인</button>
-       <button id="admin-export-btn" class="admin-action-btn">📥 데이터 내보내기 (JSON)</button>
-      <button id="admin-import-btn" class="admin-action-btn">📤 데이터 가져오기</button>
-      <button id="admin-reset-btn" class="admin-action-btn danger">⚠️ 데이터 초기화</button>
-      <button id="admin-logout-btn" class="admin-action-btn danger" style="background-color: #ef4444; border-color: #ef4444; color: white;">🚪 로그아웃</button>
-      <label class="admin-checkbox-label" style="display: none !important; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; color: #f8fafc; cursor: pointer; padding: 0 8px; margin-left: auto;">
-        <input type="checkbox" id="admin-move-descendants-toggle" style="cursor: pointer; width: 14px; height: 14px;">
-        <span>자손 동시 이동 (Shift 키)</span>
-      </label>
-      <input type="file" id="import-file-input" accept=".json" style="display: none;">
+    <!-- Admin Database Action Panel (Always visible 6-button consolidated toolkit) -->
+    <div id="admin-actions-bar">
+       <button id="admin-add-btn" class="admin-action-btn-circle has-tooltip tooltip-down" data-tooltip="인물 추가" title="인물 추가">
+         <span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 26.5px; height: 26.5px;">
+           <img class="custom-add-person-icon" src="add_person_btn.png" alt="인물 추가" style="width: 26.5px; height: 26.5px; object-fit: contain; pointer-events: none;" />
+         </span>
+       </button>
+        <button id="admin-add-event-btn" class="admin-action-btn-circle has-tooltip tooltip-down" data-tooltip="사건 추가" title="사건 추가">
+          <span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 26.5px; height: 26.5px;">
+            <img class="custom-add-event-icon" src="add_event_btn.png" alt="사건 추가" style="width: 26.5px; height: 26.5px; object-fit: contain; pointer-events: none;" />
+          </span>
+        </button>
+        <button id="admin-add-location-btn" class="admin-action-btn-circle has-tooltip tooltip-down" data-tooltip="장소 추가" title="장소 추가">
+          <span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 26.5px; height: 26.5px;">
+            <img class="custom-add-location-icon" src="add_location_btn.png" alt="장소 추가" style="width: 26.5px; height: 26.5px; object-fit: contain; pointer-events: none;" />
+          </span>
+        </button>
+       <button id="admin-add-note-btn" class="admin-action-btn-circle has-tooltip tooltip-down" data-tooltip="텍스트 상자 추가" title="텍스트 상자 추가">
+         <span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 26.5px; height: 26.5px;">
+           <img class="custom-add-note-icon" src="add_note_btn.png" alt="텍스트 상자 추가" style="width: 26.5px; height: 26.5px; object-fit: contain; pointer-events: none;" />
+         </span>
+       </button>
+        <button id="admin-add-polygon-btn" class="admin-action-btn-circle has-tooltip tooltip-down" data-tooltip="영역(다각형) 추가" title="영역(다각형) 추가">
+          <span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 26.5px; height: 26.5px;">
+            <img class="custom-add-polygon-icon" src="add_polygon_btn.png" alt="영역(다각형) 추가" style="width: 26.5px; height: 26.5px; object-fit: contain; pointer-events: none;" />
+          </span>
+        </button>
+
+       
+       <label class="admin-checkbox-label" style="display: none !important; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; color: #f8fafc; cursor: pointer; padding: 0 8px; margin-left: auto;">
+         <input type="checkbox" id="admin-move-descendants-toggle" style="cursor: pointer; width: 14px; height: 14px;">
+         <span>자손 동시 이동 (Shift 키)</span>
+       </label>
+       <input type="file" id="import-file-input" accept=".json" style="display: none;">
     </div>
     
     <!-- Sliding Study and Note Sidebar Panel -->
@@ -736,7 +2157,10 @@
           <h2 id="panel-name">이름</h2>
           <p id="panel-eng">English Name</p>
         </div>
-        <button id="panel-close" class="close-btn" title="닫기">&times;</button>
+        <div class="panel-header-actions" style="display: flex; align-items: center; gap: 12px;">
+          <button id="panel-expand" class="expand-btn" title="확장">⛶</button>
+          <button id="panel-close" class="close-btn" title="닫기">&times;</button>
+        </div>
       </div>
       
       <div class="panel-body">
@@ -746,15 +2170,52 @@
           <p id="panel-desc" class="desc-text">성경 관련 정보가 노출됩니다.</p>
         </section>
         
+        <!-- 1-2. Hometown and Activity Locations -->
+        <section id="panel-location-section" class="panel-section">
+          <h3 class="panel-sec-title" id="panel-location-sec-title">고향 및 사역/활동 장소</h3>
+          
+          <!-- Hometown Subsection -->
+          <div class="panel-subsection">
+            <div class="panel-subsection-header">
+              <span class="panel-subsec-badge" id="panel-hometown-badge">🏠 고향</span>
+              <button type="button" id="panel-hometown-map-btn" class="map-link-btn" title="지도 보기" style="display: none;">📍 지도 보기</button>
+            </div>
+            <div class="hometown-inputs-grid">
+              <input type="text" id="panel-hometown-name" class="location-input" placeholder="고향 지명 (예: 베들레헴, 다소)">
+              <input type="text" id="panel-hometown-coords" class="location-input" placeholder="좌표 (예: 31.7054, 35.2024)">
+            </div>
+          </div>
+
+          <!-- Ministry & Activity Locations Subsection -->
+          <div class="panel-subsection" style="margin-top: 8px;">
+            <div class="panel-subsection-header">
+              <span class="panel-subsec-badge" id="panel-activities-badge">📍 사역지 / 거주지 / 활동지</span>
+            </div>
+            <div id="panel-activities-list" class="activities-list-container">
+              <!-- Rendered dynamically -->
+            </div>
+            <div class="activity-add-form">
+              <div class="activity-add-row">
+                <input type="text" id="panel-activity-name-input" class="location-input" placeholder="장소명 (예: 예루살렘, 갈릴리)" style="flex: 1.2;">
+                <input type="text" id="panel-activity-coords-input" class="location-input" placeholder="좌표 (예: 31.7767, 35.2345)" style="flex: 1;">
+              </div>
+              <div class="activity-add-row" style="margin-top: 4px;">
+                <input type="text" id="panel-activity-desc-input" class="location-input" placeholder="사역/활동 내용 (예: 통일 왕국 수도 통치)" style="flex: 1;">
+                <button type="button" id="panel-activity-add-btn" class="activity-add-btn">추가</button>
+              </div>
+            </div>
+          </div>
+        </section>
+        
         <!-- 2. Notes Editor -->
         <section>
-          <h3 class="panel-sec-title">개인 연구 메모</h3>
+          <h3 class="panel-sec-title" id="panel-note-sec-title">개인 연구 메모</h3>
           <textarea id="note-text" class="note-textarea" placeholder="이 인물에 대한 메모나 생각들을 여기에 기록하세요. (자동 저장)"></textarea>
         </section>
         
         <!-- 3. Study Resources Organizer -->
         <section>
-          <h3 class="panel-sec-title">참고 링크 및 자료 정리</h3>
+          <h3 class="panel-sec-title" id="panel-resource-sec-title">참고 링크 및 자료 정리</h3>
           <div class="resource-input-wrapper">
             <input type="text" id="resource-title" class="resource-input" placeholder="자료 설명 (예: 구절, 기사 제목)">
             <input type="text" id="resource-url" class="resource-input" placeholder="링크 URL (http...)">
@@ -773,58 +2234,134 @@
     </aside>
 
     <!-- Admin Mode Instruction Banner -->
-    <div id="add-person-instruction" style="display: none; position: fixed; top: 130px; left: 50%; transform: translateX(-50%); background: rgba(30, 41, 59, 0.95); backdrop-filter: blur(4px); color: #ffffff; padding: 10px 20px; border-radius: 9999px; z-index: 1000; font-size: 13px; font-weight: 500; border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3); align-items: center; gap: 8px;">
+    <div id="add-person-instruction" style="display: none; position: fixed; top: calc(56px + env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); background: rgba(30, 41, 59, 0.95); backdrop-filter: blur(4px); color: #ffffff; padding: 6px 16px; border-radius: 9999px; z-index: 17000; font-size: 12px; font-weight: 500; border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); align-items: center; gap: 8px; pointer-events: none;">
       💡 <span>추가할 자식의 부모 카드를 클릭하거나, 빈 공간을 클릭하여 새 조상을 시작하세요.</span>
     </div>
 
-    <!-- Settings Modal -->
+    <!-- Settings Modal (Upgraded with Language, Theme, Layers, and iCloud Sync options) -->
     <div id="settings-modal" class="modal-overlay" style="display: none;">
-      <div class="modal-content" style="width: 480px;">
-        <div class="modal-header">
-          <h2>환경 설정 (Settings)</h2>
-          <button id="settings-close-btn" class="close-btn">&times;</button>
-        </div>
-        <div class="settings-body">
+      <div class="modal-content" style="max-height: 90vh; overflow-y: auto;">
+        <!-- Settings Modal Header Removed for Compact Layout -->
+        <div class="settings-body" style="display: flex; flex-direction: column; gap: 1.5px; padding: 17px 15px 6px 15px;">
+          
+          <!-- 1. General App Configurations (Lang, Theme, and Edit Mode Toggle) -->
           <div class="settings-group">
-            <h3>로컬 파일 관리 (Local Files)</h3>
-            <div class="settings-item">
-              <div class="settings-info">
-                <label for="setting-md-sync">Obsidian 마크다운 연동 (.md 생성)</label>
-                <p class="settings-desc">메모 작성 시 내 문서 폴더에 자동으로 인물별 마크다운 파일(.md)을 생성하고 양방향으로 연동합니다. 비활성화 시 파일 생성을 중단하고 내부에만 보안 저장됩니다.</p>
+            <h3 id="settings-group-general-title" style="margin: 0; font-size: 13px; padding: 1px 0 0 0;">일반 설정</h3>
+            <div style="display: flex; gap: 6px; margin-top: 2px;">
+              <button id="settings-lang-toggle" class="settings-btn primary-outline" style="flex: 1; font-size: 12.5px; min-height: 34px; padding: 7px 9px; border-radius: 6px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 4px; border: 1px solid var(--border-panel); background: var(--bg-panel); color: var(--text-main);">
+                <span id="settings-lang-btn-text">🌐 언어 전환</span>
+              </button>
+              <button id="settings-theme-toggle" class="settings-btn primary-outline" style="flex: 1; font-size: 12.5px; min-height: 34px; padding: 7px 9px; border-radius: 6px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 4px; border: 1px solid var(--border-panel); background: var(--bg-panel); color: var(--text-main);">
+                <span id="settings-theme-btn-text">🌙 다크 모드</span>
+              </button>
+            </div>
+            <div style="display: flex; gap: 6px; margin-top: 5px;">
+              <button id="settings-edit-mode-toggle" class="settings-btn primary-outline" style="flex: 1; font-size: 12.5px; min-height: 34px; padding: 7px 9px; border-radius: 6px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 4px; border: 1px solid var(--border-panel); background: var(--bg-panel); color: var(--text-main);">
+                <span id="settings-edit-mode-btn-text">🔒 편집 모드 전환 (⇧⌘E)</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 2. Layer Toggle Configurations (Transferred from main screen view) -->
+          <div class="settings-group">
+            <h3 id="settings-group-layers-title" style="margin: 0; font-size: 13px; padding: 1px 0 0 0;">레이어 표시 설정</h3>
+            <div class="layer-toggles-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px 8px; font-size: 12.5px; color: var(--text-main); background: rgba(0,0,0,0.03); padding: 6px 8px; border-radius: 8px; border: 1px solid var(--border-panel); margin-top: 2px;">
+              <div class="layer-toggle-row" style="display: flex; align-items: center; gap: 6px; padding: 2px 2px;">
+                <button type="button" class="custom-layer-chk checked" id="btn-layer-people" style="width: 19px; height: 19px; padding: 0; border-radius: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer; -webkit-tap-highlight-color: transparent;">
+                  <svg class="chk-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <input type="checkbox" id="toggle-layer-people" checked style="display: none;">
+                </button>
+                <span id="text-layer-people" style="font-weight: 500; user-select: none; cursor: default;">인물 족보</span>
+              </div>
+              <div class="layer-toggle-row" style="display: flex; align-items: center; gap: 6px; padding: 2px 2px;">
+                <button type="button" class="custom-layer-chk checked" id="btn-layer-events" style="width: 19px; height: 19px; padding: 0; border-radius: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer; -webkit-tap-highlight-color: transparent;">
+                  <svg class="chk-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <input type="checkbox" id="toggle-layer-events" checked style="display: none;">
+                </button>
+                <span id="text-layer-events" style="font-weight: 500; user-select: none; cursor: default;">주요 사건</span>
+              </div>
+              <div class="layer-toggle-row" style="display: flex; align-items: center; gap: 6px; padding: 2px 2px;">
+                <button type="button" class="custom-layer-chk checked" id="btn-layer-locations" style="width: 19px; height: 19px; padding: 0; border-radius: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer; -webkit-tap-highlight-color: transparent;">
+                  <svg class="chk-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <input type="checkbox" id="toggle-layer-locations" checked style="display: none;">
+                </button>
+                <span id="text-layer-locations" style="font-weight: 500; user-select: none; cursor: default;">장소/지명</span>
+              </div>
+              <div class="layer-toggle-row" style="display: flex; align-items: center; gap: 6px; padding: 2px 2px;">
+                <button type="button" class="custom-layer-chk checked" id="btn-layer-polygons" style="width: 19px; height: 19px; padding: 0; border-radius: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer; -webkit-tap-highlight-color: transparent;">
+                  <svg class="chk-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <input type="checkbox" id="toggle-layer-polygons" checked style="display: none;">
+                </button>
+                <span id="text-layer-polygons" style="font-weight: 500; user-select: none; cursor: default;">영역</span>
+              </div>
+              <div class="layer-toggle-row" style="display: flex; align-items: center; gap: 6px; padding: 2px 2px;">
+                <button type="button" class="custom-layer-chk checked" id="btn-layer-prophets" style="width: 19px; height: 19px; padding: 0; border-radius: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer; -webkit-tap-highlight-color: transparent;">
+                  <svg class="chk-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <input type="checkbox" id="toggle-layer-prophets" checked style="display: none;">
+                </button>
+                <span id="text-layer-prophets" style="font-weight: 500; user-select: none; cursor: default;">선지자</span>
+              </div>
+              <input type="checkbox" id="toggle-relationship-highlight" checked style="display: none;">
+            </div>
+          </div>
+
+          <!-- 3. iCloud Synchronization Options (Integrated with Apple ID Credentials) -->
+          <div class="settings-group">
+            <div class="settings-item" id="settings-icloud-item" style="margin-top: 0; display: flex; justify-content: space-between; align-items: center; opacity: 0.55; cursor: not-allowed;">
+              <span id="settings-group-icloud-title" style="margin: 0; font-size: 13px; font-weight: 600; padding: 1px 0 0 0; user-select: none;">iCloud 자동 동기화 (비활성화됨)</span>
+              <div class="settings-action">
+                <label class="switch-toggle" id="switch-icloud-btn" style="transform: scale(0.8); transform-origin: right center; cursor: not-allowed; display: inline-block;">
+                  <input type="checkbox" id="setting-icloud-sync" disabled>
+                  <span class="slider-round" style="background-color: #cbd5e1 !important;"></span>
+                </label>
+              </div>
+            </div>
+            
+            <!-- iCloud Account Credentials Input (Hidden & Disabled) -->
+            <div id="icloud-account-fields" style="display: none;">
+            </div>
+          </div>
+
+          <!-- 4. Local File Sync & Manual Backup -->
+          <div class="settings-group">
+            <h3 id="settings-group-files-title" style="margin: 0; font-size: 13px; padding: 1px 0 0 0;">로컬 파일 관리</h3>
+            <div class="settings-item" id="settings-md-item" style="margin-top: 1px; display: flex; justify-content: space-between; align-items: center; opacity: 0.55; cursor: not-allowed;">
+              <div class="settings-info" style="flex: 1; padding-right: 8px;">
+                <span id="settings-md-sync-label" style="font-weight: 600; font-size: 11.5px; user-select: none;">Obsidian 마크다운 연동 (비활성화됨)</span>
               </div>
               <div class="settings-action">
-                <label class="switch-toggle">
-                  <input type="checkbox" id="setting-md-sync" checked>
-                  <span class="slider-round"></span>
+                <label class="switch-toggle" id="switch-md-btn" style="transform: scale(0.8); transform-origin: right center; cursor: not-allowed; display: inline-block;">
+                  <input type="checkbox" id="setting-md-sync" disabled>
+                  <span class="slider-round" style="background-color: #cbd5e1 !important;"></span>
                 </label>
               </div>
             </div>
           </div>
           
           <div class="settings-group">
-            <h3>백업 및 복원 (Backup & Restore)</h3>
-            <div class="settings-item">
-              <div class="settings-info">
-                <label>전체 메모 백업 (JSON 내보내기)</label>
-                <p class="settings-desc">현재 작성된 전체 메모 데이터를 안전한 JSON 백업 파일로 컴퓨터에 다운로드합니다.</p>
+            <h3 id="settings-group-backup-title" style="margin: 0; font-size: 13px; padding: 1px 0 0 0;">백업 및 복원</h3>
+            <div style="display: flex; flex-direction: column; gap: 2px; margin-top: 1px;">
+              <div class="settings-item" style="display: flex; justify-content: space-between; align-items: center;">
+                <div class="settings-info" style="flex: 1; padding-right: 8px;">
+                  <label id="settings-backup-label" style="font-weight: 600; font-size: 11.5px;">전체 메모 백업</label>
+                </div>
+                <div class="settings-action">
+                  <button id="bottom-backup-btn" class="settings-btn primary-outline" style="font-size: 10.5px; padding: 2px 7px; border-radius: 5px; cursor: pointer; display: flex; align-items: center; gap: 4px; font-weight: 600; border: 1px solid var(--border-panel); background: var(--bg-panel); color: var(--text-main);">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                    <span id="settings-backup-btn-text">백업 생성</span>
+                  </button>
+                </div>
               </div>
-              <div class="settings-action">
-                <button id="bottom-backup-btn" class="settings-btn primary-outline" style="font-size: 11px; padding: 6px 12px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 600;">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
-                  백업 파일 생성
-                </button>
-              </div>
-            </div>
-            <div class="settings-item">
-              <div class="settings-info">
-                <label>백업 파일 불러오기 (JSON 복원)</label>
-                <p class="settings-desc">이전에 다운로드했던 JSON 백업 파일을 불러와 현재 성경 족보 메모를 복원합니다.</p>
-              </div>
-              <div class="settings-action">
-                <button id="bottom-restore-btn" class="settings-btn primary-outline" style="font-size: 11px; padding: 6px 12px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 600;">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                  백업 파일 선택
-                </button>
+              <div class="settings-item" style="display: flex; justify-content: space-between; align-items: center;">
+                <div class="settings-info" style="flex: 1; padding-right: 8px;">
+                  <label id="settings-restore-label" style="font-weight: 600; font-size: 11.5px;">백업 불러오기</label>
+                </div>
+                <div class="settings-action">
+                  <button id="bottom-restore-btn" class="settings-btn primary-outline" style="font-size: 10.5px; padding: 2px 7px; border-radius: 5px; cursor: pointer; display: flex; align-items: center; gap: 4px; font-weight: 600; border: 1px solid var(--border-panel); background: var(--bg-panel); color: var(--text-main);">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    <span id="settings-restore-btn-text">백업 선택</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -839,9 +2376,9 @@
           <h2 id="modal-title">인물 정보 추가/수정</h2>
           <button id="modal-close" class="close-btn">&times;</button>
         </div>
-        <form id="admin-form" onsubmit="return false;">
+        <form id="admin-form">
           <div id="relation-presets-container" style="display: none; background: var(--bg-panel); border: 1px solid var(--border-panel); padding: 10px; border-radius: 8px; margin: 0 16px 12px 16px; flex-direction: column; gap: 6px;">
-            <p style="margin: 0; font-size: 11px; color: var(--text-muted); font-weight: 600;">선택된 인물 연계 프리셋 (<span id="relation-target-name">이름</span>)</p>
+            <p id="preset-container-desc" style="margin: 0; font-size: 11px; color: var(--text-muted); font-weight: 600;"><span id="preset-title-text">선택된 인물 연계 프리셋</span> (<span id="relation-target-name">이름</span>)</p>
             <div style="display: flex; gap: 8px;">
               <button type="button" id="preset-child-btn" class="admin-action-btn primary" style="font-size: 11px; padding: 6px 10px; margin: 0;">👶 자식으로 추가</button>
               <button type="button" id="preset-spouse-btn" class="admin-action-btn primary" style="font-size: 11px; padding: 6px 10px; margin: 0;">💍 배우자로 추가</button>
@@ -849,76 +2386,94 @@
           </div>
           <div class="form-grid">
             <div class="form-group">
-              <label for="form-id">ID (영문 고유식별자)*</label>
-              <input type="text" id="form-id" required placeholder="예: abraham, cain_son">
+              <label id="label-form-id" for="form-id">ID (영문 고유식별자)</label>
+              <input type="text" id="form-id" placeholder="비워두면 영어 이름으로 자동 생성됩니다">
             </div>
             <div class="form-group">
-              <label for="form-name">이름 (한글)*</label>
-              <input type="text" id="form-name" required placeholder="예: 아브라함" list="bible-names-list" autocomplete="off">
-              <datalist id="bible-names-list"></datalist>
+              <label id="label-form-name" for="form-name">이름 (한글)*</label>
+              <input type="text" id="form-name" required placeholder="예: 아브라함" autocomplete="off">
             </div>
             <div class="form-group">
-              <label for="form-eng">영어 이름</label>
+              <label id="label-form-eng" for="form-eng">영어 이름</label>
               <input type="text" id="form-eng" placeholder="예: Abraham">
             </div>
             <div class="form-group">
-              <label for="form-gender">성별*</label>
+              <label id="label-form-gender" for="form-gender">성별*</label>
               <select id="form-gender" required>
-                <option value="M">남성 (♂)</option>
-                <option value="F">여성 (♀)</option>
+                <option id="opt-gender-m" value="M">남성 (♂)</option>
+                <option id="opt-gender-f" value="F">여성 (♀)</option>
               </select>
             </div>
             <div class="form-group">
-              <label for="form-gen">세대 (아담=0)*</label>
+              <label id="label-form-gen" for="form-gen">횡 위치 (아담=0)*</label>
               <input type="number" id="form-gen" required min="0" max="100" step="0.01" value="0">
             </div>
             <div class="form-group">
-              <label for="form-col">열 위치 (소수점 3자리 지원)*</label>
+              <label id="label-form-col" for="form-col">열 위치 (소수점 3자리 지원)*</label>
               <div style="display:flex; gap:8px; align-items:center;">
                 <input type="number" id="form-col" required step="0.001" value="0" placeholder="직계=0, 왼쪽=-1.5, 오른쪽=1.5" style="flex:1;">
                 <button type="button" id="form-col-auto-btn" class="admin-action-btn primary" style="margin:0; padding:0 12px; height:38px; font-size:12px;" title="부모 및 형제 기준으로 열 위치를 자동 계산합니다.">자동 계산</button>
               </div>
             </div>
-            <div class="form-group" style="position: relative;">
-              <label for="form-parents">부모 ID (콤마로 구분, 최대 2명)</label>
+            <div class="form-group">
+              <label id="label-form-parents" for="form-parents">부모 ID (콤마로 구분, 최대 2명)</label>
               <input type="text" id="form-parents" placeholder="예: adam, eve (생략 시 시조)" autocomplete="off">
-              <div id="parents-suggestions" class="autocomplete-suggestions"></div>
             </div>
-            <div class="form-group" style="position: relative;">
-              <label for="form-spouses">배우자 ID (콤마로 구분)</label>
+            <div class="form-group">
+              <label id="label-form-spouses" for="form-spouses">배우자 ID (콤마로 구분)</label>
               <input type="text" id="form-spouses" placeholder="예: sarah, hagar" autocomplete="off">
-              <div id="spouses-suggestions" class="autocomplete-suggestions"></div>
             </div>
-            <div class="form-group" style="position: relative;">
-              <label for="form-teachers">전도자 ID 목록 (콤마로 구분)</label>
+            <div class="form-group">
+              <label id="label-form-teachers" for="form-teachers">전도자 ID 목록 (콤마로 구분)</label>
               <input type="text" id="form-teachers" placeholder="예: jesus, paul" autocomplete="off">
-              <div id="teachers-suggestions" class="autocomplete-suggestions"></div>
             </div>
-            <div class="form-group" style="position: relative;">
-              <label for="form-prophets">선지자 ID 목록 (콤마로 구분)</label>
+            <div class="form-group">
+              <label id="label-form-prophets" for="form-prophets">선지자 ID 목록 (콤마로 구분)</label>
               <input type="text" id="form-prophets" placeholder="예: samuel, elijah" autocomplete="off">
-              <div id="prophets-suggestions" class="autocomplete-suggestions"></div>
             </div>
             <div class="form-group full-width" style="position: relative;">
-              <label>관련된 인물들 (임의 검색 및 체크)</label>
+              <label id="label-form-related">관련된 인물들 (임의 검색 및 체크)</label>
               <input type="text" id="form-related-search" placeholder="이름 또는 ID를 검색하여 관련 인물을 추가/해제하세요..." autocomplete="off" style="margin-bottom: 6px;">
               <div id="form-related-list" class="related-people-checkbox-list"></div>
             </div>
             <div class="form-group full-width">
-              <label for="form-desc">인물 설명</label>
+              <label id="label-form-desc" for="form-desc">인물 설명</label>
               <textarea id="form-desc" rows="3" placeholder="성경적 배경이나 인물에 대한 짧은 소개..."></textarea>
             </div>
             <div class="form-group full-width">
-              <label for="form-eng-desc">인물 설명 (영어)</label>
+              <label id="label-form-eng-desc" for="form-eng-desc">인물 설명 (영어)</label>
               <textarea id="form-eng-desc" rows="3" placeholder="English description / short introduction..."></textarea>
             </div>
+            
+            <!-- Hometown in Admin Modal -->
+            <div class="form-group">
+              <label id="label-form-hometown-name" for="form-hometown-name">고향 지명 (출생지)</label>
+              <input type="text" id="form-hometown-name" placeholder="예: 베들레헴, 다소" autocomplete="off">
+            </div>
+            <div class="form-group">
+              <label id="label-form-hometown-coords" for="form-hometown-coords">고향 좌표 (위도, 경도)</label>
+              <input type="text" id="form-hometown-coords" placeholder="예: 31.7054, 35.2024" autocomplete="off">
+            </div>
+
+            <!-- Ministry & Activity Locations in Admin Modal -->
+            <div class="form-group full-width">
+              <label id="label-form-activities">사역지 / 거주지 / 활동지 목록</label>
+              <div id="admin-form-activities-list" class="admin-activities-list"></div>
+              <div class="admin-activity-add-row" style="display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap;">
+                <input type="text" id="admin-act-name-input" placeholder="장소명 (예: 예루살렘)" style="flex: 1.2; min-width: 110px;">
+                <input type="text" id="admin-act-coords-input" placeholder="좌표 (위도, 경도)" style="flex: 1; min-width: 120px;">
+                <input type="text" id="admin-act-desc-input" placeholder="사역/활동 내용 (예: 통일 왕국 통치)" style="flex: 1.8; min-width: 140px;">
+                <button type="button" id="admin-act-add-btn" class="admin-action-btn primary" style="margin: 0; padding: 0 12px; height: 36px; font-size: 11px; white-space: nowrap;">추가</button>
+              </div>
+            </div>
+            
             <div class="form-group full-width checkbox-group">
               <input type="checkbox" id="form-main">
-              <label for="form-main">예수 그리스도 메시아 계보 직계 ("Main Line") 여부</label>
+              <label id="label-form-main" for="form-main">예수 그리스도 메시아 계보 직계 ("Main Line") 여부</label>
             </div>
             <div class="form-group full-width checkbox-group" style="margin-top: 10px;">
               <input type="checkbox" id="form-prophet">
-              <label for="form-prophet">선지자/예언자 (Prophet) 여부</label>
+              <label id="label-form-prophet" for="form-prophet">선지자/예언자 (Prophet) 여부</label>
             </div>
           </div>
           <div class="modal-footer">
@@ -938,24 +2493,24 @@
           <h2 id="layer-item-modal-title">사건/장소 정보 수정</h2>
           <button id="layer-item-modal-close" class="close-btn">&times;</button>
         </div>
-        <form id="layer-item-form" onsubmit="return false;">
+        <form id="layer-item-form">
           <div class="form-grid">
             <div class="form-group full-width">
               <label id="layer-item-name-label" for="layer-item-name">이름*</label>
               <input type="text" id="layer-item-name" required placeholder="예: 에덴 동산">
             </div>
             <div class="form-group full-width">
-              <label for="layer-item-desc">상세 설명</label>
+              <label id="layer-item-desc-label" for="layer-item-desc">상세 설명</label>
               <textarea id="layer-item-desc" rows="3" placeholder="상세 설명을 적어주세요..."></textarea>
             </div>
             <div class="form-group full-width">
-              <label for="layer-item-refs">관련 성구 (쉼표로 구분)</label>
+              <label id="layer-item-refs-label" for="layer-item-refs">관련 성구 (쉼표로 구분)</label>
               <input type="text" id="layer-item-refs" placeholder="예: 창 3:24, 창 4:1">
             </div>
             
             <!-- Relations -->
             <div class="form-group full-width">
-              <label>관련 인물 (선택)</label>
+              <label id="layer-item-people-label">관련 인물 (선택)</label>
               <div class="relation-selector-box">
                 <input type="text" id="layer-item-people-search" class="relation-search" placeholder="🔍 인물 검색... (존재하지 않는 이름은 입력 후 Enter로 임의 추가)">
                 <div id="layer-item-people-tags" class="selected-relation-tags"></div>
@@ -964,7 +2519,7 @@
             </div>
             
             <div class="form-group full-width" id="layer-item-events-group">
-              <label>관련 사건 (선택)</label>
+              <label id="layer-item-events-label">관련 사건 (선택)</label>
               <div class="relation-selector-box">
                 <input type="text" id="layer-item-events-search" class="relation-search" placeholder="🔍 사건 검색... (존재하지 않는 사건은 입력 후 Enter로 임의 추가)">
                 <div id="layer-item-events-tags" class="selected-relation-tags"></div>
@@ -973,7 +2528,7 @@
             </div>
             
             <div class="form-group full-width" id="layer-item-locations-group">
-              <label>관련 장소 (선택)</label>
+              <label id="layer-item-locations-label">관련 장소 (선택)</label>
               <div class="relation-selector-box">
                 <input type="text" id="layer-item-locations-search" class="relation-search" placeholder="🔍 장소 검색... (존재하지 않는 장소는 입력 후 Enter로 임의 추가)">
                 <div id="layer-item-locations-tags" class="selected-relation-tags"></div>
@@ -994,25 +2549,25 @@
     <!-- Admin Spawner Palette for Events and Locations -->
     <div id="bottom-spawner-panel" class="bottom-spawner-panel" style="display: none;">
       <div class="spawner-header">
-        <span>🛠️ 장소/사건 복사 및 배치 툴킷</span>
-        <small style="font-size: 11px; opacity: 0.7; margin-left: 8px;">원하는 항목을 클릭하거나 검색창에 타이핑 후 Enter를 눌러 배치하세요.</small>
+        <span id="spawner-header-title">🛠️ 장소/사건 복사 및 배치 툴킷</span>
+        <small id="spawner-header-desc" style="font-size: 11px; opacity: 0.7; margin-left: 8px;">원하는 항목을 클릭하거나 검색창에 타이핑 후 Enter를 눌러 배치하세요.</small>
         <div class="spawner-controls" style="margin-left: auto; display: flex; gap: 8px; align-items: center;">
           <input type="text" id="spawner-search-input" placeholder="🔍 이름 검색 또는 직접 작성 후 Enter..." style="width: 220px; padding: 3px 10px; font-size: 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.3); color: #fff; outline: none; transition: border-color 0.2s ease;">
           <select id="spawner-custom-type" style="padding: 3px 8px; font-size: 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.3); color: #fff; outline: none; cursor: pointer;">
-            <option value="location">📍 장소</option>
-            <option value="event">📜 사건</option>
+            <option id="spawner-opt-location" value="location">📍 장소</option>
+            <option id="spawner-opt-event" value="event">📜 사건</option>
           </select>
           <button type="button" id="spawner-panel-close-btn" style="background: none; border: none; color: #fff; font-size: 14px; cursor: pointer; padding: 0 4px; display: flex; align-items: center; justify-content: center; opacity: 0.6; transition: opacity 0.2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.6" title="툴킷 닫기">❌</button>
         </div>
       </div>
       <div class="spawner-content">
         <div class="spawner-section">
-          <h5>사건 복사</h5>
+          <h5 id="spawner-events-title">사건 복사</h5>
           <div id="spawner-events-list" class="spawner-chips-container"></div>
         </div>
         <div class="spawner-section-divider"></div>
         <div class="spawner-section">
-          <h5>장소 복사</h5>
+          <h5 id="spawner-locations-title">장소 복사</h5>
           <div id="spawner-locations-list" class="spawner-chips-container"></div>
         </div>
       </div>
@@ -1022,10 +2577,7 @@
     <button id="spawner-panel-toggle-btn" class="spawner-panel-toggle-btn" style="display: none;" title="장소/사건 복사 및 배치 툴킷 열기">🛠️</button>
   </div>
 
-  <!-- Copyright Notice -->
-  <div class="copyright-notice">
-    &copy; precept67@gmail.com
-  </div>
+  <!-- Copyright Notice Removed -->
 
   <script src="data_v16_v2.js?v=2300"></script>
   <script>
@@ -1071,93 +2623,7 @@
         });
     };
 
-    // Synchronously fetch latest data from server and populate localStorage
-    // This blocks the page load just enough to ensure the latest data is available before app.js runs.
-    try {
-      var req = new XMLHttpRequest();
-      var dataUrl = isTauri ? 'database.json' : '/api/data';
-      req.open('GET', dataUrl + '?t=' + new Date().getTime(), false); // false = synchronous
-      req.send(null);
-      if (req.status === 200) {
-        var parsed = JSON.parse(req.responseText);
-        if (parsed && parsed.db) {
-          var characterEdits = {};
-          var customCharacters = [];
-          
-          // Build a lookup object of canonical IDs from data_v16_v2.js
-          var canonIds = {};
-          if (typeof BIBLE_CHARACTERS !== 'undefined') {
-            BIBLE_CHARACTERS.forEach(function(c) {
-              canonIds[c.id] = true;
-            });
-          }
-          
-          if (parsed.db && Array.isArray(parsed.db)) {
-            parsed.db.forEach(function(c) {
-              if (canonIds[c.id]) {
-                characterEdits[c.id] = c;
-              } else {
-                customCharacters.push(c);
-              }
-            });
-          }
-          window.localStorage.setItem('bible_tree_character_edits', JSON.stringify(characterEdits));
-          window.localStorage.setItem('bible_tree_custom_characters', JSON.stringify(customCharacters));
-          if(parsed.lineBends) window.localStorage.setItem('bible_tree_line_bends', JSON.stringify(parsed.lineBends));
-          if(parsed.customVisualLines) window.localStorage.setItem('bible_tree_custom_visual_lines', JSON.stringify(parsed.customVisualLines));
-          if(parsed.canvasJunctions) window.localStorage.setItem('bible_tree_canvas_junctions', JSON.stringify(parsed.canvasJunctions));
-          if(parsed.spouseSplits) window.localStorage.setItem('bible_tree_spouse_splits', JSON.stringify(parsed.spouseSplits));
-          if(parsed.annotations) window.localStorage.setItem('bible_tree_annotations', JSON.stringify(parsed.annotations));
-          if(parsed.styleSettings) window.localStorage.setItem('bible_tree_style_settings', JSON.stringify(parsed.styleSettings));
-          if(parsed.customPolygons) {
-            window.localStorage.setItem('bible_tree_custom_polygons', JSON.stringify(parsed.customPolygons));
-            window.localStorage.setItem('bible_tree_custom_polygons_initialized', 'true');
-          }
-          if(parsed.events) window.localStorage.setItem('bible_tree_events', JSON.stringify(parsed.events));
-          if(parsed.locations) window.localStorage.setItem('bible_tree_locations', JSON.stringify(parsed.locations));
-        }
-      }
-    } catch(e) {
-      console.log('API data not available, falling back to local database.json.');
-      try {
-        var localReq = new XMLHttpRequest();
-        localReq.open('GET', 'database.json?t=' + new Date().getTime(), false);
-        localReq.send(null);
-        if (localReq.status === 200) {
-          var parsed = JSON.parse(localReq.responseText);
-          if (parsed && parsed.db) {
-            var characterEdits = {};
-            var customCharacters = [];
-            var canonIds = {};
-            if (typeof BIBLE_CHARACTERS !== 'undefined') {
-              BIBLE_CHARACTERS.forEach(function(c) {
-                canonIds[c.id] = true;
-              });
-            }
-            parsed.db.forEach(function(c) {
-              if (canonIds[c.id]) {
-                characterEdits[c.id] = c;
-              } else {
-                customCharacters.push(c);
-              }
-            });
-            window.localStorage.setItem('bible_tree_character_edits', JSON.stringify(characterEdits));
-            window.localStorage.setItem('bible_tree_custom_characters', JSON.stringify(customCharacters));
-            if(parsed.lineBends) window.localStorage.setItem('bible_tree_line_bends', JSON.stringify(parsed.lineBends));
-            if(parsed.customVisualLines) window.localStorage.setItem('bible_tree_custom_visual_lines', JSON.stringify(parsed.customVisualLines));
-            if(parsed.canvasJunctions) window.localStorage.setItem('bible_tree_canvas_junctions', JSON.stringify(parsed.canvasJunctions));
-            if(parsed.spouseSplits) window.localStorage.setItem('bible_tree_spouse_splits', JSON.stringify(parsed.spouseSplits));
-            if(parsed.annotations) window.localStorage.setItem('bible_tree_annotations', JSON.stringify(parsed.annotations));
-            if(parsed.styleSettings) window.localStorage.setItem('bible_tree_style_settings', JSON.stringify(parsed.styleSettings));
-            if(parsed.customPolygons) window.localStorage.setItem('bible_tree_custom_polygons', JSON.stringify(parsed.customPolygons));
-            if(parsed.events) window.localStorage.setItem('bible_tree_events', JSON.stringify(parsed.events));
-            if(parsed.locations) window.localStorage.setItem('bible_tree_locations', JSON.stringify(parsed.locations));
-          }
-        }
-      } catch(innerErr) {
-        console.error('Failed to load local database.json fallback:', innerErr);
-      }
-    }
+
 
     // Installation Guide Modal Handlers (for app-internal downloads)
     var guideModal = document.getElementById('install-guide-modal');
@@ -1272,6 +2738,47 @@
     var helpClose = document.getElementById('help-guide-close-btn');
     var helpConfirm = document.getElementById('help-guide-confirm-btn');
 
+    var macMenuManual = document.getElementById('mac-menu-manual');
+    if (macMenuManual) {
+      macMenuManual.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (helpModal) helpModal.style.display = 'flex';
+      });
+    }
+
+    // Fullscreen Direct Menu Handlers
+    window.triggerInlineFullscreen = function() {
+      if (typeof window.toggleFullscreen === 'function') {
+        window.toggleFullscreen();
+      }
+    };
+
+    var exportNotesBtn = document.getElementById('mac-menu-notes-export');
+    if (exportNotesBtn) {
+      exportNotesBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (typeof window.exportStudyNotesFile === 'function') {
+          window.exportStudyNotesFile();
+        } else {
+          var btn = document.getElementById('bottom-backup-btn');
+          if (btn) btn.click();
+        }
+      });
+    }
+
+    var importNotesBtn = document.getElementById('mac-menu-notes-import');
+    if (importNotesBtn) {
+      importNotesBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (typeof window.importStudyNotesFile === 'function') {
+          window.importStudyNotesFile();
+        } else {
+          var btn = document.getElementById('bottom-restore-btn');
+          if (btn) btn.click();
+        }
+      });
+    }
+
     if (helpBtn) {
       helpBtn.addEventListener('click', function(e) {
         e.preventDefault();
@@ -1335,6 +2842,6 @@
       });
     }
   </script>
-  <script src="app_v16_v2.js?v=2300"></script>
+  <script src="app_v16_v2.js?v=25745"></script>
 </body>
 </html>

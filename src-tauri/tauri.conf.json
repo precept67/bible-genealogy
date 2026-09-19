@@ -1,7 +1,7 @@
 {
   "package": {
-    "productName": "BibleGenealogy",
-    "version": "1.0.36"
+    "productName": "열린 족보이야기",
+    "version": "1.1.1"
   },
   "build": {
     "distDir": "../dist",
@@ -15,10 +15,33 @@
       "shell": {
         "open": true
       },
+      "dialog": {
+        "all": true,
+        "ask": true,
+        "confirm": true,
+        "message": true,
+        "open": true,
+        "save": true
+      },
+      "window": {
+        "all": true
+      },
       "fs": {
         "all": true,
         "scope": [
+          "$DOCUMENT",
+          "$DOCUMENT/*",
           "$DOCUMENT/**",
+          "$DESKTOP",
+          "$DESKTOP/*",
+          "$DESKTOP/**",
+          "$DOWNLOAD",
+          "$DOWNLOAD/*",
+          "$DOWNLOAD/**",
+          "$APPDATA",
+          "$APPDATA/*",
+          "$APPDATA/**",
+          "$HOME/**",
           "$HOME/Library/Mobile Documents/iCloud~md~obsidian/Documents/**",
           "/Users/sanghyunkim/Library/Mobile Documents/iCloud~md~obsidian/Documents/**"
         ]
@@ -53,7 +76,7 @@
     },
     "windows": [
       {
-        "title": "성경 족보 묵상",
+        "title": "열린 족보이야기",
         "width": 1280,
         "height": 720,
         "resizable": true,

@@ -135,7 +135,7 @@
     },
     {
       "id": "irad",
-      "name": "이라드",
+      "name": "이랏",
       "engName": "Irad",
       "gender": "M",
       "generation": 3,
@@ -150,7 +150,8 @@
       "isManual": true,
       "prophets": [],
       "relatedPeople": [],
-      "engDesc": "Son of Enoch. The leader of the Cain-affiliated city civilization."
+      "engDesc": "Son of Enoch. The leader of the Cain-affiliated city civilization.",
+      "isProphet": false
     },
     {
       "id": "kenan",
