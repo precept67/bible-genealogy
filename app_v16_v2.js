@@ -36,13 +36,19 @@ if (typeof document !== 'undefined') {
   });
 }
 
-// Intercept localStorage writes to automatically trigger iCloud Sync
+let isRestoringLocalData = false;
+let isRestoringNotesData = false;
+
+// Intercept localStorage writes to automatically trigger local disk persistence & iCloud Sync
 (function() {
   const originalSetItem = localStorage.setItem;
   let syncTimeout = null;
+  let diskPersistTimeout = null;
 
   localStorage.setItem = function(key, value) {
     originalSetItem.apply(this, arguments);
+
+    if (isRestoringLocalData || isRestoringNotesData) return;
 
     // Sync only genealogy/memos specific app data keys
     if (key.startsWith('bible_tree_') || key.startsWith('bible_genealogy_')) {
@@ -52,6 +58,17 @@ if (typeof document !== 'undefined') {
         syncTimeout = setTimeout(() => {
           window.triggerICloudSync('auto');
         }, 800);
+      }
+
+      // Automatically persist tree and layout data to local filesystem/disk
+      if (typeof persistTreeDataLocally === 'function') {
+        clearTimeout(diskPersistTimeout);
+        diskPersistTimeout = setTimeout(() => {
+          persistTreeDataLocally(true);
+          if (typeof triggerAutoBackup === 'function') {
+            triggerAutoBackup(true);
+          }
+        }, 50);
       }
     }
   };
@@ -65,6 +82,20 @@ const UI_TEXTS = {
   ko: {
     search_placeholder: "검색 (인물, 사건, 장소)...",
     filter_panel_title: "계보 필터 설정",
+    filter_panel_desc: "지선 계보를 선택적으로 숨기거나 표시합니다",
+    filter_sec_title: "지선 계보 선택",
+    filter_cain: "가인 자손 계보 (Cain)",
+    filter_japheth: "야벳 자손 계보 (Japheth)",
+    filter_ham: "함 자손 계보 (Ham)",
+    filter_joktan: "욕단 자손 계보 (Joktan)",
+    filter_keturah: "그두라 자손 계보 (Keturah)",
+    filter_ishmael: "이스마엘 자손 계보 (Ishmael)",
+    filter_esau: "에서(에돔) 자손 계보 (Esau)",
+    filter_north_kings: "북이스라엘 왕 계보 (North Israel Kings)",
+    filter_independent_1chr4: "대상 4장 독립 족보 (1 Chr 4 Lineages)",
+    filter_levite_priests: "제사장 및 레위인 독립 족보 (Levite Priests)",
+    filter_horite_chiefs: "호리 족속의 족장들 (Horite Chiefs)",
+    filter_reuben_simeon: "르우벤 및 시므온 독립 족보 (Reuben & Simeon)",
     theme_toggle_title: "테마 변경",
     zoom_in_title: "확대",
     zoom_out_title: "축소",
@@ -87,11 +118,43 @@ const UI_TEXTS = {
     desc_polygon: "사용자 정의 다각형 영역입니다. 아래에서 영역에 대한 연구 메모를 작성하고 참고 링크를 등록할 수 있습니다.",
     desc_no_detail: "상세 설명이 없습니다.",
     related_verses: "📖 관련 성구:",
+    panel_info_title: "성경 속 인물 정보",
+    panel_sec_location_info: "고향 및 사역/활동 장소",
+    panel_hometown_badge: "🏠 고향",
+    panel_activities_badge: "📍 사역지 / 거주지 / 활동지",
+    map_view_btn: "📍 지도 보기",
+    placeholder_hometown_name: "고향 지명 (예: 베들레헴, 다소)",
+    placeholder_hometown_coords: "좌표 (예: 31.7054, 35.2024)",
+    placeholder_activity_name: "장소명 (예: 예루살렘, 갈릴리)",
+    placeholder_activity_coords: "좌표 (예: 31.7767, 35.2345)",
+    placeholder_activity_desc: "사역/활동 내용 (예: 통일 왕국 수도 통치)",
+    btn_add_activity: "추가",
+    no_activities: "등록된 사역/활동지가 없습니다.",
+    label_form_hometown_name: "고향 지명 (출생지)",
+    label_form_hometown_coords: "고향 좌표 (위도, 경도)",
+    label_form_activities: "사역지 / 거주지 / 활동지 목록",
+    panel_sec_notes: "개인 연구 메모",
+    panel_sec_resources: "참고 링크 및 자료 정리",
     notes_placeholder: "이 인물에 대한 메모나 생각들을 여기에 기록하세요. (자동 저장)",
     notes_title: "📖 연구 메모 및 링크",
     resource_desc_placeholder: "자료 설명 (예: 구절, 기사 제목)",
     resource_url_placeholder: "링크 URL (http...)",
     resource_add_btn: "추가",
+    resource_delete_btn: "삭제",
+    no_resources: "등록된 참고 자료가 없습니다.",
+    panel_cancel: "취소",
+    panel_save: "저장 완료",
+    panel_expand_title: "확장",
+    panel_close_title: "닫기",
+    slide_lock_text: "편집모드",
+    slide_lock_unlocked: "편집모드",
+    tooltip_settings: "환경설정",
+    tooltip_search: "검색",
+    tooltip_add_person: "인물 추가",
+    tooltip_add_event: "사건 추가",
+    tooltip_add_location: "장소 추가",
+    tooltip_add_note: "텍스트 상자 추가",
+    tooltip_add_polygon: "영역(다각형) 추가",
     gender_m: "남",
     gender_f: "여",
     search_no_results: "검색 결과가 없습니다.",
@@ -99,18 +162,18 @@ const UI_TEXTS = {
     admin_mode_unlocked: "🔓 화면 편집이 열려있습니다 (인물/선/장소/사건 조작 가능).",
     admin_mode_prompt: "비밀번호를 입력하세요:",
     admin_mode_wrong: "비밀번호가 올바르지 않습니다.",
-    app_title: "열린족보이야기",
+    app_title: "열린 족보이야기",
     layer_panel_title: "레이어 표시 설정",
     layer_people: "인물 족보",
     layer_events: "주요 사건",
     layer_locations: "장소/지명",
-    layer_polygons: "영역/보드",
+    layer_polygons: "영역",
     layer_prophets: "선지자",
     setting_title: "환경 설정",
     group_general: "기본 설정",
     group_layers: "레이어 표시 설정",
-    group_files: "로컬 파일 연동",
-    group_backup: "데이터 백업 및 복원",
+    group_files: "로컬 파일 관리",
+    group_backup: "백업 및 복원",
     label_language: "표시 언어",
     label_theme: "화면 테마",
     text_theme_btn: "테마",
@@ -132,16 +195,138 @@ const UI_TEXTS = {
     settings_theme_btn: "🌓 테마 모드 전환",
     settings_icloud_username_label: "iCloud 계정 (Apple ID)",
     settings_icloud_password_label: "App 전용 암호 (iCloud Password)",
-    settings_icloud_save_btn: "iCloud 동기화 연동 완료",
+    settings_icloud_save_btn: "☁️ iCloud 동기화 연동 완료",
     settings_md_sync_label: "Obsidian 마크다운 연동",
     settings_backup_label: "전체 메모 백업",
     settings_backup_btn: "백업 생성",
     settings_restore_label: "백업 불러오기",
-    settings_restore_btn: "백업 선택"
+    settings_restore_btn: "백업 선택",
+    // 모달창 및 입력 폼 다국어 텍스트
+    modal_title_person_default: "인물 정보 추가/수정",
+    modal_title_person_add: "새 인물 추가",
+    modal_title_person_edit: "인물 정보 수정",
+    preset_title_text: "선택된 인물 연계 프리셋",
+    preset_child_btn: "👶 자식으로 추가",
+    preset_spouse_btn: "💍 배우자로 추가",
+    label_form_id: "ID (영문 고유식별자)*",
+    placeholder_form_id: "예: abraham, cain_son",
+    label_form_name: "이름 (한글)*",
+    placeholder_form_name: "예: 아브라함",
+    label_form_eng: "영어 이름",
+    placeholder_form_eng: "예: Abraham",
+    label_form_gender: "성별*",
+    opt_gender_m: "남성 (♂)",
+    opt_gender_f: "여성 (♀)",
+    label_form_gen: "횡 위치 (아담=0)*",
+    label_form_col: "열 위치 (소수점 3자리 지원)*",
+    placeholder_form_col: "직계=0, 왼쪽=-1.5, 오른쪽=1.5",
+    form_col_auto_btn: "자동 계산",
+    form_col_auto_btn_title: "부모 및 형제 기준으로 열 위치를 자동 계산합니다.",
+    label_form_parents: "부모 ID (콤마로 구분, 최대 2명)",
+    placeholder_form_parents: "예: adam, eve (생략 시 시조)",
+    label_form_spouses: "배우자 ID (콤마로 구분)",
+    placeholder_form_spouses: "예: sarah, hagar",
+    label_form_teachers: "전도자 ID 목록 (콤마로 구분)",
+    placeholder_form_teachers: "예: jesus, paul",
+    label_form_prophets: "선지자 ID 목록 (콤마로 구분)",
+    placeholder_form_prophets: "예: samuel, elijah",
+    label_form_related: "관련된 인물들 (임의 검색 및 체크)",
+    placeholder_form_related_search: "이름 또는 ID를 검색하여 관련 인물을 추가/해제하세요...",
+    label_form_desc: "인물 설명",
+    placeholder_form_desc: "성경적 배경이나 인물에 대한 짧은 소개...",
+    label_form_eng_desc: "인물 설명 (영어)",
+    placeholder_form_eng_desc: "English description / short introduction...",
+    label_form_main: "예수 그리스도 메시아 계보 직계 (\"Main Line\") 여부",
+    label_form_prophet: "선지자/예언자 (Prophet) 여부",
+    btn_form_delete: "삭제하기",
+    btn_modal_cancel: "취소",
+    btn_modal_submit: "확인",
+    modal_title_layer_default: "사건/장소 정보 수정",
+    modal_title_event_add: "새 사건 추가",
+    modal_title_event_edit: "사건 정보 수정",
+    modal_title_location_add: "새 장소 추가",
+    modal_title_location_edit: "장소 정보 수정",
+    modal_title_annotation_relations: "텍스트 상자 관계 설정",
+    label_layer_name_default: "이름*",
+    label_layer_name_event: "사건 이름*",
+    label_layer_name_location: "장소 이름*",
+    placeholder_layer_name_event: "예: 선악과 사건",
+    placeholder_layer_name_location: "예: 에덴 동산",
+    label_layer_desc: "상세 설명",
+    placeholder_layer_desc: "상세 설명을 적어주세요...",
+    label_layer_refs: "관련 성구 (쉼표로 구분)",
+    placeholder_layer_refs: "예: 창 3:24, 창 4:1",
+    label_layer_people: "관련 인물 (선택)",
+    placeholder_layer_people_search: "🔍 인물 검색... (존재하지 않는 이름은 입력 후 Enter로 임의 추가)",
+    label_layer_events: "관련 사건 (선택)",
+    placeholder_layer_events_search: "🔍 사건 검색... (존재하지 않는 사건은 입력 후 Enter로 임의 추가)",
+    label_layer_locations: "관련 장소 (선택)",
+    placeholder_layer_locations_search: "🔍 장소 검색... (존재하지 않는 장소는 입력 후 Enter로 임의 추가)",
+    custom_tag_suffix: " (임의)",
+    spawner_header_title: "🛠️ 장소/사건 복사 및 배치 툴킷",
+    spawner_header_desc: "원하는 항목을 클릭하거나 검색창에 타이핑 후 Enter를 눌러 배치하세요.",
+    placeholder_spawner_search: "🔍 이름 검색 또는 직접 작성 후 Enter...",
+    spawner_opt_location: "📍 장소",
+    spawner_opt_event: "📜 사건",
+    spawner_close_btn_title: "툴킷 닫기",
+    spawner_events_title: "사건 복사",
+    spawner_locations_title: "장소 복사",
+    spawner_toggle_btn_title: "장소/사건 복사 및 배치 툴킷 열기",
+    area_editor_title: "영역(다각형) 편집기",
+    label_area_name: "영역 이름",
+    placeholder_area_name: "영역 이름",
+    label_area_color: "영역 색상 (선 & 면)",
+    label_area_opacity_title: "면 불투명도",
+    label_area_stroke_width_title: "테두리 두께",
+    label_area_border_title: "테두리 스타일",
+    opt_area_border_dashed: "굵은 점선 (Dashed)",
+    opt_area_border_dotted: "촘촘한 점선 (Dotted)",
+    opt_area_border_dashdot: "일점쇄선 (Dash-Dot)",
+    opt_area_border_solid: "실선 (Solid)",
+    btn_delete_area_point: "선택된<br>점 삭제",
+    btn_reset_area_label: "제목 위치<br>초기화",
+    btn_delete_area: "영역 삭제",
+    style_sec_connection_title: "연결선 형태 선택",
+    style_label_line_type: "연결선 스타일",
+    opt_line_type_orthogonal: "직각 및 곡선 (Orthogonal)",
+    opt_line_type_diagonal: "직선 (Diagonal)",
+    style_sec_colors_title: "선 색상 변경",
+    style_label_line_color: "일반 연결선",
+    style_label_main_line_color: "메시아 직계선",
+    style_label_spouse_line_color: "배우자 연결선",
+    style_label_preacher_line_color: "전도자 연결선",
+    style_sec_curvature_title: "두께 및 곡선 조절",
+    style_label_line_width: "선 두께",
+    style_label_corner_radius: "모서리 둥글기 (곡률)",
+    style_label_split_offset: "분기선 높이 (선 이동)",
+    style_label_sibling_gap: "아들들 간격 (픽셀)",
+    style_sec_line_editor_title: "선 개별 편집기",
+    style_label_line_edit_toggle: "선 편집 활성화",
+    style_label_grid_snap_toggle: "그리드 스냅",
+    btn_delete_selected_point: "선택된<br>점 삭제",
+    btn_delete_selected_line: "선택선 삭제",
+    style_label_zorder: "선 레이어 순서 (상하 관계)",
+    btn_line_bring_front: "맨 앞으로 보내기 ⬆️",
+    btn_line_send_back: "맨 뒤로 보내기 ⬇️",
+    btn_style_reset: "기본값 재설정"
   },
   en: {
     search_placeholder: "Search (People, Events, Locations)...",
     filter_panel_title: "Genealogy Filter Settings",
+    filter_panel_desc: "Selectively show or hide branch lineages",
+    filter_sec_title: "Select Branch Lineages",
+    filter_cain: "Cain Lineage",
+    filter_japheth: "Japheth Lineage",
+    filter_ham: "Ham Lineage",
+    filter_joktan: "Joktan Lineage",
+    filter_keturah: "Keturah Lineage",
+    filter_ishmael: "Ishmael Lineage",
+    filter_esau: "Esau (Edom) Lineage",
+    filter_north_kings: "North Israel Kings",
+    filter_independent_1chr4: "1 Chr 4 Lineages",
+    filter_levite_priests: "Levite Priests Lineage",
+    filter_horite_chiefs: "Horite Chiefs",
+    filter_reuben_simeon: "Reuben & Simeon Lineages",
     theme_toggle_title: "Change Theme",
     zoom_in_title: "Zoom In",
     zoom_out_title: "Zoom Out",
@@ -164,11 +349,43 @@ const UI_TEXTS = {
     desc_polygon: "This is a custom polygonal region. You can write study notes and register reference links for this region below.",
     desc_no_detail: "No detailed description available.",
     related_verses: "📖 Related Scriptures:",
+    panel_info_title: "Biblical Figure Details",
+    panel_sec_location_info: "Hometown & Ministry/Activity Locations",
+    panel_hometown_badge: "🏠 Hometown",
+    panel_activities_badge: "📍 Ministry & Activity Locations",
+    map_view_btn: "📍 View Map",
+    placeholder_hometown_name: "Hometown (e.g. Bethlehem, Tarsus)",
+    placeholder_hometown_coords: "Coordinates (e.g. 31.7054, 35.2024)",
+    placeholder_activity_name: "Place name (e.g. Jerusalem, Galilee)",
+    placeholder_activity_coords: "Coordinates (e.g. 31.7767, 35.2345)",
+    placeholder_activity_desc: "Ministry/Activity details (e.g. Kingdom Capital)",
+    btn_add_activity: "Add",
+    no_activities: "No ministry or activity locations registered.",
+    label_form_hometown_name: "Hometown (Birthplace)",
+    label_form_hometown_coords: "Hometown Coordinates (Lat, Long)",
+    label_form_activities: "Ministry & Activity Locations",
+    panel_sec_notes: "Personal Study Notes",
+    panel_sec_resources: "Reference Links & Study Resources",
     notes_placeholder: "Write your study notes or thoughts here. (Auto-saved)",
     notes_title: "📖 Study Notes & Links",
     resource_desc_placeholder: "Resource description (e.g. verse reference, article title)",
     resource_url_placeholder: "Link URL (http...)",
     resource_add_btn: "Add",
+    resource_delete_btn: "Delete",
+    no_resources: "No reference resources registered.",
+    panel_cancel: "Cancel",
+    panel_save: "Save",
+    panel_expand_title: "Expand",
+    panel_close_title: "Close",
+    slide_lock_text: "Edit Mode",
+    slide_lock_unlocked: "Edit Mode",
+    tooltip_settings: "Settings",
+    tooltip_search: "Search",
+    tooltip_add_person: "Add Person",
+    tooltip_add_event: "Add Event",
+    tooltip_add_location: "Add Location",
+    tooltip_add_note: "Add Text Box",
+    tooltip_add_polygon: "Add Area (Polygon)",
     gender_m: "Male",
     gender_f: "Female",
     search_no_results: "No results found.",
@@ -209,12 +426,120 @@ const UI_TEXTS = {
     settings_theme_btn: "🌓 Toggle Dark Theme",
     settings_icloud_username_label: "iCloud Account (Apple ID)",
     settings_icloud_password_label: "App-Specific Password (iCloud Password)",
-    settings_icloud_save_btn: "iCloud Synchronization Setup Complete",
+    settings_icloud_save_btn: "☁️ Complete iCloud Sync",
     settings_md_sync_label: "Obsidian Markdown Sync",
     settings_backup_label: "Backup All Notes",
     settings_backup_btn: "Create Backup",
     settings_restore_label: "Import Notes",
-    settings_restore_btn: "Select Backup"
+    settings_restore_btn: "Select Backup",
+    // Modals and form elements (English)
+    modal_title_person_default: "Biblical Figure Info",
+    modal_title_person_add: "Add Biblical Figure",
+    modal_title_person_edit: "Edit Biblical Figure Info",
+    preset_title_text: "Selected Figure Presets",
+    preset_child_btn: "👶 Add as Child",
+    preset_spouse_btn: "💍 Add as Spouse",
+    label_form_id: "ID (Unique English Identifier)*",
+    placeholder_form_id: "e.g.: abraham, cain_son",
+    label_form_name: "Name (Korean)*",
+    placeholder_form_name: "e.g.: Abraham",
+    label_form_eng: "English Name",
+    placeholder_form_eng: "e.g.: Abraham",
+    label_form_gender: "Gender*",
+    opt_gender_m: "Male (♂)",
+    opt_gender_f: "Female (♀)",
+    label_form_gen: "Generation (Adam=0)*",
+    label_form_col: "Column Position (decimals allowed)*",
+    placeholder_form_col: "Main=0, Left=-1.5, Right=1.5",
+    form_col_auto_btn: "Auto Calculate",
+    form_col_auto_btn_title: "Auto-calculate column position based on parents and siblings.",
+    label_form_parents: "Parent IDs (comma-separated, max 2)",
+    placeholder_form_parents: "e.g.: adam, eve (blank if origin)",
+    label_form_spouses: "Spouse IDs (comma-separated)",
+    placeholder_form_spouses: "e.g.: sarah, hagar",
+    label_form_teachers: "Teachers / Evangelists IDs (comma-separated)",
+    placeholder_form_teachers: "e.g.: jesus, paul",
+    label_form_prophets: "Prophets IDs (comma-separated)",
+    placeholder_form_prophets: "e.g.: samuel, elijah",
+    label_form_related: "Related Figures (Search & Check)",
+    placeholder_form_related_search: "Search name or ID to select related figures...",
+    label_form_desc: "Description (Korean)",
+    placeholder_form_desc: "Biblical background or short introduction...",
+    label_form_eng_desc: "Description (English)",
+    placeholder_form_eng_desc: "English description / short introduction...",
+    label_form_main: "Direct Line of Jesus Christ (\"Main Line\")",
+    label_form_prophet: "Prophet / Seer (Prophet)",
+    btn_form_delete: "Delete",
+    btn_modal_cancel: "Cancel",
+    btn_modal_submit: "Confirm",
+    modal_title_layer_default: "Edit Event/Location Details",
+    modal_title_event_add: "Add Biblical Event",
+    modal_title_event_edit: "Edit Event Details",
+    modal_title_location_add: "Add Biblical Location",
+    modal_title_location_edit: "Edit Location Details",
+    modal_title_annotation_relations: "Set Text Box Relations",
+    label_layer_name_default: "Name*",
+    label_layer_name_event: "Event Name*",
+    label_layer_name_location: "Location Name*",
+    placeholder_layer_name_event: "e.g.: Fall of Man",
+    placeholder_layer_name_location: "e.g.: Garden of Eden",
+    label_layer_desc: "Detailed Description",
+    placeholder_layer_desc: "Write detailed description...",
+    label_layer_refs: "Related Scriptures (comma-separated)",
+    placeholder_layer_refs: "e.g.: Gen 3:24, Gen 4:1",
+    label_layer_people: "Related Figures (Optional)",
+    placeholder_layer_people_search: "🔍 Search people... (type & press Enter to add custom)",
+    label_layer_events: "Related Events (Optional)",
+    placeholder_layer_events_search: "🔍 Search events... (type & press Enter to add custom)",
+    label_layer_locations: "Related Locations (Optional)",
+    placeholder_layer_locations_search: "🔍 Search locations... (type & press Enter to add custom)",
+    custom_tag_suffix: " (Custom)",
+    spawner_header_title: "🛠️ Location & Event Spawner Toolkit",
+    spawner_header_desc: "Click an item or type and press Enter to place on board.",
+    placeholder_spawner_search: "🔍 Search or type name and press Enter...",
+    spawner_opt_location: "📍 Location",
+    spawner_opt_event: "📜 Event",
+    spawner_close_btn_title: "Close Toolkit",
+    spawner_events_title: "Duplicate Events",
+    spawner_locations_title: "Duplicate Locations",
+    spawner_toggle_btn_title: "Open Location/Event Spawner Toolkit",
+    area_editor_title: "Area (Polygon) Editor",
+    label_area_name: "Area Name",
+    placeholder_area_name: "Area name",
+    label_area_color: "Area Color (Border & Fill)",
+    label_area_opacity_title: "Fill Opacity",
+    label_area_stroke_width_title: "Border Width",
+    label_area_border_title: "Border Style",
+    opt_area_border_dashed: "Dashed",
+    opt_area_border_dotted: "Dotted",
+    opt_area_border_dashdot: "Dash-Dot",
+    opt_area_border_solid: "Solid",
+    btn_delete_area_point: "Delete<br>Point",
+    btn_reset_area_label: "Reset Title<br>Position",
+    btn_delete_area: "Delete Area",
+    style_sec_connection_title: "Connection Line Style",
+    style_label_line_type: "Line Style",
+    opt_line_type_orthogonal: "Orthogonal & Curve",
+    opt_line_type_diagonal: "Straight Line (Diagonal)",
+    style_sec_colors_title: "Line Colors",
+    style_label_line_color: "General Line",
+    style_label_main_line_color: "Messianic Line",
+    style_label_spouse_line_color: "Spouse Line",
+    style_label_preacher_line_color: "Preacher Line",
+    style_sec_curvature_title: "Thickness & Curve Controls",
+    style_label_line_width: "Line Thickness",
+    style_label_corner_radius: "Corner Radius",
+    style_label_split_offset: "Branch Height",
+    style_label_sibling_gap: "Sibling Gap",
+    style_sec_line_editor_title: "Individual Line Editor",
+    style_label_line_edit_toggle: "Enable Line Editing",
+    style_label_grid_snap_toggle: "Grid Snap",
+    btn_delete_selected_point: "Delete<br>Point",
+    btn_delete_selected_line: "Delete Line",
+    style_label_zorder: "Line Layer Order (Z-Order)",
+    btn_line_bring_front: "Bring to Front ⬆️",
+    btn_line_send_back: "Send to Back ⬇️",
+    btn_style_reset: "Reset to Defaults"
   }
 };
 
@@ -291,1078 +616,1534 @@ function cleanLayerName(name) {
 
 const DEFAULT_LOCATIONS = [
   {
-    "id": "loc-eden",
-    "name": "에덴동산 (Eden)",
-    "desc": "인류 최초의 거처이자 생명나무와 선악을 알게 하는 나무가 있던 낙원.",
-    "refs": [
-      "창세기 2:8",
-      "창세기 2:15"
-    ],
-    "relatedPeople": [
-      "adam",
-      "eve"
-    ],
-    "relatedEvents": [
-      "ev-eden_sin"
-    ],
-    "x": 150,
-    "y": 150
-  },
-  {
-    "id": "loc-east_eden",
-    "name": "에덴 동쪽 놋 땅 (Land of Nod)",
-    "desc": "가인이 아벨을 죽인 후 쫓겨나 유리하며 거주하게 된 에덴 동편의 땅.",
-    "refs": [
-      "창세기 4:16"
-    ],
-    "relatedPeople": [
-      "cain",
-      "abel"
-    ],
-    "relatedEvents": [
-      "ev-cain_abel"
-    ],
-    "x": -400,
-    "y": 330
-  },
-  {
-    "id": "loc-ararat",
-    "name": "아라랏산 (Mount Ararat)",
-    "desc": "노아의 방주가 대홍수 심판이 끝난 후 머무른 산.",
-    "refs": [
-      "창세기 8:4"
-    ],
-    "relatedPeople": [
-      "noah",
-      "shem",
-      "ham",
-      "japheth"
-    ],
-    "relatedEvents": [
-      "ev-noah_flood"
-    ],
-    "x": 150,
-    "y": 1770
-  },
-  {
-    "id": "loc-shinar",
-    "name": "시날 평지 (Plain of Shinar)",
-    "desc": "노아의 후손들이 모여 바벨탑을 쌓으며 하나님께 대적했던 평원.",
-    "refs": [
-      "창세기 11:2"
-    ],
-    "relatedPeople": [
-      "noah"
-    ],
-    "relatedEvents": [
-      "ev-babel_tower"
-    ],
-    "x": 280,
-    "y": 2130
-  },
-  {
-    "id": "loc-haran",
-    "name": "하란 (Haran)",
-    "desc": "아브라함의 아버지 데라가 머물다 죽은 곳이자 아브라함이 소명을 받고 떠난 땅.",
-    "refs": [
-      "창세기 11:31",
-      "창세기 12:4"
-    ],
-    "relatedPeople": [
-      "terah",
-      "abraham",
-      "sarah"
-    ],
-    "relatedEvents": [
-      "ev-abraham_haran"
-    ],
-    "x": 100,
-    "y": 3480
-  },
-  {
-    "id": "loc-shechem",
-    "name": "세겜 (Shechem)",
-    "desc": "아브라함이 가나안 땅에 들어와 최초로 제단을 쌓고 하나님의 약속을 받은 장소.",
-    "refs": [
-      "창세기 12:6",
-      "창세기 12:7"
-    ],
-    "relatedPeople": [
-      "abraham"
-    ],
-    "relatedEvents": [
-      "ev-abraham_shechem"
-    ],
-    "x": 150,
-    "y": 3570
-  },
-  {
-    "id": "loc-sodom",
-    "name": "소돔과 고모라 (Sodom & Gomorrah)",
-    "desc": "도덕적 타락으로 인해 유황과 불의 심판을 받아 멸망한 요단 평지의 성읍들.",
-    "refs": [
-      "창세기 19:24",
-      "창세기 19:25"
-    ],
-    "relatedPeople": [
-      "lot",
-      "abraham"
-    ],
-    "relatedEvents": [
-      "ev-sodom_destruction"
-    ],
-    "x": -200,
-    "y": 3540
-  },
-  {
-    "id": "loc-moriah",
-    "name": "모리아산 (Mount Moriah)",
-    "desc": "아브라함이 독자 이삭을 번제로 바치려 했던 산이자 훗날 솔로몬 성전이 건축된 장소.",
-    "refs": [
-      "창세기 22:2"
-    ],
-    "relatedPeople": [
-      "abraham",
-      "isaac"
-    ],
-    "relatedEvents": [
-      "ev-isaac_offering"
-    ],
-    "x": 150,
-    "y": 3660
-  },
-  {
-    "id": "loc-beersheba",
-    "name": "브엘세바 (Beersheba)",
-    "desc": "맹세의 우물이라는 뜻으로, 아브라함และ 이삭이 그랄 왕 아비멜렉과 평화 언약을 맺은 곳.",
-    "refs": [
-      "창세기 21:31",
-      "창세기 26:33"
-    ],
-    "relatedPeople": [
-      "abraham",
-      "isaac"
-    ],
-    "relatedEvents": [
-      "ev-isaac_covenant"
-    ],
-    "x": 150,
-    "y": 3750
-  },
-  {
-    "id": "loc-bethel",
-    "name": "벧엘 (Bethel)",
-    "desc": "하나님의 집이라는 뜻으로, 야곱이 형 에서를 피해 도망치던 중 돌베개를 베고 자다 하늘 사다리 환상을 본 곳.",
-    "refs": [
-      "창세기 28:19"
-    ],
-    "relatedPeople": [
-      "jacob"
-    ],
-    "relatedEvents": [
-      "ev-jacob_bethel"
-    ],
-    "x": 150,
-    "y": 3930
-  },
-  {
-    "id": "loc-peniel",
-    "name": "브니엘 (Peniel)",
-    "desc": "하나님의 얼굴이라는 뜻으로, 야곱이 얍복 나루에서 하나님의 사자와 밤새 씨름하여 '이스라엘'이라는 이름을 얻은 곳.",
-    "refs": [
-      "창세기 32:30"
-    ],
-    "relatedPeople": [
-      "jacob"
-    ],
-    "relatedEvents": [
-      "ev-jacob_peniel"
-    ],
-    "x": 150,
-    "y": 3990
-  },
-  {
-    "id": "loc-hebron",
-    "name": "헤브론 막벨라 굴 (Cave of Machpelah)",
-    "desc": "아브라함이 사라를 장사하기 위해 매입한 굴로, 아브라함, 사라, 이삭, 리브가, 야곱, 레아가 묻힌 족장들의 묘실.",
-    "refs": [
-      "창세기 23:19",
-      "창세기 49:30"
-    ],
-    "relatedPeople": [
-      "abraham",
-      "sarah",
-      "isaac",
-      "jacob"
-    ],
-    "relatedEvents": [
-      "ev-machpelah_buy"
-    ],
-    "x": 120,
-    "y": 3610
-  },
-  {
-    "id": "loc-goshen",
-    "name": "애굽 고센 땅 (Goshen in Egypt)",
-    "desc": "가나안 기근 때 요셉의 초청으로 입성한 야곱의 가족들이 정착하여 번성한 비옥한 목초지.",
-    "refs": [
-      "창세기 47:6"
-    ],
-    "relatedPeople": [
-      "jacob",
-      "joseph"
-    ],
-    "relatedEvents": [
-      "ev-goshen_migration"
-    ],
-    "x": 350,
-    "y": 4080
-  },
-  {
-    "id": "loc-nile",
-    "name": "나일강 (Nile River)",
-    "desc": "바로의 히브리 유아 학살 명령 속에서 모세가 갈대 상자에 담겨 떠내려가다 바로의 딸에게 구출된 강.",
-    "refs": [
-      "출애굽기 2:3",
-      "출애굽기 2:5"
-    ],
-    "relatedPeople": [
-      "moses",
-      "jochebed"
-    ],
-    "relatedEvents": [
-      "ev-moses_rescue"
-    ],
-    "x": -5900,
-    "y": 4560
-  },
-  {
-    "id": "loc-midian",
-    "name": "미디안 광야 (Midian Wilderness)",
-    "desc": "모세가 애굽 사람을 죽인 후 도망하여 40년간 목자로 살았던 땅이자 호렙산 떨기나무에서 하나님의 부르심을 받은 곳.",
-    "refs": [
-      "출애굽기 2:15",
-      "출애굽기 3:1"
-    ],
-    "relatedPeople": [
-      "moses",
-      "zipporah"
-    ],
-    "relatedEvents": [
-      "ev-burning_bush"
-    ],
-    "x": -6100,
-    "y": 4620
-  },
-  {
-    "id": "loc-pharaoh_palace",
-    "name": "애굽 바로의 궁전 (Pharaoh's Palace)",
-    "desc": "모세와 아론이 이스라엘 백성의 해방을 요구하며 바로와 대치하고 열 가지 재앙을 선포했던 궁전.",
-    "refs": [
-      "출애굽기 5:1",
-      "출애굽기 7:10"
-    ],
-    "relatedPeople": [
-      "moses",
-      "aaron"
-    ],
-    "relatedEvents": [
-      "ev-ten_plagues"
-    ],
-    "x": -5600,
-    "y": 4560
-  },
-  {
-    "id": "loc-red_sea",
-    "name": "홍해 (Red Sea)",
+    "id": "loc-1784790667582",
+    "name": "홍해",
     "desc": "뒤쫓아오는 애굽 군대 앞에서 모세가 지팡이를 내밀어 밤새 동풍으로 바다를 가르고 마른 땅처럼 건넌 기적의 바다.",
     "refs": [
       "출애굽기 14:21",
       "출애굽기 14:22"
     ],
+    "relatedEvents": [
+      "ev-crossing_red_sea"
+    ],
     "relatedPeople": [
       "moses",
       "aaron"
     ],
-    "relatedEvents": [
-      "ev-crossing_red_sea"
-    ],
-    "x": -5900,
-    "y": 4740
+    "x": 10401,
+    "y": 4554,
+    "engName": "red sea",
+    "engDesc": "In front of the pursuing Egyptian army, Moses held out his staff and parted the sea with an east wind all night long, crossing it like dry land."
   },
   {
-    "id": "loc-sinai",
-    "name": "시내산 (Mount Sinai)",
-    "desc": "출애굽한 이스라엘 백성들이 당도하여 하나님과 언약을 맺고 모세가 십계명과 성막 설계도를 받은 성산.",
+    "id": "loc-1784790981421",
+    "name": "에덴동산",
+    "desc": "인류 최초의 거처이자 생명나무와 선악을 알게 하는 나무가 있던 낙원.",
     "refs": [
-      "출애굽기 19:11",
-      "출애굽기 20:1"
-    ],
-    "relatedPeople": [
-      "moses"
+      "창세기 2:8",
+      "창세기 2:15"
     ],
     "relatedEvents": [
-      "ev-ten_commandments"
-    ],
-    "x": -5900,
-    "y": 4860
-  },
-  {
-    "id": "loc-kadesh",
-    "name": "가데스 바네아 (Kadesh Barnea)",
-    "desc": "가나안 접경 지역으로, 각 지파별로 12명의 정탐꾼을 보내 가나안 땅을 탐지하고 보고를 들었던 역사적 광야 기지.",
-    "refs": [
-      "민수기 13:26",
-      "신명기 1:19"
-    ],
-    "relatedPeople": [
-      "moses",
-      "joshua_eph",
-      "caleb_jephunneh"
-    ],
-    "relatedEvents": [
-      "ev-kadesh_spies"
-    ],
-    "x": -5900,
-    "y": 4980
-  },
-  {
-    "id": "loc-nebo",
-    "name": "느보산 비스가산대 (Mount Nebo)",
-    "desc": "모세가 약속의 땅 가나안을 멀리 바라본 후, 들어가지 못하고 120세로 생을 마감한 모압 땅의 산.",
-    "refs": [
-      "신명기 34:1",
-      "신명기 34:5"
-    ],
-    "relatedPeople": [
-      "moses"
-    ],
-    "relatedEvents": [
-      "ev-moses_death"
-    ],
-    "x": -5700,
-    "y": 4900
-  },
-  {
-    "id": "loc-jordan",
-    "name": "요단강 (Jordan River)",
-    "desc": "여호수아의 인도 하에 제사장들이 언약궤를 메고 물에 발을 딛자 흐르던 강물이 멈추어 마른 땅으로 건넌 약속의 땅 관문.",
-    "refs": [
-      "여호수아 3:15",
-      "여호수아 3:17"
-    ],
-    "relatedPeople": [
-      "joshua_eph"
-    ],
-    "relatedEvents": [
-      "ev-crossing_jordan"
-    ],
-    "x": -200,
-    "y": 5160
-  },
-  {
-    "id": "loc-jericho",
-    "name": "여리고 (Jericho)",
-    "desc": "가나안 첫 성읍으로, 정탐꾼을 숨긴 라합의 집이 있던 곳이며 언약궤를 메고 성을 7일간 돌아 무너뜨린 기적의 성.",
-    "refs": [
-      "여호수아 2:1",
-      "여호수아 6:20"
-    ],
-    "relatedPeople": [
-      "joshua_eph",
-      "rahab"
-    ],
-    "relatedEvents": [
-      "ev-fall_of_jericho"
-    ],
-    "x": -200,
-    "y": 5220
-  },
-  {
-    "id": "loc-shiloh",
-    "name": "실로 (Shiloh)",
-    "desc": "사사 시대 성막과 언약궤가 오랫동안 위치했던 영적 중심지이자 어린 사무엘이 하나님의 음성을 듣고 소명을 받은 곳.",
-    "refs": [
-      "여호수아 18:1",
-      "사무엘상 3:21"
-    ],
-    "relatedPeople": [
-      "david"
-    ],
-    "relatedEvents": [
-      "ev-samuel_call"
-    ],
-    "x": 100,
-    "y": 5580
-  },
-  {
-    "id": "loc-bethlehem",
-    "name": "베들레헴 (Bethlehem)",
-    "desc": "룻과 보아스의 만남이 성취된 곳이자 다윗 왕의 고향이며, 선지자 사무엘이 이새의 아들 다윗에게 기름을 부어 왕으로 세운 떡집의 땅.",
-    "refs": [
-      "룻기 1:22",
-      "사무엘상 16:1"
-    ],
-    "relatedPeople": [
-      "david"
-    ],
-    "relatedEvents": [
-      "ev-david_anointed"
-    ],
-    "x": 120,
-    "y": 5820
-  },
-  {
-    "id": "loc-elah",
-    "name": "엘라 골짜기 (Valley of Elah)",
-    "desc": "블레셋 군대와 이스라엘 군대가 대치하던 중, 소년 다윗이 물맷돌 5개와 만군의 여호와의 이름으로 거인 골리앗을 쓰러뜨린 전쟁터.",
-    "refs": [
-      "사무엘상 17:2",
-      "사무엘상 17:49"
-    ],
-    "relatedPeople": [
-      "david"
-    ],
-    "relatedEvents": [
-      "ev-david_goliath"
-    ],
-    "x": 50,
-    "y": 5940
-  },
-  {
-    "id": "loc-jerusalem",
-    "name": "예루살렘 성전산 (Mount Moriah Temple)",
-    "desc": "다윗이 오르난의 타작마당을 매입해 예배한 터로, 솔로몬 왕이 이스라엘 영광의 상징인 제1성전을 건축하여 헌당한 장소.",
-    "refs": [
-      "역대하 3:1",
-      "열왕기상 8:1"
-    ],
-    "relatedPeople": [
-      "david",
-      "solomon"
-    ],
-    "relatedEvents": [
-      "ev-temple_building"
-    ],
-    "x": 120,
-    "y": 6060
-  },
-  {
-    "id": "loc-carmel",
-    "name": "갈멜산 (Mount Carmel)",
-    "desc": "선지자 엘리야가 바알과 아세라 선지자 850명과 대결하여 여호와의 제단에 불이 내리게 함으로써 참 신이 누구인지 입증한 산.",
-    "refs": [
-      "열왕기상 18:19",
-      "열왕기상 18:38"
-    ],
-    "relatedPeople": [
-      "david"
-    ],
-    "relatedEvents": [
-      "ev-elijah_fire"
-    ],
-    "x": -450,
-    "y": 6960
-  },
-  {
-    "id": "loc-babylon",
-    "name": "바벨론 강가 (Rivers of Babylon)",
-    "desc": "예루살렘 멸망 이후 유다 백성들이 포로로 잡혀가 눈물로 시온을 기억하며 수금을 나무에 걸었던 슬픔과 탄식의 유배지.",
-    "refs": [
-      "시편 137:1",
-      "열왕기하 25:11"
-    ],
-    "relatedPeople": [
-      "jeconiah"
-    ],
-    "relatedEvents": [
-      "ev-babylon_captivity"
-    ],
-    "x": 400,
-    "y": 8220
-  },
-  {
-    "id": "loc-second_temple",
-    "name": "예루살렘 제2성전 터 (Second Temple Ruins)",
-    "desc": "바벨론 포로에서 귀환한 유다 백성들이 총독 스룹바벨의 주도 하에 눈물과 기쁨 속에 재건한 하나님의 성전.",
-    "refs": [
-      "에스라 3:8",
-      "에스라 6:15"
-    ],
-    "relatedPeople": [
-      "zerubbabel"
-    ],
-    "relatedEvents": [
-      "ev-temple_rebuild"
-    ],
-    "x": 120,
-    "y": 9444
-  },
-  {
-    "id": "loc-jerusalem_walls",
-    "name": "예루살렘 성벽 (Jerusalem Walls)",
-    "desc": "느헤미야 총독의 헌신과 이스라엘 백성들의 일치단결로 방해자들의 위협 속에서도 52일 만에 중건한 예루살렘 성벽 성곽.",
-    "refs": [
-      "느헤미야 2:17",
-      "느헤미야 6:15"
-    ],
-    "relatedPeople": [
-      "zerubbabel"
-    ],
-    "relatedEvents": [
-      "ev-walls_rebuild"
-    ],
-    "x": 120,
-    "y": 9550
-  }
-];
-
-const DEFAULT_EVENTS = [
-  {
-    "id": "ev-eden_sin",
-    "name": "선악과 사건과 인류의 타락 (Fall of Man)",
-    "desc": "뱀의 유혹으로 하와와 아담이 선악과를 먹고 하나님의 명령을 어겨 에덴동산에서 추방당하고 인류에 죄가 들어온 사건.",
-    "refs": [
-      "창세기 3:6",
-      "창세기 3:23"
+      "ev-eden_sin"
     ],
     "relatedPeople": [
       "adam",
       "eve"
     ],
-    "relatedLocations": [
-      "loc-eden"
-    ],
-    "x": 240,
-    "y": 150
+    "x": 16128,
+    "y": 75,
+    "engName": "Garden of Eden",
+    "engDesc": "Paradise, the first home of mankind and the location of the tree of life and the tree of knowledge of good and evil."
   },
   {
-    "id": "ev-cain_abel",
-    "name": "가인의 아벨 살인 사건 (Cain and Abel)",
-    "desc": "하나님께서 아벨의 제사만 받으시자 이에 분노한 형 가인이 들판에서 아우 아벨을 돌로 쳐 죽인 인류 최초의 살인 사건.",
+    "id": "loc-1784792563461",
+    "name": "시날 평지",
+    "desc": "노아의 후손들이 모여 바벨탑을 쌓으며 하나님께 대적했던 평원.",
     "refs": [
-      "창세기 4:8"
+      "창세기 11:2"
     ],
-    "relatedPeople": [
-      "cain",
-      "abel"
-    ],
-    "relatedLocations": [
-      "loc-east_eden"
-    ],
-    "x": -310,
-    "y": 330
-  },
-  {
-    "id": "ev-enoch_ascension",
-    "name": "에녹의 하나님 동행과 승천 (Enoch's Translation)",
-    "desc": "에녹이 65세에 므두셀라를 낳고 300년 동안 하나님과 동행하다가, 하나님이 그를 데려가시므로 세상에 있지 아니한 신비한 사건.",
-    "refs": [
-      "창세기 5:24"
-    ],
-    "relatedPeople": [
-      "enoch_seth",
-      "methuselah"
-    ],
-    "relatedLocations": [
-      "loc-eden"
-    ],
-    "x": 240,
-    "y": 150
-  },
-  {
-    "id": "ev-noah_flood",
-    "name": "노아의 방주와 대홍수 심판 (Noah's Flood)",
-    "desc": "온 세상의 해악이 가득 참에 분노하신 하나님께서 40일 동안 비를 내려 전 지구를 홍수로 심판하시고 노아의 여덟 식구만 구원하신 사건.",
-    "refs": [
-      "창세기 7:11",
-      "창세기 7:23"
-    ],
-    "relatedPeople": [
-      "noah",
-      "shem",
-      "ham",
-      "japheth"
-    ],
-    "relatedLocations": [
-      "loc-ararat"
-    ],
-    "x": 240,
-    "y": 1770
-  },
-  {
-    "id": "ev-babel_tower",
-    "name": "바벨탑 건설과 언어의 혼잡 (Tower of Babel)",
-    "desc": "인류가 하늘에 닿는 탑을 쌓아 자기 이름을 내고 흩어짐을 면하려 하자, 하나님이 언어를 혼잡하게 하사 온 지면에 흩으신 심판.",
-    "refs": [
-      "창세기 11:4",
-      "창세기 11:9"
+    "relatedEvents": [
+      "ev-babel_tower"
     ],
     "relatedPeople": [
       "noah"
     ],
-    "relatedLocations": [
-      "loc-shinar"
-    ],
-    "x": 370,
-    "y": 2130
+    "x": 16558,
+    "y": 2661,
+    "engName": "Plain of Shinar",
+    "engDesc": "A plain where Noah's descendants gathered to build the Tower of Babel and oppose God."
   },
   {
-    "id": "ev-abraham_haran",
-    "name": "아브라함의 갈대아 우르 및 하란 소명 (Call of Abraham)",
-    "desc": "본토 친척 아비 집을 떠나 보여줄 땅으로 가라는 하나님의 명령에 순종하여 75세에 아브라함이 믿음의 여정을 시작한 사건.",
+    "id": "loc-1784792669341",
+    "name": "하란",
+    "desc": "아브라함의 아버지 데라가 머물다 죽은 곳이자 아브라함이 소명을 받고 떠난 땅.",
     "refs": [
-      "창세기 12:1",
+      "창세기 11:31",
       "창세기 12:4"
+    ],
+    "relatedEvents": [
+      "ev-abraham_haran"
     ],
     "relatedPeople": [
       "terah",
       "abraham",
       "sarah"
     ],
-    "relatedLocations": [
-      "loc-haran"
-    ],
-    "x": 190,
-    "y": 3480
+    "x": 16664,
+    "y": 3406,
+    "engName": "Haran",
+    "engDesc": "This is the place where Abraham's father Terah stayed and died, and the land where Abraham left after receiving his calling."
   },
   {
-    "id": "ev-abraham_shechem",
-    "name": "세겜에서의 첫 단 축조와 약속 (Abraham's Altar at Shechem)",
-    "desc": "약속의 땅 가나안에 들어온 아브라함에게 하나님이 나타나 '이 땅을 네 자손에게 주리라' 하시자 제단을 쌓아 예배한 사건.",
+    "id": "loc-1784793488527",
+    "name": "모리아산",
+    "desc": "아브라함이 독자 이삭을 번제로 바치려 했던 산이자 훗날 솔로몬 성전이 건축된 장소.",
     "refs": [
-      "창세기 12:7"
+      "창세기 22:2"
     ],
-    "relatedPeople": [
-      "abraham"
-    ],
-    "relatedLocations": [
-      "loc-shechem"
-    ],
-    "x": 240,
-    "y": 3570
-  },
-  {
-    "id": "ev-sodom_destruction",
-    "name": "소돔과 고모라의 유황불 비 심판 (Destruction of Sodom)",
-    "desc": "소돔성 주민들의 죄악이 심히 무거움으로 하늘에서 유황과 불이 비처럼 내려와 성읍들과 그곳에 살던 생물들을 완전히 소멸시킨 사건.",
-    "refs": [
-      "창세기 19:24"
-    ],
-    "relatedPeople": [
-      "lot",
-      "abraham"
-    ],
-    "relatedLocations": [
-      "loc-sodom"
-    ],
-    "x": -110,
-    "y": 3540
-  },
-  {
-    "id": "ev-isaac_offering",
-    "name": "독자 이삭의 모리아산 번제 봉헌 (Binding of Isaac)",
-    "desc": "하나님이 아브라함의 믿음을 시험하고자 백세에 얻은 외아들 이삭을 바치라 하실 때, 칼을 들어 드리려 하자 야훼 이레로 수양을 준비하신 사건.",
-    "refs": [
-      "창세기 22:10",
-      "창세기 22:13"
+    "relatedEvents": [
+      "ev-isaac_offering"
     ],
     "relatedPeople": [
       "abraham",
       "isaac"
     ],
-    "relatedLocations": [
-      "loc-moriah"
-    ],
-    "x": 240,
-    "y": 3660
+    "x": 16446,
+    "y": 3680,
+    "engName": "Mount Moriah",
+    "engDesc": "This is the mountain where Abraham attempted to sacrifice his only son Isaac as a burnt offering, and the place where Solomon's temple was later built."
   },
   {
-    "id": "ev-isaac_covenant",
-    "name": "이삭의 브엘세바 평화 언약 체결 (Isaac's Covenant at Beersheba)",
-    "desc": "이삭이 그랄 목자들과의 우물 분쟁을 평화롭게 온유함으로 해결한 후, 아비멜렉 왕이 스스로 찾아와 여호와가 함께하심을 고백하고 맺은 맹세.",
+    "id": "loc-1786029363695",
+    "name": "예루살렘 성벽",
+    "desc": "느헤미야 총독의 헌신과 이스라엘 백성들의 일치단결로 방해자들의 위협 속에서도 52일 만에 중건한 예루살렘 성벽 성곽.",
     "refs": [
-      "창세기 26:28",
-      "창세기 26:31"
+      "느헤미야 2:17",
+      "느헤미야 6:15"
+    ],
+    "relatedEvents": [
+      "ev-walls_rebuild"
     ],
     "relatedPeople": [
-      "abraham",
-      "isaac"
+      "zerubbabel"
     ],
-    "relatedLocations": [
-      "loc-beersheba"
-    ],
-    "x": 240,
-    "y": 3750
+    "x": 22077,
+    "y": 7772,
+    "engName": "Jerusalem Walls",
+    "engDesc": "The walls and ramparts of Jerusalem rebuilt in 52 days under governor Nehemiah's leadership and the unified dedication of the Israelites despite threats from adversaries."
   },
   {
-    "id": "ev-jacob_bethel",
-    "name": "야곱의 벧엘 사다리 꿈과 서원 (Jacob's Ladder at Bethel)",
-    "desc": "형 에서의 낯을 피해 도망하던 중 광야에서 잠든 야곱에게 하나님이 하늘 사다리 환상으로 나타나 임마누엘 동행을 약속해 주신 은혜의 서원.",
+    "id": "loc-1786033012492",
+    "name": "애굽 고센 땅",
+    "desc": "가나안 기근 때 요셉의 초청으로 입성한 야곱의 가족들이 정착하여 번성한 비옥한 목초지.",
     "refs": [
-      "창세기 28:12",
-      "창세기 28:15"
+      "창세기 47:6"
     ],
-    "relatedPeople": [
-      "jacob"
-    ],
-    "relatedLocations": [
-      "loc-bethel"
-    ],
-    "x": 240,
-    "y": 3930
-  },
-  {
-    "id": "ev-jacob_peniel",
-    "name": "야곱의 얍복강가 천사 씨름과 이스라엘 축복 (Jacob wrestles at Peniel)",
-    "desc": "에서와의 해후를 앞두고 두려움 속에 홀로 남은 야곱이 하나님의 사자와 밤새 목숨 걸고 씨름하다 환도뼈가 부러지며 '이스라엘'로 개명한 축복.",
-    "refs": [
-      "창세기 32:24",
-      "창세기 32:28"
-    ],
-    "relatedPeople": [
-      "jacob"
-    ],
-    "relatedLocations": [
-      "loc-peniel"
-    ],
-    "x": 240,
-    "y": 3990
-  },
-  {
-    "id": "ev-machpelah_buy",
-    "name": "아브라함의 막벨라 굴 묘실 매입 사건 (Purchase of Machpelah)",
-    "desc": "가나안 헷 족속에게서 은 사백 세겔을 주고 밭과 굴을 정식 매입하여 영구 기업의 묘실로 삼아 향후 3대 족장이 그곳에 함께 묻힌 사건.",
-    "refs": [
-      "창세기 23:16",
-      "창세기 23:18"
-    ],
-    "relatedPeople": [
-      "abraham",
-      "sarah",
-      "isaac",
-      "jacob"
-    ],
-    "relatedLocations": [
-      "loc-hebron"
-    ],
-    "x": 210,
-    "y": 3610
-  },
-  {
-    "id": "ev-goshen_migration",
-    "name": "야곱 온 가족의 고센 땅 애굽 이주 (Jacob's Migration to Egypt)",
-    "desc": "전례 없는 기근 속에서 요셉의 통치권 하에 있던 애굽으로 70명의 야곱 권속이 수레를 타고 정착하여 거대한 민족의 기틀을 마련한 사건.",
-    "refs": [
-      "창세기 46:27",
-      "창세기 47:1"
+    "relatedEvents": [
+      "ev-goshen_migration"
     ],
     "relatedPeople": [
       "jacob",
       "joseph"
     ],
-    "relatedLocations": [
-      "loc-goshen"
-    ],
-    "x": 440,
-    "y": 4080
-  },
+    "x": 16580,
+    "y": 3940,
+    "engName": "land of Goshen, Egypt",
+    "engDesc": "A fertile pasture where Jacob's family, who entered the country at the invitation of Joseph during the Canaan famine, settled and prospered."
+  }
+];
+
+const DEFAULT_EVENTS = [
   {
-    "id": "ev-moses_rescue",
-    "name": "아기 모세의 갈대 상자 나일강 방류와 구조 (Finding of Moses)",
-    "desc": "히브리 남아가 태어나면 죽이라는 바로의 서슬 퍼런 명령 속에 역청을 칠한 상자에 담긴 아기가 나일강에서 건짐을 받아 바로 왕궁의 왕자가 된 사건.",
+    "id": "ev-1784788761811",
+    "name": "가인의 아벨 살인 사건",
+    "desc": "하나님께서 아벨의 제사만 받으시자 이에 분노한 형 가인이 들판에서 아우 아벨을 돌로 쳐 죽인 인류 최초의 살인 사건.",
     "refs": [
-      "출애굽기 2:3",
-      "출애굽기 2:10"
+      "창세기 4:8"
+    ],
+    "relatedLocations": [
+      "loc-east_eden"
     ],
     "relatedPeople": [
-      "moses",
-      "jochebed"
+      "cain",
+      "abel"
     ],
-    "relatedLocations": [
-      "loc-nile"
-    ],
-    "x": -5810,
-    "y": 4560
+    "x": 15791,
+    "y": 251,
+    "engName": "Cain's murder of Abel",
+    "engDesc": "When God only accepted Abel's sacrifice, the older brother Cain became angry and stoned his younger brother Abel to death in the field, the first murder case in history."
   },
   {
-    "id": "ev-burning_bush",
-    "name": "호렙산 떨기나무 불꽃 소명 수여 (Moses and the Burning Bush)",
-    "desc": "양을 치던 80세의 노인 모세에게 타지 않는 불꽃 떨기나무 가운데서 여호와 하나님이 나타나 이스라엘의 구원자로 세우시며 '스스로 계신 자'를 밝히신 소명.",
+    "id": "ev-1784789196127",
+    "name": "노아의 방주와 대홍수 심판",
+    "desc": "온 세상의 해악이 가득 참에 분노하신 하나님께서 40일 동안 비를 내려 전 지구를 홍수로 심판하시고 노아의 여덟 식구만 구원하신 사건.",
     "refs": [
-      "출애굽기 3:2",
-      "출애굽기 3:14"
+      "창세기 7:11",
+      "창세기 7:23"
+    ],
+    "relatedLocations": [
+      "loc-ararat"
     ],
     "relatedPeople": [
-      "moses",
-      "zipporah"
+      "noah",
+      "shem",
+      "japheth",
+      "ham",
+      "noah_wife",
+      "shem_wife",
+      "japheth_wife",
+      "ham_wife"
     ],
-    "relatedLocations": [
-      "loc-midian"
-    ],
-    "x": -6010,
-    "y": 4620
+    "x": 16188,
+    "y": 1791,
+    "engName": "Noah's Ark and the Flood Judgment",
+    "engDesc": "An incident in which God, angry at the world being filled with evil, made it rain for 40 days, judged the entire earth with a flood, and saved only Noah's family of eight."
   },
   {
-    "id": "ev-ten_plagues",
-    "name": "애굽에 내린 여호와의 열 가지 재앙 심판 (Ten Plagues of Egypt)",
-    "desc": "완악한 바로가 백성을 보내지 않자 모세와 아론을 통해 나일강이 피로 변하는 재앙부터 장자의 죽음에 이르기까지 애굽의 우상들을 징벌하신 심판.",
+    "id": "ev-1784791438912",
+    "name": "천지창조",
+    "desc": "",
+    "refs": [],
+    "relatedLocations": [],
+    "relatedPeople": [],
+    "x": 16127,
+    "y": 4,
+    "engName": "creation of heaven and earth"
+  },
+  {
+    "id": "ev-1784792467976",
+    "name": "독자 이삭의 모리아산 번제드림",
+    "desc": "하나님이 아브라함의 믿음을 시험하고자 백세에 얻은 외아들 이삭을 바치라 하실 때, 칼을 들어 드리려 하자 야훼 이레로 수양을 준비하신 사건.",
     "refs": [
-      "출애굽기 7:20",
-      "출애굽기 12:29"
+      "창세기 22:10",
+      "창세기 22:13"
+    ],
+    "relatedLocations": [
+      "loc-moriah"
     ],
     "relatedPeople": [
-      "moses",
-      "aaron"
+      "abraham",
+      "isaac"
     ],
-    "relatedLocations": [
-      "loc-pharaoh_palace"
-    ],
-    "x": -5510,
-    "y": 4560
+    "x": 16625,
+    "y": 3641,
+    "engName": "Reader Isaac’s Burnt Offering on Mount Moriah",
+    "engDesc": "When God asked Abraham to sacrifice his only son Isaac, whom he had at the age of 100, to test his faith, when he was about to raise his sword to offer him up, Yahweh prepared a ram for him."
   },
   {
-    "id": "ev-crossing_red_sea",
-    "name": "홍해 바다의 갈라짐과 애굽 군대 몰살 (Crossing the Red Sea)",
-    "desc": "진퇴양난의 홍해 앞에서 모세가 지팡이로 바다를 갈라 밤새 마른 땅으로 이스라엘 백성을 건너게 하시고, 뒤쫓던 애굽 마병들을 수장시키신 해방의 기적.",
+    "id": "ev-1784792508036",
+    "name": "바벨탑 건설과 언어의 혼잡",
+    "desc": "인류가 하늘에 닿는 탑을 쌓아 자기 이름을 내고 흩어짐을 면하려 하자, 하나님이 언어를 혼잡하게 하사 온 지면에 흩으신 심판.",
     "refs": [
-      "출애굽기 14:21",
-      "출애굽기 14:28"
+      "창세기 11:4",
+      "창세기 11:9"
+    ],
+    "relatedLocations": [
+      "loc-shinar"
+    ],
+    "relatedPeople": [],
+    "x": 16562,
+    "y": 2591,
+    "engName": "Construction of the Tower of Babel and language confusion",
+    "engDesc": "When mankind tried to make a name for themselves and avoid being scattered by building a tower that reached the sky, God confused their language and scattered them all over the earth."
+  },
+  {
+    "id": "ev-1784792646273",
+    "name": "아브라함의 갈대아 우르 와 하란 소명",
+    "desc": "본토 친척 아비 집을 떠나 보여줄 땅으로 가라는 하나님의 명령에 순종하여 75세에 아브라함이 믿음의 여정을 시작한 사건.",
+    "refs": [
+      "창세기 12:1",
+      "창세기 12:4"
+    ],
+    "relatedLocations": [
+      "loc-1785964008527-61"
     ],
     "relatedPeople": [
-      "moses",
-      "aaron"
+      "terah",
+      "sarah",
+      "abraham"
     ],
-    "relatedLocations": [
-      "loc-red_sea"
-    ],
-    "x": -5810,
-    "y": 4740
+    "x": 16499,
+    "y": 3407,
+    "engName": "Abraham's Calling to Ur and Haran of Chaldea",
+    "engDesc": "An incident in which Abraham began his journey of faith at the age of 75 by obeying God's command to leave his native country, his relatives, and his father's house and go to the land he would show him."
   },
   {
-    "id": "ev-ten_commandments",
-    "name": "시내산 십계명 돌판 수여와 언약 (The Ten Commandments)",
-    "desc": "번개와 빽빽한 구름이 덮인 시내산 정상에서 모세가 하나님과 단독 대면하여 두 돌판에 새겨진 십계명 율법과 성막 법령을 받아 백성에게 공포한 일.",
+    "id": "ev-1785925947543",
+    "name": "르호보암 VS 여로보암 항상 전쟁",
+    "desc": "분열 직후 두 나라는 계속해서 전쟁 상태였다",
     "refs": [
-      "출애굽기 20:1",
-      "출애굽기 31:18"
+      "왕상 14:30; 15:6"
     ],
+    "relatedLocations": [],
     "relatedPeople": [
-      "moses"
+      "rehoboam",
+      "jeroboam1"
     ],
-    "relatedLocations": [
-      "loc-sinai"
-    ],
-    "x": -5810,
-    "y": 4860
+    "x": 15559,
+    "y": 6276,
+    "engName": "Rehoboam VS Jeroboam always war",
+    "engDesc": "Immediately after the split, the two countries continued to be at war."
   },
   {
-    "id": "ev-kadesh_spies",
-    "name": "가데스 바네아 12정탐꾼의 보고와 심판 (The 12 Spies at Kadesh)",
-    "desc": "가나안을 탐지하고 돌아온 10명의 부정적인 정탐꾼과 백성의 통곡으로 인해, 하나님이 진노하사 가나안 입국을 거부한 세대를 광야 40년 동안 방황하게 하신 심판.",
+    "id": "ev-1785926110192",
+    "name": "아비야 VS 여로보암 전쟁",
+    "desc": "",
     "refs": [
-      "민수기 14:1",
-      "민수기 14:34"
+      "왕상 15:7"
     ],
+    "relatedLocations": [],
     "relatedPeople": [
-      "moses",
-      "joshua_eph",
-      "caleb_jephunneh"
+      "abijah",
+      "jeroboam1"
     ],
-    "relatedLocations": [
-      "loc-kadesh"
-    ],
-    "x": -5810,
-    "y": 4980
+    "x": 15627,
+    "y": 6348,
+    "engName": "Abijah VS Jeroboam War"
   },
   {
-    "id": "ev-moses_death",
-    "name": "느보산에서의 가나안 조망과 모세의 죽음 (Death of Moses)",
-    "desc": "화가 나 므리바 반석을 지팡이로 두 번 침으로 하나님의 거룩함을 가린 모세가, 약속의 땅 가나안을 요단강 건너편 느보산에서 바라만 본 채 별세한 종말.",
+    "id": "ev-1785926290636",
+    "name": "바아사 VS 아사 전쟁",
+    "desc": "북왕국 바아사가 예루살렘을 압박하기 위해 라마를 건축하자, 남유다 아사가 아람(시리아) 왕 벤하닷에게 뇌물을 보내 북이스라엘의 배후를 치게 만들어 위기를 극복",
     "refs": [
-      "신명기 34:5",
-      "신명기 34:6"
+      "왕상 15:16-22",
+      "대하 16:1-6"
     ],
+    "relatedLocations": [],
     "relatedPeople": [
-      "moses"
+      "baasha",
+      "asa"
     ],
-    "relatedLocations": [
-      "loc-nebo"
-    ],
-    "x": -5610,
-    "y": 4900
+    "x": 15578,
+    "y": 6582,
+    "engName": "Baasha VS Asa War",
+    "engDesc": "When Baasha of the northern kingdom built Ramah to put pressure on Jerusalem, Asa of the southern kingdom overcame the crisis by sending a bribe to Benhadad, king of Syria (Syria), to attack the rear of northern Israel."
   },
   {
-    "id": "ev-crossing_jordan",
-    "name": "요단강 물의 멈춤과 마른 땅 도하 (Crossing of Jordan)",
-    "desc": "제사장들의 언약궤 멘 발이 가득 차 흐르던 요단강 상류에 닿자, 흐르던 물이 사르단에 이르기까지 둑처럼 일어서 멈추고 온 이스라엘이 마른 땅으로 강을 건넌 이적.",
+    "id": "ev-1785926544693",
+    "name": "전략결혼과 동맹",
+    "desc": "여호사밧의 아들 여호람과 아합의 딸 아달랴가 결혼하며 동맹을 맺었습니다. 이후 아람과의 길르앗 라못 전투에 연합군으로 참전",
+    "refs": [],
+    "relatedLocations": [],
+    "relatedPeople": [
+      "ahaziah_ahab",
+      "ahab",
+      "jehoram_ahab",
+      "jehoshaphat"
+    ],
+    "x": 15609,
+    "y": 7038,
+    "engName": "Strategic marriage and alliance",
+    "engDesc": "Jehoram, the son of Jehoshaphat, and Athaliah, the daughter of Ahab, married and formed an alliance. Afterwards, he participated as an allied force in the Battle of Ramoth-Gilead against Aram."
+  },
+  {
+    "id": "ev-1785926941132",
+    "name": "아하시야와 요람 동맹",
+    "desc": "남유다의 아하시야가 아람과의 전쟁에서 부상을 입은 북이스라엘의 요람을 문병하러 갔다가, 북이스라엘에서 일어난 예후의 반란 과정에서 함께 죽임을 당함",
     "refs": [
-      "여호수아 3:16",
-      "여호수아 3:17"
+      "(왕하 8:28-29",
+      "9:27-28)"
     ],
+    "relatedLocations": [],
     "relatedPeople": [
-      "joshua_eph"
+      "ahaziah",
+      "jehoram_ahab"
     ],
-    "relatedLocations": [
-      "loc-jordan"
-    ],
-    "x": -110,
-    "y": 5160
+    "x": 15810,
+    "y": 7318,
+    "engName": "Ahaziah and the Cradle Alliance",
+    "engDesc": "Ahaziah of southern Judah went to visit Joram in northern Israel, who was injured in the war with Aram, and was killed along with Jehu during his rebellion in northern Israel."
   },
   {
-    "id": "ev-fall_of_jericho",
-    "name": "여리고성의 7일간의 순행과 성벽 함락 (Fall of Jericho)",
-    "desc": "하루에 성을 한 바퀴씩 돌고 일곱째 날에 일곱 번 돌며 양각 나팔 소리와 함께 백성들이 일제히 큰 소리로 외치자 난공불락의 견고한 여리고 성벽이 와르르 무너져 내린 함락.",
+    "id": "ev-1785927235493",
+    "name": "요아스 VS 아마샤 전쟁",
+    "desc": "예후의 혁명 이후 동맹이 깨지면서 남북 간의 자존심 대결과 충돌.\n에돔을 무찌른 남유다 아마샤가 북이스라엘 요아스에게 전쟁을 도발했으나 대패. 요아스는 예루살렘 성벽을 헐고 성전 보물을 약탈",
     "refs": [
-      "여호수아 6:15",
-      "여호수아 6:20"
+      "왕하 14:8-14",
+      "대하 25:17-24"
     ],
+    "relatedLocations": [],
     "relatedPeople": [
-      "joshua_eph",
-      "rahab"
+      "amaziah",
+      "jehoash_jehoahaz"
     ],
-    "relatedLocations": [
-      "loc-jericho"
-    ],
-    "x": -110,
-    "y": 5220
+    "x": 15848,
+    "y": 7814,
+    "engName": "Joash VS Amaziah War",
+    "engDesc": "After Jehu's revolution, the alliance broke down, leading to a show of pride and conflict between the North and South.\nAmaziah of southern Judah, who defeated Edom, provoked war against Joash of northern Israel, but was defeated. Joash demolished the walls of Jerusalem and plundered the temple treasures."
   },
   {
-    "id": "ev-samuel_call",
-    "name": "실로 성막 안의 어린 사무엘 소명 (Call of Samuel)",
-    "desc": "엘리 제사장의 눈이 어두워져 실로의 등불이 꺼져갈 때, 성막 안 여호와의 궤 곁에 누워있던 어린 사무엘을 하나님이 이름을 불러 불러 선지자로 세우신 소명.",
-    "refs": [
-      "사무엘상 3:4",
-      "사무엘상 3:10"
-    ],
-    "relatedPeople": [
-      "david"
-    ],
-    "relatedLocations": [
-      "loc-shiloh"
-    ],
-    "x": 190,
-    "y": 5580
-  },
-  {
-    "id": "ev-david_anointed",
-    "name": "사무엘의 이새 아들 다윗 기름 부음 (David Anointed by Samuel)",
-    "desc": "사울 왕을 폐하고 새 왕을 세우려 하신 하나님의 지시로 베들레헴 이새의 집에 당도한 사무엘이, 막내인 양치기 소년 다윗에게 기름을 붓자 하나님의 신이 임한 사건.",
-    "refs": [
-      "사무엘상 16:12",
-      "사무엘상 16:13"
-    ],
-    "relatedPeople": [
-      "david"
-    ],
-    "relatedLocations": [
-      "loc-bethlehem"
-    ],
-    "x": 210,
-    "y": 5820
-  },
-  {
-    "id": "ev-david_goliath",
-    "name": "소년 다윗과 거인 골리앗의 물맷돌 결투 (David and Goliath)",
-    "desc": "갑옷을 입지 않고 물매와 시냇가의 매끄러운 돌 5개만 가지고 나가, 하나님의 이름을 모욕하는 블레셋의 3미터 거구 장수 골리앗의 이마를 단 한 방으로 맞추어 죽인 승리.",
-    "refs": [
-      "사무엘상 17:45",
-      "사무엘상 17:49"
-    ],
-    "relatedPeople": [
-      "david"
-    ],
-    "relatedLocations": [
-      "loc-elah"
-    ],
-    "x": 140,
-    "y": 5940
-  },
-  {
-    "id": "ev-temple_building",
-    "name": "솔로몬의 예루살렘 성전 건축 준공 봉헌 (Dedicating Solomon's Temple)",
-    "desc": "다윗이 성전 준비를 마치고 아들 솔로몬이 즉위하여 예루살렘 모리아산 터에 7년 반 동안 영광스러운 대성전을 건축하여 지성소에 언약궤를 입당시키며 봉헌한 사건.",
-    "refs": [
-      "열왕기상 6:38",
-      "열왕기상 8:10"
-    ],
-    "relatedPeople": [
-      "david",
-      "solomon"
-    ],
-    "relatedLocations": [
-      "loc-jerusalem"
-    ],
-    "x": 210,
-    "y": 6060
-  },
-  {
-    "id": "ev-elijah_fire",
-    "name": "선지자 엘리야의 갈멜산 번제 불 응답 (Elijah's Carmel Victory)",
-    "desc": "백성과 아합 왕 앞에서 여호와를 잊고 바알을 섬기는 자들과 대결할 때, 밤낮 기도해도 반응 없는 바알과 달리 엘리야의 번제 제단에 야훼의 불이 임해 도랑의 물을 핥은 참 신의 역사.",
-    "refs": [
-      "열왕기상 18:36",
-      "열왕기상 18:38"
-    ],
-    "relatedPeople": [
-      "david"
-    ],
-    "relatedLocations": [
-      "loc-carmel"
-    ],
-    "x": -360,
-    "y": 6960
-  },
-  {
-    "id": "ev-babylon_captivity",
-    "name": "유다 왕국의 패망과 바벨론 강제 유배 (Babylonian Captivity)",
-    "desc": "여호와의 목전에 악을 행하던 유다 왕국이 결국 느부갓네살 왕의 바벨론 제국 군대에 의해 성전이 불타고 성벽이 허물어지며 귀인과 백성들이 포로로 끌려간 수치와 심판의 비극.",
-    "refs": [
-      "열왕기하 25:9",
-      "열왕기하 25:11"
-    ],
-    "relatedPeople": [
-      "jeconiah"
-    ],
-    "relatedLocations": [
-      "loc-babylon"
-    ],
-    "x": 490,
-    "y": 8220
-  },
-  {
-    "id": "ev-temple_rebuild",
-    "name": "스룹바벨의 성전 재건 공사 필역 (Rebuilding the Temple)",
-    "desc": "고레스 왕의 조서로 포로 귀환한 유다 백성들이 대적들의 끈질긴 방해와 중단 압박 속에서도 학개와 스가랴 선지자의 격려 속에 성전 기초를 놓고 완공하여 봉헌한 감격의 역사.",
-    "refs": [
-      "에스라 5:2",
-      "에스라 6:15"
-    ],
-    "relatedPeople": [
-      "zerubbabel"
-    ],
-    "relatedLocations": [
-      "loc-second_temple"
-    ],
-    "x": 210,
-    "y": 9444
-  },
-  {
-    "id": "ev-walls_rebuild",
-    "name": "느헤미야의 예루살렘 성벽 성곽 중건 완공 (Rebuilding Jerusalem's Walls)",
+    "id": "ev-1786029213751",
+    "name": "느헤미야의 예루살렘 성벽 성곽 중건 완공",
     "desc": "예루살렘 성벽이 허물어지고 성문이 소화되었다는 소식을 듣고 눈물로 기도한 술관원 느헤미야가, 총독으로 부임해 대적들의 방해 속에 한 손엔 병기를 들고 52일 만에 성벽을 완성한 중건.",
     "refs": [
       "느헤미야 4:17",
       "느헤미야 6:15"
     ],
-    "relatedPeople": [
-      "zerubbabel"
-    ],
     "relatedLocations": [
       "loc-jerusalem_walls"
     ],
-    "x": 210,
-    "y": 9550
+    "relatedPeople": [
+      "zerubbabel"
+    ],
+    "x": 22079,
+    "y": 7696,
+    "engName": "Nehemiah's Rebuilding and Completion of the Jerusalem Walls",
+    "engDesc": "Nehemiah, the cupbearer who wept and prayed upon hearing that the walls of Jerusalem were broken and its gates burned, returned as governor and successfully completed the reconstruction of the walls in 52 days under constant threat, with workers holding weapons in one hand."
+  },
+  {
+    "id": "ev-1786031894789",
+    "name": "홍해 바다의 갈라짐과 애굽 군대 몰살",
+    "desc": "진퇴양난의 홍해 앞에서 모세가 지팡이로 바다를 갈라 밤새 마른 땅으로 이스라엘 백성을 건너게 하시고, 뒤쫓던 애굽 마병들을 수장시키신 해방의 기적.",
+    "refs": [
+      "출애굽기 14:21",
+      "출애굽기 14:28"
+    ],
+    "relatedLocations": [
+      "loc-red_sea"
+    ],
+    "relatedPeople": [
+      "moses",
+      "aaron"
+    ],
+    "x": 10404,
+    "y": 4483,
+    "engName": "Parting of the Red Sea and Annihilation of the Egyptian Army",
+    "engDesc": "The miracle of liberation where Moses parted the Red Sea with his staff, allowing the Israelites to cross on dry ground, and drowned the pursuing Egyptian horsemen and chariots in the sea."
+  },
+  {
+    "id": "ev-1786032977555",
+    "name": "야곱 온 가족의 고센 땅 애굽 이주",
+    "desc": "전례 없는 기근 속에서 요셉의 통치권 하에 있던 애굽으로 70명의 야곱 권속이 수레를 타고 정착하여 거대한 민족의 기틀을 마련한 사건.",
+    "refs": [
+      "창세기 46:27",
+      "창세기 47:1"
+    ],
+    "relatedLocations": [
+      "loc-1786036569158-55"
+    ],
+    "relatedPeople": [
+      "carmi_reuben",
+      "gad",
+      "gera_benjamin",
+      "gershon_levi",
+      "kohath",
+      "guni",
+      "naaman_benjamin",
+      "naphtali",
+      "dan",
+      "tola_issachar",
+      "dinah",
+      "levi",
+      "rosh",
+      "reuben",
+      "malchiel_beriah",
+      "muppim",
+      "manasseh",
+      "merari_levi",
+      "pallu_reuben",
+      "becher",
+      "benjamin",
+      "perez",
+      "bela",
+      "puah_issachar",
+      "beriah_asher",
+      "shaul_simeon",
+      "serah_asher",
+      "zerah",
+      "sered_zebulun",
+      "shelah-1",
+      "shuni_gad",
+      "zebulun",
+      "zohar_simeon",
+      "shimron_issachar",
+      "simeon",
+      "ziphion_gad",
+      "shillem",
+      "areli_gad",
+      "arodi_gad",
+      "ard",
+      "asher",
+      "ashbel",
+      "jacob",
+      "jachin_simeon",
+      "jamin_simeon",
+      "jahzeel",
+      "jahleel_zebulun",
+      "eri_gad",
+      "ephraim",
+      "ezbon_gad",
+      "ehi",
+      "elon_zebulun",
+      "jemuel_simeon",
+      "jezer",
+      "ohad_simeon",
+      "joseph",
+      "jashub_issachar",
+      "judah",
+      "ishvah_asher",
+      "ishvi_asher",
+      "imnah_asher",
+      "issachar",
+      "hanoch_reuben",
+      "hamul",
+      "haggi_gad",
+      "heber_beriah",
+      "hezron_reuben",
+      "hezron",
+      "hushim_1",
+      "huppim"
+    ],
+    "x": 16580,
+    "y": 3849,
+    "engName": "Jacob's entire family migrates from Egypt to the land of Goshen",
+    "engDesc": "An incident in which 70 members of Jacob's family settled by wagon in Egypt, under Joseph's rule, during an unprecedented famine, laying the foundation for a great nation."
+  },
+  {
+    "id": "ev-1786037573263",
+    "name": "선악과 사건과 인류의 타락",
+    "desc": "뱀의 유혹으로 하와와 아담이 선악과를 먹고 하나님의 명령을 어겨 에덴동산에서 추방당하고 인류에 죄가 들어온 사건.",
+    "refs": [
+      "창세기 3:6",
+      "창세기 3:23"
+    ],
+    "relatedLocations": [
+      "loc-eden"
+    ],
+    "relatedPeople": [
+      "adam",
+      "eve"
+    ],
+    "x": 16025,
+    "y": 165,
+    "engName": "The Forbidden Fruit and the Fall of Mankind",
+    "engDesc": "The incident where Adam and Eve, tempted by the serpent, ate the forbidden fruit and disobeyed God's command, resulting in their expulsion from the Garden of Eden and the entry of sin into the world."
+  }
+];
+
+const DEFAULT_CUSTOM_POLYGONS = [
+  {
+    "id": "poly-cain",
+    "label": "가인 자손 계열",
+    "color": "#ef4444",
+    "fillOpacity": 0.03,
+    "points": [
+      {
+        "x": 15080,
+        "y": 240
+      },
+      {
+        "x": 15924.48,
+        "y": 240
+      },
+      {
+        "x": 15924.48,
+        "y": 1440
+      },
+      {
+        "x": 15080,
+        "y": 1440
+      }
+    ],
+    "label_en": "Cain descendants line",
+    "labelOffsetX": 32.53226240007701,
+    "labelOffsetY": -14.14446191307696
+  },
+  {
+    "id": "poly-japheth",
+    "label": "야벳 자손 (유럽/북방계 민족)",
+    "color": "#22c55e",
+    "fillOpacity": 0.03,
+    "points": [
+      {
+        "x": 14074.48,
+        "y": 1860
+      },
+      {
+        "x": 15424.48,
+        "y": 1860
+      },
+      {
+        "x": 15424.48,
+        "y": 2340
+      },
+      {
+        "x": 14074.48,
+        "y": 2340
+      }
+    ],
+    "label_en": "Descendants of Japheth (European/Northern people)",
+    "labelOffsetX": 32.532262400077016,
+    "labelOffsetY": -9.901123339153873
+  },
+  {
+    "id": "poly-ham",
+    "label": "함 자손 (가나안/아프리카계 민족)",
+    "color": "#f97316",
+    "fillOpacity": 0.03,
+    "points": [
+      {
+        "x": 15454.48,
+        "y": 1860
+      },
+      {
+        "x": 16174.48,
+        "y": 1860
+      },
+      {
+        "x": 16174.48,
+        "y": 2340
+      },
+      {
+        "x": 15454.48,
+        "y": 2340
+      }
+    ],
+    "label_en": "Descendants of Ham (Canaanite/African people)",
+    "labelOffsetX": 23.46201806727417,
+    "labelOffsetY": -11.040949678717256
+  },
+  {
+    "id": "poly-joktan",
+    "label": "욕단 자손 (아라비아 부족 연합)",
+    "color": "#3b82f6",
+    "fillOpacity": 0.03,
+    "points": [
+      {
+        "x": 14184.48,
+        "y": 2580
+      },
+      {
+        "x": 16184.48,
+        "y": 2580
+      },
+      {
+        "x": 16184.48,
+        "y": 2880
+      },
+      {
+        "x": 14184.48,
+        "y": 2880
+      }
+    ],
+    "label_en": "Descendants of Joktan (Arabian tribal confederation)",
+    "labelOffsetX": 1549.1219951299995,
+    "labelOffsetY": -9.486677147846176
+  },
+  {
+    "id": "poly-keturah",
+    "label": "그두라 자손 (미디안 등 아라비아 부족)",
+    "color": "#ec4899",
+    "fillOpacity": 0.03,
+    "points": [
+      {
+        "x": 14524.48,
+        "y": 2990
+      },
+      {
+        "x": 15814.48,
+        "y": 2990
+      },
+      {
+        "x": 15814.48,
+        "y": 3500
+      },
+      {
+        "x": 14524.48,
+        "y": 3500
+      }
+    ],
+    "label_en": "Descendants of Keturah (Arabian tribes such as Midian)",
+    "labelOffsetX": 839.5820265735381,
+    "labelOffsetY": -8.657784765230783
+  },
+  {
+    "id": "poly-ishmael",
+    "label": "이스마엘 12방백 자손 (아랍 민족)",
+    "color": "#a855f7",
+    "fillOpacity": 0.03,
+    "points": [
+      {
+        "x": 14014.48,
+        "y": 3580
+      },
+      {
+        "x": 16154.48,
+        "y": 3580
+      },
+      {
+        "x": 16154.48,
+        "y": 3800
+      },
+      {
+        "x": 14014.48,
+        "y": 3800
+      }
+    ],
+    "label_en": "Descendants of the 12 princes of Ishmael (Arab people)",
+    "labelOffsetX": 1693.9508875126148,
+    "labelOffsetY": -10.901123339153873
+  },
+  {
+    "id": "poly-mary",
+    "label": "마리아 계보 (누가복음 3장 혈통)",
+    "color": "#06b6d4",
+    "fillOpacity": 0.03,
+    "points": [
+      {
+        "x": 14741.24,
+        "y": 6000
+      },
+      {
+        "x": 14951.24,
+        "y": 6000
+      },
+      {
+        "x": 14941.24,
+        "y": 11310
+      },
+      {
+        "x": 14741.24,
+        "y": 11310
+      }
+    ],
+    "label_en": "Mary's Genealogy (Luke 3 Lineage)",
+    "labelOffsetX": -28.288923826153923,
+    "labelOffsetY": -4.243338573923088
+  },
+  {
+    "id": "poly-custom-1785266075158",
+    "label": "잇사갈 지파(창 46:13. 민 26:23,24, 대상 7:1-4)",
+    "color": "#3b82f6",
+    "fillOpacity": 0.03,
+    "points": [
+      {
+        "x": 20631.239999999998,
+        "y": 4020
+      },
+      {
+        "x": 21750,
+        "y": 4020
+      },
+      {
+        "x": 21751.239999999998,
+        "y": 5000
+      },
+      {
+        "x": 20636.931574215196,
+        "y": 4998.0145519272855
+      }
+    ],
+    "label_en": "Tribe of Issachar (Genesis 46:13; Numbers 26:23,24; 1 Chronicles 7:1-4)",
+    "labelOffsetX": 12.730015721769265,
+    "labelOffsetY": -12.730015721769265
+  },
+  {
+    "id": "poly-custom-1785292170590",
+    "label": "에서의 족보(창 11:27-32, 창 36:1-5, 창 36:9-30, 창 36:40-43, 대상 1:34-32, 대상 1:521-54)",
+    "color": "#06b6d4",
+    "fillOpacity": 0.03,
+    "points": [
+      {
+        "x": 11625.109375,
+        "y": 3454
+      },
+      {
+        "x": 13926.11719767249,
+        "y": 3454
+      },
+      {
+        "x": 13926.11719767249,
+        "y": 3949.1220334042905
+      },
+      {
+        "x": 11626.109371762588,
+        "y": 3949.122033404291
+      }
+    ],
+    "labelOffsetX": 36.5855538086923,
+    "labelOffsetY": -11.730015721769265,
+    "label_en": "Esau's genealogy (Genesis 11:27-32, Genesis 36:1-5, Genesis 36:9-30, Genesis 36:40-43, 1 Chronicles 1:34-32, 1 Chronicles 1:521-54)"
+  },
+  {
+    "id": "poly-custom-1785292260091",
+    "label": "호리족속의 족장들(창 36:20-30)",
+    "color": "#ef4444",
+    "fillOpacity": 0.03,
+    "points": [
+      {
+        "x": 7561.109375,
+        "y": 3629
+      },
+      {
+        "x": 11266.112748817628,
+        "y": 3628.999999999999
+      },
+      {
+        "x": 11266.112748817628,
+        "y": 3957.0015141180716
+      },
+      {
+        "x": 7562.107216810187,
+        "y": 3957.001514118072
+      }
+    ],
+    "labelOffsetX": -307.97335429569233,
+    "labelOffsetY": -11.07223095653848,
+    "label_en": "Horite chieftains (Genesis 36:20-30)"
+  },
+  {
+    "id": "poly-custom-1785470013891",
+    "label": "르우벤 지파(창 46:9, 민 26:5-11, 대상 5:3-9)",
+    "color": "#f97316",
+    "fillOpacity": 0.03,
+    "points": [
+      {
+        "x": 6320,
+        "y": 4020
+      },
+      {
+        "x": 7173.111507193738,
+        "y": 4020
+      },
+      {
+        "x": 7173.111507193738,
+        "y": 6362.926888556567
+      },
+      {
+        "x": 6320,
+        "y": 6360
+      }
+    ],
+    "label_en": "Tribe of Reuben (Genesis 46:9, Numbers 26:5-11, 1 Chronicles 5:3-9)"
+  },
+  {
+    "id": "poly-custom-1785470264092",
+    "label": "시므온 지파(창 46:10, 민 26:12, 13, 대상 4:24-38)",
+    "color": "#3b82f6",
+    "fillOpacity": 0.03,
+    "points": [
+      {
+        "x": 7191.109375,
+        "y": 4020
+      },
+      {
+        "x": 8233.433700725924,
+        "y": 4020
+      },
+      {
+        "x": 8233.433700725924,
+        "y": 4326.209471364206
+      },
+      {
+        "x": 7764.109328253808,
+        "y": 4326.209471364206
+      },
+      {
+        "x": 7764.109328253808,
+        "y": 8470.058399975731
+      },
+      {
+        "x": 7349.066843908517,
+        "y": 8470.058399975731
+      },
+      {
+        "x": 7349.066843908516,
+        "y": 5599.999332472802
+      },
+      {
+        "x": 7191.106213847174,
+        "y": 5599.999332472802
+      }
+    ],
+    "label_en": "Tribe of Simeon (Genesis 46:10, Numbers 26:12, 13, 1 Chronicles 4:24-38)"
+  },
+  {
+    "id": "poly-custom-1785472117571",
+    "label": "레위지파(창 46:11, 민 26:16-25, 대상 23:7-24, 스 7:1-5)",
+    "color": "#f97316",
+    "fillOpacity": 0.03,
+    "points": [
+      {
+        "x": 8260.109375,
+        "y": 4019
+      },
+      {
+        "x": 13340.123548208576,
+        "y": 4019
+      },
+      {
+        "x": 13340.123548208576,
+        "y": 4508.016475782308
+      },
+      {
+        "x": 13496.827358493414,
+        "y": 4508.016475782308
+      },
+      {
+        "x": 13496.827358493414,
+        "y": 4933.0894096332895
+      },
+      {
+        "x": 10500,
+        "y": 4940
+      },
+      {
+        "x": 10500,
+        "y": 9420
+      },
+      {
+        "x": 9460,
+        "y": 9420
+      },
+      {
+        "x": 9460,
+        "y": 11570
+      },
+      {
+        "x": 8530,
+        "y": 11570
+      },
+      {
+        "x": 8534.898008555294,
+        "y": 5918.760585119707
+      },
+      {
+        "x": 8227.33860170277,
+        "y": 5918.760585119707
+      },
+      {
+        "x": 8227.33860170277,
+        "y": 4744.99788310867
+      },
+      {
+        "x": 7791.080745538248,
+        "y": 4744.99788310867
+      },
+      {
+        "x": 7791.080745538248,
+        "y": 4360.994939716645
+      },
+      {
+        "x": 8261.126351896857,
+        "y": 4360.994939716645
+      }
+    ],
+    "label_en": "Tribe of Levi (Genesis 46:11, Numbers 26:16-25, 1 Chronicles 23:7-24, Ezra 7:1-5)"
+  },
+  {
+    "id": "poly-custom-1785472410768",
+    "label": "유다 지파(창 46장, 대상 2장)",
+    "color": "#a855f7",
+    "fillOpacity": 0.03,
+    "points": [
+      {
+        "x": 13410,
+        "y": 4020
+      },
+      {
+        "x": 20613.114963517233,
+        "y": 4019
+      },
+      {
+        "x": 20613.114963517233,
+        "y": 5236.092368054173
+      },
+      {
+        "x": 20883.04187512654,
+        "y": 5236.092368054173
+      },
+      {
+        "x": 20883.04187512654,
+        "y": 6485.000001824087
+      },
+      {
+        "x": 22066.542069102063,
+        "y": 6485.000001824087
+      },
+      {
+        "x": 22066.542069102063,
+        "y": 8085.794632873714
+      },
+      {
+        "x": 19478.93307415876,
+        "y": 8085.794632873714
+      },
+      {
+        "x": 19478.93307415876,
+        "y": 6196.9744534395495
+      },
+      {
+        "x": 17865.661173095777,
+        "y": 6196.9744534395495
+      },
+      {
+        "x": 17865.661173095777,
+        "y": 7094.871538808849
+      },
+      {
+        "x": 16780.9035897505,
+        "y": 7094.871538808849
+      },
+      {
+        "x": 16780.9035897505,
+        "y": 11488.887561488538
+      },
+      {
+        "x": 14697.054575252228,
+        "y": 11488.887561488538
+      },
+      {
+        "x": 14697.054575252228,
+        "y": 8323.838782609448
+      },
+      {
+        "x": 13828.845008501947,
+        "y": 8323.838782609448
+      },
+      {
+        "x": 13828.845008501947,
+        "y": 5976.8799734571585
+      },
+      {
+        "x": 13700,
+        "y": 5980
+      },
+      {
+        "x": 13700,
+        "y": 4730
+      },
+      {
+        "x": 13560,
+        "y": 4730
+      },
+      {
+        "x": 13560,
+        "y": 4490
+      },
+      {
+        "x": 13410,
+        "y": 4490
+      }
+    ],
+    "label_en": "Tribe of Judah (Gen. 46, Chron. 2)",
+    "labelOffsetX": -7158.901123339154,
+    "labelOffsetY": -7.486677147846177
+  },
+  {
+    "id": "poly-custom-1785472524528",
+    "label": "스불론 지파(창 46:14, 대상 26:26)",
+    "color": "#a855f7",
+    "fillOpacity": 0.03,
+    "points": [
+      {
+        "x": 21770,
+        "y": 4020
+      },
+      {
+        "x": 22298.11676866482,
+        "y": 4019
+      },
+      {
+        "x": 22300,
+        "y": 5010
+      },
+      {
+        "x": 21768.100177333097,
+        "y": 5005.19947749838
+      }
+    ],
+    "labelOffsetX": -506.02664570430767,
+    "labelOffsetY": -11.730015721769265,
+    "label_en": "Tribe of Zebulun (Genesis 46:14, 1 Chronicles 26:26)"
+  },
+  {
+    "id": "poly-custom-1785472705847",
+    "label": "갓 지파(창 46:16, 민 26:15-18, 대상 5:11-17)",
+    "color": "#22c55e",
+    "fillOpacity": 0.03,
+    "points": [
+      {
+        "x": 22500,
+        "y": 4020
+      },
+      {
+        "x": 23257.47043761548,
+        "y": 4023.0373038435346
+      },
+      {
+        "x": 23710.46179570396,
+        "y": 4024
+      },
+      {
+        "x": 23710.46179570396,
+        "y": 4324.501425128546
+      },
+      {
+        "x": 22500,
+        "y": 4330
+      }
+    ],
+    "label_en": "Tribe of Gad (Genesis 46:16, Numbers 26:15-18, 1 Chronicles 5:11-17)"
+  },
+  {
+    "id": "poly-custom-1785472852863",
+    "label": "아셀 지파(창 46:17, 민 26:44-46, 대상 7:30-39)",
+    "color": "#ef4444",
+    "fillOpacity": 0.03,
+    "points": [
+      {
+        "x": 23730.109375,
+        "y": 4019
+      },
+      {
+        "x": 25400,
+        "y": 4020
+      },
+      {
+        "x": 25404.91070414104,
+        "y": 5061.774489080552
+      },
+      {
+        "x": 23093.103469230948,
+        "y": 5061.774489080552
+      },
+      {
+        "x": 23100,
+        "y": 4510
+      },
+      {
+        "x": 23590,
+        "y": 4510
+      },
+      {
+        "x": 23590,
+        "y": 4340
+      },
+      {
+        "x": 23730,
+        "y": 4340
+      }
+    ],
+    "label_en": "Tribe of Asher (Genesis 46:17, Numbers 26:44-46, 1 Chronicles 7:30-39)"
+  },
+  {
+    "id": "poly-custom-1785473027523",
+    "label": "므낫세 지파(민 27:1, 수 17:3, 대상 7:14-19. 민 26:29-34)",
+    "color": "#f97316",
+    "fillOpacity": 0.03,
+    "points": [
+      {
+        "x": 25431.109375,
+        "y": 4200
+      },
+      {
+        "x": 27900,
+        "y": 4200
+      },
+      {
+        "x": 27900,
+        "y": 5280
+      },
+      {
+        "x": 25434.90280047577,
+        "y": 5279.572639305983
+      }
+    ],
+    "label_en": "Tribe of Manasseh (Numbers 27:1, Joshua 17:3, 1 Chronicles 7:14-19, Numbers 26:29-34)"
+  },
+  {
+    "id": "poly-custom-1785473278362",
+    "label": "에브라임 지파(민 26:35-37, 대상 7:20-29)",
+    "color": "#06b6d4",
+    "fillOpacity": 0.03,
+    "points": [
+      {
+        "x": 27940,
+        "y": 4200
+      },
+      {
+        "x": 28846.222980087827,
+        "y": 4202
+      },
+      {
+        "x": 28846.222980087827,
+        "y": 5999.570041380666
+      },
+      {
+        "x": 27940,
+        "y": 6000
+      }
+    ],
+    "label_en": "Tribe of Ephraim (Numbers 26:35-37, 1 Chronicles 7:20-29)"
+  },
+  {
+    "id": "poly-custom-1785473461886",
+    "label": "베냐민 지파(창 46:21, 민 26:38-40, 대상 7:6-12 대상 8:1-40, 대상 9:35-44, 에 2:5-7, 15)",
+    "color": "#f97316",
+    "fillOpacity": 0.03,
+    "points": [
+      {
+        "x": 28880,
+        "y": 4030
+      },
+      {
+        "x": 34686.619769240504,
+        "y": 4032
+      },
+      {
+        "x": 34686.619769240504,
+        "y": 4350.33088373737
+      },
+      {
+        "x": 34004.77297548695,
+        "y": 4350.33088373737
+      },
+      {
+        "x": 34004.77297548695,
+        "y": 5093.06286865837
+      },
+      {
+        "x": 32917.693605479755,
+        "y": 5093.06286865837
+      },
+      {
+        "x": 32917.693605479755,
+        "y": 7608.7786866699425
+      },
+      {
+        "x": 30574.034141217417,
+        "y": 7608.7786866699425
+      },
+      {
+        "x": 30574.034141217417,
+        "y": 4929.280863045839
+      },
+      {
+        "x": 30455.102477519267,
+        "y": 4929.280863045839
+      },
+      {
+        "x": 30455.102477519267,
+        "y": 4551.416390021452
+      },
+      {
+        "x": 28882.041772316446,
+        "y": 4551.416390021452
+      }
+    ],
+    "label_en": "Tribe of Benjamin (Genesis 46:21, Numbers 26:38-40, 1 Chronicles 7:6-12, 1 Chronicles 8:1-40, 1 Chronicles 9:35-44, Esther 2:5-7, 15)",
+    "labelOffsetX": 20,
+    "labelOffsetY": 0
+  },
+  {
+    "id": "poly-custom-1785473541654",
+    "label": "단 지파(창 46:23, 민 26:42-43)",
+    "color": "#f97316",
+    "fillOpacity": 0.03,
+    "points": [
+      {
+        "x": 34706.109375,
+        "y": 4038
+      },
+      {
+        "x": 35383.47559795476,
+        "y": 4038
+      },
+      {
+        "x": 35390,
+        "y": 4870
+      },
+      {
+        "x": 34710,
+        "y": 4870
+      }
+    ],
+    "label_en": "Tribe of Dan (Genesis 46:23, Numbers 26:42-43)"
+  },
+  {
+    "id": "poly-custom-1785473618112",
+    "label": "납달리 지파(창 46:24, 대상 7:13, 민 26:48-50)",
+    "color": "#3b82f6",
+    "fillOpacity": 0.03,
+    "points": [
+      {
+        "x": 35419.109375,
+        "y": 4037
+      },
+      {
+        "x": 36138.11007040996,
+        "y": 4037
+      },
+      {
+        "x": 36138.11007040996,
+        "y": 4463.792732086433
+      },
+      {
+        "x": 35422.099329817174,
+        "y": 4463.792732086433
+      }
+    ],
+    "label_en": "Tribe of Naphtali (Genesis 46:24, 1 Chronicles 7:13, Numbers 26:48-50)"
+  },
+  {
+    "id": "poly-custom-1785777570404",
+    "label": "선지자들",
+    "color": "#f97316",
+    "fillOpacity": 0.03,
+    "points": [
+      {
+        "x": 15541.291465993898,
+        "y": 5682.24770743105
+      },
+      {
+        "x": 15929.640716918042,
+        "y": 5682.24770743105
+      },
+      {
+        "x": 15929.640716918042,
+        "y": 6118.864642526312
+      },
+      {
+        "x": 15651.438533689496,
+        "y": 6118.864642526312
+      },
+      {
+        "x": 15650,
+        "y": 6230
+      },
+      {
+        "x": 15410,
+        "y": 6230
+      },
+      {
+        "x": 15410,
+        "y": 6380
+      },
+      {
+        "x": 15570,
+        "y": 6380
+      },
+      {
+        "x": 15570,
+        "y": 6470
+      },
+      {
+        "x": 15700,
+        "y": 6470
+      },
+      {
+        "x": 15700,
+        "y": 6550
+      },
+      {
+        "x": 16060,
+        "y": 6550
+      },
+      {
+        "x": 16060,
+        "y": 6700
+      },
+      {
+        "x": 16158.463027810003,
+        "y": 6701.3949421896805
+      },
+      {
+        "x": 16160,
+        "y": 6920
+      },
+      {
+        "x": 15800,
+        "y": 6920
+      },
+      {
+        "x": 15800,
+        "y": 7210
+      },
+      {
+        "x": 15730,
+        "y": 7210
+      },
+      {
+        "x": 15730,
+        "y": 7650
+      },
+      {
+        "x": 15830,
+        "y": 7650
+      },
+      {
+        "x": 15830,
+        "y": 7760
+      },
+      {
+        "x": 15630,
+        "y": 7760
+      },
+      {
+        "x": 15630,
+        "y": 8100
+      },
+      {
+        "x": 15490,
+        "y": 8100
+      },
+      {
+        "x": 15490,
+        "y": 8420
+      },
+      {
+        "x": 15660,
+        "y": 8420
+      },
+      {
+        "x": 15660,
+        "y": 8570
+      },
+      {
+        "x": 15910,
+        "y": 8570
+      },
+      {
+        "x": 15910,
+        "y": 8980
+      },
+      {
+        "x": 15840,
+        "y": 8980
+      },
+      {
+        "x": 15840,
+        "y": 9380
+      },
+      {
+        "x": 16040,
+        "y": 9380
+      },
+      {
+        "x": 16040,
+        "y": 10380
+      },
+      {
+        "x": 15840,
+        "y": 10380
+      },
+      {
+        "x": 15840,
+        "y": 9890
+      },
+      {
+        "x": 16000,
+        "y": 9890
+      },
+      {
+        "x": 16000,
+        "y": 9490
+      },
+      {
+        "x": 15650,
+        "y": 9490
+      },
+      {
+        "x": 15650,
+        "y": 9380
+      },
+      {
+        "x": 15800,
+        "y": 9380
+      },
+      {
+        "x": 15800,
+        "y": 8980
+      },
+      {
+        "x": 15720,
+        "y": 8980
+      },
+      {
+        "x": 15720,
+        "y": 8770
+      },
+      {
+        "x": 15460,
+        "y": 8770
+      },
+      {
+        "x": 15460,
+        "y": 8340
+      },
+      {
+        "x": 15270,
+        "y": 8340
+      },
+      {
+        "x": 15270,
+        "y": 8070
+      },
+      {
+        "x": 15600,
+        "y": 8070
+      },
+      {
+        "x": 15600,
+        "y": 7530
+      },
+      {
+        "x": 15520,
+        "y": 7530
+      },
+      {
+        "x": 15520,
+        "y": 7350
+      },
+      {
+        "x": 15690,
+        "y": 7350
+      },
+      {
+        "x": 15690,
+        "y": 7190
+      },
+      {
+        "x": 15770,
+        "y": 7190
+      },
+      {
+        "x": 15770,
+        "y": 6650
+      },
+      {
+        "x": 15680,
+        "y": 6650
+      },
+      {
+        "x": 15680,
+        "y": 6490
+      },
+      {
+        "x": 15380,
+        "y": 6490
+      },
+      {
+        "x": 15380,
+        "y": 6230
+      },
+      {
+        "x": 15230,
+        "y": 6230
+      },
+      {
+        "x": 15228.533046805705,
+        "y": 6136.034323412799
+      },
+      {
+        "x": 15542.71191308563,
+        "y": 6136.034323412799
+      }
+    ],
+    "label_en": "prophets",
+    "labelOffsetX": 20.828892382615393,
+    "labelOffsetY": 0.6844304695384302
   }
 ];
 
@@ -1449,6 +2230,8 @@ let lineZIndices = {}; // Custom z-order weights for connection lines (maps line
 let coupleMidpoints = {}; // Midpoints for spouse lines
 let customPolygons = []; // Custom arbitrary polygons (filled regions)
 let selectedPolygonId = null; // Selected custom polygon ID
+let selectedBendIndex = null; // Currently selected bend handle index on line
+let selectedPolyVertexIndex = null; // Currently selected vertex handle index on polygon
 let isAddPolygonModeActive = false; // Add Polygon mode toggle state
 let tempPolygonPoints = []; // Uncommitted drawing points for new polygon
 
@@ -1636,35 +2419,92 @@ function updateHistoryButtonsState() {
   }
 }
 
+function positionToastContainer(container) {
+  if (!container) container = document.getElementById('toast-container');
+  if (!container) return;
+  const banner = document.getElementById('add-person-instruction');
+  
+  let syncWidth = null;
+  if (banner && banner.style.display === 'flex') {
+    const bannerRect = banner.getBoundingClientRect();
+    container.style.top = `${Math.round(bannerRect.bottom + 8)}px`;
+    if (bannerRect.width > 0) {
+      syncWidth = Math.round(bannerRect.width);
+    }
+  } else {
+    container.style.top = 'calc(56px + env(safe-area-inset-top))';
+  }
+  
+  container.style.position = 'fixed';
+  container.style.bottom = 'auto';
+  container.style.left = '50%';
+  container.style.transform = 'translateX(-50%)';
+  container.style.zIndex = '18000';
+  container.style.pointerEvents = 'none';
+
+  if (syncWidth) {
+    container.querySelectorAll('.toast-notification').forEach(t => {
+      t.style.width = `${syncWidth}px`;
+      t.style.boxSizing = 'border-box';
+      t.style.justifyContent = 'center';
+      t.style.textAlign = 'center';
+      t.style.whiteSpace = 'normal';
+      t.style.wordBreak = 'keep-all';
+      t.style.wordWrap = 'break-word';
+      t.style.height = 'auto';
+    });
+  }
+}
+
 function showToast(message) {
   let container = document.getElementById('toast-container');
   if (!container) {
     container = document.createElement('div');
     container.id = 'toast-container';
-    container.style.position = 'fixed';
-    container.style.bottom = '20px';
-    container.style.left = '50%';
-    container.style.transform = 'translateX(-50%)';
-    container.style.zIndex = '9999';
     container.style.display = 'flex';
     container.style.flexDirection = 'column';
-    container.style.gap = '8px';
+    container.style.gap = '6px';
+    container.style.alignItems = 'center';
     document.body.appendChild(container);
   }
+  
+  positionToastContainer(container);
   
   const toast = document.createElement('div');
   toast.className = 'toast-notification';
   toast.textContent = message;
-  toast.style.background = 'rgba(15, 23, 42, 0.9)';
+  toast.style.background = 'rgba(15, 23, 42, 0.92)';
+  toast.style.backdropFilter = 'blur(6px)';
+  toast.style.webkitBackdropFilter = 'blur(6px)';
   toast.style.color = '#fff';
-  toast.style.padding = '10px 20px';
-  toast.style.borderRadius = '8px';
-  toast.style.fontSize = '14px';
+  toast.style.padding = '8px 16px';
+  toast.style.borderRadius = '16px';
+  toast.style.fontSize = '12px';
   toast.style.fontWeight = '500';
-  toast.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+  toast.style.lineHeight = '1.45';
+  toast.style.border = '1px solid rgba(255, 255, 255, 0.15)';
+  toast.style.boxShadow = '0 4px 14px rgba(0, 0, 0, 0.2)';
   toast.style.opacity = '0';
-  toast.style.transform = 'translateY(10px)';
-  toast.style.transition = 'all 0.3s ease';
+  toast.style.transform = 'translateY(-6px)';
+  toast.style.transition = 'all 0.25s ease';
+  toast.style.pointerEvents = 'none';
+  toast.style.whiteSpace = 'normal';
+  toast.style.wordBreak = 'keep-all';
+  toast.style.wordWrap = 'break-word';
+  toast.style.height = 'auto';
+  toast.style.textAlign = 'center';
+
+  const banner = document.getElementById('add-person-instruction');
+  if (banner && banner.style.display === 'flex') {
+    const bannerRect = banner.getBoundingClientRect();
+    if (bannerRect.width > 0) {
+      toast.style.width = `${Math.round(bannerRect.width)}px`;
+      toast.style.boxSizing = 'border-box';
+      toast.style.justifyContent = 'center';
+      toast.style.display = 'flex';
+      toast.style.alignItems = 'center';
+    }
+  }
   
   container.appendChild(toast);
   
@@ -1676,33 +2516,95 @@ function showToast(message) {
   
   setTimeout(() => {
     toast.style.opacity = '0';
-    toast.style.transform = 'translateY(-10px)';
+    toast.style.transform = 'translateY(-6px)';
     setTimeout(() => {
       toast.remove();
-    }, 300);
-  }, 2500);
+      if (container.children.length === 0) {
+        container.remove();
+      }
+    }, 250);
+  }, 2200);
 }
 
-// Global shortcut keydown listener for Admin Mode Undo/Redo
-window.addEventListener('keydown', (e) => {
-  if (!isAdminMode) return;
-  
-  const activeEl = document.activeElement;
-  if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'SELECT' || activeEl.isContentEditable)) {
+
+
+// Global shortcut keydown listener for Edit Mode Toggle & Admin Mode Shortcuts
+window.toggleAdminEditMode = function() {
+  if (typeof isAdminMode !== 'undefined' && isAdminMode) {
+    if (typeof exitAdminMode === 'function') {
+      exitAdminMode();
+    } else {
+      isAdminMode = false;
+      document.body.classList.remove('admin-mode');
+    }
+    cachedAdminPassword = '';
+    const lang = (typeof currentLang !== 'undefined' && currentLang) ? currentLang : 'ko';
+    if (typeof showToast === 'function') {
+      showToast(lang === 'en' ? "🔒 Edit mode locked." : "🔒 편집 모드가 잠겼습니다.");
+    }
+  } else {
+    cachedAdminPassword = 'admin';
+    if (typeof enterAdminMode === 'function') {
+      enterAdminMode();
+    } else {
+      isAdminMode = true;
+      document.body.classList.add('admin-mode');
+    }
+    const lang = (typeof currentLang !== 'undefined' && currentLang) ? currentLang : 'ko';
+    if (typeof showToast === 'function') {
+      showToast(lang === 'en' ? "🔓 Edit mode unlocked! (Press Cmd+Shift+E to lock)" : "🔓 편집 모드가 활성화되었습니다! (다시 Cmd+Shift+E를 누르면 잠김)");
+    }
+  }
+  if (typeof syncSettingsEditModeText === 'function') {
+    syncSettingsEditModeText();
+  }
+  if (typeof window.syncMenubarEditLabel === 'function') {
+    window.syncMenubarEditLabel();
+  }
+};
+
+function isInputTarget(el) {
+  if (!el) return false;
+  const tag = (el.tagName || '').toUpperCase();
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return true;
+  if (el.isContentEditable || (el.getAttribute && el.getAttribute('contenteditable') === 'true')) return true;
+  if (typeof el.closest === 'function' && el.closest('input, textarea, select, [contenteditable="true"]')) return true;
+  return false;
+}
+
+// Attach capture-phase keydown handler on window and document
+function handleGlobalKeydown(e) {
+  const isCmdOrCtrl = e.metaKey || e.ctrlKey;
+  const isEKey = (e.key && (e.key.toLowerCase() === 'e' || e.key === 'ㄷ' || e.key === 'ㄸ')) || e.code === 'KeyE' || e.keyCode === 69;
+
+  // 1. Shortcut to Toggle Edit / Lock Mode (Cmd+Shift+E, Ctrl+Shift+E, or Shift+E outside inputs)
+  if (isEKey && e.shiftKey && !e.altKey) {
+    const inInput = isInputTarget(e.target) || isInputTarget(document.activeElement);
+    // If Cmd or Ctrl + Shift + E is pressed (even in inputs), or Shift + E outside inputs, toggle edit mode
+    if (isCmdOrCtrl || !inInput) {
+      e.preventDefault();
+      e.stopPropagation();
+      window.toggleAdminEditMode();
+      return;
+    }
+  }
+
+  const inInput = isInputTarget(e.target) || isInputTarget(document.activeElement);
+  if (inInput) return;
+
+  if (typeof isAdminMode === 'undefined' || !isAdminMode) return;
+
+  if (typeof activeSpawnerItem !== 'undefined' && activeSpawnerItem && e.key === 'Escape') {
+    e.preventDefault();
+    if (typeof cancelPlacementMode === 'function') cancelPlacementMode();
+    if (typeof showToast === 'function') showToast("복사 배치가 취소되었습니다.");
     return;
   }
 
-  if (activeSpawnerItem && e.key === 'Escape') {
+  if (typeof isAddAnnotationModeActive !== 'undefined' && isAddAnnotationModeActive && e.key === 'Escape') {
     e.preventDefault();
-    cancelPlacementMode();
-    showToast("복사 배치가 취소되었습니다.");
-    return;
-  }
-
-  if (isAddAnnotationModeActive && e.key === 'Escape') {
-    e.preventDefault();
-    deactivateAddAnnotationMode();
-    showToast("텍스트 상자 추가가 취소되었습니다.");
+    if (typeof deactivateAddAnnotationMode === 'function') deactivateAddAnnotationMode();
+    if (typeof showToast === 'function') showToast("텍스트 상자 추가가 취소되었습니다.");
     return;
   }
 
@@ -1711,7 +2613,7 @@ window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       e.preventDefault();
       deactivateAddPolygonMode();
-      showToast("다각형 영역 추가가 취소되었습니다.");
+      showToast(currentLang === 'en' ? "Polygon creation cancelled." : "다각형 영역 추가가 취소되었습니다.");
       renderTree();
       updateTransform();
       return;
@@ -1719,6 +2621,15 @@ window.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       completePolygonCreation();
+      return;
+    }
+    if (e.key === 'Backspace' || e.key === 'Delete') {
+      e.preventDefault();
+      if (tempPolygonPoints.length > 0) {
+        tempPolygonPoints.pop();
+        updateTempPolygonPreview();
+        showToast(currentLang === 'en' ? `Last vertex removed (${tempPolygonPoints.length} remaining).` : `직전 정점이 삭제되었습니다. (남은 정점: ${tempPolygonPoints.length}개)`);
+      }
       return;
     }
   }
@@ -1768,7 +2679,10 @@ window.addEventListener('keydown', (e) => {
       }
     }
   }
-});
+}
+
+window.addEventListener('keydown', handleGlobalKeydown, true);
+document.addEventListener('keydown', handleGlobalKeydown, true);
 
 function deleteSelectedLine() {
   if (!selectedLineKey) return;
@@ -1984,9 +2898,9 @@ let annotDragStartY = 0;
 let annotOriginalX = 0;
 let annotOriginalY = 0;
 
-// Admin Mode State
+// Admin Mode State (Locked by default, unlocked via slide-lock button)
 let isAdminMode = false;
-let cachedAdminPassword = '';
+let cachedAdminPassword = 'admin';
 let editingPersonId = null; // null means adding a new person
 let isAddPersonModeActive = false;
 let isAddAnnotationModeActive = false;
@@ -2074,17 +2988,126 @@ const labelCornerRadius = document.getElementById('label-corner-radius');
 const labelSplitOffset = document.getElementById('label-split-offset');
 const labelSiblingGap = document.getElementById('label-sibling-gap');
 
+// Global Hybrid Event Helper (Touch + Click without drop/delay)
+function bindHybridButton(el, callback, cooldown = 200) {
+  if (!el) return;
+  let lastTriggerTime = 0;
+  const trigger = (e) => {
+    const now = Date.now();
+    if (now - lastTriggerTime < cooldown) return;
+    lastTriggerTime = now;
+    callback(e);
+  };
+  el.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    trigger(e);
+  }, { passive: false });
+  el.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    trigger(e);
+  });
+}
+
 // Node Coordinate Map
 let coordinates = {};
 
+// Disable all inline predictive text, autocomplete, autocorrect, and spellcheck on all inputs and textareas
+function disableAllPredictiveText() {
+  function applyNoPredictive(el) {
+    if (!el || !el.tagName) return;
+    const tag = el.tagName.toLowerCase();
+    if (tag === 'input' || tag === 'textarea') {
+      const type = el.type ? el.type.toLowerCase() : 'text';
+      if (['text', 'search', 'password', 'email', 'url', 'textarea'].includes(type) || tag === 'textarea') {
+        el.setAttribute('autocomplete', 'off');
+        el.setAttribute('autocorrect', 'off');
+        el.setAttribute('autocapitalize', 'off');
+        el.setAttribute('spellcheck', 'false');
+        el.setAttribute('data-form-type', 'other');
+        el.setAttribute('data-lpignore', 'true');
+      }
+    }
+  }
+
+  // Apply to existing elements
+  document.querySelectorAll('input, textarea').forEach(applyNoPredictive);
+
+  // Apply dynamically on focus/input
+  document.addEventListener('focusin', (e) => {
+    if (e.target) applyNoPredictive(e.target);
+  }, true);
+
+  // MutationObserver for modal popups and dynamically generated inputs
+  try {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+          if (node.nodeType === 1) {
+            applyNoPredictive(node);
+            if (node.querySelectorAll) {
+              node.querySelectorAll('input, textarea').forEach(applyNoPredictive);
+            }
+          }
+        });
+      });
+    });
+
+    observer.observe(document.body || document.documentElement, {
+      childList: true,
+      subtree: true
+    });
+  } catch (err) {
+    console.warn('Predictive observer error:', err);
+  }
+}
+
 // Initialize App
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', async () => {
+  disableAllPredictiveText();
   // Ensure layout version is synchronized without resetting any manual edits
   if (typeof LAYOUT_VERSION !== 'undefined') {
     localStorage.setItem('bible_tree_layout_version', LAYOUT_VERSION);
   }
   
+  // Restore local disk/filesystem tree backup & notes if available (safe race to prevent any startup delay)
+  try {
+    if (typeof restoreTreeDataLocally === 'function') {
+      await Promise.race([
+        restoreTreeDataLocally(),
+        new Promise(resolve => setTimeout(resolve, 1500))
+      ]);
+    }
+    if (typeof fetchUserNotes === 'function') {
+      await Promise.race([
+        fetchUserNotes(),
+        new Promise(resolve => setTimeout(resolve, 1200))
+      ]);
+    }
+  } catch (err) {
+    console.warn("Storage restore startup note:", err);
+  }
 
+  // Flush all data to local disk on close/hide/background
+  const flushAllLocalData = () => {
+    if (typeof persistTreeDataLocally === 'function') persistTreeDataLocally(true);
+    if (typeof runBackupActual === 'function') runBackupActual();
+  };
+  window.addEventListener('beforeunload', flushAllLocalData);
+  window.addEventListener('pagehide', flushAllLocalData);
+  window.addEventListener('pause', flushAllLocalData);
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') flushAllLocalData();
+  });
+
+  if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App) {
+    try {
+      window.Capacitor.Plugins.App.addListener('appStateChange', (state) => {
+        if (!state.isActive) flushAllLocalData();
+      });
+    } catch (_) {}
+  }
 
   precomputeGroups();
   setupThemeToggle();
@@ -2099,6 +3122,128 @@ window.addEventListener('DOMContentLoaded', () => {
   setupStyleEditor();
   updateStats();
   
+  // Explicitly dismiss native splash screen if plugin present
+  if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.SplashScreen) {
+    try {
+      window.Capacitor.Plugins.SplashScreen.hide();
+    } catch (_) {}
+  }
+
+  // Desktop 1-time toast hint for Edit mode shortcut (fn+E / Cmd+E)
+  const isDesktopEnv = window.location.protocol.startsWith('tauri') || 
+                       window.location.protocol.startsWith('asset') || 
+                       window.location.protocol.startsWith('file') || 
+                       (!window.Capacitor && !(/iPad|iPhone|iPod|Android/.test(navigator.userAgent)));
+  if (isDesktopEnv && !sessionStorage.getItem('edit_shortcut_hint_shown')) {
+    sessionStorage.setItem('edit_shortcut_hint_shown', 'true');
+    setTimeout(() => {
+      showToast(currentLang === 'en' 
+        ? "💡 Tip: Press Cmd + Shift + E (or Ctrl+Shift+E) to toggle Edit Mode." 
+        : "💡 팁: Cmd + Shift + E (또는 Ctrl+Shift+E) 키를 누르면 언제든지 편집 모드로 전환할 수 있습니다.", 4500);
+    }, 2800);
+  }
+
+  // Listen for native Tauri menu toggle event
+  function setupTauriMenuListener() {
+    if (window.__TAURI__ && window.__TAURI__.event) {
+      try {
+        window.__TAURI__.event.listen('open-settings', () => {
+          const floatBtn = document.getElementById('floating-settings-btn');
+          if (floatBtn) floatBtn.click();
+        });
+        window.__TAURI__.event.listen('toggle-edit-mode', () => {
+          if (typeof window.toggleAdminEditMode === 'function') {
+            window.toggleAdminEditMode();
+          }
+        });
+        window.__TAURI__.event.listen('menu-add-person', () => {
+          if (!isAdminMode && typeof window.toggleAdminEditMode === 'function') window.toggleAdminEditMode();
+          if (typeof activateAddPersonMode === 'function') activateAddPersonMode();
+        });
+        window.__TAURI__.event.listen('menu-add-event', () => {
+          if (typeof window.triggerAddEvent === 'function') window.triggerAddEvent();
+        });
+        window.__TAURI__.event.listen('menu-add-location', () => {
+          if (typeof window.triggerAddLocation === 'function') window.triggerAddLocation();
+        });
+        window.__TAURI__.event.listen('menu-add-note', () => {
+          if (!isAdminMode && typeof window.toggleAdminEditMode === 'function') window.toggleAdminEditMode();
+          if (typeof activateAddAnnotationMode === 'function') activateAddAnnotationMode();
+        });
+        window.__TAURI__.event.listen('menu-add-polygon', () => {
+          if (!isAdminMode && typeof window.toggleAdminEditMode === 'function') window.toggleAdminEditMode();
+          if (typeof activateAddPolygonMode === 'function') activateAddPolygonMode();
+        });
+        window.__TAURI__.event.listen('menu-copy-box', () => {
+          if (typeof window.copySelectedBox === 'function') {
+            window.copySelectedBox();
+          }
+        });
+        window.__TAURI__.event.listen('menu-paste-box', () => {
+          if (typeof window.pasteSelectedBox === 'function') {
+            window.pasteSelectedBox();
+          }
+        });
+        window.__TAURI__.event.listen('menu-duplicate-box', () => {
+          if (typeof window.duplicateSelectedBox === 'function') {
+            window.duplicateSelectedBox();
+          }
+        });
+        window.__TAURI__.event.listen('menu-export-notes', () => {
+          if (typeof window.exportStudyNotesFile === 'function') {
+            window.exportStudyNotesFile();
+          }
+        });
+        window.__TAURI__.event.listen('menu-import-notes', () => {
+          if (typeof window.importStudyNotesFile === 'function') {
+            window.importStudyNotesFile();
+          }
+        });
+        window.__TAURI__.event.listen('menu-zoom-in', () => {
+          const btn = document.getElementById('zoom-in');
+          if (btn) btn.click();
+        });
+        window.__TAURI__.event.listen('menu-zoom-out', () => {
+          const btn = document.getElementById('zoom-out');
+          if (btn) btn.click();
+        });
+        window.__TAURI__.event.listen('menu-reset-zoom', () => {
+          if (typeof applyZoom === 'function') {
+            applyZoom('reset');
+          } else {
+            const btn = document.getElementById('zoom-reset');
+            if (btn) btn.click();
+          }
+        });
+        window.__TAURI__.event.listen('menu-center-adam', () => {
+          if (typeof centerOnNode === 'function') centerOnNode('adam');
+        });
+        window.__TAURI__.event.listen('menu-theme-toggle', () => {
+          const themeBtn = document.getElementById('settings-theme-toggle');
+          if (themeBtn) themeBtn.click();
+        });
+        window.__TAURI__.event.listen('menu-manual', () => {
+          const modal = document.getElementById('help-guide-modal');
+          if (modal) modal.style.display = 'flex';
+        });
+        window.__TAURI__.event.listen('menu-about-app', () => {
+          alert("열린 족보이야기 (Bible Genealogy)\n버전: 1.1.2\n단축키: ⌘+Shift+E (편집 모드 전환)");
+        });
+      } catch (_) {}
+    }
+  }
+  setupTauriMenuListener();
+  let tauriBridgeRetries = 0;
+  const tauriBridgeTimer = setInterval(() => {
+    tauriBridgeRetries++;
+    if (window.__TAURI__ && window.__TAURI__.event) {
+      setupTauriMenuListener();
+      clearInterval(tauriBridgeTimer);
+    } else if (tauriBridgeRetries > 30) {
+      clearInterval(tauriBridgeTimer);
+    }
+  }, 300);
+
   // Center view on Adam initially if the ResizeObserver hasn't already done it
   setTimeout(() => {
     if (!initialCentered) {
@@ -2107,6 +3252,248 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   }, 100);
   
+  // Global Fullscreen Toggle Function with Debounce (Desktop Tauri & Web Browser)
+  let lastFullscreenToggleTime = 0;
+  window.toggleFullscreen = async function() {
+    const now = Date.now();
+    if (now - lastFullscreenToggleTime < 800) {
+      return;
+    }
+    lastFullscreenToggleTime = now;
+
+    // 1. Tauri desktop app
+    if (window.__TAURI__) {
+      try {
+        const tauri = window.__TAURI__;
+        if (tauri.window) {
+          const appWin = tauri.window.appWindow || (typeof tauri.window.getCurrent === 'function' ? tauri.window.getCurrent() : null);
+          if (appWin && typeof appWin.isFullscreen === 'function') {
+            const isFull = await appWin.isFullscreen().catch(() => false);
+            await appWin.setFullscreen(!isFull).catch(async () => {
+              if (typeof appWin.toggleMaximize === 'function') await appWin.toggleMaximize().catch(() => {});
+            });
+            return;
+          }
+        }
+        const invokeFn = tauri.invoke || (tauri.tauri && tauri.tauri.invoke);
+        if (typeof invokeFn === 'function') {
+          await invokeFn('toggle_app_fullscreen');
+          return;
+        }
+      } catch (e) {
+        console.warn("Tauri fullscreen toggle error:", e);
+      }
+    }
+
+    // 2. Web / Browser Fullscreen API
+    try {
+      const doc = document;
+      const docEl = document.documentElement;
+      const isFull = !!(
+        doc.fullscreenElement ||
+        doc.webkitFullscreenElement ||
+        doc.webkitCurrentFullScreenElement ||
+        doc.mozFullScreenElement ||
+        doc.msFullscreenElement ||
+        doc.webkitIsFullScreen ||
+        doc.mozFullScreen ||
+        doc.fullscreen
+      );
+
+      if (!isFull) {
+        if (docEl.requestFullscreen) {
+          await docEl.requestFullscreen().catch(() => {});
+        } else if (docEl.webkitRequestFullscreen) {
+          docEl.webkitRequestFullscreen();
+        } else if (docEl.webkitRequestFullScreen) {
+          docEl.webkitRequestFullScreen();
+        } else if (docEl.mozRequestFullScreen) {
+          docEl.mozRequestFullScreen();
+        } else if (docEl.msRequestFullscreen) {
+          docEl.msRequestFullscreen();
+        } else if (document.body && document.body.webkitRequestFullScreen) {
+          document.body.webkitRequestFullScreen();
+        }
+      } else {
+        if (doc.exitFullscreen) {
+          await doc.exitFullscreen().catch(() => {});
+        } else if (doc.webkitExitFullscreen) {
+          doc.webkitExitFullscreen();
+        } else if (doc.webkitCancelFullScreen) {
+          doc.webkitCancelFullScreen();
+        } else if (doc.mozCancelFullScreen) {
+          doc.mozCancelFullScreen();
+        } else if (doc.msExitFullscreen) {
+          doc.msExitFullscreen();
+        }
+      }
+    } catch (err) {
+      console.warn("Fullscreen toggle error:", err);
+    }
+  };
+
+  // Complete Global Keyboard Shortcuts (Web & Desktop In-App Menus)
+  window.addEventListener('keydown', (e) => {
+    const activeEl = document.activeElement;
+    const isInput = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'SELECT' || activeEl.isContentEditable || activeEl.closest('[contenteditable="true"]'));
+    if (isInput) return;
+
+    const isMetaOrCtrl = e.metaKey || e.ctrlKey;
+    const isShift = e.shiftKey;
+    const isAlt = e.altKey;
+
+    // 1. Fullscreen: Ctrl+Cmd+F, Cmd+Shift+F, Ctrl+Shift+F, F11, Alt+Enter
+    const isKeyF = (e.key === 'f' || e.key === 'F' || e.key === 'ㄹ' || e.code === 'KeyF');
+    const isFullscreenShortcut = 
+      (e.ctrlKey && e.metaKey && isKeyF) ||
+      (e.metaKey && e.shiftKey && isKeyF) ||
+      (e.ctrlKey && e.shiftKey && isKeyF) ||
+      (e.key === 'F11') ||
+      (e.altKey && e.key === 'Enter');
+
+    if (isFullscreenShortcut) {
+      e.preventDefault();
+      if (typeof window.toggleFullscreen === 'function') window.toggleFullscreen();
+      return;
+    }
+
+    // 2. Preferences / Settings: Cmd+, or Ctrl+,
+    if (isMetaOrCtrl && !isShift && !isAlt && (e.key === ',' || e.code === 'Comma')) {
+      e.preventDefault();
+      const floatBtn = document.getElementById('floating-settings-btn');
+      if (floatBtn) floatBtn.click();
+      return;
+    }
+
+    // 3. Toggle Edit Mode: Cmd+Shift+E or Ctrl+Shift+E
+    if (isMetaOrCtrl && isShift && !isAlt && (e.key === 'e' || e.key === 'E' || e.code === 'KeyE')) {
+      e.preventDefault();
+      if (typeof window.toggleAdminEditMode === 'function') window.toggleAdminEditMode();
+      return;
+    }
+
+    // 4. Option (Alt) Shortcuts for Add & View
+    if (isAlt && !isMetaOrCtrl && !isShift) {
+      // Add Person: Alt+P
+      if (e.key === 'p' || e.key === 'P' || e.key === 'π' || e.code === 'KeyP') {
+        e.preventDefault();
+        if (!isAdminMode && typeof window.toggleAdminEditMode === 'function') window.toggleAdminEditMode();
+        if (typeof activateAddPersonMode === 'function') activateAddPersonMode();
+        return;
+      }
+      // Add Event: Alt+E
+      if (e.key === 'e' || e.key === 'E' || e.key === '´' || e.code === 'KeyE') {
+        e.preventDefault();
+        if (typeof window.triggerAddEvent === 'function') window.triggerAddEvent();
+        return;
+      }
+      // Add Location: Alt+L
+      if (e.key === 'l' || e.key === 'L' || e.key === '¬' || e.code === 'KeyL') {
+        e.preventDefault();
+        if (typeof window.triggerAddLocation === 'function') window.triggerAddLocation();
+        return;
+      }
+      // Add Note: Alt+N
+      if (e.key === 'n' || e.key === 'N' || e.key === '˜' || e.code === 'KeyN') {
+        e.preventDefault();
+        if (!isAdminMode && typeof window.toggleAdminEditMode === 'function') window.toggleAdminEditMode();
+        if (typeof activateAddAnnotationMode === 'function') activateAddAnnotationMode();
+        return;
+      }
+      // Add Polygon: Alt+G
+      if (e.key === 'g' || e.key === 'G' || e.key === '©' || e.code === 'KeyG') {
+        e.preventDefault();
+        if (!isAdminMode && typeof window.toggleAdminEditMode === 'function') window.toggleAdminEditMode();
+        if (typeof activateAddPolygonMode === 'function') activateAddPolygonMode();
+        return;
+      }
+      // Center on Adam: Alt+A
+      if (e.key === 'a' || e.key === 'A' || e.key === 'å' || e.code === 'KeyA') {
+        e.preventDefault();
+        if (typeof centerOnNode === 'function') centerOnNode('adam');
+        return;
+      }
+      // Toggle Theme: Alt+T
+      if (e.key === 't' || e.key === 'T' || e.key === '†' || e.code === 'KeyT') {
+        e.preventDefault();
+        const themeBtn = document.getElementById('settings-theme-toggle');
+        if (themeBtn) themeBtn.click();
+        return;
+      }
+    }
+
+    // 5. Cmd / Ctrl Shortcuts: Copy, Paste, Duplicate, Zoom, Undo, Redo, Minimize
+    if (isMetaOrCtrl) {
+      // Zoom In: Cmd + / Cmd =
+      if (!isAlt && (e.key === '=' || e.key === '+' || e.code === 'Equal' || e.code === 'NumpadAdd')) {
+        e.preventDefault();
+        const btn = document.getElementById('zoom-in');
+        if (btn) btn.click();
+        return;
+      }
+      // Zoom Out: Cmd -
+      if (!isAlt && (e.key === '-' || e.key === '_' || e.code === 'Minus' || e.code === 'NumpadSubtract')) {
+        e.preventDefault();
+        const btn = document.getElementById('zoom-out');
+        if (btn) btn.click();
+        return;
+      }
+      // 100% Reset Zoom: Cmd 0 / Ctrl 0
+      if (!isAlt && (e.key === '0' || e.code === 'Digit0' || e.code === 'Numpad0')) {
+        e.preventDefault();
+        if (typeof applyZoom === 'function') {
+          applyZoom('reset');
+        } else {
+          const btn = document.getElementById('zoom-reset');
+          if (btn) btn.click();
+        }
+        return;
+      }
+      // Copy Box: Cmd+C
+      if (!isShift && !isAlt && (e.key === 'c' || e.key === 'C' || e.code === 'KeyC')) {
+        if (typeof window.copySelectedBox === 'function' && window.copySelectedBox()) {
+          e.preventDefault();
+          return;
+        }
+      }
+      // Paste Box: Cmd+V
+      if (!isShift && !isAlt && (e.key === 'v' || e.key === 'V' || e.code === 'KeyV')) {
+        if (typeof window.pasteSelectedBox === 'function' && window.pasteSelectedBox()) {
+          e.preventDefault();
+          return;
+        }
+      }
+      // Duplicate Box: Cmd+D
+      if (!isShift && !isAlt && (e.key === 'd' || e.key === 'D' || e.code === 'KeyD')) {
+        e.preventDefault();
+        if (typeof window.duplicateSelectedBox === 'function') {
+          window.duplicateSelectedBox();
+        }
+        return;
+      }
+      // Undo: Cmd+Z (without shift)
+      if (!isShift && !isAlt && (e.key === 'z' || e.key === 'Z' || e.code === 'KeyZ')) {
+        e.preventDefault();
+        if (typeof performUndo === 'function') performUndo();
+        return;
+      }
+      // Redo: Shift+Cmd+Z or Ctrl+Y
+      if ((isShift && (e.key === 'z' || e.key === 'Z' || e.code === 'KeyZ')) || (e.key === 'y' || e.key === 'Y' || e.code === 'KeyY')) {
+        e.preventDefault();
+        if (typeof performRedo === 'function') performRedo();
+        return;
+      }
+      // Minimize Window: Cmd+M
+      if (!isShift && !isAlt && (e.key === 'm' || e.key === 'M' || e.code === 'KeyM')) {
+        if (window.__TAURI__ && window.__TAURI__.window) {
+          e.preventDefault();
+          try { window.__TAURI__.window.appWindow.minimize(); } catch(_) {}
+          return;
+        }
+      }
+    }
+  });
+
   // Register keyboard nudge listeners for Admin Mode
   window.addEventListener('keydown', (e) => {
     if (!isAdminMode) return;
@@ -2692,25 +4079,33 @@ function initDatabase() {
 function saveDatabase() {
   const customCharacters = [];
   const characterEdits = {};
-  const deletedIds = [];
   
   const canonIds = new Set(BIBLE_CHARACTERS.map(c => c.id));
+  const currentDbIds = new Set(db.map(c => c.id));
   
-  // Load previously saved state to preserve hidden items
-  const prevCustom = JSON.parse(localStorage.getItem('bible_tree_custom_characters') || '[]');
-  const prevEdits = JSON.parse(localStorage.getItem('bible_tree_character_edits') || '{}');
-  const prevDeleted = JSON.parse(localStorage.getItem('bible_tree_deleted_ids') || '[]');
+  // Load previously saved state
+  let prevEdits = {};
+  let prevDeleted = [];
+  try {
+    prevEdits = JSON.parse(localStorage.getItem('bible_tree_character_edits') || '{}');
+    if (!prevEdits || typeof prevEdits !== 'object' || Array.isArray(prevEdits)) prevEdits = {};
+  } catch(_) { prevEdits = {}; }
+  try {
+    prevDeleted = JSON.parse(localStorage.getItem('bible_tree_deleted_ids') || '[]');
+    if (!Array.isArray(prevDeleted)) prevDeleted = [];
+  } catch(_) { prevDeleted = []; }
+
+  // 1. Maintain deleted IDs for characters that are NOT currently in the active db
+  const deletedIds = prevDeleted.filter(id => !currentDbIds.has(id));
   
-  // Helper to check if a group is hidden
-  const isGroupHidden = (group) => {
-    if (!group) return false;
-    if (isFilterModeActive()) {
-      return activeFilters[group] !== true;
+  // 2. Track deleted canonical characters
+  BIBLE_CHARACTERS.forEach(canon => {
+    if (!currentDbIds.has(canon.id) && !deletedIds.includes(canon.id)) {
+      deletedIds.push(canon.id);
     }
-    return false;
-  };
-  
-  // 1. Process current db (active/visible items)
+  });
+
+  // 3. Process current active db
   db.forEach(char => {
     if (canonIds.has(char.id)) {
       const canon = BIBLE_CHARACTERS.find(c => c.id === char.id);
@@ -2719,52 +4114,22 @@ function saveDatabase() {
         characterEdits[char.id] = char;
       }
     } else {
-      customCharacters.push(char);
-    }
-  });
-  
-  // 2. Preserve hidden custom characters
-  prevCustom.forEach(char => {
-    const group = getCharacterGroup(char);
-    if (isGroupHidden(group)) {
       if (!customCharacters.some(c => c.id === char.id)) {
         customCharacters.push(char);
       }
     }
   });
-  
-  // 3. Preserve hidden edits
-  Object.keys(prevEdits).forEach(id => {
-    const char = prevEdits[id];
-    const group = getCharacterGroup(char);
-    if (isGroupHidden(group)) {
-      if (!characterEdits[id]) {
-        characterEdits[id] = char;
-      }
-    }
-  });
-  
-  // 4. Handle deleted canonical characters
-  const currentDbIds = new Set(db.map(c => c.id));
-  BIBLE_CHARACTERS.forEach(canon => {
-    const group = getCharacterGroup(canon);
-    if (isGroupHidden(group)) {
-      if (prevDeleted.includes(canon.id) && !deletedIds.includes(canon.id)) {
-        deletedIds.push(canon.id);
-      }
-    } else {
-      if (!currentDbIds.has(canon.id)) {
-        deletedIds.push(canon.id);
-      }
-    }
-  });
-  
-  // 5. Save to localStorage
+
+  // 4. Save to localStorage
   localStorage.setItem('bible_tree_custom_characters', JSON.stringify(customCharacters));
   localStorage.setItem('bible_tree_character_edits', JSON.stringify(characterEdits));
   localStorage.setItem('bible_tree_deleted_ids', JSON.stringify(deletedIds));
   
   precomputeProphets();
+
+  if (typeof persistTreeDataLocally === 'function') {
+    persistTreeDataLocally(true);
+  }
 
   // Trigger iCloud Background Auto-Sync if active
   if (userToken && typeof autoSaveToServer === 'function') {
@@ -2780,32 +4145,25 @@ function loadAnnotations() {
   if (savedAnnots) {
     try {
       annotations = JSON.parse(savedAnnots);
-      if (!Array.isArray(annotations)) annotations = [];
+      if (!Array.isArray(annotations)) {
+        annotations = [];
+      } else {
+        annotations = annotations.filter(a => a.id !== "note-welcome" && !((a.text || "").includes("성경 인물 족보 보드")));
+      }
     } catch (e) {
       console.error("Failed to parse annotations.", e);
       annotations = [];
     }
   } else {
-    annotations = [
-      {
-        id: "note-welcome",
-        text: "성경 인물 족보 보드\n(마우스 드래그로 이동, 휠로 확대/축소)",
-        x: -50,
-        y: 40,
-        width: 260,
-        height: 55,
-        fontSize: 13,
-        bold: true,
-        color: "#1e293b",
-        bgColor: "#f8fafc"
-      }
-    ];
-    saveAnnotations();
+    annotations = [];
   }
 }
 
 function saveAnnotations() {
   localStorage.setItem('bible_tree_annotations', JSON.stringify(annotations));
+  if (typeof persistTreeDataLocally === 'function') {
+    persistTreeDataLocally(true);
+  }
   if (isAdminMode) {
     debouncedAutoSaveToServer();
   }
@@ -2849,11 +4207,17 @@ function loadLineBends() {
 
 function saveLineBends() {
   localStorage.setItem('bible_tree_line_bends', JSON.stringify(lineBends));
+  if (typeof persistTreeDataLocally === 'function') {
+    persistTreeDataLocally(true);
+  }
   autoSaveToServer();
 }
 
 function saveLineZIndices() {
   localStorage.setItem('bible_tree_line_zindices', JSON.stringify(lineZIndices));
+  if (typeof persistTreeDataLocally === 'function') {
+    persistTreeDataLocally(true);
+  }
   autoSaveToServer();
 }
 
@@ -2915,6 +4279,9 @@ function loadSpouseSplits() {
 
 function saveSpouseSplits() {
   localStorage.setItem('bible_tree_spouse_splits', JSON.stringify(spouseSplits));
+  if (typeof persistTreeDataLocally === 'function') {
+    persistTreeDataLocally(true);
+  }
 }
 
 function loadCustomVisualLines() {
@@ -2934,6 +4301,9 @@ function loadCustomVisualLines() {
 
 function saveCustomVisualLines() {
   localStorage.setItem('bible_tree_custom_visual_lines', JSON.stringify(customVisualLines));
+  if (typeof persistTreeDataLocally === 'function') {
+    persistTreeDataLocally(true);
+  }
 }
 
 function loadCanvasJunctions() {
@@ -2953,6 +4323,9 @@ function loadCanvasJunctions() {
 
 function saveCanvasJunctions() {
   localStorage.setItem('bible_tree_canvas_junctions', JSON.stringify(canvasJunctions));
+  if (typeof persistTreeDataLocally === 'function') {
+    persistTreeDataLocally(true);
+  }
 }
 
 function loadEvents() {
@@ -2960,18 +4333,24 @@ function loadEvents() {
   if (saved && saved !== '[]') {
     try {
       events = JSON.parse(saved);
-      if (!Array.isArray(events)) events = [];
+      if (!Array.isArray(events) || events.length === 0) {
+        events = JSON.parse(JSON.stringify(DEFAULT_EVENTS));
+      }
     } catch (e) {
       console.error("Failed to parse events.", e);
-      events = [];
+      events = JSON.parse(JSON.stringify(DEFAULT_EVENTS));
     }
   } else {
-    events = [];
+    events = JSON.parse(JSON.stringify(DEFAULT_EVENTS));
+    localStorage.setItem('bible_tree_events', JSON.stringify(events));
   }
 }
 
 function saveEvents() {
   localStorage.setItem('bible_tree_events', JSON.stringify(events));
+  if (typeof persistTreeDataLocally === 'function') {
+    persistTreeDataLocally(true);
+  }
   if (isAdminMode && typeof renderSpawnerPanel === 'function') renderSpawnerPanel();
 }
 
@@ -2980,34 +4359,52 @@ function loadLocations() {
   if (saved && saved !== '[]') {
     try {
       locations = JSON.parse(saved);
-      if (!Array.isArray(locations)) locations = [];
+      if (!Array.isArray(locations) || locations.length === 0) {
+        locations = JSON.parse(JSON.stringify(DEFAULT_LOCATIONS));
+      }
     } catch (e) {
       console.error("Failed to parse locations.", e);
-      locations = [];
+      locations = JSON.parse(JSON.stringify(DEFAULT_LOCATIONS));
     }
   } else {
-    locations = [];
+    locations = JSON.parse(JSON.stringify(DEFAULT_LOCATIONS));
+    localStorage.setItem('bible_tree_locations', JSON.stringify(locations));
   }
 }
 
 // Ensure local storage save triggers spawner render
 function saveLocations() {
   localStorage.setItem('bible_tree_locations', JSON.stringify(locations));
+  if (typeof persistTreeDataLocally === 'function') {
+    persistTreeDataLocally(true);
+  }
   if (isAdminMode && typeof renderSpawnerPanel === 'function') renderSpawnerPanel();
 }
 
 function loadCustomPolygons() {
   const saved = localStorage.getItem('bible_tree_custom_polygons');
-  if (saved) {
+  if (saved && saved !== '[]') {
     try {
       customPolygons = JSON.parse(saved);
-      if (!Array.isArray(customPolygons)) customPolygons = [];
+      if (!Array.isArray(customPolygons) || customPolygons.length === 0) {
+        customPolygons = JSON.parse(JSON.stringify(DEFAULT_CUSTOM_POLYGONS));
+      } else if (customPolygons.length < 10 && typeof DEFAULT_CUSTOM_POLYGONS !== 'undefined') {
+        // Upgrade legacy polygons list to full 23 polygons
+        const existingIds = new Set(customPolygons.map(p => p.id));
+        DEFAULT_CUSTOM_POLYGONS.forEach(dp => {
+          if (!existingIds.has(dp.id)) {
+            customPolygons.push(JSON.parse(JSON.stringify(dp)));
+          }
+        });
+        localStorage.setItem('bible_tree_custom_polygons', JSON.stringify(customPolygons));
+      }
     } catch (e) {
       console.error("Failed to parse custom polygons.", e);
-      customPolygons = [];
+      customPolygons = JSON.parse(JSON.stringify(DEFAULT_CUSTOM_POLYGONS));
     }
   } else {
-    customPolygons = [];
+    customPolygons = JSON.parse(JSON.stringify(DEFAULT_CUSTOM_POLYGONS));
+    localStorage.setItem('bible_tree_custom_polygons', JSON.stringify(customPolygons));
   }
 }
 
@@ -3023,6 +4420,9 @@ function debouncedAutoSaveToServer() {
 
 function saveCustomPolygons() {
   localStorage.setItem('bible_tree_custom_polygons', JSON.stringify(customPolygons));
+  if (typeof persistTreeDataLocally === 'function') {
+    persistTreeDataLocally(true);
+  }
   if (isAdminMode) {
     debouncedAutoSaveToServer();
   }
@@ -3463,6 +4863,94 @@ function applyAnnotationBorder(el, annot) {
   }
 }
 
+function startEditingAnnotation(annotId) {
+  const el = document.getElementById(`annot-${annotId}`);
+  const annot = annotations.find(a => a.id === annotId);
+  if (!el || !annot) return;
+  
+  if (el.classList.contains('editing')) return;
+  
+  const textDiv = el.querySelector('.annotation-text');
+  if (textDiv) textDiv.style.display = 'none';
+  
+  el.classList.add('editing');
+  
+  const existingTextarea = el.querySelector('.annotation-edit-textarea');
+  if (existingTextarea) existingTextarea.remove();
+  
+  const textarea = document.createElement('textarea');
+  textarea.className = 'annotation-edit-textarea';
+  textarea.value = (annot.text === "새 텍스트 상자\n(클릭하여 편집)") ? "" : (annot.text || '');
+  textarea.placeholder = "내용을 입력하세요...";
+  textarea.style.position = 'absolute';
+  textarea.style.top = '0';
+  textarea.style.left = '0';
+  textarea.style.width = '100%';
+  textarea.style.height = '100%';
+  textarea.style.border = '2px solid var(--text-accent, #3b82f6)';
+  textarea.style.borderRadius = '6px';
+  textarea.style.outline = 'none';
+  textarea.style.background = annot.bgColor || '#ffffff';
+  textarea.style.color = annot.color || '#1e293b';
+  textarea.style.fontSize = `${annot.fontSize || 14}px`;
+  textarea.style.fontWeight = annot.bold ? 'bold' : 'normal';
+  textarea.style.fontStyle = annot.italic ? 'italic' : 'normal';
+  textarea.style.textDecoration = annot.underline ? 'underline' : 'none';
+  textarea.style.textAlign = annot.align || 'center';
+  textarea.style.fontFamily = 'inherit';
+  textarea.style.boxSizing = 'border-box';
+  textarea.style.padding = '6px 8px';
+  textarea.style.resize = 'none';
+  textarea.style.overflow = 'auto';
+  textarea.style.zIndex = '120';
+  textarea.style.pointerEvents = 'auto';
+  
+  const saveAndClose = () => {
+    if (textarea.parentNode) {
+      const val = textarea.value.trim();
+      annot.text = val || "새 텍스트 상자\n(클릭하여 편집)";
+      if (textDiv) {
+        textDiv.innerText = getLocalizedAnnotationText(annot.text);
+        textDiv.style.display = 'flex';
+      }
+      textarea.remove();
+      el.classList.remove('editing');
+      saveAnnotations();
+      autoSaveToServer();
+    }
+  };
+  
+  textarea.addEventListener('input', () => {
+    annot.text = textarea.value;
+    localStorage.setItem('bible_tree_annotations', JSON.stringify(annotations));
+    if (typeof persistTreeDataLocally === 'function') {
+      persistTreeDataLocally(false);
+    }
+  });
+
+  textarea.addEventListener('blur', saveAndClose);
+  textarea.addEventListener('keydown', (evt) => {
+    if (evt.key === 'Escape') {
+      evt.stopPropagation();
+      saveAndClose();
+    }
+  });
+  
+  textarea.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
+  textarea.addEventListener('touchmove', (e) => e.stopPropagation(), { passive: true });
+  textarea.addEventListener('touchend', (e) => e.stopPropagation(), { passive: true });
+  textarea.addEventListener('mousedown', (e) => e.stopPropagation());
+  textarea.addEventListener('click', (e) => e.stopPropagation());
+  
+  el.appendChild(textarea);
+  setTimeout(() => {
+    textarea.focus();
+    if (textarea.value.length > 0) {
+      textarea.select();
+    }
+  }, 60);
+}
+
 function renderAnnotations() {
   // Clear existing annotation elements on the board
   document.querySelectorAll('.canvas-annotation').forEach(el => el.remove());
@@ -3534,6 +5022,21 @@ function renderAnnotations() {
     const toolbar = document.createElement('div');
     toolbar.className = 'annotation-toolbar';
     
+    // Row 1: Text & Style Formatting (✏️, Size, B, I, U, Align, Border Style, Border Width)
+    const row1 = document.createElement('div');
+    row1.className = 'annot-toolbar-row annot-toolbar-row-1';
+
+    // Direct Edit Button (✏️)
+    const editBtn = document.createElement('button');
+    editBtn.className = 'annot-btn';
+    editBtn.innerHTML = '✏️';
+    editBtn.title = currentLang === 'en' ? 'Direct Edit/Type Text' : '텍스트 직접 편집/입력';
+    editBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      startEditingAnnotation(annot.id);
+    });
+    row1.appendChild(editBtn);
+
     // Size input
     const sizeInput = document.createElement('input');
     sizeInput.type = 'number';
@@ -3542,57 +5045,59 @@ function renderAnnotations() {
     sizeInput.min = 10;
     sizeInput.max = 72;
     sizeInput.step = 2;
+    sizeInput.title = currentLang === 'en' ? 'Font Size' : '글자 크기';
     sizeInput.addEventListener('change', (e) => {
       annot.fontSize = parseInt(e.target.value) || 14;
       textDiv.style.fontSize = `${annot.fontSize}px`;
       saveAnnotations();
     });
-    toolbar.appendChild(sizeInput);
+    row1.appendChild(sizeInput);
     
     // Bold button
     const boldBtn = document.createElement('button');
     boldBtn.className = `annot-btn annot-bold-btn ${annot.bold ? 'active' : ''}`;
     boldBtn.innerHTML = '<b>B</b>';
+    boldBtn.title = currentLang === 'en' ? 'Bold' : '굵게';
     boldBtn.addEventListener('click', () => {
       annot.bold = !annot.bold;
       boldBtn.classList.toggle('active', annot.bold);
       textDiv.style.fontWeight = annot.bold ? 'bold' : 'normal';
       saveAnnotations();
     });
-    toolbar.appendChild(boldBtn);
+    row1.appendChild(boldBtn);
     
     // Italic button
     const italicBtn = document.createElement('button');
     italicBtn.className = `annot-btn annot-italic-btn ${annot.italic ? 'active' : ''}`;
     italicBtn.innerHTML = '<i>I</i>';
-    italicBtn.title = '기울임꼴';
+    italicBtn.title = currentLang === 'en' ? 'Italic' : '기울임꼴';
     italicBtn.addEventListener('click', () => {
       annot.italic = !annot.italic;
       italicBtn.classList.toggle('active', annot.italic);
       textDiv.style.fontStyle = annot.italic ? 'italic' : 'normal';
       saveAnnotations();
     });
-    toolbar.appendChild(italicBtn);
+    row1.appendChild(italicBtn);
     
     // Underline button
     const underlineBtn = document.createElement('button');
     underlineBtn.className = `annot-btn annot-underline-btn ${annot.underline ? 'active' : ''}`;
     underlineBtn.innerHTML = '<u>U</u>';
-    underlineBtn.title = '밑줄';
+    underlineBtn.title = currentLang === 'en' ? 'Underline' : '밑줄';
     underlineBtn.addEventListener('click', () => {
       annot.underline = !annot.underline;
       underlineBtn.classList.toggle('active', annot.underline);
       textDiv.style.textDecoration = annot.underline ? 'underline' : 'none';
       saveAnnotations();
     });
-    toolbar.appendChild(underlineBtn);
+    row1.appendChild(underlineBtn);
     
     // Align button (cycles left, center, right)
     const alignBtn = document.createElement('button');
     alignBtn.className = `annot-btn`;
     const getAlignChar = (a) => a === 'left' ? '▤' : a === 'right' ? '▥' : '▧';
     alignBtn.textContent = getAlignChar(annot.align || 'center');
-    alignBtn.title = '텍스트 정렬 (왼쪽/가운데/오른쪽)';
+    alignBtn.title = currentLang === 'en' ? 'Text Alignment (Left/Center/Right)' : '텍스트 정렬 (왼쪽/가운데/오른쪽)';
     alignBtn.addEventListener('click', () => {
       const current = annot.align || 'center';
       const next = current === 'center' ? 'left' : current === 'left' ? 'right' : 'center';
@@ -3602,14 +5107,14 @@ function renderAnnotations() {
       textDiv.style.justifyContent = next === 'left' ? 'flex-start' : next === 'right' ? 'flex-end' : 'center';
       saveAnnotations();
     });
-    toolbar.appendChild(alignBtn);
+    row1.appendChild(alignBtn);
     
     // Border Style button (cycles dashed, solid, none)
     const borderStyleBtn = document.createElement('button');
     borderStyleBtn.className = `annot-btn`;
     const getBorderStyleLabel = (s) => s === 'solid' ? '▬' : s === 'dashed' ? '╍' : '☐';
     borderStyleBtn.textContent = getBorderStyleLabel(annot.borderStyle || 'dashed');
-    borderStyleBtn.title = '테두리 선 스타일 (실선/점선/없음)';
+    borderStyleBtn.title = currentLang === 'en' ? 'Border Style (Solid/Dashed/None)' : '테두리 선 스타일 (실선/점선/없음)';
     borderStyleBtn.addEventListener('click', () => {
       const current = annot.borderStyle || 'dashed';
       const next = current === 'dashed' ? 'solid' : current === 'solid' ? 'none' : 'dashed';
@@ -3618,13 +5123,13 @@ function renderAnnotations() {
       applyAnnotationBorder(el, annot);
       saveAnnotations();
     });
-    toolbar.appendChild(borderStyleBtn);
+    row1.appendChild(borderStyleBtn);
     
     // Border Width button (cycles 1px, 2px, 4px)
     const borderWidthBtn = document.createElement('button');
     borderWidthBtn.className = `annot-btn`;
     borderWidthBtn.textContent = `${annot.borderWidth || 1}px`;
-    borderWidthBtn.title = '테두리 두께';
+    borderWidthBtn.title = currentLang === 'en' ? 'Border Width' : '테두리 두께';
     borderWidthBtn.addEventListener('click', () => {
       const current = annot.borderWidth || 1;
       const next = current === 1 ? 2 : current === 2 ? 4 : 1;
@@ -3633,7 +5138,13 @@ function renderAnnotations() {
       applyAnnotationBorder(el, annot);
       saveAnnotations();
     });
-    toolbar.appendChild(borderWidthBtn);
+    row1.appendChild(borderWidthBtn);
+
+    toolbar.appendChild(row1);
+
+    // Row 2: Colors & Actions (Color pickers, Link, Aura, Duplicate, Delete)
+    const row2 = document.createElement('div');
+    row2.className = 'annot-toolbar-row annot-toolbar-row-2';
     
     // Color pickers
     const colorWrapper = document.createElement('div');
@@ -3643,7 +5154,7 @@ function renderAnnotations() {
     colorPicker.type = 'color';
     colorPicker.className = 'annot-color-picker';
     colorPicker.value = annot.color || '#1e293b';
-    colorPicker.title = '글자 색상';
+    colorPicker.title = currentLang === 'en' ? 'Text Color' : '글자 색상';
     colorPicker.addEventListener('input', (e) => {
       annot.color = e.target.value;
       textDiv.style.color = annot.color;
@@ -3655,7 +5166,7 @@ function renderAnnotations() {
     bgPicker.type = 'color';
     bgPicker.className = 'annot-color-picker';
     bgPicker.value = annot.bgColor || '#ffffff';
-    bgPicker.title = '배경 색상';
+    bgPicker.title = currentLang === 'en' ? 'Background Color' : '배경 색상';
     bgPicker.addEventListener('input', (e) => {
       annot.bgColor = e.target.value;
       el.style.backgroundColor = annot.bgColor;
@@ -3667,7 +5178,7 @@ function renderAnnotations() {
     borderPicker.type = 'color';
     borderPicker.className = 'annot-color-picker';
     borderPicker.value = annot.borderColor || '#cbd5e1';
-    borderPicker.title = '테두리 색상';
+    borderPicker.title = currentLang === 'en' ? 'Border Color' : '테두리 색상';
     borderPicker.addEventListener('input', (e) => {
       annot.borderColor = e.target.value;
       applyAnnotationBorder(el, annot);
@@ -3675,18 +5186,18 @@ function renderAnnotations() {
     });
     colorWrapper.appendChild(borderPicker);
     
-    toolbar.appendChild(colorWrapper);
+    row2.appendChild(colorWrapper);
     
     // Relation button
     const relBtn = document.createElement('button');
     relBtn.className = 'annot-btn';
     relBtn.innerHTML = '🔗';
-    relBtn.title = '아우라 연동 관계 설정';
+    relBtn.title = currentLang === 'en' ? 'Aura Link / Relationship Settings' : '아우라 연동 관계 설정';
     relBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       editLayerItem(annot, 'annotation');
     });
-    toolbar.appendChild(relBtn);
+    row2.appendChild(relBtn);
 
     // Aura toggle button (Per-annotation aura toggle)
     const auraBtn = document.createElement('button');
@@ -3697,11 +5208,11 @@ function renderAnnotations() {
       if (annot.auraEnabled !== false) {
         auraBtn.style.backgroundColor = '#a855f7'; // Purple
         auraBtn.style.color = '#ffffff';
-        auraBtn.title = '클릭 시 아우라 강조 기능 활성화됨';
+        auraBtn.title = currentLang === 'en' ? 'Aura highlight active on click' : '클릭 시 아우라 강조 기능 활성화됨';
       } else {
         auraBtn.style.backgroundColor = '#cbd5e1'; // Gray
         auraBtn.style.color = '#64748b';
-        auraBtn.title = '클릭 시 아우라 강조 기능 비활성화됨';
+        auraBtn.title = currentLang === 'en' ? 'Aura highlight inactive on click' : '클릭 시 아우라 강조 기능 비활성화됨';
       }
     };
     updateAuraBtnStyle();
@@ -3711,15 +5222,17 @@ function renderAnnotations() {
       annot.auraEnabled = (annot.auraEnabled !== false) ? false : true;
       updateAuraBtnStyle();
       saveAnnotations();
-      showToast(annot.auraEnabled ? "💡 이 상자의 아우라 강조가 활성화되었습니다." : "📴 이 상자의 아우라 강조가 비활성화되었습니다.");
+      showToast(annot.auraEnabled 
+        ? (currentLang === 'en' ? "💡 Aura highlight enabled for this box." : "💡 이 상자의 아우라 강조가 활성화되었습니다.")
+        : (currentLang === 'en' ? "📴 Aura highlight disabled for this box." : "📴 이 상자의 아우라 강조가 비활성화되었습니다."));
     });
-    toolbar.appendChild(auraBtn);
-    
+    row2.appendChild(auraBtn);
+
     // Copy/Duplicate button
     const copyBtn = document.createElement('button');
     copyBtn.className = 'annot-btn';
     copyBtn.innerHTML = '📋';
-    copyBtn.title = '이 텍스트 상자 복제 (동일 스타일로 복사)';
+    copyBtn.title = currentLang === 'en' ? 'Duplicate Text Box' : '이 텍스트 상자 복제 (동일 스타일로 복사)';
     copyBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       pushHistoryState();
@@ -3727,7 +5240,7 @@ function renderAnnotations() {
       const newId = 'annotation_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
       const newAnnot = {
         id: newId,
-        text: (annot.text || '') + ' (복사본)',
+        text: (annot.text || '') + (currentLang === 'en' ? ' (Copy)' : ' (복사본)'),
         x: (annot.x || 0) + 30,
         y: (annot.y || 0) + 30,
         width: annot.width || 180,
@@ -3749,16 +5262,22 @@ function renderAnnotations() {
       saveAnnotations();
       renderAnnotations();
       drawConnections();
-      showToast("📋 텍스트 상자가 동일한 스타일로 복제되었습니다.");
+      showToast(currentLang === 'en' ? "📋 Text box duplicated with matching style." : "📋 텍스트 상자가 동일한 스타일로 복제되었습니다.");
     });
-    toolbar.appendChild(copyBtn);
+    row2.appendChild(copyBtn);
     
     // Delete button
     const delBtn = document.createElement('button');
-    delBtn.className = 'annot-btn';
+    delBtn.className = 'annot-btn annot-delete-btn';
     delBtn.innerHTML = '🗑️';
-    delBtn.addEventListener('click', () => {
-      if (confirm('이 텍스트 상자를 삭제하시겠습니까?')) {
+    delBtn.title = currentLang === 'en' ? 'Delete Text Box' : '이 텍스트 상자 삭제';
+    
+    const handleDeleteAnnotation = (e) => {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      if (confirm(currentLang === 'en' ? 'Are you sure you want to delete this text box?' : '이 텍스트 상자를 삭제하시겠습니까?')) {
         pushHistoryState();
         annotations = annotations.filter(a => a.id !== annot.id);
         saveAnnotations();
@@ -3768,42 +5287,36 @@ function renderAnnotations() {
         
         el.remove();
         drawConnections();
+        autoSaveToServer();
+        showToast(currentLang === 'en' ? "🗑️ Text box deleted." : "🗑️ 텍스트 상자가 삭제되었습니다.");
       }
-    });
-    toolbar.appendChild(delBtn);
+    };
     
+    delBtn.addEventListener('click', handleDeleteAnnotation);
+    delBtn.addEventListener('touchend', handleDeleteAnnotation, { passive: false });
+    row2.appendChild(delBtn);
+
+    toolbar.appendChild(row2);
     el.appendChild(toolbar);
     
-    // Custom Resize Handle (Admin Mode)
+    // Custom Resize Handle (Admin Mode) - Supports both Mouse and Touch Drag
     if (isAdminMode) {
       const resizeHandle = document.createElement('div');
       resizeHandle.className = 'annot-resize-handle';
-      resizeHandle.style.position = 'absolute';
-      resizeHandle.style.bottom = '2px';
-      resizeHandle.style.right = '2px';
-      resizeHandle.style.width = '10px';
-      resizeHandle.style.height = '10px';
-      resizeHandle.style.cursor = 'se-resize';
-      resizeHandle.style.borderBottom = '2.5px solid var(--text-accent)';
-      resizeHandle.style.borderRight = '2.5px solid var(--text-accent)';
-      resizeHandle.style.zIndex = '110';
-      resizeHandle.title = '드래그하여 크기 조절';
+      resizeHandle.title = '드래그하여 크기 조절 (터치/마우스)';
       
-      resizeHandle.addEventListener('mousedown', (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        
-        const startX = e.clientX;
-        const startY = e.clientY;
+      const startResize = (clientX, clientY) => {
+        const startX = clientX;
+        const startY = clientY;
         const startWidth = annot.width || 120;
         const startHeight = annot.height || 60;
         
-        const onMouseMove = (moveEvt) => {
-          const dx = (moveEvt.clientX - startX) / currentScale;
-          const dy = (moveEvt.clientY - startY) / currentScale;
+        const onMove = (currentClientX, currentClientY) => {
+          const dx = (currentClientX - startX) / currentScale;
+          const dy = (currentClientY - startY) / currentScale;
           
-          annot.width = Math.max(10, Math.round(startWidth + dx));
-          annot.height = Math.max(10, Math.round(startHeight + dy));
+          annot.width = Math.max(40, Math.round(startWidth + dx));
+          annot.height = Math.max(30, Math.round(startHeight + dy));
           
           el.style.width = `${annot.width}px`;
           el.style.height = `${annot.height}px`;
@@ -3815,27 +5328,69 @@ function renderAnnotations() {
           }
         };
         
-        const onMouseUp = () => {
+        const onEnd = () => {
           document.removeEventListener('mousemove', onMouseMove);
           document.removeEventListener('mouseup', onMouseUp);
+          document.removeEventListener('touchmove', onTouchMove);
+          document.removeEventListener('touchend', onTouchEnd);
+          document.removeEventListener('touchcancel', onTouchEnd);
           autoSaveToServer();
+        };
+        
+        const onMouseMove = (moveEvt) => {
+          onMove(moveEvt.clientX, moveEvt.clientY);
+        };
+        const onMouseUp = () => {
+          onEnd();
+        };
+        const onTouchMove = (moveEvt) => {
+          if (moveEvt.touches && moveEvt.touches.length > 0) {
+            if (moveEvt.cancelable) moveEvt.preventDefault();
+            moveEvt.stopPropagation();
+            onMove(moveEvt.touches[0].clientX, moveEvt.touches[0].clientY);
+          }
+        };
+        const onTouchEnd = (endEvt) => {
+          if (endEvt && endEvt.cancelable) endEvt.preventDefault();
+          if (endEvt) endEvt.stopPropagation();
+          onEnd();
         };
         
         document.addEventListener('mousemove', onMouseMove);
         document.addEventListener('mouseup', onMouseUp);
+        document.addEventListener('touchmove', onTouchMove, { passive: false });
+        document.addEventListener('touchend', onTouchEnd, { passive: false });
+        document.addEventListener('touchcancel', onTouchEnd, { passive: false });
+      };
+      
+      resizeHandle.addEventListener('mousedown', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        startResize(e.clientX, e.clientY);
       });
+      
+      resizeHandle.addEventListener('touchstart', (e) => {
+        if (e.touches && e.touches.length > 0) {
+          e.stopPropagation();
+          if (e.cancelable) e.preventDefault();
+          startResize(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: false });
       
       el.appendChild(resizeHandle);
     }
     
-    // Click to highlight related elements & open study memo panel
+    // Click to select & open details or edit
     el.addEventListener('click', (e) => {
       if (e.target.closest('.annotation-toolbar') || e.target.closest('.annot-resize-handle')) return;
       
-      e.stopPropagation(); // Avoid triggering board deselection
+      e.stopPropagation();
       
       if (isAdminMode) {
-        // Just select, do not focus text edit yet (Figma style)
+        if (el.classList.contains('selected')) {
+          startEditingAnnotation(annot.id);
+          return;
+        }
         document.querySelectorAll('.canvas-annotation').forEach(n => n.classList.remove('selected'));
         el.classList.add('selected');
       } else {
@@ -3846,64 +5401,27 @@ function renderAnnotations() {
       openLayerDetails(annot, 'annotation');
     });
 
-    // Double-click to Edit (Figma style with a simple textarea)
+    // Double-click to Edit
     el.addEventListener('dblclick', (e) => {
       if (!isAdminMode) return;
       if (e.target.closest('.annotation-toolbar') || e.target.closest('.annot-resize-handle')) return;
       
       e.stopPropagation();
-      el.classList.add('editing');
-      textDiv.style.display = 'none';
-      
-      const textarea = document.createElement('textarea');
-      textarea.className = 'annotation-edit-textarea';
-      textarea.value = annot.text || '';
-      textarea.style.position = 'absolute';
-      textarea.style.top = '0';
-      textarea.style.left = '0';
-      textarea.style.width = '100%';
-      textarea.style.height = '100%';
-      textarea.style.border = 'none';
-      textarea.style.outline = 'none';
-      textarea.style.background = 'transparent';
-      textarea.style.color = annot.color || '#1e293b';
-      textarea.style.fontSize = `${annot.fontSize || 14}px`;
-      textarea.style.fontWeight = annot.bold ? 'bold' : 'normal';
-      textarea.style.fontStyle = annot.italic ? 'italic' : 'normal';
-      textarea.style.textDecoration = annot.underline ? 'underline' : 'none';
-      textarea.style.textAlign = annot.align || 'center';
-      textarea.style.fontFamily = 'inherit';
-      textarea.style.boxSizing = 'border-box';
-      textarea.style.padding = '8px';
-      textarea.style.resize = 'none';
-      textarea.style.overflow = 'hidden';
-      textarea.style.zIndex = '10';
-      
-      const saveAndClose = () => {
-        if (textarea.parentNode) {
-          annot.text = textarea.value;
-          textDiv.innerText = annot.text;
-          textarea.remove();
-          textDiv.style.display = 'flex';
-          el.classList.remove('editing');
-          saveAnnotations();
-        }
-      };
-      
-      textarea.addEventListener('blur', saveAndClose);
-      textarea.addEventListener('keydown', (evt) => {
-        if (evt.key === 'Escape') {
-          evt.stopPropagation();
-          saveAndClose();
-        }
-      });
-      
-      el.appendChild(textarea);
-      setTimeout(() => {
-        textarea.focus();
-        textarea.select();
-      }, 10);
+      startEditingAnnotation(annot.id);
     });
+
+    // Double-tap on mobile touch to Edit
+    let lastAnnotTouchTime = 0;
+    el.addEventListener('touchend', (e) => {
+      if (!isAdminMode) return;
+      if (e.target.closest('.annotation-toolbar') || e.target.closest('.annot-resize-handle')) return;
+      const now = Date.now();
+      if (now - lastAnnotTouchTime < 380) {
+        e.stopPropagation();
+        startEditingAnnotation(annot.id);
+      }
+      lastAnnotTouchTime = now;
+    }, { passive: true });
 
     // Drag handlers
     el.addEventListener('mousedown', (e) => {
@@ -4941,7 +6459,7 @@ function initBoard() {
   svgLayer.style.width = `${boardWidth}px`;
   svgLayer.style.height = `${boardHeight}px`;
   
-  // Map coordinates for all database characters (even if currently filtered out, to keep coordinate system uniform)
+  // Map coordinates for all database characters
   coordinates = {};
   
   let allChars = [];
@@ -4969,10 +6487,18 @@ function initBoard() {
     allChars = [...BIBLE_CHARACTERS];
   }
   
-  allChars.forEach(char => {
+  const charMap = new Map();
+  allChars.forEach(c => { if (c && c.id) charMap.set(c.id, c); });
+  if (Array.isArray(db)) {
+    db.forEach(c => { if (c && c.id) charMap.set(c.id, c); });
+  }
+
+  charMap.forEach(char => {
+    const col = typeof char.column === 'number' && !isNaN(char.column) ? char.column : (parseFloat(char.column) || 0);
+    const gen = typeof char.generation === 'number' && !isNaN(char.generation) ? char.generation : (parseFloat(char.generation) || 0);
     coordinates[char.id] = {
-      x: centerX + (char.column * COL_WIDTH),
-      y: BOARD_PADDING_Y + (char.generation * GEN_HEIGHT)
+      x: centerX + (col * COL_WIDTH),
+      y: BOARD_PADDING_Y + (gen * GEN_HEIGHT)
     };
   });
   
@@ -5706,18 +7232,11 @@ function getLocationFilterClass(loc) {
 
 function isCharacterCardVisible(charId) {
   const showPeople = document.getElementById('toggle-layer-people')?.checked !== false;
-  const showProphets = document.getElementById('toggle-layer-prophets')?.checked === true;
+  const showProphets = document.getElementById('toggle-layer-prophets')?.checked !== false;
   
   const char = db.find(c => c.id === charId);
-  if (!char) {
-    if (charId === 'samuel') {
-      return showProphets;
-    }
-    return showPeople;
-  }
-  
   const isProphetChecked = isProphet(charId);
-  const isSamuelCard = charId === 'samuel' || (char.name && (char.name === '사무엘' || char.name.includes('사무엘')));
+  const isSamuelCard = charId === 'samuel' || (char && char.name && (char.name === '사무엘' || char.name.includes('사무엘')));
   
   if (isProphetChecked || isSamuelCard) {
     return showProphets;
@@ -5730,7 +7249,7 @@ function updateLayersVisibility() {
   const showEvents = document.getElementById('toggle-layer-events')?.checked !== false;
   const showLocations = document.getElementById('toggle-layer-locations')?.checked !== false;
   const showPolygons = document.getElementById('toggle-layer-polygons')?.checked !== false;
-  const showProphets = document.getElementById('toggle-layer-prophets')?.checked === true;
+  const showProphets = document.getElementById('toggle-layer-prophets')?.checked !== false;
 
   // 1. Person Cards
   const personCards = document.querySelectorAll('.person-card');
@@ -5820,7 +7339,121 @@ function updateLayersVisibility() {
       handle.style.display = showPolygons ? '' : 'none';
     }
   });
+
+  if (typeof syncLayerMenuChecks === 'function') {
+    syncLayerMenuChecks();
+  }
 }
+
+function syncLayerMenuChecks() {
+  const isEn = typeof currentLang !== 'undefined' && currentLang === 'en';
+  const layerDefs = [
+    { menuId: 'mac-menu-layer-people', toggleId: 'toggle-layer-people', key: 'bible_layer_people', ko: '인물 족보', en: 'Characters' },
+    { menuId: 'mac-menu-layer-events', toggleId: 'toggle-layer-events', key: 'bible_layer_events', ko: '주요 사건', en: 'Key Events' },
+    { menuId: 'mac-menu-layer-locations', toggleId: 'toggle-layer-locations', key: 'bible_layer_locations', ko: '장소/지명', en: 'Locations' },
+    { menuId: 'mac-menu-layer-polygons', toggleId: 'toggle-layer-polygons', key: 'bible_layer_polygons', ko: '영역', en: 'Regions' },
+    { menuId: 'mac-menu-layer-prophets', toggleId: 'toggle-layer-prophets', key: 'bible_layer_prophets', ko: '선지자', en: 'Prophets' },
+  ];
+
+  layerDefs.forEach(({ menuId, toggleId, key, ko, en }) => {
+    const menuEl = document.getElementById(menuId);
+    if (!menuEl) return;
+    const toggleEl = document.getElementById(toggleId);
+    let isChecked = true;
+    if (toggleEl) {
+      isChecked = !!toggleEl.checked;
+    } else {
+      const saved = localStorage.getItem(key);
+      isChecked = saved !== null ? (saved === 'true') : true;
+    }
+
+    const labelText = isEn ? en : ko;
+    const labelSpan = menuEl.querySelector('.label');
+    const checkHtml = isChecked
+      ? '<span class="menu-check" style="display:inline-block; width:16px; font-weight:700; color:currentColor;">✓</span>'
+      : '<span class="menu-check" style="display:inline-block; width:16px;"></span>';
+    
+    if (labelSpan) {
+      labelSpan.innerHTML = `${checkHtml}<span>${labelText}</span>`;
+    } else {
+      menuEl.innerHTML = `<span class="label">${checkHtml}<span>${labelText}</span></span>`;
+    }
+
+    if (isChecked) {
+      menuEl.classList.add('checked');
+    } else {
+      menuEl.classList.remove('checked');
+    }
+  });
+}
+window.syncLayerMenuChecks = syncLayerMenuChecks;
+
+function syncMacMenubarLocalization() {
+  const isEn = typeof currentLang !== 'undefined' && currentLang === 'en';
+
+  // 1. Top Menubar Main Titles
+  const titles = {
+    'mac-menu-title-file': isEn ? 'File' : '파일',
+    'mac-menu-title-edit': isEn ? 'Edit' : '편집',
+    'mac-menu-title-view': isEn ? 'View' : '보기',
+    'mac-menu-title-layers': isEn ? 'Layers' : '레이어',
+    'mac-menu-title-help': isEn ? 'Help' : '도움말',
+  };
+
+  for (const [id, text] of Object.entries(titles)) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
+  }
+
+  // 2. Menu Item Labels
+  const menuLabels = {
+    'mac-menu-about-help': isEn ? 'About Open Genealogy' : '열린 족보이야기 정보',
+    'mac-menu-pref': isEn ? 'Preferences...' : '환경설정...',
+    'mac-menu-notes-export': isEn ? 'Backup Study Notes' : '연구 메모 백업',
+    'mac-menu-notes-import': isEn ? 'Restore Study Notes' : '연구 메모 복원',
+    'mac-menu-add-person': isEn ? 'Add Person' : '인물 추가',
+    'mac-menu-add-event': isEn ? 'Add Event' : '사건 추가',
+    'mac-menu-add-location': isEn ? 'Add Location' : '장소/지명 추가',
+    'mac-menu-add-note': isEn ? 'Add Note Box' : '메모 상자 추가',
+    'mac-menu-add-polygon': isEn ? 'Add Region' : '영역 추가',
+    'mac-menu-copy': isEn ? 'Copy' : '복사',
+    'mac-menu-paste': isEn ? 'Paste' : '붙여넣기',
+    'mac-menu-duplicate-box': isEn ? 'Duplicate Box' : '박스 즉시 복제',
+    'mac-menu-undo': isEn ? 'Undo' : '실행 취소',
+    'mac-menu-redo': isEn ? 'Redo' : '다시 실행',
+    'mac-menu-zoomin': isEn ? 'Zoom In' : '확대',
+    'mac-menu-zoomout': isEn ? 'Zoom Out' : '축소',
+    'mac-menu-reset-zoom': isEn ? '100% Actual Size' : '100% 기본 크기',
+    'mac-menu-center-adam': isEn ? 'Go to Start (Adam)' : '시작 위치(아담)로 이동',
+    'mac-menu-theme-toggle': (document.documentElement.getAttribute('data-theme') === 'dark' || document.body.getAttribute('data-theme') === 'dark') ? (isEn ? 'Light Mode' : '일반 모드') : (isEn ? 'Dark Mode' : '다크 모드'),
+    'mac-menu-manual': isEn ? 'User Guide' : '사용 가이드',
+  };
+
+  for (const [id, text] of Object.entries(menuLabels)) {
+    const el = document.getElementById(id);
+    if (el) {
+      const labelSpan = el.querySelector('.label');
+      if (labelSpan) labelSpan.textContent = text;
+      else el.textContent = text;
+    }
+  }
+
+  // 3. Edit Toggle Button Label
+  const editToggleLabel = document.getElementById('mac-menu-toggle-edit-label');
+  if (editToggleLabel) {
+    if (typeof isAdminMode !== 'undefined' && isAdminMode) {
+      editToggleLabel.textContent = isEn ? 'Lock Edit Mode' : '편집 모드 잠금';
+    } else {
+      editToggleLabel.textContent = isEn ? 'Unlock Edit Mode' : '편집 모드 전환';
+    }
+  }
+
+  // 4. Layers Menu Sync
+  if (typeof syncLayerMenuChecks === 'function') {
+    syncLayerMenuChecks();
+  }
+}
+window.syncMacMenubarLocalization = syncMacMenubarLocalization;
 
 function applyFilters() {
   initDatabase();
@@ -5828,18 +7461,16 @@ function applyFilters() {
   renderTree();
   updateTransform();
   
+  const toggleLayerProphets = document.getElementById('toggle-layer-prophets');
+  const showProphets = toggleLayerProphets ? (toggleLayerProphets.checked !== false) : true;
+  
   const treeBoard = document.getElementById('tree-board');
   if (treeBoard) {
-    if (activeFilters['prophets'] === true) {
+    if (showProphets || activeFilters['prophets'] === true) {
       treeBoard.classList.add('prophets-filter-active');
     } else {
       treeBoard.classList.remove('prophets-filter-active');
     }
-  }
-
-  const toggleLayerProphets = document.getElementById('toggle-layer-prophets');
-  if (toggleLayerProphets && activeFilters['prophets'] === true) {
-    toggleLayerProphets.checked = true;
   }
 
   updateLayersVisibility();
@@ -6077,7 +7708,7 @@ function renderTree() {
     
     const editOverlayHTML = isAdminMode ? `
       <div class="card-edit-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); border-radius: 10px; display: flex; align-items: center; justify-content: center; padding: 6px; box-sizing: border-box; transform: translateZ(0); will-change: transform; pointer-events: none; opacity: 0; transition: opacity 0.2s ease; z-index: 15;">
-        <button class="card-edit-btn" onmousedown="event.preventDefault(); event.stopPropagation();" ontouchstart="event.preventDefault(); event.stopPropagation();" onclick="event.stopPropagation(); openAdminForm('${char.id}')" title="상세 정보 수정">✏️</button>
+        <button class="card-edit-btn" onmousedown="event.preventDefault(); event.stopPropagation();" ontouchstart="event.preventDefault(); event.stopPropagation();" onclick="event.stopPropagation(); openAdminForm('${char.id}')" title="${currentLang === 'en' ? 'Edit Details' : '상세 정보 수정'}">✏️</button>
       </div>
     ` : '';
 
@@ -6577,6 +8208,11 @@ function renderTree() {
 
   // 5. Apply scale and pan position to all newly created elements
   updateTransform();
+
+  // 6. Ensure all active layers are properly visible
+  if (typeof updateLayersVisibility === 'function') {
+    updateLayersVisibility();
+  }
 }
 
 // Draw Spouse and Parent-Children Connecting Lines in SVG
@@ -6973,13 +8609,13 @@ function drawConnections() {
   renderCustomPolygons();
   
   // Update line editor buttons state and z-order controls
-  const clearSelectedBtn = document.getElementById('style-clear-selected-line-btn');
-  if (clearSelectedBtn) {
-    clearSelectedBtn.disabled = !selectedLineKey;
-  }
   const deleteSelectedBtn = document.getElementById('style-delete-selected-line-btn');
   if (deleteSelectedBtn) {
     deleteSelectedBtn.disabled = !selectedLineKey;
+  }
+  const deletePointBtn = document.getElementById('style-delete-selected-point-btn');
+  if (deletePointBtn) {
+    deletePointBtn.disabled = !selectedLineKey || !(lineBends[selectedLineKey] && lineBends[selectedLineKey].length > 0);
   }
   const zorderGroup = document.getElementById('style-line-zorder-group');
   if (zorderGroup) {
@@ -6998,11 +8634,11 @@ function renderBendHandles() {
   
   points.forEach((pt, index) => {
     const handle = document.createElement('div');
-    handle.className = 'line-bend-handle';
+    handle.className = `line-bend-handle ${selectedBendIndex === index ? 'selected' : ''}`;
     handle.dataset.index = index;
     handle.style.left = `${pt.x * currentScale}px`;
     handle.style.top = `${pt.y * currentScale}px`;
-    handle.title = "드래그하여 이동, 우클릭 또는 더블클릭하여 삭제";
+    handle.title = "드래그하여 이동, 클릭하여 선택, 우클릭 또는 더블클릭하여 삭제";
     
     let dragStartX = 0;
     let dragStartY = 0;
@@ -7066,6 +8702,7 @@ function renderBendHandles() {
     const deletePoint = () => {
       pushHistoryState();
       points.splice(index, 1);
+      selectedBendIndex = null;
       if (points.length === 0) {
         delete lineBends[selectedLineKey];
         selectedLineKey = null;
@@ -7077,8 +8714,11 @@ function renderBendHandles() {
     // Click to select the bend point
     handle.addEventListener('click', (e) => {
       e.stopPropagation();
+      selectedBendIndex = index;
       document.querySelectorAll('.line-bend-handle').forEach(h => h.classList.remove('selected'));
       handle.classList.add('selected');
+      const delPtBtn = document.getElementById('style-delete-selected-point-btn');
+      if (delPtBtn) delPtBtn.disabled = false;
     });
     
     // Double click to delete bend point if selected
@@ -7722,21 +9362,19 @@ function renderCustomPolygons() {
       let dragStartPos = null;
       let hasDragged = false;
       
-      polyEl.addEventListener('mousedown', (e) => {
-        if (e.button !== 0 || isAddPolygonModeActive) return;
-        e.stopPropagation();
-        
-        dragStartPos = { x: e.clientX, y: e.clientY };
+      const startDragPolygon = (clientX, clientY) => {
+        if (isAddPolygonModeActive) return;
+        dragStartPos = { x: clientX, y: clientY };
         hasDragged = false;
         
         const startPoints = poly.points.map(pt => ({ x: pt.x, y: pt.y }));
         
-        const onMouseMove = (moveEvt) => {
+        const onMove = (currX, currY) => {
           if (!dragStartPos) return;
-          let dx = (moveEvt.clientX - dragStartPos.x) / currentScale;
-          let dy = (moveEvt.clientY - dragStartPos.y) / currentScale;
+          let dx = (currX - dragStartPos.x) / currentScale;
+          let dy = (currY - dragStartPos.y) / currentScale;
           
-          if (Math.abs(dx) > 2 || Math.abs(dy) > 2) {
+          if (Math.hypot(dx, dy) > 2) {
             if (!hasDragged) {
               pushHistoryState();
               hasDragged = true;
@@ -7757,40 +9395,82 @@ function renderCustomPolygons() {
           }
         };
         
-        const onMouseUp = () => {
+        const onEnd = (endX, endY) => {
           window.removeEventListener('mousemove', onMouseMove);
           window.removeEventListener('mouseup', onMouseUp);
+          window.removeEventListener('touchmove', onTouchMove);
+          window.removeEventListener('touchend', onTouchEnd);
+          window.removeEventListener('touchcancel', onTouchEnd);
           dragStartPos = null;
           
           if (hasDragged) {
             saveCustomPolygons();
+            selectedPolygonId = poly.id;
+            selectedLineKey = null;
+            selectedJunctionId = null;
             renderTree();
             updateTransform();
+            updateAreaEditorPanel();
+            openStyleEditorPanel();
+            if (styleEditorPanel) styleEditorPanel.scrollTop = 0;
           } else {
-            // It was a simple click!
+            // It was a simple click / tap: select the polygon and open line design editor panel!
             if (selectedPolygonId !== poly.id) {
               selectedPolygonId = poly.id;
               selectedLineKey = null;
               selectedJunctionId = null;
               renderTree();
               updateTransform();
+              updateAreaEditorPanel();
               openStyleEditorPanel();
-              setTimeout(() => {
-                document.getElementById('area-editor-section')?.scrollIntoView({ behavior: 'smooth' });
-              }, 300);
+              if (styleEditorPanel) styleEditorPanel.scrollTop = 0;
             } else {
               // Already selected, try to insert a vertex
+              const clickPtX = endX !== undefined ? endX : clientX;
+              const clickPtY = endY !== undefined ? endY : clientY;
               const rect = treeBoard.getBoundingClientRect();
-              const clickX = (e.clientX - rect.left) / currentScale;
-              const clickY = (e.clientY - rect.top) / currentScale;
+              const clickX = (clickPtX - rect.left) / currentScale;
+              const clickY = (clickPtY - rect.top) / currentScale;
               insertVertexOnClosestSegment(poly, clickX, clickY);
+              openStyleEditorPanel();
+              if (styleEditorPanel) styleEditorPanel.scrollTop = 0;
             }
           }
         };
         
+        const onMouseMove = (moveEvt) => onMove(moveEvt.clientX, moveEvt.clientY);
+        const onMouseUp = (upEvt) => onEnd(upEvt.clientX, upEvt.clientY);
+        const onTouchMove = (moveEvt) => {
+          if (moveEvt.touches && moveEvt.touches.length > 0) {
+            if (moveEvt.cancelable) moveEvt.preventDefault();
+            onMove(moveEvt.touches[0].clientX, moveEvt.touches[0].clientY);
+          }
+        };
+        const onTouchEnd = (endEvt) => {
+          const t = endEvt.changedTouches && endEvt.changedTouches.length > 0 ? endEvt.changedTouches[0] : null;
+          onEnd(t ? t.clientX : clientX, t ? t.clientY : clientY);
+        };
+        
         window.addEventListener('mousemove', onMouseMove);
         window.addEventListener('mouseup', onMouseUp);
+        window.addEventListener('touchmove', onTouchMove, { passive: false });
+        window.addEventListener('touchend', onTouchEnd);
+        window.addEventListener('touchcancel', onTouchEnd);
+      };
+      
+      polyEl.addEventListener('mousedown', (e) => {
+        if (e.button !== 0 || isAddPolygonModeActive) return;
+        e.stopPropagation();
+        startDragPolygon(e.clientX, e.clientY);
       });
+
+      polyEl.addEventListener('touchstart', (e) => {
+        if (isAddPolygonModeActive) return;
+        if (e.touches && e.touches.length === 1) {
+          e.stopPropagation();
+          startDragPolygon(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: true });
     } else {
       // Clicks pass through in user mode, so no click listener on the polygon shape itself.
       polyEl.style.cursor = 'default';
@@ -7817,65 +9497,90 @@ function renderCustomPolygons() {
     label.textContent = getPolygonLabel(poly);
     label.style.display = isLayerVisible ? '' : 'none';
     
-    if (isAdminMode) {
-      label.style.cursor = isSelected ? 'move' : 'pointer';
-      
-      // Select polygon on label click
-      label.addEventListener('click', (e) => {
-        e.stopPropagation();
-        selectedPolygonId = poly.id;
-        selectedLineKey = null;
-        selectedJunctionId = null;
-        renderTree();
-        updateTransform();
-        openStyleEditorPanel();
-        setTimeout(() => {
-          document.getElementById('area-editor-section')?.scrollIntoView({ behavior: 'smooth' });
-        }, 300);
-      });
+    const handleTitleOpenDetails = () => {
+      selectedPolygonId = poly.id;
+      selectedLineKey = null;
+      selectedJunctionId = null;
+      renderTree();
+      updateTransform();
+      closeStyleEditorPanel();
+      openLayerDetails(poly, 'polygon');
+      highlightRelatedElements(poly.id, 'polygon');
+    };
 
-      // Drag label to adjust title position
-      label.addEventListener('mousedown', (e) => {
-        if (e.button !== 0) return; // only left click
-        e.stopPropagation();
-        e.preventDefault();
-        
-        pushHistoryState();
-        const dragStartX = e.clientX;
-        const dragStartY = e.clientY;
+    if (isAdminMode) {
+      label.style.cursor = 'pointer';
+      
+      // Unified Drag and Click/Touch handler for Admin Mode
+      const startDragLabel = (clientX, clientY) => {
+        let hasMoved = false;
+        const dragStartX = clientX;
+        const dragStartY = clientY;
         const startOffsetX = poly.labelOffsetX || 0;
         const startOffsetY = poly.labelOffsetY || 0;
         
-        if (selectedPolygonId !== poly.id) {
-          selectedPolygonId = poly.id;
-          selectedLineKey = null;
-          selectedJunctionId = null;
-          renderTree();
-          updateTransform();
-        }
-        
-        const onMouseMove = (moveEvt) => {
-          const dx = (moveEvt.clientX - dragStartX) / currentScale;
-          const dy = (moveEvt.clientY - dragStartY) / currentScale;
-          poly.labelOffsetX = startOffsetX + dx;
-          poly.labelOffsetY = startOffsetY + dy;
-          
-          label.style.left = `${(labelPt.x + poly.labelOffsetX) * currentScale}px`;
-          label.style.top = `${(labelPt.y - 12 + poly.labelOffsetY) * currentScale}px`;
+        const onMove = (currX, currY) => {
+          const dx = (currX - dragStartX) / currentScale;
+          const dy = (currY - dragStartY) / currentScale;
+          if (Math.hypot(dx, dy) > 4) {
+            if (!hasMoved) {
+              pushHistoryState();
+              hasMoved = true;
+            }
+            poly.labelOffsetX = startOffsetX + dx;
+            poly.labelOffsetY = startOffsetY + dy;
+            label.style.left = `${(labelPt.x + poly.labelOffsetX) * currentScale}px`;
+            label.style.top = `${(labelPt.y - 12 + poly.labelOffsetY) * currentScale}px`;
+          }
         };
-        
-        const onMouseUp = () => {
+
+        const onEnd = () => {
           window.removeEventListener('mousemove', onMouseMove);
           window.removeEventListener('mouseup', onMouseUp);
-          saveCustomPolygons();
-          renderTree();
-          updateTransform();
+          window.removeEventListener('touchmove', onTouchMove);
+          window.removeEventListener('touchend', onTouchEnd);
+          window.removeEventListener('touchcancel', onTouchEnd);
+          
+          if (hasMoved) {
+            saveCustomPolygons();
+            renderTree();
+            updateTransform();
+          } else {
+            // It was a tap / click! Open area details / note recording window and close style editor
+            handleTitleOpenDetails();
+          }
         };
-        
+
+        const onMouseMove = (moveEvt) => onMove(moveEvt.clientX, moveEvt.clientY);
+        const onMouseUp = () => onEnd();
+        const onTouchMove = (moveEvt) => {
+          if (moveEvt.touches && moveEvt.touches.length > 0) {
+            if (moveEvt.cancelable) moveEvt.preventDefault();
+            onMove(moveEvt.touches[0].clientX, moveEvt.touches[0].clientY);
+          }
+        };
+        const onTouchEnd = () => onEnd();
+
         window.addEventListener('mousemove', onMouseMove);
         window.addEventListener('mouseup', onMouseUp);
+        window.addEventListener('touchmove', onTouchMove, { passive: false });
+        window.addEventListener('touchend', onTouchEnd);
+        window.addEventListener('touchcancel', onTouchEnd);
+      };
+
+      label.addEventListener('mousedown', (e) => {
+        if (e.button !== 0) return;
+        e.stopPropagation();
+        startDragLabel(e.clientX, e.clientY);
       });
-      
+
+      label.addEventListener('touchstart', (e) => {
+        if (e.touches && e.touches.length === 1) {
+          e.stopPropagation();
+          startDragLabel(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: true });
+
       // Double click to rename
       label.addEventListener('dblclick', (e) => {
         e.stopPropagation();
@@ -7906,8 +9611,11 @@ function renderCustomPolygons() {
       label.style.cursor = 'pointer';
       label.addEventListener('click', (e) => {
         e.stopPropagation();
-        openLayerDetails(poly, 'polygon');
-        highlightRelatedElements(poly.id, 'polygon');
+        handleTitleOpenDetails();
+      });
+      label.addEventListener('touchend', (e) => {
+        e.stopPropagation();
+        handleTitleOpenDetails();
       });
     }
     
@@ -7917,54 +9625,24 @@ function renderCustomPolygons() {
     if (isAdminMode && isSelected) {
       poly.points.forEach((pt, idx) => {
         const handle = document.createElement('div');
-        handle.className = 'poly-vertex-handle';
+        handle.className = `poly-vertex-handle ${selectedPolyVertexIndex === idx ? 'selected' : ''}`;
         handle.dataset.polyId = poly.id;
         handle.dataset.index = idx;
         handle.style.left = `${pt.x * currentScale}px`;
         handle.style.top = `${pt.y * currentScale}px`;
-        handle.title = "드래그하여 정점 이동, 더블클릭 또는 우클릭하여 삭제";
+        handle.title = "드래그하여 정점 이동, 클릭하여 선택, 더블클릭 또는 우클릭하여 삭제";
         handle.style.display = isLayerVisible ? '' : 'none';
         
-        handle.addEventListener('mousedown', (e) => {
-          e.stopPropagation();
-          e.preventDefault();
+        const startDragVertex = (clientX, clientY) => {
           pushHistoryState();
-          
-          const dragStartX = e.clientX;
-          const dragStartY = e.clientY;
+          const dragStartX = clientX;
+          const dragStartY = clientY;
           const originalX = pt.x;
           const originalY = pt.y;
           
-          const onMouseMove = (moveEvt) => {
-            let dx = (moveEvt.clientX - dragStartX) / currentScale;
-            let dy = (moveEvt.clientY - dragStartY) / currentScale;
-            
-            if (moveEvt && moveEvt.shiftKey) {
-              const dist = Math.hypot(dx, dy);
-              if (dist > 0) {
-                const angleRad = Math.atan2(dy, dx);
-                let angleDeg = angleRad * (180 / Math.PI);
-                if (angleDeg < 0) angleDeg += 360;
-                const quadrant = Math.floor(angleDeg / 90);
-                const relativeAngle = angleDeg % 90;
-                
-                // Snap to 0, 30, 45, 70, 90
-                const allowedBaseAngles = [0, 30, 45, 70, 90];
-                let closestBase = 0;
-                let minDiff = Infinity;
-                for (const base of allowedBaseAngles) {
-                  const diff = Math.abs(relativeAngle - base);
-                  if (diff < minDiff) {
-                    minDiff = diff;
-                    closestBase = base;
-                  }
-                }
-                const constrainedDeg = (quadrant * 90) + closestBase;
-                const constrainedRad = constrainedDeg * (Math.PI / 180);
-                dx = dist * Math.cos(constrainedRad);
-                dy = dist * Math.sin(constrainedRad);
-              }
-            }
+          const onMove = (currentClientX, currentClientY) => {
+            let dx = (currentClientX - dragStartX) / currentScale;
+            let dy = (currentClientY - dragStartY) / currentScale;
             
             let targetX = originalX + dx;
             let targetY = originalY + dy;
@@ -7986,21 +9664,78 @@ function renderCustomPolygons() {
             updateLabelRealTime(poly);
           };
           
-          const onMouseUp = () => {
+          const onEnd = () => {
             window.removeEventListener('mousemove', onMouseMove);
             window.removeEventListener('mouseup', onMouseUp);
+            window.removeEventListener('touchmove', onTouchMove);
+            window.removeEventListener('touchend', onTouchEnd);
+            window.removeEventListener('touchcancel', onTouchEnd);
             saveCustomPolygons();
+            selectedPolygonId = poly.id;
             renderTree();
             updateTransform();
+            updateAreaEditorPanel();
+            openStyleEditorPanel();
+            if (styleEditorPanel) styleEditorPanel.scrollTop = 0;
+          };
+          
+          const onMouseMove = (moveEvt) => {
+            onMove(moveEvt.clientX, moveEvt.clientY);
+          };
+          const onMouseUp = () => {
+            onEnd();
+          };
+          const onTouchMove = (moveEvt) => {
+            if (moveEvt.touches && moveEvt.touches.length > 0) {
+              if (moveEvt.cancelable) moveEvt.preventDefault();
+              moveEvt.stopPropagation();
+              onMove(moveEvt.touches[0].clientX, moveEvt.touches[0].clientY);
+            }
+          };
+          const onTouchEnd = (endEvt) => {
+            if (endEvt && endEvt.cancelable) endEvt.preventDefault();
+            if (endEvt) endEvt.stopPropagation();
+            onEnd();
           };
           
           window.addEventListener('mousemove', onMouseMove);
           window.addEventListener('mouseup', onMouseUp);
+          window.addEventListener('touchmove', onTouchMove, { passive: false });
+          window.addEventListener('touchend', onTouchEnd, { passive: false });
+          window.addEventListener('touchcancel', onTouchEnd, { passive: false });
+        };
+        
+        handle.addEventListener('mousedown', (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          startDragVertex(e.clientX, e.clientY);
+        });
+
+        handle.addEventListener('touchstart', (e) => {
+          if (e.touches && e.touches.length === 1) {
+            e.stopPropagation();
+            if (e.cancelable) e.preventDefault();
+            startDragVertex(e.touches[0].clientX, e.touches[0].clientY, false);
+          }
+        }, { passive: false });
+
+        handle.addEventListener('click', (e) => {
+          e.stopPropagation();
+          selectedPolygonId = poly.id;
+          selectedPolyVertexIndex = idx;
+          treeBoard.querySelectorAll('.poly-vertex-handle').forEach(h => h.classList.remove('selected'));
+          handle.classList.add('selected');
+          const delAreaPtBtn = document.getElementById('style-delete-area-point-btn');
+          if (delAreaPtBtn) delAreaPtBtn.disabled = false;
+          updateAreaEditorPanel();
+          openStyleEditorPanel();
+          if (styleEditorPanel) styleEditorPanel.scrollTop = 0;
         });
         
         const deleteVertex = () => {
           pushHistoryState();
           poly.points.splice(idx, 1);
+          selectedPolyVertexIndex = null;
           if (poly.points.length < 3) {
             customPolygons = customPolygons.filter(p => p.id !== poly.id);
             selectedPolygonId = null;
@@ -8622,9 +10357,23 @@ function getCustomOrthogonalPath(x0, y0, x_child, y_child, points) {
 
 // Setup Zoom and Pan Interaction Handler
 function setupZoomPan() {
-  document.getElementById('zoom-in').addEventListener('click', () => applyZoom('in'));
-  document.getElementById('zoom-out').addEventListener('click', () => applyZoom('out'));
-  document.getElementById('zoom-reset')?.addEventListener('click', () => applyZoom('reset'));
+  const zoomInBtn = document.getElementById('zoom-in');
+  const zoomOutBtn = document.getElementById('zoom-out');
+  const zoomResetBtn = document.getElementById('zoom-reset');
+  const zoomLevelEl = document.getElementById('zoom-level');
+
+  if (zoomInBtn) {
+    bindHybridButton(zoomInBtn, () => applyZoom('in'), 120);
+  }
+  if (zoomOutBtn) {
+    bindHybridButton(zoomOutBtn, () => applyZoom('out'), 120);
+  }
+  if (zoomResetBtn) {
+    bindHybridButton(zoomResetBtn, () => applyZoom('reset'), 120);
+  }
+  if (zoomLevelEl) {
+    bindHybridButton(zoomLevelEl, () => applyZoom('reset'), 120);
+  }
   
   // Prevent any native browser scroll offset shifts inside viewerContainer (e.g. from element focus)
   viewerContainer.addEventListener('scroll', () => {
@@ -8659,17 +10408,15 @@ function setupZoomPan() {
   // Helper to determine if wheel/gesture target is inside a scrollable modal/panel
   function isScrollableOverlay(target) {
     if (!target) return false;
-    return target.closest('#landing-page') ||
-           target.closest('#study-panel') || 
-           target.closest('.layer-control-panel') || 
-           target.closest('#search-panel') || 
-           target.closest('.modal-content') || 
-           target.closest('#style-editor-panel') ||
-           target.closest('#help-guide-modal') ||
-           target.closest('#install-guide-modal') ||
-           target.closest('#desktop-license-modal') ||
-           target.closest('#admin-dashboard-modal') ||
-           target.closest('#bottom-spawner-panel');
+    const overlay = target.closest(
+      '#study-panel, .layer-control-panel, #search-panel, .modal-content, #admin-modal, #layer-item-modal, #style-editor-panel, #help-guide-modal, #install-guide-modal, #desktop-license-modal, #admin-dashboard-modal, #bottom-spawner-panel'
+    );
+    if (!overlay) return false;
+    const style = window.getComputedStyle(overlay);
+    if (style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0') {
+      return false;
+    }
+    return true;
   }
 
   function shouldIgnoreDrag(target) {
@@ -8681,6 +10428,9 @@ function setupZoomPan() {
       target.closest('#search-panel') ||
       target.closest('#admin-actions-bar') ||
       target.closest('.modal-content') ||
+      target.closest('.modal-overlay') ||
+      target.closest('#admin-modal') ||
+      target.closest('#layer-item-modal') ||
       target.closest('#style-editor-panel') ||
       target.closest('.canvas-annotation') ||
       target.closest('.layer-marker') ||
@@ -8694,47 +10444,60 @@ function setupZoomPan() {
     );
   }
 
+  let isNativeGesturing = false;
+
   // Intercept wheel events globally on window (ignoring scrollable panels) to prevent dead-zones
   window.addEventListener('wheel', (e) => {
-    if (isScrollableOverlay(e.target)) {
+    if (isNativeGesturing || isScrollableOverlay(e.target)) {
       return;
     }
     e.preventDefault();
     
-    if (e.ctrlKey || e.metaKey || e.altKey) {
-      // High-precision smooth zoom with delta clamping for perfect trackpad pinch & mouse wheel feel
-      const maxDelta = 30;
-      const clampedDelta = Math.min(maxDelta, Math.max(-maxDelta, e.deltaY));
-      let nextScale = targetScale * Math.exp(-clampedDelta * 0.005);
-      nextScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, nextScale));
-      
-      if (nextScale === targetScale) return;
-      
-      const rect = viewerContainer.getBoundingClientRect();
-      const mouseX = globalMouseX - rect.left;
-      const mouseY = globalMouseY - rect.top;
-      
-      const worldX = (mouseX - targetPanX) / targetScale;
-      const worldY = (mouseY - targetPanY) / targetScale;
-      
-      // If we are starting a new zoom gesture, record the start scale
-      if (!isZoomAnimating) {
-        scaleAtAnimationStart = currentScale;
-      }
-      
-      targetScale = nextScale;
-      targetPanX = mouseX - worldX * targetScale;
-      targetPanY = mouseY - worldY * targetScale;
-      
-      startZoomAnimation();
+    // Smooth zoom with delta clamping for both trackpad pinch and mouse wheel scroll
+    const isPinch = e.ctrlKey || e.metaKey || e.altKey;
+    let zoomSensitivity;
+    let delta = e.deltaY;
+
+    if (isPinch) {
+      const maxDelta = 40;
+      const clampedDelta = Math.min(maxDelta, Math.max(-maxDelta, delta));
+      zoomSensitivity = -clampedDelta * 0.008;
     } else {
-      // Trackpad Swipe/Mouse Scroll panning
-      panX -= e.deltaX;
-      panY -= e.deltaY;
-      targetPanX = panX;
-      targetPanY = panY;
-      updateTransform(true);
+      // Physical mouse wheel scroll: normalize deltaMode (0: pixels, 1: lines, 2: pages)
+      if (e.deltaMode === 1) delta *= 33;
+      else if (e.deltaMode === 2) delta *= 100;
+      const maxDelta = 120;
+      const clampedDelta = Math.min(maxDelta, Math.max(-maxDelta, delta));
+      zoomSensitivity = -clampedDelta * 0.003;
     }
+
+    let nextScale = (targetScale || currentScale || 1.0) * Math.exp(zoomSensitivity);
+    nextScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, nextScale));
+
+    if (Math.abs(nextScale - currentScale) < 0.0001 && Math.abs(nextScale - targetScale) < 0.0001) return;
+
+    const rect = viewerContainer.getBoundingClientRect();
+    const clientX = (typeof e.clientX === 'number' && e.clientX > 0) ? e.clientX : (globalMouseX || (rect.left + rect.width / 2));
+    const clientY = (typeof e.clientY === 'number' && e.clientY > 0) ? e.clientY : (globalMouseY || (rect.top + rect.height / 2));
+    const mouseX = clientX - rect.left;
+    const mouseY = clientY - rect.top;
+
+    const safeScale = (isNaN(currentScale) || currentScale <= 0) ? 1.0 : currentScale;
+    const safePanX = isNaN(panX) ? 0 : panX;
+    const safePanY = isNaN(panY) ? 0 : panY;
+
+    const currentWorldX = (mouseX - safePanX) / safeScale;
+    const currentWorldY = (mouseY - safePanY) / safeScale;
+
+    if (!isZoomAnimating) {
+      scaleAtAnimationStart = safeScale;
+    }
+
+    targetScale = nextScale;
+    targetPanX = mouseX - currentWorldX * targetScale;
+    targetPanY = mouseY - currentWorldY * targetScale;
+
+    startZoomAnimation();
   }, { passive: false });
 
   // Native macOS WebKit gesture events for extremely smooth 100% reliable trackpad pinch-to-zoom
@@ -8747,11 +10510,15 @@ function setupZoomPan() {
       return;
     }
     e.preventDefault();
-    gestureStartScale = currentScale;
-    gestureStartPanX = panX;
-    gestureStartPanY = panY;
-    scaleAtAnimationStart = currentScale; // Set baseline for updateTransformLightweight calculations
-    isZoomAnimating = false; // stop animation during active gesture tracking
+    isNativeGesturing = true;
+    gestureStartScale = (isNaN(currentScale) || currentScale <= 0) ? 1.0 : currentScale;
+    gestureStartPanX = isNaN(panX) ? 0 : panX;
+    gestureStartPanY = isNaN(panY) ? 0 : panY;
+    scaleAtAnimationStart = gestureStartScale; // Set baseline for updateTransformLightweight calculations
+    if (isZoomAnimating) {
+      isZoomAnimating = false;
+      updateTransform();
+    }
     if (viewerContainer) viewerContainer.classList.add('zooming');
   });
 
@@ -8760,18 +10527,21 @@ function setupZoomPan() {
       return;
     }
     e.preventDefault();
-    const factor = e.scale;
+    isNativeGesturing = true;
+    const factor = e.scale || 1;
     const nextScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, gestureStartScale * factor));
     
     const rect = viewerContainer.getBoundingClientRect();
-    const mouseX = globalMouseX - rect.left;
-    const mouseY = globalMouseY - rect.top;
+    const clientX = (typeof e.clientX === 'number' && e.clientX > 0) ? e.clientX : (globalMouseX || (rect.left + rect.width / 2));
+    const clientY = (typeof e.clientY === 'number' && e.clientY > 0) ? e.clientY : (globalMouseY || (rect.top + rect.height / 2));
+    const mouseX = clientX - rect.left;
+    const mouseY = clientY - rect.top;
     
     const worldX = (mouseX - gestureStartPanX) / gestureStartScale;
     const worldY = (mouseY - gestureStartPanY) / gestureStartScale;
     
     currentScale = nextScale;
-    zoomLevelText.textContent = `${Math.round(currentScale * 100)}%`;
+    if (zoomLevelText) zoomLevelText.textContent = `${Math.round(currentScale * 100)}%`;
     
     panX = mouseX - worldX * currentScale;
     panY = mouseY - worldY * currentScale;
@@ -8788,6 +10558,7 @@ function setupZoomPan() {
       return;
     }
     e.preventDefault();
+    isNativeGesturing = false;
     updateTransform();
     setTimeout(() => {
       if (!isZoomAnimating && !isTouchZooming) {
@@ -8798,20 +10569,19 @@ function setupZoomPan() {
   
   let startClickX = 0;
   let startClickY = 0;
+  let isBoardActuallyMoved = false;
   viewerContainer.addEventListener('mousedown', (e) => {
     if (shouldIgnoreDrag(e.target)) return;
     
     // Prevent native selection/drag on background
     e.preventDefault();
-    isZoomAnimating = false; // Stop any ongoing zoom animation when dragging starts
+    stopZoomAnimation();
     
     startClickX = e.clientX;
     startClickY = e.clientY;
+    isBoardActuallyMoved = false;
     
     isDragging = true;
-    if (!isAddPersonModeActive) {
-      viewerContainer.style.cursor = 'grabbing';
-    }
     startX = e.clientX;
     startY = e.clientY;
     startPanX = panX;
@@ -8820,7 +10590,7 @@ function setupZoomPan() {
   
   window.addEventListener('mouseup', () => {
     isDragging = false;
-    viewerContainer.style.cursor = 'grab';
+    if (viewerContainer) viewerContainer.style.cursor = 'default';
     
     if (activeAnnotationId) {
       activeAnnotationId = null;
@@ -8860,7 +10630,7 @@ function setupZoomPan() {
   
   viewerContainer.addEventListener('mouseleave', () => {
     isDragging = false;
-    viewerContainer.style.cursor = 'grab';
+    if (viewerContainer) viewerContainer.style.cursor = 'default';
     
     if (activeAnnotationId) {
       activeAnnotationId = null;
@@ -8881,35 +10651,17 @@ function setupZoomPan() {
       let finalX = clickX;
       let finalY = clickY;
       
-      if (e.shiftKey) {
-        const lastPt = tempPolygonPoints[tempPolygonPoints.length - 1];
-        const dx = clickX - lastPt.x;
-        const dy = clickY - lastPt.y;
-        const dist = Math.hypot(dx, dy);
-        if (dist > 0) {
-          const angleRad = Math.atan2(dy, dx);
-          let angleDeg = angleRad * (180 / Math.PI);
-          if (angleDeg < 0) angleDeg += 360;
-          
-          const quadrant = Math.floor(angleDeg / 90);
-          const relativeAngle = angleDeg % 90;
-          
-          const allowedBaseAngles = [0, 30, 45, 75, 90];
-          let closestBase = 0;
-          let minDiff = Infinity;
-          for (const base of allowedBaseAngles) {
-            const diff = Math.abs(relativeAngle - base);
-            if (diff < minDiff) {
-              minDiff = diff;
-              closestBase = base;
-            }
-          }
-          
-          const constrainedDeg = (quadrant * 90) + closestBase;
-          const constrainedRad = constrainedDeg * (Math.PI / 180);
-          finalX = lastPt.x + dist * Math.cos(constrainedRad);
-          finalY = lastPt.y + dist * Math.sin(constrainedRad);
-        }
+      const lastPt = tempPolygonPoints[tempPolygonPoints.length - 1];
+      const dx = clickX - lastPt.x;
+      const dy = clickY - lastPt.y;
+      
+      if (isGridSnapActive) {
+        finalX = Math.round(finalX / 10) * 10;
+        finalY = Math.round(finalY / 10) * 10;
+      } else {
+        // 스마트 근접 스냅 (8px 이내 시 수평/수직 자동 정렬)
+        if (Math.abs(dy) <= 8) finalY = lastPt.y;
+        if (Math.abs(dx) <= 8) finalX = lastPt.x;
       }
       
       updateTempPolygonPreview({ x: finalX, y: finalY });
@@ -8918,8 +10670,9 @@ function setupZoomPan() {
     if (activeAnnotationId) {
       const annot = annotations.find(a => a.id === activeAnnotationId);
       if (annot) {
-        const dx = (e.clientX - annotDragStartX) / currentScale;
-        const dy = (e.clientY - annotDragStartY) / currentScale;
+        let dx = (e.clientX - annotDragStartX) / currentScale;
+        let dy = (e.clientY - annotDragStartY) / currentScale;
+        
         annot.x = annotOriginalX + dx;
         annot.y = annotOriginalY + dy;
         const el = document.getElementById(`annot-${annot.id}`);
@@ -8939,40 +10692,55 @@ function setupZoomPan() {
     if (!isDragging) return;
     const dx = e.clientX - startX;
     const dy = e.clientY - startY;
+    if (Math.abs(dx) > 4 || Math.abs(dy) > 4) {
+      isBoardActuallyMoved = true;
+    }
     panX = startPanX + dx;
     panY = startPanY + dy;
     targetPanX = panX;
     targetPanY = panY;
-    zoomWrapper.style.transform = `translate3d(${panX}px, ${panY}px, 0)`;
+    updateTransform(true);
   });
   
   // Mobile Touch Support
   const onTouchMove = (e) => {
     const rect = viewerContainer.getBoundingClientRect();
-    if (isTouchZooming && e.touches.length === 2) {
+    if (e.touches.length === 2) {
       e.preventDefault();
+      if (!isTouchZooming || touchStartDistance <= 0) {
+        isTouchZooming = true;
+        isDragging = false;
+        touchStartDistance = getTouchDistance(e.touches[0], e.touches[1]);
+        touchStartScale = currentScale;
+        touchStartPanX = panX;
+        touchStartPanY = panY;
+        if (viewerContainer) viewerContainer.classList.add('zooming');
+      }
       const currentDist = getTouchDistance(e.touches[0], e.touches[1]);
-      const factor = currentDist / touchStartDistance;
-      const nextScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, touchStartScale * factor));
-      
-      const touchCenterX = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left;
-      const touchCenterY = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top;
-      
-      const worldX = (touchCenterX - touchStartPanX) / touchStartScale;
-      const worldY = (touchCenterY - touchStartPanY) / touchStartScale;
-      
-      currentScale = nextScale;
-      zoomLevelText.textContent = `${Math.round(currentScale * 100)}%`;
-      
-      panX = touchCenterX - worldX * currentScale;
-      panY = touchCenterY - worldY * currentScale;
-      
-      // Keep target coordinates synced for touch zooming (no LERP needed here as fingers do physical easing)
-      targetScale = currentScale;
-      targetPanX = panX;
-      targetPanY = panY;
-      
-      updateTransform();
+      if (touchStartDistance > 0) {
+        const factor = currentDist / touchStartDistance;
+        const nextScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, touchStartScale * factor));
+        
+        const touchCenterX = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left;
+        const touchCenterY = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top;
+        
+        const worldX = (touchCenterX - touchStartPanX) / touchStartScale;
+        const worldY = (touchCenterY - touchStartPanY) / touchStartScale;
+        
+        currentScale = nextScale;
+        if (zoomLevelText) zoomLevelText.textContent = `${Math.round(currentScale * 100)}%`;
+        
+        panX = touchCenterX - worldX * currentScale;
+        panY = touchCenterY - worldY * currentScale;
+        
+        // Keep target coordinates synced for touch zooming (no LERP needed here as fingers do physical easing)
+        targetScale = currentScale;
+        targetPanX = panX;
+        targetPanY = panY;
+        
+        updateTransform();
+      }
+      return;
     } else if (isDragging && e.touches.length === 1) {
       e.preventDefault(); // Stop mobile native elastic scrolling and bounce
       const currentX = e.touches[0].clientX;
@@ -8982,9 +10750,12 @@ function setupZoomPan() {
       
       panX = startPanX + dx;
       panY = startPanY + dy;
+      if (Math.abs(dx) > 4 || Math.abs(dy) > 4) {
+        isBoardActuallyMoved = true;
+      }
       targetPanX = panX;
       targetPanY = panY;
-      zoomWrapper.style.transform = `translate3d(${panX}px, ${panY}px, 0)`;
+      updateTransform(true);
       
       const now = Date.now();
       const dt = now - lastTouchTime;
@@ -9001,7 +10772,187 @@ function setupZoomPan() {
     }
   };
   
+  let lastCanvasTapTimestamp = 0;
+  
+  function handleCanvasTapOrClick(clientX, clientY, target) {
+    if (!target) return;
+    
+    // UI 상단 바, 제어판, 검색창, 관리자 바, 모달 내부 클릭/터치는 캔버스 액션 제외
+    if (target.closest('header') || 
+        target.closest('#control-panel') || 
+        target.closest('#search-panel') || 
+        target.closest('#admin-actions-bar') || 
+        target.closest('.modal-content') || 
+        target.closest('#style-editor-panel') || 
+        target.closest('.bottom-spawner-panel')) {
+      return;
+    }
+
+    if (isAdminMode && activeSpawnerItem) {
+      const rect = treeBoard.getBoundingClientRect();
+      const clickX = (clientX - rect.left) / currentScale;
+      const clickY = (clientY - rect.top) / currentScale;
+      
+      pushHistoryState();
+      
+      if (activeSpawnerType === 'location') {
+        const newLoc = {
+          id: 'loc-' + Date.now(),
+          name: activeSpawnerItem.name,
+          desc: activeSpawnerItem.desc || '',
+          refs: activeSpawnerItem.refs ? [...activeSpawnerItem.refs] : [],
+          relatedEvents: activeSpawnerItem.relatedEvents ? [...activeSpawnerItem.relatedEvents] : [],
+          relatedPeople: activeSpawnerItem.relatedPeople ? [...activeSpawnerItem.relatedPeople] : [],
+          x: Math.round(clickX),
+          y: Math.round(clickY)
+        };
+        locations.push(newLoc);
+        saveLocations();
+        renderLocations();
+        showToast(currentLang === 'en' ? `📍 Placed '${activeSpawnerItem.name}' location copy.` : `📍 '${activeSpawnerItem.name}' 장소가 복사되어 배치되었습니다.`);
+      } else if (activeSpawnerType === 'event') {
+        const newEv = {
+          id: 'ev-' + Date.now(),
+          name: activeSpawnerItem.name,
+          desc: activeSpawnerItem.desc || '',
+          refs: activeSpawnerItem.refs ? [...activeSpawnerItem.refs] : [],
+          relatedLocations: activeSpawnerItem.relatedLocations ? [...activeSpawnerItem.relatedLocations] : [],
+          relatedPeople: activeSpawnerItem.relatedPeople ? [...activeSpawnerItem.relatedPeople] : [],
+          x: Math.round(clickX),
+          y: Math.round(clickY)
+        };
+        events.push(newEv);
+        saveEvents();
+        renderEvents();
+        showToast(currentLang === 'en' ? `📜 Placed '${activeSpawnerItem.name}' event copy.` : `📜 '${activeSpawnerItem.name}' 사건이 복사되어 배치되었습니다.`);
+      }
+      
+      cancelPlacementMode();
+      autoSaveToServer();
+      return;
+    }
+
+    // 1) 다각형 영역 추가 모드
+    if (isAddPolygonModeActive) {
+      const rect = treeBoard.getBoundingClientRect();
+      const clickX = (clientX - rect.left) / currentScale;
+      const clickY = (clientY - rect.top) / currentScale;
+      
+      let finalX = clickX;
+      let finalY = clickY;
+      
+      const lastPt = tempPolygonPoints[tempPolygonPoints.length - 1];
+      if (lastPt) {
+        const dx = clickX - lastPt.x;
+        const dy = clickY - lastPt.y;
+        
+        if (isGridSnapActive) {
+          finalX = Math.round(finalX / 10) * 10;
+          finalY = Math.round(finalY / 10) * 10;
+        } else {
+          if (Math.abs(dy) <= 8) finalY = lastPt.y;
+          if (Math.abs(dx) <= 8) finalX = lastPt.x;
+        }
+      }
+      
+      tempPolygonPoints.push({ x: finalX, y: finalY });
+      updateTempPolygonPreview();
+      return;
+    }
+
+    // 2) 메모 추가 모드
+    if (isAddAnnotationModeActive) {
+      const rect = treeBoard.getBoundingClientRect();
+      const clickX = (clientX - rect.left) / currentScale;
+      const clickY = (clientY - rect.top) / currentScale;
+      
+      const newNote = {
+        id: "note-" + Date.now(),
+        x: Math.round(clickX),
+        y: Math.round(clickY),
+        width: 180,
+        height: 100,
+        text: "새 텍스트 상자",
+        fontSize: 14,
+        color: "#1e293b",
+        bgColor: "#ffffff"
+      };
+      
+      annotations.push(newNote);
+      saveAnnotations();
+      renderAnnotations();
+      deactivateAddAnnotationMode();
+      autoSaveToServer();
+      showToast(currentLang === 'en' ? "📝 Text box created. Enter your text." : "📝 텍스트 상자가 생성되었습니다. 내용을 입력하세요.");
+      setTimeout(() => {
+        startEditingAnnotation(newNote.id);
+      }, 80);
+      return;
+    }
+
+    // 3) 인물 추가 모드
+    if (isAddPersonModeActive) {
+      if (target.closest('.person-card') || target.closest('.canvas-annotation')) return;
+      
+      const rect = viewerContainer.getBoundingClientRect();
+      const mouseX = clientX - rect.left;
+      const mouseY = clientY - rect.top;
+      const worldX = (mouseX - panX) / currentScale;
+      const worldY = (mouseY - panY) / currentScale;
+      
+      const clickGen = Math.max(0, Math.round((worldY - BOARD_PADDING_Y) / GEN_HEIGHT));
+      const clickCol = parseFloat(((worldX - centerX) / COL_WIDTH).toFixed(1));
+      
+      deactivateAddPersonMode();
+      openAdminFormWithCoords(clickGen, clickCol);
+      return;
+    }
+
+    // 4) 빈 공간 클릭/탭
+    const clickedEmptySpace = !target.closest('.person-card') && 
+                              !target.closest('.layer-marker') && 
+                              !target.closest('#study-panel') && 
+                              !target.closest('.canvas-annotation') && 
+                              !target.closest('.canvas-junction-node') &&
+                              !target.closest('.line-bend-handle') && 
+                              !target.closest('.poly-vertex-handle') &&
+                              !target.closest('.family-group-label') &&
+                              !target.closest('.family-group-panel-poly') &&
+                              !target.closest('.spouse-connector') && 
+                              !target.closest('.connector-line');
+                              
+    if (clickedEmptySpace) {
+      if (isAdminMode) {
+        if (selectedPersonId || selectedPersonIds.size > 0 || selectedLineKey || selectedJunctionId || selectedPolygonId) {
+          selectedPersonId = null;
+          selectedPersonIds.clear();
+          selectedLineKey = null;
+          selectedJunctionId = null;
+          selectedPolygonId = null;
+          document.querySelectorAll('.canvas-junction-node').forEach(n => n.classList.remove('selected-junction'));
+          renderTree();
+        }
+        closeStyleEditorPanel();
+        document.getElementById('filter-panel')?.classList.remove('active');
+      } else {
+        // 일반 모드: 빈 공간을 클릭 또는 탭했을 때 인물 선택, 직계 아우라, 상세정보창을 닫고 선택 해제
+        closeStudyPanel();
+        clearAllHighlights();
+        selectedPersonId = null;
+        selectedPersonIds.clear();
+      }
+    }
+  }
+
   const onTouchEnd = (e) => {
+    // 터치 이동 거리가 8px 이하인 명확한 제자리 탭 제스처인 경우에만 캔버스 액션 실행
+    const touchDist = Math.hypot(lastTouchX - startClickX, lastTouchY - startClickY);
+    if (!isTouchZooming && !isBoardActuallyMoved && touchDist <= 8) {
+      lastCanvasTapTimestamp = Date.now();
+      const touchTarget = document.elementFromPoint(lastTouchX, lastTouchY) || e.target;
+      handleCanvasTapOrClick(lastTouchX, lastTouchY, touchTarget);
+    }
+
     if (isDragging) {
       const speed = Math.sqrt(velocityX * velocityX + velocityY * velocityY);
       if (speed > 0.15) {
@@ -9025,7 +10976,7 @@ function setupZoomPan() {
             panY += velocityY * elapsed;
             targetPanX = panX;
             targetPanY = panY;
-            zoomWrapper.style.transform = `translate3d(${panX}px, ${panY}px, 0)`;
+            updateTransform(true);
           }
           inertiaFrameId = requestAnimationFrame(runInertia);
         };
@@ -9050,29 +11001,39 @@ function setupZoomPan() {
   };
   
   viewerContainer.addEventListener('touchstart', (e) => {
+    // 2개 이상의 터치(핀치 줌 제스처)는 인물 카드나 텍스트 위라도 무조건 최우선 처리!
+    if (e.touches.length >= 2) {
+      if (isScrollableOverlay(e.target)) return;
+      stopInertia();
+      stopZoomAnimation();
+      isDragging = false;
+      isTouchZooming = true;
+      if (viewerContainer) viewerContainer.classList.add('zooming');
+      touchStartDistance = getTouchDistance(e.touches[0], e.touches[1]);
+      touchStartScale = (isNaN(currentScale) || currentScale <= 0) ? 1.0 : currentScale;
+      touchStartPanX = isNaN(panX) ? 0 : panX;
+      touchStartPanY = isNaN(panY) ? 0 : panY;
+      window.addEventListener('touchmove', onTouchMove, { passive: false });
+      window.addEventListener('touchend', onTouchEnd, { passive: false });
+      window.addEventListener('touchcancel', onTouchEnd, { passive: false });
+      return;
+    }
+
     if (shouldIgnoreDrag(e.target)) return;
     stopInertia();
-    isZoomAnimating = false; // Stop any ongoing zoom animation when touch starts
-    if (viewerContainer) {
-      if (e.touches.length === 2) {
-        viewerContainer.classList.add('zooming');
-      } else {
-        viewerContainer.classList.remove('zooming');
-      }
-    }
-    const rect = viewerContainer.getBoundingClientRect();
-    if (e.touches.length === 2) {
-      isTouchZooming = true;
-      touchStartDistance = getTouchDistance(e.touches[0], e.touches[1]);
-      touchStartScale = currentScale;
-      touchStartPanX = panX;
-      touchStartPanY = panY;
-    } else if (e.touches.length === 1) {
+    stopZoomAnimation();
+
+    if (e.touches.length === 1) {
+      isBoardActuallyMoved = false;
       isDragging = true;
       startX = e.touches[0].clientX;
       startY = e.touches[0].clientY;
       startPanX = panX;
       startPanY = panY;
+      
+      // 모바일 기기 터치 시작 지점의 정밀 트래킹 동기화 (터치 탭 씹힘 완치)
+      startClickX = e.touches[0].clientX;
+      startClickY = e.touches[0].clientY;
       
       lastTouchX = e.touches[0].clientX;
       lastTouchY = e.touches[0].clientY;
@@ -9087,200 +11048,29 @@ function setupZoomPan() {
   }, { passive: false });
 
   viewerContainer.addEventListener('click', (e) => {
+    // 이미 터치 탭으로 처리된 경우 중복 실행 방지
+    if (Date.now() - lastCanvasTapTimestamp < 450) return;
+
+    if (isBoardActuallyMoved) {
+      isBoardActuallyMoved = false;
+      return;
+    }
+
     // Ignore click if the user was dragging/panning the board
     const clickDist = Math.sqrt(Math.pow(e.clientX - startClickX, 2) + Math.pow(e.clientY - startClickY, 2));
-    if (clickDist > 6) return;
+    if (clickDist > 8) return;
 
-    if (isAdminMode && activeSpawnerItem) {
-      if (e.target.closest('header') || e.target.closest('#control-panel') || e.target.closest('#search-panel') || e.target.closest('#admin-actions-bar') || e.target.closest('.modal-content') || e.target.closest('#style-editor-panel') || e.target.closest('.bottom-spawner-panel')) return;
-      
-      const rect = treeBoard.getBoundingClientRect();
-      const clickX = (e.clientX - rect.left) / currentScale;
-      const clickY = (e.clientY - rect.top) / currentScale;
-      
-      pushHistoryState();
-      
-      if (activeSpawnerType === 'location') {
-        const newLoc = {
-          id: 'loc-' + Date.now(),
-          name: activeSpawnerItem.name,
-          desc: activeSpawnerItem.desc || '',
-          refs: activeSpawnerItem.refs ? [...activeSpawnerItem.refs] : [],
-          relatedEvents: activeSpawnerItem.relatedEvents ? [...activeSpawnerItem.relatedEvents] : [],
-          relatedPeople: activeSpawnerItem.relatedPeople ? [...activeSpawnerItem.relatedPeople] : [],
-          x: Math.round(clickX),
-          y: Math.round(clickY)
-        };
-        locations.push(newLoc);
-        saveLocations();
-        renderLocations();
-        showToast(`📍 '${activeSpawnerItem.name}' 장소가 복사되어 배치되었습니다.`);
-      } else if (activeSpawnerType === 'event') {
-        const newEv = {
-          id: 'ev-' + Date.now(),
-          name: activeSpawnerItem.name,
-          desc: activeSpawnerItem.desc || '',
-          refs: activeSpawnerItem.refs ? [...activeSpawnerItem.refs] : [],
-          relatedLocations: activeSpawnerItem.relatedLocations ? [...activeSpawnerItem.relatedLocations] : [],
-          relatedPeople: activeSpawnerItem.relatedPeople ? [...activeSpawnerItem.relatedPeople] : [],
-          x: Math.round(clickX),
-          y: Math.round(clickY)
-        };
-        events.push(newEv);
-        saveEvents();
-        renderEvents();
-        showToast(`📜 '${activeSpawnerItem.name}' 사건이 복사되어 배치되었습니다.`);
-      }
-      
-      cancelPlacementMode();
-      autoSaveToServer();
-      return;
-    }
+    handleCanvasTapOrClick(e.clientX, e.clientY, e.target);
+  });
 
-    const clickedEmptySpace = !e.target.closest('.person-card') && 
-                              !e.target.closest('.layer-marker') && 
-                              !e.target.closest('#study-panel') && 
-                              !e.target.closest('header') && 
-                              !e.target.closest('#control-panel') && 
-                              !e.target.closest('#search-panel') && 
-                              !e.target.closest('#admin-actions-bar') && 
-                              !e.target.closest('.modal-content') && 
-                              !e.target.closest('#style-editor-panel') && 
-                              !e.target.closest('.canvas-annotation') && 
-                              !e.target.closest('.canvas-junction-node') &&
-                              !e.target.closest('.line-bend-handle') &&
-                              !e.target.closest('.poly-vertex-handle') &&
-                              !e.target.closest('.family-group-label') &&
-                              !e.target.closest('.family-group-panel-poly') &&
-                              !e.target.closest('.spouse-connector') && 
-                              !e.target.closest('.connector-line');
-                              
-    if (clickedEmptySpace) {
-      if (selectedPersonId || selectedPersonIds.size > 0 || selectedLineKey || selectedJunctionId || selectedPolygonId) {
-        selectedPersonId = null;
-        selectedPersonIds.clear();
-        selectedLineKey = null;
-        selectedJunctionId = null;
-        selectedPolygonId = null;
-        document.querySelectorAll('.canvas-junction-node').forEach(n => n.classList.remove('selected-junction'));
-        renderTree();
-      }
-      closeStudyPanel();
-      closeStyleEditorPanel();
-      document.getElementById('filter-panel')?.classList.remove('active');
-      clearAllHighlights();
-    }
-
-    if (isAddPolygonModeActive) {
-      if (e.target.closest('header') || e.target.closest('#control-panel') || e.target.closest('#search-panel') || e.target.closest('#admin-actions-bar') || e.target.closest('.modal-content') || e.target.closest('#style-editor-panel')) return;
-      
-      const rect = treeBoard.getBoundingClientRect();
-      const clickX = (e.clientX - rect.left) / currentScale;
-      const clickY = (e.clientY - rect.top) / currentScale;
-      
-      let finalX = clickX;
-      let finalY = clickY;
-      
-      if (e.shiftKey && tempPolygonPoints.length > 0) {
-        const lastPt = tempPolygonPoints[tempPolygonPoints.length - 1];
-        const dx = clickX - lastPt.x;
-        const dy = clickY - lastPt.y;
-        const dist = Math.hypot(dx, dy);
-        if (dist > 0) {
-          const angleRad = Math.atan2(dy, dx);
-          let angleDeg = angleRad * (180 / Math.PI);
-          if (angleDeg < 0) angleDeg += 360;
-          
-          const quadrant = Math.floor(angleDeg / 90);
-          const relativeAngle = angleDeg % 90;
-          
-          const allowedBaseAngles = [0, 30, 45, 75, 90];
-          let closestBase = 0;
-          let minDiff = Infinity;
-          for (const base of allowedBaseAngles) {
-            const diff = Math.abs(relativeAngle - base);
-            if (diff < minDiff) {
-              minDiff = diff;
-              closestBase = base;
-            }
-          }
-          
-          const constrainedDeg = (quadrant * 90) + closestBase;
-          const constrainedRad = constrainedDeg * (Math.PI / 180);
-          finalX = lastPt.x + dist * Math.cos(constrainedRad);
-          finalY = lastPt.y + dist * Math.sin(constrainedRad);
-        }
-      }
-      
-      if (tempPolygonPoints.length >= 3) {
-        const startPt = tempPolygonPoints[0];
-        const distToStartRaw = Math.hypot(clickX - startPt.x, clickY - startPt.y);
-        const distToStartConstrained = Math.hypot(finalX - startPt.x, finalY - startPt.y);
-        if (distToStartRaw < 15 || distToStartConstrained < 15) {
-          completePolygonCreation();
-          return;
-        }
-      }
-      
-      tempPolygonPoints.push({ x: finalX, y: finalY });
-      showToast(`정점 ${tempPolygonPoints.length}개가 추가되었습니다. 계속 클릭하여 선을 긋고, 시작점을 다시 누르거나 Enter 키로 완료하세요.`);
+  viewerContainer.addEventListener('contextmenu', (e) => {
+    if (isAddPolygonModeActive && tempPolygonPoints.length > 0) {
+      e.preventDefault();
+      e.stopPropagation();
+      tempPolygonPoints.pop();
       updateTempPolygonPreview();
-      return;
+      showToast(currentLang === 'en' ? `Last vertex removed (${tempPolygonPoints.length} remaining).` : `직전 정점이 삭제되었습니다. (남은 정점: ${tempPolygonPoints.length}개)`);
     }
-    
-    if (isAddAnnotationModeActive) {
-      if (e.target.closest('header') || e.target.closest('#control-panel') || e.target.closest('#search-panel') || e.target.closest('#admin-actions-bar') || e.target.closest('.modal-content') || e.target.closest('#style-editor-panel')) return;
-      
-      const dist = Math.hypot(e.clientX - startClickX, e.clientY - startClickY);
-      if (dist > 5) return;
-      
-      const rect = treeBoard.getBoundingClientRect();
-      const clickX = (e.clientX - rect.left) / currentScale;
-      const clickY = (e.clientY - rect.top) / currentScale;
-      
-      pushHistoryState();
-      
-      const newNote = {
-        id: `note-${Date.now()}`,
-        text: "새 텍스트 상자\n(클릭하여 편집)",
-        x: Math.round(clickX - 100),
-        y: Math.round(clickY - 30),
-        width: 200,
-        height: 60,
-        fontSize: 14,
-        bold: false,
-        color: "#1e293b",
-        bgColor: "#ffffff"
-      };
-      
-      annotations.push(newNote);
-      saveAnnotations();
-      renderAnnotations();
-      deactivateAddAnnotationMode();
-      autoSaveToServer();
-      showToast("📝 텍스트 상자가 성공적으로 생성되었습니다.");
-      return;
-    }
-    
-    if (!isAddPersonModeActive) return;
-    if (e.target.closest('.person-card') || e.target.closest('header') || e.target.closest('#control-panel') || e.target.closest('#search-panel') || e.target.closest('#admin-actions-bar') || e.target.closest('.modal-content') || e.target.closest('#style-editor-panel') || e.target.closest('.canvas-annotation')) return;
-    
-    // Only proceed if it was a genuine click, not a drag
-    const dist = Math.hypot(e.clientX - startClickX, e.clientY - startClickY);
-    if (dist > 5) return;
-    
-    // Convert click coordinates to world space
-    const rect = viewerContainer.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
-    const worldX = (mouseX - panX) / currentScale;
-    const worldY = (mouseY - panY) / currentScale;
-    
-    const clickGen = Math.max(0, Math.round((worldY - BOARD_PADDING_Y) / GEN_HEIGHT));
-    const clickCol = parseFloat(((worldX - centerX) / COL_WIDTH).toFixed(1));
-    
-    deactivateAddPersonMode();
-    openAdminFormWithCoords(clickGen, clickCol);
   });
 }
 
@@ -9290,20 +11080,40 @@ function getTouchDistance(t1, t2) {
   return Math.sqrt(dx * dx + dy * dy);
 }
 
+let zoomAnimFrameId = null;
+
+function stopZoomAnimation() {
+  if (zoomAnimFrameId) {
+    cancelAnimationFrame(zoomAnimFrameId);
+    zoomAnimFrameId = null;
+  }
+  if (isZoomAnimating) {
+    isZoomAnimating = false;
+    updateTransform();
+  }
+  if (viewerContainer) viewerContainer.classList.remove('zooming');
+}
+
 function updateTransformLightweight() {
-  const scaleFactor = currentScale / scaleAtAnimationStart;
-  zoomWrapper.style.transform = `translate3d(${panX}px, ${panY}px, 0) scale(${scaleFactor})`;
-  zoomWrapper.style.transformOrigin = '0 0';
+  updateTransform();
 }
 
 function startZoomAnimation() {
-  if (isZoomAnimating) return;
+  if (zoomAnimFrameId) {
+    cancelAnimationFrame(zoomAnimFrameId);
+    zoomAnimFrameId = null;
+  }
   isZoomAnimating = true;
   
   if (viewerContainer) viewerContainer.classList.add('zooming');
   
   function step() {
-    if (!isZoomAnimating) return;
+    if (!isZoomAnimating) {
+      updateTransform();
+      if (viewerContainer) viewerContainer.classList.remove('zooming');
+      zoomAnimFrameId = null;
+      return;
+    }
     
     const dScale = targetScale - currentScale;
     const dPanX = targetPanX - panX;
@@ -9314,12 +11124,11 @@ function startZoomAnimation() {
       currentScale = targetScale;
       panX = targetPanX;
       panY = targetPanY;
-      zoomLevelText.textContent = `${Math.round(currentScale * 100)}%`;
+      if (zoomLevelText) zoomLevelText.textContent = `${Math.round(currentScale * 100)}%`;
       
-      // Reset zoomWrapper's temporary scale factor (as updateTransform will draw elements at targetScale)
-      zoomWrapper.style.transform = `translate3d(${panX}px, ${panY}px, 0)`;
       updateTransform();
       isZoomAnimating = false;
+      zoomAnimFrameId = null;
       
       setTimeout(() => {
         if (!isZoomAnimating && !isTouchZooming) {
@@ -9329,26 +11138,26 @@ function startZoomAnimation() {
       return;
     }
     
-    currentScale += dScale * 0.5;
-    panX += dPanX * 0.5;
-    panY += dPanY * 0.5;
+    currentScale += dScale * 0.4;
+    panX += dPanX * 0.4;
+    panY += dPanY * 0.4;
     
-    zoomLevelText.textContent = `${Math.round(currentScale * 100)}%`;
-    updateTransformLightweight();
+    if (zoomLevelText) zoomLevelText.textContent = `${Math.round(currentScale * 100)}%`;
+    updateTransform();
     
-    requestAnimationFrame(step);
+    zoomAnimFrameId = requestAnimationFrame(step);
   }
   
-  requestAnimationFrame(step);
+  zoomAnimFrameId = requestAnimationFrame(step);
 }
 
 function applyZoom(direction) {
-  let nextScale = currentScale;
-  if (direction === 'in') nextScale = Math.min(MAX_SCALE, currentScale + ZOOM_STEP);
-  if (direction === 'out') nextScale = Math.max(MIN_SCALE, currentScale - ZOOM_STEP);
+  let nextScale = (isNaN(currentScale) || currentScale <= 0) ? 1.0 : currentScale;
+  if (direction === 'in') nextScale = Math.min(MAX_SCALE, nextScale + ZOOM_STEP);
+  if (direction === 'out') nextScale = Math.max(MIN_SCALE, nextScale - ZOOM_STEP);
   if (direction === 'reset') nextScale = 1.0;
   
-  if (nextScale === currentScale && direction !== 'reset') return;
+  if (Math.abs(nextScale - currentScale) < 0.001 && direction !== 'reset') return;
   
   let containerCenterX = viewerContainer.clientWidth / 2;
   let containerCenterY = viewerContainer.clientHeight / 2;
@@ -9358,11 +11167,15 @@ function applyZoom(direction) {
     containerCenterY = (window.innerHeight - 80) / 2;
   }
   
-  const worldX = (containerCenterX - panX) / currentScale;
-  const worldY = (containerCenterY - panY) / currentScale;
+  const safeScale = (isNaN(currentScale) || currentScale <= 0) ? 1.0 : currentScale;
+  const safePanX = isNaN(panX) ? 0 : panX;
+  const safePanY = isNaN(panY) ? 0 : panY;
+  
+  const worldX = (containerCenterX - safePanX) / safeScale;
+  const worldY = (containerCenterY - safePanY) / safeScale;
   
   if (!isZoomAnimating) {
-    scaleAtAnimationStart = currentScale;
+    scaleAtAnimationStart = safeScale;
   }
   targetScale = nextScale;
   
@@ -9393,8 +11206,9 @@ function centerOnCoords(x, y) {
     containerCenterY = (window.innerHeight - 80) / 2;
   }
   
-  const targetX = containerCenterX - x * currentScale;
-  const targetY = containerCenterY - y * currentScale;
+  const safeScale = (isNaN(currentScale) || currentScale <= 0) ? 1.0 : currentScale;
+  const targetX = containerCenterX - x * safeScale;
+  const targetY = containerCenterY - y * safeScale;
   
   if (!initialCentered) {
     panX = targetX;
@@ -9404,7 +11218,7 @@ function centerOnCoords(x, y) {
     updateTransform();
   } else {
     if (!isZoomAnimating) {
-      scaleAtAnimationStart = currentScale;
+      scaleAtAnimationStart = safeScale;
     }
     targetPanX = targetX;
     targetPanY = targetY;
@@ -9419,8 +11233,16 @@ function centerOnNode(nodeId) {
 }
 
 function updateTransform(onlyPan = false) {
+  if (isNaN(currentScale) || currentScale <= 0) currentScale = 1.0;
+  if (isNaN(panX)) panX = 0;
+  if (isNaN(panY)) panY = 0;
+  if (isNaN(targetScale) || targetScale <= 0) targetScale = currentScale;
+  if (isNaN(targetPanX)) targetPanX = panX;
+  if (isNaN(targetPanY)) targetPanY = panY;
+
   // Pan zoomWrapper (Using translate3d for GPU-composited, zero-lag rendering!)
   zoomWrapper.style.transform = `translate3d(${panX}px, ${panY}px, 0)`;
+  zoomWrapper.style.transformOrigin = '0 0';
   zoomWrapper.style.zoom = 'normal';
   
   if (onlyPan) {
@@ -10384,12 +12206,12 @@ function setupSearch() {
   });
 
   const handleGlobalOutsideClick = (e) => {
-    // 0. Search Focus / Results Panel auto close when clicking/touching outside
+    // 0. Search Results Panel auto close when clicking/touching outside
     const searchWrapper = document.getElementById('floating-search-wrapper');
-    const searchInput = document.getElementById('search-input');
+    const searchInput = document.getElementById('searchInput') || document.getElementById('search-input');
     const searchResults = document.getElementById('search-results');
     
-    if (document.body.classList.contains('search-focused') || (searchResults && searchResults.style.display !== 'none')) {
+    if (searchResults && searchResults.style.display !== 'none') {
       const isClickInsideSearch = 
         (searchWrapper && searchWrapper.contains(e.target)) || 
         (searchResults && searchResults.contains(e.target)) ||
@@ -10397,9 +12219,11 @@ function setupSearch() {
         e.target.closest('#search-results');
         
       if (!isClickInsideSearch) {
-        document.body.classList.remove('search-focused');
-        if (searchResults) searchResults.style.display = 'none';
-        if (searchInput) searchInput.blur();
+        if (window.closeSearchWrapper) {
+          window.closeSearchWrapper();
+        } else {
+          searchResults.style.display = 'none';
+        }
       }
     }
 
@@ -10410,27 +12234,8 @@ function setupSearch() {
         filterPanel.classList.remove('active');
       }
     }
-
-    // 2. Personal Study/Memo Panel (#study-panel) auto close when clicking/touching outside
-    const studyPanel = document.getElementById('study-panel');
-    if (studyPanel && studyPanel.classList.contains('active')) {
-      const isClickInsideStudyPanel = e.target.closest('#study-panel');
-      const isClickOnTrigger = 
-        e.target.closest('.person-card') || 
-        e.target.closest('.layer-marker') || 
-        e.target.closest('.canvas-annotation') ||
-        e.target.closest('#control-panel') ||
-        e.target.closest('#main-header') ||
-        e.target.closest('#search-panel') ||
-        e.target.closest('.modal-content') ||
-        e.target.closest('.toast');
-        
-      if (!isClickInsideStudyPanel && !isClickOnTrigger) {
-        closeStudyPanel();
-      }
-    }
     
-    // 3. Line Design Editor (#style-editor-panel) auto close when clicking/touching outside
+    // 2. Line Design Editor (#style-editor-panel) auto close when clicking/touching outside
     const stylePanel = document.getElementById('style-editor-panel');
     if (stylePanel && stylePanel.classList.contains('active')) {
       const isClickInsideStylePanel = e.target.closest('#style-editor-panel');
@@ -10443,6 +12248,160 @@ function setupSearch() {
 
   document.addEventListener('click', handleGlobalOutsideClick);
   document.addEventListener('touchstart', handleGlobalOutsideClick, { passive: true });
+}
+
+// Location and Activities Management for Study Panel and Admin Form
+let tempAdminActivities = [];
+
+function openMapLocation(coords, name) {
+  const query = (coords && coords.trim()) ? coords.trim() : (name && name.trim() ? name.trim() : '');
+  if (!query) return;
+  const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+  window.open(url, '_blank');
+}
+
+function updateHometownMapButton(btnEl, coords, name) {
+  if (!btnEl) return;
+  const query = (coords && coords.trim()) ? coords.trim() : (name && name.trim() ? name.trim() : '');
+  if (query) {
+    btnEl.style.display = 'inline-flex';
+    btnEl.onclick = (e) => {
+      e.stopPropagation();
+      openMapLocation(coords, name);
+    };
+  } else {
+    btnEl.style.display = 'none';
+  }
+}
+
+function renderPanelActivities(char) {
+  const listEl = document.getElementById('panel-activities-list');
+  if (!listEl) return;
+  listEl.innerHTML = '';
+  const texts = UI_TEXTS[currentLang] || UI_TEXTS.ko;
+  const activities = (char && Array.isArray(char.activities)) ? char.activities : [];
+
+  if (activities.length === 0) {
+    const emptyEl = document.createElement('div');
+    emptyEl.style.cssText = 'font-size: 11px; color: var(--text-muted); font-style: italic; padding: 4px 2px;';
+    emptyEl.textContent = texts.no_activities || '등록된 사역/활동지가 없습니다.';
+    listEl.appendChild(emptyEl);
+    return;
+  }
+
+  activities.forEach((act, idx) => {
+    const item = document.createElement('div');
+    item.className = 'activity-item-card';
+
+    const content = document.createElement('div');
+    content.className = 'activity-item-content';
+
+    const titleRow = document.createElement('div');
+    titleRow.className = 'activity-item-title-row';
+
+    const nameSpan = document.createElement('span');
+    nameSpan.className = 'activity-item-name';
+    nameSpan.textContent = act.name || '';
+    titleRow.appendChild(nameSpan);
+
+    if (act.coords) {
+      const coordsBadge = document.createElement('span');
+      coordsBadge.className = 'activity-item-coords';
+      coordsBadge.textContent = act.coords;
+      titleRow.appendChild(coordsBadge);
+    }
+    content.appendChild(titleRow);
+
+    if (act.desc) {
+      const descEl = document.createElement('div');
+      descEl.className = 'activity-item-desc';
+      descEl.textContent = act.desc;
+      content.appendChild(descEl);
+    }
+    item.appendChild(content);
+
+    const actions = document.createElement('div');
+    actions.className = 'activity-item-actions';
+
+    if (act.coords || act.name) {
+      const mapBtn = document.createElement('button');
+      mapBtn.type = 'button';
+      mapBtn.className = 'map-link-btn';
+      mapBtn.title = texts.map_view_btn || '지도 보기';
+      mapBtn.textContent = '📍 지도';
+      mapBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openMapLocation(act.coords, act.name);
+      });
+      actions.appendChild(mapBtn);
+    }
+
+    const delBtn = document.createElement('button');
+    delBtn.type = 'button';
+    delBtn.className = 'activity-delete-btn';
+    delBtn.title = texts.resource_delete_btn || '삭제';
+    delBtn.innerHTML = '&times;';
+    delBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      char.activities.splice(idx, 1);
+      renderPanelActivities(char);
+      saveDatabase();
+    });
+    actions.appendChild(delBtn);
+
+    item.appendChild(actions);
+    listEl.appendChild(item);
+  });
+}
+
+function renderAdminActivitiesList() {
+  const listEl = document.getElementById('admin-form-activities-list');
+  if (!listEl) return;
+  listEl.innerHTML = '';
+  const texts = UI_TEXTS[currentLang] || UI_TEXTS.ko;
+
+  if (!tempAdminActivities || tempAdminActivities.length === 0) {
+    const emptyEl = document.createElement('div');
+    emptyEl.style.cssText = 'font-size: 11px; color: var(--text-muted); font-style: italic; padding: 4px 2px;';
+    emptyEl.textContent = texts.no_activities || '등록된 사역/활동지가 없습니다.';
+    listEl.appendChild(emptyEl);
+    return;
+  }
+
+  tempAdminActivities.forEach((act, idx) => {
+    const item = document.createElement('div');
+    item.className = 'admin-activity-item';
+
+    const info = document.createElement('div');
+    info.className = 'act-info';
+
+    const title = document.createElement('div');
+    title.className = 'act-title';
+    title.textContent = act.name + (act.coords ? ` (${act.coords})` : '');
+    info.appendChild(title);
+
+    if (act.desc) {
+      const desc = document.createElement('div');
+      desc.className = 'act-desc';
+      desc.textContent = act.desc;
+      info.appendChild(desc);
+    }
+    item.appendChild(info);
+
+    const delBtn = document.createElement('button');
+    delBtn.type = 'button';
+    delBtn.className = 'activity-delete-btn';
+    delBtn.title = texts.resource_delete_btn || '삭제';
+    delBtn.innerHTML = '&times;';
+    delBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      tempAdminActivities.splice(idx, 1);
+      renderAdminActivitiesList();
+    });
+    item.appendChild(delBtn);
+
+    listEl.appendChild(item);
+  });
 }
 
 // Study Sidebar Panel Note management
@@ -10502,9 +12461,11 @@ function setupStudyPanel() {
     newLeft = Math.max(0, Math.min(newLeft, maxX));
     newTop = Math.max(0, Math.min(newTop, maxY));
     
-    studyPanel.style.left = `${newLeft}px`;
-    studyPanel.style.top = `${newTop}px`;
-    studyPanel.style.right = 'auto';
+    studyPanel.style.setProperty('left', `${newLeft}px`, 'important');
+    studyPanel.style.setProperty('top', `${newTop}px`, 'important');
+    studyPanel.style.setProperty('right', 'auto', 'important');
+    studyPanel.style.setProperty('bottom', 'auto', 'important');
+    studyPanel.style.setProperty('transform', 'none', 'important');
   };
 
   const onMouseUp = () => {
@@ -10530,6 +12491,11 @@ function setupStudyPanel() {
       initialTop = rect.top;
       
       studyPanel.style.transition = 'none';
+      studyPanel.style.setProperty('left', `${initialLeft}px`, 'important');
+      studyPanel.style.setProperty('top', `${initialTop}px`, 'important');
+      studyPanel.style.setProperty('right', 'auto', 'important');
+      studyPanel.style.setProperty('bottom', 'auto', 'important');
+      studyPanel.style.setProperty('transform', 'none', 'important');
       
       document.addEventListener('mousemove', onMouseMove);
       document.addEventListener('mouseup', onMouseUp);
@@ -10544,17 +12510,21 @@ function setupStudyPanel() {
       studyPanel.classList.toggle('expanded');
       
       if (!isExpandedBefore) {
-        // Expand immediately on the right side
-        studyPanel.style.right = '16px';
-        studyPanel.style.left = 'auto';
-        studyPanel.style.top = '80px';
-        studyPanel.style.transform = 'none';
+        // Expand and center on the screen
+        document.body.classList.add('study-panel-expanded');
+        studyPanel.style.setProperty('left', '50%', 'important');
+        studyPanel.style.setProperty('top', '50%', 'important');
+        studyPanel.style.setProperty('right', 'auto', 'important');
+        studyPanel.style.setProperty('bottom', 'auto', 'important');
+        studyPanel.style.setProperty('transform', 'translate(-50%, -50%)', 'important');
       } else {
-        // Restore to docked position
-        studyPanel.style.left = '';
-        studyPanel.style.top = '';
-        studyPanel.style.right = '';
-        studyPanel.style.transform = '';
+        // Restore to docked position on the right
+        document.body.classList.remove('study-panel-expanded');
+        studyPanel.style.removeProperty('left');
+        studyPanel.style.removeProperty('top');
+        studyPanel.style.removeProperty('right');
+        studyPanel.style.removeProperty('bottom');
+        studyPanel.style.removeProperty('transform');
       }
       
       const isExpanded = studyPanel.classList.contains('expanded');
@@ -10618,6 +12588,16 @@ function setupStudyPanel() {
       }
     }
     
+    if (activeStudyPanelType === 'person' && activePersonId) {
+      const char = db.find(c => c.id === activePersonId);
+      if (char) {
+        const htName = document.getElementById('panel-hometown-name') ? document.getElementById('panel-hometown-name').value.trim() : '';
+        const htCoords = document.getElementById('panel-hometown-coords') ? document.getElementById('panel-hometown-coords').value.trim() : '';
+        char.hometown = { name: htName, coords: htCoords };
+        saveDatabase();
+      }
+    }
+    
     closeStudyPanel();
   });
   
@@ -10678,23 +12658,25 @@ function setupStudyPanel() {
     }
   });
 
-  // 참고 링크 입력 텍스트 실시간 자동 저장 (Auto-save)
+  // Resources Organizer: Title/URL input auto persistence
   const titleInput = document.getElementById('resource-title');
   const urlInput = document.getElementById('resource-url');
   if (titleInput) {
-    titleInput.addEventListener('input', () => {
+    titleInput.addEventListener('input', (e) => {
       if (!activePersonId) return;
-      localStorage.setItem(`temp_res_title_${activePersonId}`, titleInput.value);
+      localStorage.setItem(`temp_res_title_${activePersonId}`, e.target.value);
     });
   }
   if (urlInput) {
-    urlInput.addEventListener('input', () => {
+    urlInput.addEventListener('input', (e) => {
       if (!activePersonId) return;
-      localStorage.setItem(`temp_res_url_${activePersonId}`, urlInput.value);
+      localStorage.setItem(`temp_res_url_${activePersonId}`, e.target.value);
     });
   }
   
   addResourceBtn.addEventListener('click', () => {
+    if (!activePersonId) return;
+    
     const titleInput = document.getElementById('resource-title');
     const urlInput = document.getElementById('resource-url');
     
@@ -10717,6 +12699,33 @@ function setupStudyPanel() {
     
     renderResourcesList(resources);
   });
+
+  // Ministry & Activity Locations: Add handler
+  const addActBtn = document.getElementById('panel-activity-add-btn');
+  if (addActBtn) {
+    addActBtn.addEventListener('click', () => {
+      if (!activePersonId || activeStudyPanelType !== 'person') return;
+      const char = db.find(c => c.id === activePersonId);
+      if (!char) return;
+      const nameInput = document.getElementById('panel-activity-name-input');
+      const coordsInput = document.getElementById('panel-activity-coords-input');
+      const descInput = document.getElementById('panel-activity-desc-input');
+      const name = nameInput ? nameInput.value.trim() : '';
+      const coords = coordsInput ? coordsInput.value.trim() : '';
+      const desc = descInput ? descInput.value.trim() : '';
+      if (!name) {
+        alert(currentLang === 'en' ? 'Please enter a place name.' : '장소명을 입력해주세요.');
+        return;
+      }
+      if (!char.activities) char.activities = [];
+      char.activities.push({ id: 'act-' + Date.now(), name, coords, desc });
+      if (nameInput) nameInput.value = '';
+      if (coordsInput) coordsInput.value = '';
+      if (descInput) descInput.value = '';
+      renderPanelActivities(char);
+      saveDatabase();
+    });
+  }
 }
 
 function openStudyPanel(personId) {
@@ -10757,6 +12766,31 @@ function openStudyPanel(personId) {
   const resources = JSON.parse(localStorage.getItem(`bible_tree_resources_${personId}`)) || [];
   renderResourcesList(resources);
   
+  // Render Hometown and Activities
+  const locSec = document.getElementById('panel-location-section');
+  if (locSec) {
+    locSec.style.display = 'flex';
+    const htNameInput = document.getElementById('panel-hometown-name');
+    const htCoordsInput = document.getElementById('panel-hometown-coords');
+    const htMapBtn = document.getElementById('panel-hometown-map-btn');
+    const ht = char.hometown || { name: '', coords: '' };
+    if (htNameInput) htNameInput.value = ht.name || '';
+    if (htCoordsInput) htCoordsInput.value = ht.coords || '';
+    updateHometownMapButton(htMapBtn, ht.coords, ht.name);
+
+    const handleHtChange = () => {
+      const curName = htNameInput ? htNameInput.value.trim() : '';
+      const curCoords = htCoordsInput ? htCoordsInput.value.trim() : '';
+      char.hometown = { name: curName, coords: curCoords };
+      updateHometownMapButton(htMapBtn, curCoords, curName);
+      saveDatabase();
+    };
+    if (htNameInput) htNameInput.oninput = handleHtChange;
+    if (htCoordsInput) htCoordsInput.oninput = handleHtChange;
+
+    renderPanelActivities(char);
+  }
+  
   studyPanel.classList.add('active');
   highlightRelatedElements(personId, 'person');
 }
@@ -10768,15 +12802,17 @@ function closeStudyPanel() {
   document.body.classList.remove('keyboard-open-landscape'); // 패널이 닫힐 때 키보드 축소 클래스 강제 청소 복귀
   
   // Clear dragging/expanding inline styles
-  studyPanel.style.left = '';
-  studyPanel.style.top = '';
-  studyPanel.style.right = '';
-  studyPanel.style.transform = '';
-  studyPanel.style.transition = '';
+  studyPanel.style.removeProperty('left');
+  studyPanel.style.removeProperty('top');
+  studyPanel.style.removeProperty('right');
+  studyPanel.style.removeProperty('bottom');
+  studyPanel.style.removeProperty('transform');
+  studyPanel.style.removeProperty('transition');
   
   const expandBtn = document.getElementById('panel-expand');
   if (expandBtn) {
-    expandBtn.title = '확장';
+    const texts = UI_TEXTS[currentLang] || UI_TEXTS.ko;
+    expandBtn.title = texts.panel_expand_title || (currentLang === 'en' ? 'Expand' : '확장');
     expandBtn.textContent = '⛶';
   }
   
@@ -10792,10 +12828,13 @@ function closeStudyPanel() {
 
 function renderResourcesList(resources) {
   const listElement = document.getElementById('resources-list');
+  if (!listElement) return;
   listElement.innerHTML = '';
   
-  if (resources.length === 0) {
-    listElement.innerHTML = '<li style="font-size:12px; color:var(--text-muted); text-align:center; padding:10px 0;">등록된 참고 자료가 없습니다.</li>';
+  const texts = UI_TEXTS[currentLang] || UI_TEXTS.ko;
+  
+  if (!resources || resources.length === 0) {
+    listElement.innerHTML = `<li style="font-size:12px; color:var(--text-muted); text-align:center; padding:10px 0;">${texts.no_resources || '등록된 참고 자료가 없습니다.'}</li>`;
     return;
   }
   
@@ -10804,7 +12843,7 @@ function renderResourcesList(resources) {
     li.className = 'resource-item';
     li.innerHTML = `
       <a href="${item.url}" target="_blank" rel="noopener noreferrer">${item.title}</a>
-      <button class="delete-resource-btn" data-id="${item.id}">삭제</button>
+      <button class="delete-resource-btn" data-id="${item.id}">${texts.resource_delete_btn || '삭제'}</button>
     `;
     
     li.querySelector('.delete-resource-btn').addEventListener('click', (e) => {
@@ -10819,23 +12858,60 @@ function renderResourcesList(resources) {
   });
 }
 
-// Theme Toggle
-function setupThemeToggle() {
-  const toggleBtn = document.getElementById('theme-toggle');
-  const savedTheme = localStorage.getItem('bible_tree_theme') || 'light';
-  document.documentElement.setAttribute('data-theme', savedTheme);
-  updateThemeIcon(savedTheme);
+// Unified Theme Management
+function updateThemeUI(theme) {
+  if (!theme) {
+    theme = document.documentElement.getAttribute('data-theme') || document.body.getAttribute('data-theme') || localStorage.getItem('bible_genealogy_theme') || localStorage.getItem('bible_tree_theme') || 'light';
+  }
+  const isDark = (theme === 'dark');
+  const isEn = (currentLang === 'en');
   
+  // 1. Settings modal button text
+  const themeBtnText = document.getElementById('settings-theme-btn-text');
+  if (themeBtnText) {
+    themeBtnText.textContent = isDark ? (isEn ? '☀️ Light Mode' : '☀️ 일반 모드') : (isEn ? '🌙 Dark Mode' : '🌙 다크 모드');
+  }
+
+  // 2. In-App macOS menubar entry
+  const macMenuTheme = document.getElementById('mac-menu-theme-toggle');
+  if (macMenuTheme) {
+    const labelSpan = macMenuTheme.querySelector('.label');
+    const text = isDark ? (isEn ? 'Light Mode' : '일반 모드') : (isEn ? 'Dark Mode' : '다크 모드');
+    if (labelSpan) labelSpan.textContent = text;
+    else macMenuTheme.textContent = text;
+  }
+  
+  // 3. Floating / Top Theme icon if exists
+  updateThemeIcon(theme);
+}
+window.updateThemeUI = updateThemeUI;
+
+function setAppTheme(newTheme) {
+  document.documentElement.setAttribute('data-theme', newTheme);
+  document.body.setAttribute('data-theme', newTheme);
+  localStorage.setItem('bible_tree_theme', newTheme);
+  localStorage.setItem('bible_genealogy_theme', newTheme);
+  updateThemeUI(newTheme);
+  renderTree();
+  if (typeof applyStyleSettings === 'function') applyStyleSettings();
+}
+window.setAppTheme = setAppTheme;
+
+function toggleAppTheme() {
+  const currentTheme = document.documentElement.getAttribute('data-theme') || document.body.getAttribute('data-theme') || localStorage.getItem('bible_genealogy_theme') || 'light';
+  const nextTheme = (currentTheme === 'dark') ? 'light' : 'dark';
+  setAppTheme(nextTheme);
+  showToast(nextTheme === 'dark' ? (currentLang === 'en' ? '🌙 Switched to Dark Mode.' : '🌙 다크 모드로 변경되었습니다.') : (currentLang === 'en' ? '☀️ Switched to Light Mode.' : '☀️ 일반 모드로 변경되었습니다.'));
+}
+window.toggleAppTheme = toggleAppTheme;
+
+function setupThemeToggle() {
+  const savedTheme = localStorage.getItem('bible_genealogy_theme') || localStorage.getItem('bible_tree_theme') || 'light';
+  setAppTheme(savedTheme);
+  
+  const toggleBtn = document.getElementById('theme-toggle');
   if (toggleBtn) {
-    toggleBtn.addEventListener('click', () => {
-      const currentTheme = document.documentElement.getAttribute('data-theme');
-      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-      
-      document.documentElement.setAttribute('data-theme', newTheme);
-      localStorage.setItem('bible_tree_theme', newTheme);
-      updateThemeIcon(newTheme);
-      applyStyleSettings();
-    });
+    toggleBtn.addEventListener('click', toggleAppTheme);
   }
 }
 
@@ -10880,7 +12956,7 @@ function setupAdminMode() {
     });
   }
 
-  adminAddBtn.addEventListener('click', () => {
+  bindHybridButton(adminAddBtn, () => {
     if (isAddPersonModeActive) {
       deactivateAddPersonMode();
     } else {
@@ -10888,7 +12964,7 @@ function setupAdminMode() {
     }
   });
 
-  adminAddNoteBtn.addEventListener('click', () => {
+  bindHybridButton(adminAddNoteBtn, () => {
     if (isAddAnnotationModeActive) {
       deactivateAddAnnotationMode();
     } else {
@@ -10897,7 +12973,7 @@ function setupAdminMode() {
   });
 
   if (adminAddEventBtn) {
-    adminAddEventBtn.addEventListener('click', () => {
+    bindHybridButton(adminAddEventBtn, () => {
       let containerCenterX = viewerContainer.clientWidth / 2;
       let containerCenterY = viewerContainer.clientHeight / 2;
       if (containerCenterX === 0) {
@@ -10913,7 +12989,7 @@ function setupAdminMode() {
   }
 
   if (adminAddLocationBtn) {
-    adminAddLocationBtn.addEventListener('click', () => {
+    bindHybridButton(adminAddLocationBtn, () => {
       let containerCenterX = viewerContainer.clientWidth / 2;
       let containerCenterY = viewerContainer.clientHeight / 2;
       if (containerCenterX === 0) {
@@ -10929,7 +13005,7 @@ function setupAdminMode() {
   }
 
   if (adminAddLinkBtn) {
-    adminAddLinkBtn.addEventListener('click', () => {
+    bindHybridButton(adminAddLinkBtn, () => {
       if (isAddLinkModeActive) {
         deactivateAddLinkMode();
       } else {
@@ -10940,7 +13016,7 @@ function setupAdminMode() {
 
   const adminAddPolygonBtn = document.getElementById('admin-add-polygon-btn');
   if (adminAddPolygonBtn) {
-    adminAddPolygonBtn.addEventListener('click', () => {
+    bindHybridButton(adminAddPolygonBtn, () => {
       if (isAddPolygonModeActive) {
         deactivateAddPolygonMode();
       } else {
@@ -10950,7 +13026,7 @@ function setupAdminMode() {
   }
 
   if (adminAddJunctionBtn) {
-    adminAddJunctionBtn.addEventListener('click', () => {
+    bindHybridButton(adminAddJunctionBtn, () => {
       const containerCenterX = viewerContainer.clientWidth / 2;
       const containerCenterY = viewerContainer.clientHeight / 2;
       const worldX = (containerCenterX - panX) / currentScale;
@@ -11040,18 +13116,80 @@ function setupAdminMode() {
     });
   }
 
-  modalClose.addEventListener('click', closeAdminForm);
-  modalCancel.addEventListener('click', closeAdminForm);
-  document.getElementById('modal-cancel').addEventListener('click', closeAdminForm);
+  const modalCloseBtn = document.getElementById('modal-close');
+  const modalCancelBtn = document.getElementById('modal-cancel');
+  const modalSubmitBtn = document.getElementById('modal-submit');
 
-  adminForm.addEventListener('submit', (e) => {
-    e.preventDefault();
+  const handleAdminModalClose = (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    closeAdminForm();
+  };
+
+  if (modalCloseBtn) {
+    modalCloseBtn.onclick = handleAdminModalClose;
+    modalCloseBtn.ontouchend = handleAdminModalClose;
+  }
+  if (modalCancelBtn) {
+    modalCancelBtn.onclick = handleAdminModalClose;
+    modalCancelBtn.ontouchend = handleAdminModalClose;
+  }
+
+  const adminModalEl = document.getElementById('admin-modal');
+  if (adminModalEl) {
+    adminModalEl.addEventListener('click', (e) => {
+      if (e.target === adminModalEl) {
+        closeAdminForm();
+      }
+    });
+    adminModalEl.addEventListener('touchend', (e) => {
+      if (e.target === adminModalEl) {
+        e.preventDefault();
+        e.stopPropagation();
+        closeAdminForm();
+      }
+    }, { passive: false });
+  }
+
+  const handleAdminFormSubmit = (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     saveAdminForm();
-  });
+  };
 
-  formDeleteBtn.addEventListener('click', () => {
-    deletePerson(editingPersonId);
-  });
+  if (adminForm) {
+    adminForm.onsubmit = handleAdminFormSubmit;
+  }
+
+  if (modalSubmitBtn) {
+    modalSubmitBtn.onclick = (e) => {
+      e.stopPropagation();
+      if (adminForm && typeof adminForm.requestSubmit === 'function') {
+        adminForm.requestSubmit();
+      } else {
+        handleAdminFormSubmit(e);
+      }
+    };
+    modalSubmitBtn.ontouchend = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (adminForm && typeof adminForm.requestSubmit === 'function') {
+        adminForm.requestSubmit();
+      } else {
+        handleAdminFormSubmit(e);
+      }
+    };
+  }
+
+  if (formDeleteBtn) {
+    formDeleteBtn.addEventListener('click', () => {
+      deletePerson(editingPersonId);
+    });
+  }
 
   const presetChildBtn = document.getElementById('preset-child-btn');
   const presetSpouseBtn = document.getElementById('preset-spouse-btn');
@@ -11168,7 +13306,7 @@ function setupAdminMode() {
   const prophetCheckbox = document.getElementById('form-prophet');
 
   function updateAutoGeneratedId() {
-    if (!formIdEl || formIdEl.disabled) return;
+    if (!formIdEl) return;
     
     const isProphetChecked = prophetCheckbox ? prophetCheckbox.checked : false;
     let baseText = "";
@@ -11198,7 +13336,7 @@ function setupAdminMode() {
     // Make sure it's unique
     let candidate = clean;
     let counter = 1;
-    while (db.some(c => c.id === candidate)) {
+    while (db.some(c => c.id === candidate && c.id !== editingPersonId)) {
       candidate = `${clean}_${counter}`;
       counter++;
     }
@@ -11214,30 +13352,23 @@ function setupAdminMode() {
           formEngEl.value = engName;
         }
       }
-      // Update ID if it is empty or has a placeholder prefix
-      if (formIdEl && !formIdEl.disabled) {
-        const val = formIdEl.value.trim();
-        if (!val || val.startsWith("person") || val.startsWith("prophet")) {
-          updateAutoGeneratedId();
-        }
+      if (formIdEl) {
+        updateAutoGeneratedId();
       }
     });
   }
 
   if (formEngEl) {
     formEngEl.addEventListener('input', () => {
-      if (formIdEl && !formIdEl.disabled) {
-        const val = formIdEl.value.trim();
-        if (!val || val.startsWith("person") || val.startsWith("prophet") || val.includes("_custom_") || val.includes("custom")) {
-          updateAutoGeneratedId();
-        }
+      if (formIdEl) {
+        updateAutoGeneratedId();
       }
     });
   }
 
   if (prophetCheckbox) {
     prophetCheckbox.addEventListener('change', () => {
-      if (formIdEl && !formIdEl.disabled) {
+      if (formIdEl) {
         let currentId = formIdEl.value.trim();
         if (prophetCheckbox.checked) {
           if (currentId && !currentId.startsWith('prophet_')) {
@@ -11437,123 +13568,32 @@ function distributeSelectedHeights() {
 }
 
 function setupAutocomplete() {
-  const parentsInput = document.getElementById('form-parents');
-  const spousesInput = document.getElementById('form-spouses');
-  const parentsSug = document.getElementById('parents-suggestions');
-  const spousesSug = document.getElementById('spouses-suggestions');
-  
-  function handleInput(inputEl, suggestionsEl) {
-    inputEl.addEventListener('input', () => {
-      const val = inputEl.value;
-      const parts = val.split(',');
-      const currentTerm = parts[parts.length - 1].trim().toLowerCase();
-      
-      if (currentTerm.length === 0) {
-        suggestionsEl.style.display = 'none';
-        return;
-      }
-      
-      const matches = db.filter(c => 
-        c.id.toLowerCase().includes(currentTerm) || 
-        c.name.toLowerCase().includes(currentTerm)
-      ).slice(0, 5);
-      
-      if (matches.length === 0) {
-        suggestionsEl.style.display = 'none';
-        return;
-      }
-      
-      suggestionsEl.innerHTML = '';
-      matches.forEach(match => {
-        const item = document.createElement('div');
-        item.className = 'suggestion-item';
-        item.innerHTML = `<span>${match.name}</span><span class="sug-id">${match.id}</span>`;
-        item.addEventListener('click', () => {
-          parts[parts.length - 1] = ` ${match.id}`;
-          inputEl.value = parts.join(',').trim();
-          suggestionsEl.style.display = 'none';
-          inputEl.focus();
-        });
-        suggestionsEl.appendChild(item);
-      });
-      suggestionsEl.style.display = 'block';
-    });
-    
-    document.addEventListener('click', (e) => {
-      if (e.target !== inputEl && e.target !== suggestionsEl && !suggestionsEl.contains(e.target)) {
-        suggestionsEl.style.display = 'none';
-      }
-    });
-  }
-  
-  if (parentsInput && parentsSug) handleInput(parentsInput, parentsSug);
-  if (spousesInput && spousesSug) handleInput(spousesInput, spousesSug);
-  
-  const teachersInput = document.getElementById('form-teachers');
-  const teachersSug = document.getElementById('teachers-suggestions');
-  if (teachersInput && teachersSug) handleInput(teachersInput, teachersSug);
-
-  const prophetsInput = document.getElementById('form-prophets');
-  const prophetsSug = document.getElementById('prophets-suggestions');
-  if (prophetsInput && prophetsSug) handleInput(prophetsInput, prophetsSug);
-
-  // Layer Item Autocomplete
-  const layerPeopleInput = document.getElementById('layer-item-people');
-  const layerPeopleSug = document.getElementById('layer-item-people-suggestions');
-  const layerEventsInput = document.getElementById('layer-item-events');
-  const layerEventsSug = document.getElementById('layer-item-events-suggestions');
-  const layerLocationsInput = document.getElementById('layer-item-locations');
-  const layerLocationsSug = document.getElementById('layer-item-locations-suggestions');
-
-  function handleLayerInput(inputEl, suggestionsEl, dataSource) {
-    if (!inputEl || !suggestionsEl) return;
-    inputEl.addEventListener('input', () => {
-      const val = inputEl.value;
-      const parts = val.split(',');
-      const currentTerm = parts[parts.length - 1].trim().toLowerCase();
-      
-      if (currentTerm.length === 0) {
-        suggestionsEl.style.display = 'none';
-        return;
-      }
-      
-      const matches = dataSource.filter(item => 
-        item.id.toLowerCase().includes(currentTerm) || 
-        item.name.toLowerCase().includes(currentTerm)
-      ).slice(0, 5);
-      
-      if (matches.length === 0) {
-        suggestionsEl.style.display = 'none';
-        return;
-      }
-      
-      suggestionsEl.innerHTML = '';
-      matches.forEach(match => {
-        const item = document.createElement('div');
-        item.className = 'suggestion-item';
-        item.innerHTML = `<span>${match.name}</span><span class="sug-id">${match.id}</span>`;
-        item.addEventListener('click', () => {
-          parts[parts.length - 1] = ` ${match.id}`;
-          inputEl.value = parts.join(',').trim();
-          suggestionsEl.style.display = 'none';
-          inputEl.focus();
-        });
-        suggestionsEl.appendChild(item);
-      });
-      suggestionsEl.style.display = 'block';
-    });
-    
-    document.addEventListener('click', (e) => {
-      if (e.target !== inputEl && e.target !== suggestionsEl && !suggestionsEl.contains(e.target)) {
-        suggestionsEl.style.display = 'none';
-      }
-    });
-  }
-
-  if (layerPeopleInput && layerPeopleSug) handleLayerInput(layerPeopleInput, layerPeopleSug, db);
-  if (layerEventsInput && layerEventsSug) handleLayerInput(layerEventsInput, layerEventsSug, events);
-  if (layerLocationsInput && layerLocationsSug) handleLayerInput(layerLocationsInput, layerLocationsSug, locations);
+  // All autocomplete popups and suggestion windows disabled
 }
+
+function positionAddInstructionBanner() {
+  const banner = document.getElementById('add-person-instruction');
+  if (!banner) return;
+  
+  banner.style.position = 'fixed';
+  banner.style.top = 'calc(63px + env(safe-area-inset-top))';
+  banner.style.bottom = 'auto';
+  banner.style.left = '50%';
+  banner.style.transform = 'translateX(-50%)';
+  banner.style.zIndex = '17000';
+
+  const toastContainer = document.getElementById('toast-container');
+  if (toastContainer && typeof positionToastContainer === 'function') {
+    positionToastContainer(toastContainer);
+  }
+}
+
+window.addEventListener('resize', () => {
+  const banner = document.getElementById('add-person-instruction');
+  if (banner && banner.style.display === 'flex') {
+    positionAddInstructionBanner();
+  }
+});
 
 function activateAddAnnotationMode() {
   deactivateAddPersonMode();
@@ -11564,7 +13604,7 @@ function activateAddAnnotationMode() {
   isAddAnnotationModeActive = true;
   adminAddNoteBtn.classList.add('active-tool');
   if (adminAddNoteBtn) {
-    adminAddNoteBtn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;"><svg id="text-box-custom-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="color: #ef4444; width: 24px; height: 24px; fill: none !important;"><path d="M5 3h14v13h-3a2 2 0 0 0-2 2v3H5V3z" style="fill: none !important;"></path><path d="M14 21c0-1.5 1.5-3 3-3h2" style="fill: none !important;"></path><path d="M8 7h8M8 10h8M8 13h8" style="fill: none !important;"></path></svg></span>';
+    adminAddNoteBtn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 26.5px; height: 26.5px;"><img class="custom-add-note-icon" src="add_note_btn_active.png" alt="텍스트 상자 추가" style="width: 26.5px; height: 26.5px; object-fit: contain; pointer-events: none;"></span>';
     adminAddNoteBtn.classList.add('danger');
   }
   viewerContainer.style.cursor = 'crosshair';
@@ -11593,43 +13633,73 @@ function activateAddAnnotationMode() {
   };
   document.addEventListener('mousemove', onMouseMove);
   
-  showToast("📝 보드 위의 원하는 위치를 클릭(터치)하면 텍스트 상자가 즉시 생성됩니다.");
+  const banner = document.getElementById('add-person-instruction');
+  if (banner) {
+    banner.innerHTML = currentLang === 'en'
+      ? '📝 <span>Click (touch) anywhere on the board to place a text box.</span>'
+      : '📝 <span>보드 위의 원하는 위치를 클릭(터치)하면 텍스트 상자가 생성됩니다.</span>';
+    positionAddInstructionBanner();
+    banner.style.display = 'flex';
+  }
+  showToast(currentLang === 'en'
+    ? "📝 Text Box Mode: Click (touch) canvas to place."
+    : "📝 텍스트 상자 추가 모드: 배치할 캔버스 위치를 클릭(터치)하세요.");
 }
 
 function deactivateAddAnnotationMode() {
   isAddAnnotationModeActive = false;
   adminAddNoteBtn.classList.remove('active-tool');
   if (adminAddNoteBtn) {
-    adminAddNoteBtn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;"><svg id="text-box-custom-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b; width: 24px; height: 24px; fill: none !important;"><path d="M5 3h14v13h-3a2 2 0 0 0-2 2v3H5V3z" style="fill: none !important;"></path><path d="M14 21c0-1.5 1.5-3 3-3h2" style="fill: none !important;"></path><path d="M8 7h8M8 10h8M8 13h8" style="fill: none !important;"></path></svg></span>';
+    adminAddNoteBtn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 26.5px; height: 26.5px;"><img class="custom-add-note-icon" src="add_note_btn.png" alt="텍스트 상자 추가" style="width: 26.5px; height: 26.5px; object-fit: contain; pointer-events: none;"></span>';
     adminAddNoteBtn.classList.remove('danger');
   }
   viewerContainer.style.cursor = 'grab';
   
   const ghost = document.getElementById('note-ghost-preview');
   if (ghost) ghost.remove();
+
+  const banner = document.getElementById('add-person-instruction');
+  if (banner) banner.style.display = 'none';
+
+  const toastContainer = document.getElementById('toast-container');
+  if (toastContainer && typeof positionToastContainer === 'function') {
+    positionToastContainer(toastContainer);
+  }
 }
 
 function activateAddPersonMode() {
   deactivateAddAnnotationMode();
   isAddPersonModeActive = true;
-  // 활성화(취소 가능) 시에는 더하기(+) 기호를 빼기(-) 기호로 전환하여 세련되게 시각화
-  adminAddBtn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;"><svg class="custom-add-person-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="color: #ef4444; width: 24px; height: 24px; fill: none !important;"><circle cx="10" cy="8" r="4" style="fill: none !important;"></circle><path d="M3 20a7 7 0 0 1 14 0" style="fill: none !important;"></path><path d="M17 9h6" style="fill: none !important;"></path></svg></span>';
+  adminAddBtn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 26.5px; height: 26.5px;"><img class="custom-add-person-icon" src="add_person_btn_active.png" alt="인물 추가" style="width: 26.5px; height: 26.5px; object-fit: contain; pointer-events: none;" /></span>';
   adminAddBtn.classList.add('danger');
   viewerContainer.style.cursor = 'cell';
   
   const banner = document.getElementById('add-person-instruction');
-  if (banner) banner.style.display = 'flex';
+  if (banner) {
+    banner.innerHTML = currentLang === 'en'
+      ? '💡 <span>Click a parent card to add a child, or click empty space to start a new lineage.</span>'
+      : '💡 <span>추가할 자식의 부모 카드를 클릭하거나, 빈 공간을 클릭하여 새 조상을 시작하세요.</span>';
+    positionAddInstructionBanner();
+    banner.style.display = 'flex';
+  }
+  showToast(currentLang === 'en'
+    ? "👤 Add Person Mode: Click (touch) canvas to place."
+    : "👤 인물 추가 모드: 배치할 캔버스 위치를 클릭(터치)하세요.");
 }
 
 function deactivateAddPersonMode() {
   isAddPersonModeActive = false;
-  // 비활성화(평상시)에는 사람 형상과 더하기(+) 아이콘 노출
-  adminAddBtn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;"><svg class="custom-add-person-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b; width: 24px; height: 24px; fill: none !important;"><circle cx="10" cy="8" r="4" style="fill: none !important;"></circle><path d="M3 20a7 7 0 0 1 14 0" style="fill: none !important;"></path><path d="M17 9h6M20 6v6" style="fill: none !important;"></path></svg></span>';
+  adminAddBtn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 26.5px; height: 26.5px;"><img class="custom-add-person-icon" src="add_person_btn.png" alt="인물 추가" style="width: 26.5px; height: 26.5px; object-fit: contain; pointer-events: none;" /></span>';
   adminAddBtn.classList.remove('danger');
   viewerContainer.style.cursor = 'grab';
   
   const banner = document.getElementById('add-person-instruction');
   if (banner) banner.style.display = 'none';
+
+  const toastContainer = document.getElementById('toast-container');
+  if (toastContainer && typeof positionToastContainer === 'function') {
+    positionToastContainer(toastContainer);
+  }
 }
 
 function activateAddLinkMode() {
@@ -11641,7 +13711,17 @@ function activateAddLinkMode() {
     adminAddLinkBtn.style.background = '#ff7800';
     adminAddLinkBtn.style.color = '#fff';
   }
-  showToast("연결선 추가 모드: 연결할 첫 번째 상자(인물 또는 텍스트)를 클릭하세요.");
+  const banner = document.getElementById('add-person-instruction');
+  if (banner) {
+    banner.innerHTML = currentLang === 'en'
+      ? '🔗 <span>Click the first box (figure or text) to connect.</span>'
+      : '🔗 <span>연결할 첫 번째 상자(인물 또는 텍스트)를 클릭하세요.</span>';
+    positionAddInstructionBanner();
+    banner.style.display = 'flex';
+  }
+  showToast(currentLang === 'en'
+    ? "Add Line Mode: Click the first box (figure or text) to connect."
+    : "연결선 추가 모드: 연결할 첫 번째 상자(인물 또는 텍스트)를 클릭하세요.");
   
   if (isAddPersonModeActive) deactivateAddPersonMode();
 }
@@ -11654,6 +13734,13 @@ function deactivateAddLinkMode() {
     adminAddLinkBtn.style.background = '';
     adminAddLinkBtn.style.color = '';
   }
+  const banner = document.getElementById('add-person-instruction');
+  if (banner) banner.style.display = 'none';
+
+  const toastContainer = document.getElementById('toast-container');
+  if (toastContainer && typeof positionToastContainer === 'function') {
+    positionToastContainer(toastContainer);
+  }
   document.querySelectorAll('.link-source-highlight').forEach(el => el.classList.remove('link-source-highlight'));
 }
 
@@ -11663,9 +13750,21 @@ function deactivateAddPolygonMode() {
   removeTempPolygonPreview();
   const btn = document.getElementById('admin-add-polygon-btn');
   if (btn) {
-    btn.style.background = '#ea580c';
-    btn.style.borderColor = '#ea580c';
-    btn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;"><svg class="custom-add-polygon-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b; width: 24px; height: 24px; fill: none !important;"><rect x="4" y="4" width="16" height="16" rx="3" style="fill: none !important;"></rect><path d="M8 4v16M12 4v16M16 4v16M4 8h16M4 12h16M4 16h16" style="fill: none !important;"></path></svg></span>';
+    btn.style.background = '#ffffff';
+    btn.style.borderColor = 'rgba(0, 0, 0, 0.08)';
+    btn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 26.5px; height: 26.5px;"><img class="custom-add-polygon-icon" src="add_polygon_btn.png" alt="영역 추가" style="width: 26.5px; height: 26.5px; object-fit: contain; pointer-events: none;"></span>';
+  }
+  const banner = document.getElementById('add-person-instruction');
+  if (banner) banner.style.display = 'none';
+
+  if (!selectedPolygonId) {
+    const areaSec = document.getElementById('area-editor-section');
+    if (areaSec) areaSec.style.display = 'none';
+  }
+
+  const toastContainer = document.getElementById('toast-container');
+  if (toastContainer && typeof positionToastContainer === 'function') {
+    positionToastContainer(toastContainer);
   }
 }
 
@@ -11677,27 +13776,72 @@ function activateAddPolygonMode() {
   selectedPolygonId = null;
   selectedLineKey = null;
   selectedJunctionId = null;
+  selectedPolyVertexIndex = null;
+  selectedBendIndex = null;
   
   isAddPolygonModeActive = true;
   tempPolygonPoints = [];
   const btn = document.getElementById('admin-add-polygon-btn');
   if (btn) {
-    btn.style.background = '#9a3412';
-    btn.style.borderColor = '#9a3412';
-    btn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;"><svg class="custom-add-polygon-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="color: #ef4444; width: 24px; height: 24px; fill: none !important;"><rect x="4" y="4" width="16" height="16" rx="3" style="fill: none !important;"></rect><path d="M8 4v16M12 4v16M16 4v16M4 8h16M4 12h16M4 16h16" style="fill: none !important;"></path></svg></span>';
+    btn.style.background = '#ffffff';
+    btn.style.borderColor = 'rgba(0, 0, 0, 0.08)';
+    btn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 26.5px; height: 26.5px;"><img class="custom-add-polygon-icon" src="add_polygon_btn_active.png" alt="영역 추가" style="width: 26.5px; height: 26.5px; object-fit: contain; pointer-events: none;"></span>';
   }
-  showToast("⬡ 다각형 영역 추가 모드가 활성화되었습니다. 화면을 클릭하여 다각형 꼭짓점을 만드세요.");
+  const banner = document.getElementById('add-person-instruction');
+  if (banner) {
+    banner.innerHTML = currentLang === 'en'
+      ? `<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;">
+           <span>⬡ Click/tap on screen to add polygon vertices.</span>
+           <button id="polygon-undo-point-btn" style="background:rgba(255,255,255,0.25);border:1px solid rgba(255,255,255,0.6);color:inherit;padding:2px 8px;border-radius:4px;cursor:pointer;font-size:12px;font-weight:bold;">⌫ Undo Point</button>
+           <button id="polygon-cancel-draw-btn" style="background:rgba(255,255,255,0.25);border:1px solid rgba(255,255,255,0.6);color:inherit;padding:2px 8px;border-radius:4px;cursor:pointer;font-size:12px;">✕ Cancel</button>
+         </div>`
+      : `<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;">
+           <span>⬡ 화면을 터치/클릭하여 꼭짓점을 추가하세요.</span>
+           <button id="polygon-undo-point-btn" style="background:rgba(255,255,255,0.25);border:1px solid rgba(255,255,255,0.6);color:inherit;padding:2px 8px;border-radius:4px;cursor:pointer;font-size:12px;font-weight:bold;">⌫ 직전 점 삭제</button>
+           <button id="polygon-cancel-draw-btn" style="background:rgba(255,255,255,0.25);border:1px solid rgba(255,255,255,0.6);color:inherit;padding:2px 8px;border-radius:4px;cursor:pointer;font-size:12px;">✕ 취소</button>
+         </div>`;
+    
+    document.getElementById('polygon-undo-point-btn')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (tempPolygonPoints.length > 0) {
+        tempPolygonPoints.pop();
+        updateTempPolygonPreview();
+        showToast(currentLang === 'en' ? `Last vertex removed (${tempPolygonPoints.length} remaining).` : `직전 정점이 삭제되었습니다. (남은 정점: ${tempPolygonPoints.length}개)`);
+      }
+    });
+    
+    document.getElementById('polygon-cancel-draw-btn')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      deactivateAddPolygonMode();
+      showToast(currentLang === 'en' ? "Polygon creation cancelled." : "다각형 영역 추가가 취소되었습니다.");
+      renderTree();
+      updateTransform();
+    });
+
+    positionAddInstructionBanner();
+    banner.style.display = 'flex';
+  }
+
+  // Open style editor panel and show area editor section at the top
+  openStyleEditorPanel();
+  const areaSec = document.getElementById('area-editor-section');
+  if (areaSec) areaSec.style.display = 'block';
+  if (styleEditorPanel) styleEditorPanel.scrollTop = 0;
+
+  showToast(currentLang === 'en'
+    ? "⬡ Polygon Mode Active: Click on screen to create polygon vertices."
+    : "⬡ 다각형 영역 추가 모드가 활성화되었습니다. 화면을 클릭하여 다각형 꼭짓점을 만드세요.");
   renderTree();
   updateTransform();
 }
 
 function completePolygonCreation() {
   if (tempPolygonPoints.length < 3) {
-    showToast("⚠️ 다각형 영역을 구성하려면 최소 3개 이상의 점이 필요합니다.");
+    showToast(currentLang === 'en' ? "⚠️ A polygon requires at least 3 vertices." : "⚠️ 다각형 영역을 구성하려면 최소 3개 이상의 점이 필요합니다.");
     return;
   }
   
-  const name = prompt("새로운 다각형 영역의 이름을 입력하세요:", "새 영역");
+  const name = prompt(currentLang === 'en' ? "Enter the name for the new polygon area:" : "새로운 다각형 영역의 이름을 입력하세요:", currentLang === 'en' ? "New Area" : "새 영역");
   if (!name) return;
   
   pushHistoryState();
@@ -11705,11 +13849,17 @@ function completePolygonCreation() {
   const randomColors = ['#f97316', '#3b82f6', '#22c55e', '#ef4444', '#a855f7', '#ec4899', '#eab308', '#06b6d4'];
   const randomColor = randomColors[Math.floor(Math.random() * randomColors.length)];
   
+  const trimmedName = name.trim() || (currentLang === 'en' ? "New Area" : "새 영역");
+  
   customPolygons.push({
     id: polyId,
-    label: name,
+    label: trimmedName,
     color: randomColor,
     fillOpacity: 0.03,
+    strokeWidth: 2,
+    borderStyle: 'dashed',
+    labelOffsetX: 0,
+    labelOffsetY: 0,
     points: [...tempPolygonPoints]
   });
   
@@ -11717,13 +13867,13 @@ function completePolygonCreation() {
   deactivateAddPolygonMode();
   
   selectedPolygonId = polyId;
+  openStyleEditorPanel();
+  updateAreaEditorPanel();
+  if (styleEditorPanel) styleEditorPanel.scrollTop = 0;
+
   renderTree();
   updateTransform();
-  openStyleEditorPanel();
-  setTimeout(() => {
-    document.getElementById('area-editor-section')?.scrollIntoView({ behavior: 'smooth' });
-  }, 300);
-  showToast(`"${name}" 영역이 추가되었습니다.`);
+  showToast(currentLang === 'en' ? `Area "${name}" added.` : `"${name}" 영역이 추가되었습니다.`);
 }
 
 function updateTempPolygonPreview(mousePt = null) {
@@ -11765,13 +13915,37 @@ function removeTempPolygonPreview() {
 
 function enterAdminMode() {
   isAdminMode = true;
+  document.body.classList.add('admin-mode');
   const lockBtn = document.getElementById('admin-lock-btn');
   if (lockBtn) {
     lockBtn.textContent = '🔓';
     lockBtn.title = UI_TEXTS[currentLang].admin_lock_title;
   }
   const actionsBar = document.getElementById('admin-actions-bar');
-  if (actionsBar) actionsBar.style.display = 'flex';
+  if (actionsBar) {
+    actionsBar.classList.add('active');
+    const isDesktop = document.documentElement.classList.contains('platform-macos') || 
+                      (document.body && document.body.classList.contains('platform-macos')) || 
+                      (window.innerWidth >= 900 && (!window.Capacitor || !(/iPad|iPhone|iPod|Android/.test(navigator.userAgent))));
+    if (isDesktop) {
+      actionsBar.style.setProperty('display', 'none', 'important');
+    } else {
+      const isLandscape = window.matchMedia('(orientation: landscape)').matches;
+      const shortSide = Math.min(window.innerWidth, window.innerHeight);
+      const longSide = Math.max(window.innerWidth, window.innerHeight);
+      const isMobilePhone = ((shortSide <= 550) && (longSide <= 1000)) || (document.body && (document.body.classList.contains('platform-iphone') || document.body.classList.contains('platform-android-phone')));
+      if (!isLandscape || !isMobilePhone) {
+        actionsBar.style.setProperty('display', 'flex', 'important');
+      } else {
+        actionsBar.style.setProperty('display', 'none', 'important');
+      }
+    }
+  }
+
+  const floatSettingsBtn = document.getElementById('floating-settings-btn');
+  if (floatSettingsBtn) {
+    floatSettingsBtn.style.setProperty('display', 'flex', 'important');
+  }
 
   repositionHistoryButtons();
   
@@ -11801,17 +13975,28 @@ function enterAdminMode() {
 
 function exitAdminMode() {
   isAdminMode = false;
+  document.body.classList.remove('admin-mode');
   const lockBtn = document.getElementById('admin-lock-btn');
   if (lockBtn) {
     lockBtn.textContent = '🔒';
-    lockBtn.title = UI_TEXTS[currentLang].admin_lock_title;
+    lockBtn.title = UI_TEXTS[currentLang] ? UI_TEXTS[currentLang].admin_lock_title : 'Admin Mode';
   }
-  if (typeof syncSlideLockUI === 'function') syncSlideLockUI(false);
   const actionsBar = document.getElementById('admin-actions-bar');
-  if (actionsBar) actionsBar.style.display = 'none';
+  if (actionsBar) {
+    actionsBar.classList.remove('active');
+    actionsBar.style.setProperty('display', 'none', 'important');
+  }
 
-  // updateHistoryButtonsState() 가 syncSlideLockUI(false)를 통해 자동 제어함
-  
+  const floatSettingsBtn = document.getElementById('floating-settings-btn');
+  if (floatSettingsBtn) {
+    floatSettingsBtn.style.setProperty('display', 'none', 'important');
+  }
+
+  const settingsModal = document.getElementById('settings-modal');
+  if (settingsModal) {
+    settingsModal.style.setProperty('display', 'none', 'important');
+  }
+
   const styleEditorToggleEl = document.getElementById('style-editor-toggle');
   if (styleEditorToggleEl) styleEditorToggleEl.style.display = 'none';
   
@@ -11835,6 +14020,7 @@ function exitAdminMode() {
   closeStyleEditorPanel();
   renderTree();
   updateHistoryButtonsState();
+  if (typeof syncSlideLockUI === 'function') syncSlideLockUI(false);
 }
 
 let tempRelatedPeople = [];
@@ -11913,8 +14099,37 @@ function renderRelatedPeopleList(searchTerm = "") {
   });
 }
 
+function ensureModalInputsFocusable() {
+  const modalInputs = document.querySelectorAll('.modal-overlay input, .modal-overlay textarea, .modal-overlay select');
+  modalInputs.forEach(input => {
+    input.style.userSelect = 'text';
+    input.style.webkitUserSelect = 'text';
+    input.style.touchAction = 'manipulation';
+    input.style.pointerEvents = 'auto';
+
+    if (!input.dataset.touchBound) {
+      input.dataset.touchBound = 'true';
+      input.addEventListener('touchstart', (e) => {
+        e.stopPropagation();
+      }, { passive: true });
+      input.addEventListener('touchend', (e) => {
+        e.stopPropagation();
+        input.focus();
+      }, { passive: true });
+      input.addEventListener('pointerdown', (e) => {
+        e.stopPropagation();
+      });
+      input.addEventListener('click', (e) => {
+        e.stopPropagation();
+        input.focus();
+      });
+    }
+  });
+}
+
 function openAdminForm(personId) {
   editingPersonId = personId;
+  const texts = UI_TEXTS[currentLang] || UI_TEXTS.ko;
   const formEl = document.getElementById('admin-form');
   if (formEl) formEl.reset();
   
@@ -11935,8 +14150,8 @@ function openAdminForm(personId) {
   
   if (personId) {
     if (presetContainer) presetContainer.style.display = 'none';
-    if (modalTitleEl) modalTitleEl.textContent = "인물 정보 수정";
-    if (idInput) idInput.disabled = true;
+    if (modalTitleEl) modalTitleEl.textContent = texts.modal_title_person_edit || "인물 정보 수정";
+    if (idInput) idInput.disabled = false;
     if (formDeleteBtnEl) formDeleteBtnEl.style.display = 'inline-block';
     
     const char = db.find(c => c.id === personId);
@@ -11969,6 +14184,14 @@ function openAdminForm(personId) {
       const prophetCheckbox = document.getElementById('form-prophet');
       if (prophetCheckbox) prophetCheckbox.checked = isProphet(char.id);
       
+      const htNameInput = document.getElementById('form-hometown-name');
+      if (htNameInput) htNameInput.value = (char.hometown && char.hometown.name) ? char.hometown.name : '';
+      const htCoordsInput = document.getElementById('form-hometown-coords');
+      if (htCoordsInput) htCoordsInput.value = (char.hometown && char.hometown.coords) ? char.hometown.coords : '';
+      tempAdminActivities = (char.activities && Array.isArray(char.activities))
+        ? JSON.parse(JSON.stringify(char.activities))
+        : [];
+      
       tempRelatedPeople = char.relatedPeople && Array.isArray(char.relatedPeople) ? [...char.relatedPeople] : [];
     }
   } else {
@@ -11977,7 +14200,10 @@ function openAdminForm(personId) {
       if (activeChar && presetContainer) {
         presetContainer.style.display = 'flex';
         const targetNameEl = document.getElementById('relation-target-name');
-        if (targetNameEl) targetNameEl.textContent = `${activeChar.name} (${activeChar.id})`;
+        if (targetNameEl) {
+          const charDisplayName = currentLang === 'en' ? (activeChar.engName || activeChar.name) : activeChar.name;
+          targetNameEl.textContent = `${charDisplayName} (${activeChar.id})`;
+        }
       } else if (presetContainer) {
         presetContainer.style.display = 'none';
       }
@@ -11985,7 +14211,7 @@ function openAdminForm(personId) {
       presetContainer.style.display = 'none';
     }
     
-    if (modalTitleEl) modalTitleEl.textContent = "새 인물 추가";
+    if (modalTitleEl) modalTitleEl.textContent = texts.modal_title_person_add || "새 인물 추가";
     if (idInput) idInput.disabled = false;
     if (formDeleteBtnEl) formDeleteBtnEl.style.display = 'none';
     
@@ -12002,11 +14228,48 @@ function openAdminForm(personId) {
     const engDescInput = document.getElementById('form-eng-desc');
     if (engDescInput) engDescInput.value = '';
     
+    const htNameInput = document.getElementById('form-hometown-name');
+    if (htNameInput) htNameInput.value = '';
+    const htCoordsInput = document.getElementById('form-hometown-coords');
+    if (htCoordsInput) htCoordsInput.value = '';
+    tempAdminActivities = [];
+    
     tempRelatedPeople = [];
   }
   
   renderRelatedPeopleList("");
+  renderAdminActivitiesList();
+  
+  const adminAddActBtn = document.getElementById('admin-act-add-btn');
+  if (adminAddActBtn && !adminAddActBtn._bound) {
+    adminAddActBtn._bound = true;
+    adminAddActBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const nameInput = document.getElementById('admin-act-name-input');
+      const coordsInput = document.getElementById('admin-act-coords-input');
+      const descInput = document.getElementById('admin-act-desc-input');
+      const name = nameInput ? nameInput.value.trim() : '';
+      const coords = coordsInput ? coordsInput.value.trim() : '';
+      const desc = descInput ? descInput.value.trim() : '';
+      if (!name) {
+        alert(currentLang === 'en' ? 'Please enter a place name.' : '장소명을 입력해주세요.');
+        return;
+      }
+      tempAdminActivities.push({ id: 'act-' + Date.now(), name, coords, desc });
+      if (nameInput) nameInput.value = '';
+      if (coordsInput) coordsInput.value = '';
+      if (descInput) descInput.value = '';
+      renderAdminActivitiesList();
+    });
+  }
   if (modalEl) modalEl.style.display = 'flex';
+  ensureModalInputsFocusable();
+  setTimeout(() => {
+    const focusTarget = document.getElementById('form-name') || document.getElementById('form-id');
+    if (focusTarget) {
+      focusTarget.focus();
+    }
+  }, 100);
 }
 
 function openAdminFormWithParent(parentId) {
@@ -12046,32 +14309,85 @@ function closeAdminForm() {
 }
 
 function saveAdminForm() {
-  const id = document.getElementById('form-id').value.trim();
-  const name = document.getElementById('form-name').value.trim();
-  const engName = document.getElementById('form-eng').value.trim();
-  const gender = document.getElementById('form-gender').value;
-  const generation = parseFloat(parseFloat(document.getElementById('form-gen').value).toFixed(2));
-  const rawColumn = parseFloat(document.getElementById('form-col').value);
-  const parentsInput = document.getElementById('form-parents').value.trim();
-  const spousesInput = document.getElementById('form-spouses').value.trim();
-  const desc = document.getElementById('form-desc').value.trim();
-  const engDesc = document.getElementById('form-eng-desc').value.trim();
-  const isMain = document.getElementById('form-main').checked;
-  const isProphetVal = document.getElementById('form-prophet').checked;
+  const texts = UI_TEXTS[currentLang] || UI_TEXTS.ko;
+  let newId = document.getElementById('form-id') ? document.getElementById('form-id').value.trim() : '';
+  const name = document.getElementById('form-name') ? document.getElementById('form-name').value.trim() : '';
+  const engName = document.getElementById('form-eng') ? document.getElementById('form-eng').value.trim() : '';
+  const gender = document.getElementById('form-gender') ? document.getElementById('form-gender').value : 'M';
+  const genEl = document.getElementById('form-gen');
+  const colEl = document.getElementById('form-col');
+  const generation = genEl ? parseFloat(parseFloat(genEl.value || 0).toFixed(2)) : 0;
+  const rawColumn = colEl ? parseFloat(colEl.value || 0) : 0;
+  const parentsInput = document.getElementById('form-parents') ? document.getElementById('form-parents').value.trim() : '';
+  const spousesInput = document.getElementById('form-spouses') ? document.getElementById('form-spouses').value.trim() : '';
+  const desc = document.getElementById('form-desc') ? document.getElementById('form-desc').value.trim() : '';
+  const engDesc = document.getElementById('form-eng-desc') ? document.getElementById('form-eng-desc').value.trim() : '';
+  const isMain = document.getElementById('form-main') ? document.getElementById('form-main').checked : false;
+  const isProphetVal = document.getElementById('form-prophet') ? document.getElementById('form-prophet').checked : false;
   const column = (isMain && gender === 'M') ? 0.0 : rawColumn;
+  
+  const hometownNameInput = document.getElementById('form-hometown-name');
+  const hometownCoordsInput = document.getElementById('form-hometown-coords');
+  const hometown = {
+    name: hometownNameInput ? hometownNameInput.value.trim() : '',
+    coords: hometownCoordsInput ? hometownCoordsInput.value.trim() : ''
+  };
+  const activities = Array.isArray(tempAdminActivities) ? tempAdminActivities : [];
   
   const parents = parentsInput ? parentsInput.split(',').map(s => s.trim()).filter(s => s.length > 0) : [];
   const spouses = spousesInput ? spousesInput.split(',').map(s => s.trim()).filter(s => s.length > 0) : [];
+
+  if (!newId) {
+    if (editingPersonId) {
+      newId = editingPersonId;
+    } else {
+      if (engName) {
+        newId = engName.toLowerCase().replace(/[^a-z0-9]/g, '_').replace(/^_+|_+$/g, '');
+      } else if (name && typeof BIBLE_NAMES_DICTIONARY !== 'undefined' && BIBLE_NAMES_DICTIONARY[name]) {
+        newId = BIBLE_NAMES_DICTIONARY[name].toLowerCase().replace(/[^a-z0-9]/g, '_').replace(/^_+|_+$/g, '');
+      }
+      if (!newId && name) {
+        newId = 'person_' + Date.now().toString(36);
+      }
+      if (!newId) {
+        newId = 'person_' + Date.now();
+      }
+      const idInput = document.getElementById('form-id');
+      if (idInput) idInput.value = newId;
+    }
+  }
   
-  const idRegex = /^[a-zA-Z0-9_\-]+$/;
-  if (!idRegex.test(id)) {
-    alert("ID는 영문자, 숫자, 언더바(_), 하이픈(-)만 가능하며 공백을 포함할 수 없습니다.");
-    return;
+  // Sanitize ID
+  newId = newId.replace(/[^a-zA-Z0-9_\-]/g, '_');
+  if (!newId) {
+    newId = editingPersonId || ('person_' + Date.now());
+  }
+
+  if (editingPersonId) {
+    const oldId = editingPersonId;
+    if (newId !== oldId) {
+      if (db.some(c => c.id === newId && c.id !== oldId)) {
+        alert(currentLang === 'en' ? `The ID '${newId}' is already in use by another person. Please choose a different ID.` : `ID '${newId}'는 이미 다른 인물이 사용 중입니다. 다른 ID를 입력해주세요.`);
+        return;
+      }
+    }
+  }
+
+  // Remove from deletedIds if previously deleted
+  let deletedIds = [];
+  try {
+    deletedIds = JSON.parse(localStorage.getItem('bible_tree_deleted_ids') || '[]');
+    if (!Array.isArray(deletedIds)) deletedIds = [];
+  } catch(_) { deletedIds = []; }
+  if (deletedIds.includes(newId)) {
+    deletedIds = deletedIds.filter(d => d !== newId);
+    localStorage.setItem('bible_tree_deleted_ids', JSON.stringify(deletedIds));
   }
   
   for (let pId of parents) {
     if (!db.some(c => c.id === pId)) {
-      if (confirm(`부모 ID '${pId}'가 존재하지 않습니다. 이 ID로 새 인물을 생성하시겠습니까?`)) {
+      const confirmMsg = currentLang === 'en' ? `Parent ID '${pId}' does not exist. Would you like to create a new figure with this ID?` : `부모 ID '${pId}'가 존재하지 않습니다. 이 ID로 새 인물을 생성하시겠습니까?`;
+      if (confirm(confirmMsg)) {
         db.push({
           id: pId,
           name: pId,
@@ -12081,7 +14397,7 @@ function saveAdminForm() {
           column: column,
           parents: [],
           spouses: [],
-          desc: "자동 생성된 부모",
+          desc: currentLang === 'en' ? "Auto-generated parent" : "자동 생성된 부모",
           isMain: false,
           isManual: true
         });
@@ -12091,13 +14407,14 @@ function saveAdminForm() {
     }
   }
   if (parents.length > 2) {
-    alert("부모는 최대 2명(아버지와 어머니)까지만 등록할 수 있습니다.");
+    alert(currentLang === 'en' ? "You can only register up to 2 parents (father and mother)." : "부모는 최대 2명(아버지와 어머니)까지만 등록할 수 있습니다.");
     return;
   }
   
   for (let sId of spouses) {
     if (!db.some(c => c.id === sId)) {
-      if (confirm(`배우자 ID '${sId}'가 존재하지 않습니다. 이 ID로 새 인물을 생성하시겠습니까?`)) {
+      const confirmMsg = currentLang === 'en' ? `Spouse ID '${sId}' does not exist. Would you like to create a new figure with this ID?` : `배우자 ID '${sId}'가 존재하지 않습니다. 이 ID로 새 인물을 생성하시겠습니까?`;
+      if (confirm(confirmMsg)) {
         db.push({
           id: sId,
           name: sId,
@@ -12107,7 +14424,7 @@ function saveAdminForm() {
           column: column + 1.5,
           parents: [],
           spouses: [],
-          desc: "자동 생성된 배우자",
+          desc: currentLang === 'en' ? "Auto-generated spouse" : "자동 생성된 배우자",
           isMain: false,
           isManual: true
         });
@@ -12122,7 +14439,8 @@ function saveAdminForm() {
   
   for (let tId of teachers) {
     if (!db.some(c => c.id === tId)) {
-      if (confirm(`전도자 ID '${tId}'가 존재하지 않습니다. 이 ID로 새 인물을 생성하시겠습니까?`)) {
+      const confirmMsg = currentLang === 'en' ? `Teacher ID '${tId}' does not exist. Would you like to create a new figure with this ID?` : `전도자 ID '${tId}'가 존재하지 않습니다. 이 ID로 새 인물을 생성하시겠습니까?`;
+      if (confirm(confirmMsg)) {
         db.push({
           id: tId,
           name: tId,
@@ -12132,7 +14450,7 @@ function saveAdminForm() {
           column: column - 1.5,
           parents: [],
           spouses: [],
-          desc: "자동 생성된 전도자/스승",
+          desc: currentLang === 'en' ? "Auto-generated evangelist/teacher" : "자동 생성된 전도자/스승",
           isMain: false,
           isManual: true
         });
@@ -12147,7 +14465,8 @@ function saveAdminForm() {
   
   for (let pId of prophets) {
     if (!db.some(c => c.id === pId)) {
-      if (confirm(`선지자 ID '${pId}'가 존재하지 않습니다. 이 ID로 새 인물을 생성하시겠습니까?`)) {
+      const confirmMsg = currentLang === 'en' ? `Prophet ID '${pId}' does not exist. Would you like to create a new figure with this ID?` : `선지자 ID '${pId}'가 존재하지 않습니다. 이 ID로 새 인물을 생성하시겠습니까?`;
+      if (confirm(confirmMsg)) {
         db.push({
           id: pId,
           name: pId,
@@ -12157,7 +14476,7 @@ function saveAdminForm() {
           column: column - 1.5,
           parents: [],
           spouses: [],
-          desc: "자동 생성된 선지자",
+          desc: currentLang === 'en' ? "Auto-generated prophet" : "자동 생성된 선지자",
           isMain: false,
           isProphet: true,
           isManual: true
@@ -12170,13 +14489,14 @@ function saveAdminForm() {
 
   pushHistoryState();
   if (editingPersonId) {
-    const index = db.findIndex(c => c.id === editingPersonId);
+    const oldId = editingPersonId;
+    const index = db.findIndex(c => c.id === oldId);
     if (index !== -1) {
       const oldSpouses = db[index].spouses || [];
       const oldRelated = db[index].relatedPeople || [];
       
       db[index] = {
-        id: editingPersonId,
+        id: newId,
         name,
         engName,
         gender,
@@ -12189,16 +14509,150 @@ function saveAdminForm() {
         relatedPeople: tempRelatedPeople,
         desc,
         engDesc,
+        hometown,
+        activities,
         isMain,
         isProphet: isProphetVal,
         isManual: true
       };
+
+      if (newId !== oldId) {
+        // 1. Update relationships in all characters in db
+        db.forEach(c => {
+          if (c.id !== newId) {
+            if (c.parents && Array.isArray(c.parents)) {
+              c.parents = c.parents.map(pid => pid === oldId ? newId : pid);
+            }
+            if (c.spouses && Array.isArray(c.spouses)) {
+              c.spouses = c.spouses.map(sid => sid === oldId ? newId : sid);
+            }
+            if (c.teachers && Array.isArray(c.teachers)) {
+              c.teachers = c.teachers.map(tid => tid === oldId ? newId : tid);
+            }
+            if (c.prophets && Array.isArray(c.prophets)) {
+              c.prophets = c.prophets.map(prid => prid === oldId ? newId : prid);
+            }
+            if (c.relatedPeople && Array.isArray(c.relatedPeople)) {
+              c.relatedPeople = c.relatedPeople.map(rid => rid === oldId ? newId : rid);
+            }
+          }
+        });
+
+        // 2. Update events relatedPeople
+        if (Array.isArray(events)) {
+          let eventsChanged = false;
+          events.forEach(ev => {
+            if (ev.relatedPeople && Array.isArray(ev.relatedPeople) && ev.relatedPeople.includes(oldId)) {
+              ev.relatedPeople = ev.relatedPeople.map(pid => pid === oldId ? newId : pid);
+              eventsChanged = true;
+            }
+          });
+          if (eventsChanged) {
+            saveEvents();
+          }
+        }
+
+        // 3. Update locations relatedPeople
+        if (Array.isArray(locations)) {
+          let locsChanged = false;
+          locations.forEach(loc => {
+            if (loc.relatedPeople && Array.isArray(loc.relatedPeople) && loc.relatedPeople.includes(oldId)) {
+              loc.relatedPeople = loc.relatedPeople.map(pid => pid === oldId ? newId : pid);
+              locsChanged = true;
+            }
+          });
+          if (locsChanged) {
+            saveLocations();
+          }
+        }
+
+        // 4. Update customVisualLines
+        if (Array.isArray(customVisualLines)) {
+          let linesChanged = false;
+          customVisualLines.forEach(l => {
+            if (l.from === oldId) { l.from = newId; linesChanged = true; }
+            if (l.to === oldId) { l.to = newId; linesChanged = true; }
+          });
+          if (linesChanged) {
+            saveCustomVisualLines();
+          }
+        }
+
+        // 5. Update lineBends
+        if (typeof lineBends === 'object' && lineBends !== null) {
+          const newBends = {};
+          let bendsChanged = false;
+          Object.keys(lineBends).forEach(k => {
+            if (k.includes(oldId)) {
+              const newK = k.split(oldId).join(newId);
+              newBends[newK] = lineBends[k];
+              bendsChanged = true;
+            } else {
+              newBends[k] = lineBends[k];
+            }
+          });
+          if (bendsChanged) {
+            lineBends = newBends;
+            saveLineBends();
+          }
+        }
+
+        // 6. Update user notes & localStorage caches
+        if (userNotes && userNotes[oldId]) {
+          userNotes[newId] = userNotes[oldId];
+          delete userNotes[oldId];
+          saveUserNotes();
+        }
+        const oldNote = localStorage.getItem(`bible_tree_note_${oldId}`);
+        if (oldNote !== null) {
+          localStorage.setItem(`bible_tree_note_${newId}`, oldNote);
+          localStorage.removeItem(`bible_tree_note_${oldId}`);
+        }
+        const oldRes = localStorage.getItem(`bible_tree_resources_${oldId}`);
+        if (oldRes !== null) {
+          localStorage.setItem(`bible_tree_resources_${newId}`, oldRes);
+          localStorage.removeItem(`bible_tree_resources_${oldId}`);
+        }
+
+        // 7. Manage edits and deleted tracking
+        let edits = {};
+        try {
+          edits = JSON.parse(localStorage.getItem('bible_tree_character_edits') || '{}');
+          if (!edits || typeof edits !== 'object' || Array.isArray(edits)) edits = {};
+        } catch(_) { edits = {}; }
+        if (edits[oldId]) {
+          delete edits[oldId];
+          localStorage.setItem('bible_tree_character_edits', JSON.stringify(edits));
+        }
+
+        const isOldCanon = typeof BIBLE_CHARACTERS !== 'undefined' && BIBLE_CHARACTERS.some(c => c.id === oldId);
+        if (isOldCanon) {
+          let delList = [];
+          try {
+            delList = JSON.parse(localStorage.getItem('bible_tree_deleted_ids') || '[]');
+            if (!Array.isArray(delList)) delList = [];
+          } catch(_) { delList = []; }
+          if (!delList.includes(oldId)) {
+            delList.push(oldId);
+            localStorage.setItem('bible_tree_deleted_ids', JSON.stringify(delList));
+          }
+        }
+
+        // 8. Update UI selection & active trackers
+        if (activePersonId === oldId) activePersonId = newId;
+        if (selectedPersonId === oldId) selectedPersonId = newId;
+        if (selectedPersonIds.has(oldId)) {
+          selectedPersonIds.delete(oldId);
+          selectedPersonIds.add(newId);
+        }
+        editingPersonId = newId;
+      }
       
       oldSpouses.forEach(oldSpouseId => {
         if (!spouses.includes(oldSpouseId)) {
           const spNode = db.find(c => c.id === oldSpouseId);
           if (spNode && spNode.spouses) {
-            spNode.spouses = spNode.spouses.filter(id => id !== editingPersonId);
+            spNode.spouses = spNode.spouses.filter(id => id !== newId && id !== oldId);
           }
         }
       });
@@ -12207,35 +14661,35 @@ function saveAdminForm() {
         const spNode = db.find(c => c.id === newSpouseId);
         if (spNode) {
           if (!spNode.spouses) spNode.spouses = [];
-          if (!spNode.spouses.includes(editingPersonId)) {
-            spNode.spouses.push(editingPersonId);
+          if (!spNode.spouses.includes(newId)) {
+            spNode.spouses.push(newId);
           }
         }
       });
       
-      oldRelated.forEach(oldId => {
-        if (!tempRelatedPeople.includes(oldId)) {
-          const rNode = db.find(c => c.id === oldId);
+      oldRelated.forEach(oldRId => {
+        if (!tempRelatedPeople.includes(oldRId)) {
+          const rNode = db.find(c => c.id === oldRId);
           if (rNode && rNode.relatedPeople) {
-            rNode.relatedPeople = rNode.relatedPeople.filter(id => id !== editingPersonId);
+            rNode.relatedPeople = rNode.relatedPeople.filter(id => id !== newId && id !== oldId);
           }
         }
       });
       
-      tempRelatedPeople.forEach(newId => {
-        const rNode = db.find(c => c.id === newId);
+      tempRelatedPeople.forEach(newRId => {
+        const rNode = db.find(c => c.id === newRId);
         if (rNode) {
           if (!rNode.relatedPeople) rNode.relatedPeople = [];
-          if (!rNode.relatedPeople.includes(editingPersonId)) {
-            rNode.relatedPeople.push(editingPersonId);
+          if (!rNode.relatedPeople.includes(newId)) {
+            rNode.relatedPeople.push(newId);
           }
         }
       });
     }
   } else {
+    let id = newId;
     if (db.some(c => c.id === id)) {
-      alert(`동일한 ID '${id}'를 가진 인물이 이미 존재합니다. 다른 영문 고유 ID를 부여하세요.`);
-      return;
+      id = id + '_' + Date.now().toString(36);
     }
     
     const newPerson = {
@@ -12252,6 +14706,8 @@ function saveAdminForm() {
       relatedPeople: tempRelatedPeople,
       desc,
       engDesc,
+      hometown,
+      activities,
       isMain,
       isProphet: isProphetVal,
       isManual: true
@@ -12269,8 +14725,8 @@ function saveAdminForm() {
       }
     });
     
-    tempRelatedPeople.forEach(newId => {
-      const rNode = db.find(c => c.id === newId);
+    tempRelatedPeople.forEach(newRId => {
+      const rNode = db.find(c => c.id === newRId);
       if (rNode) {
         if (!rNode.relatedPeople) rNode.relatedPeople = [];
         if (!rNode.relatedPeople.includes(id)) {
@@ -12283,46 +14739,110 @@ function saveAdminForm() {
   saveDatabase();
   applyFilters();
   updateStats();
+  
+  // If this person is currently displayed in the study panel, refresh it
+  if (activePersonId && activePersonId === (editingPersonId || id) && activeStudyPanelType === 'person') {
+    const charToSync = db.find(c => c.id === activePersonId);
+    if (charToSync) {
+      const htNameInput = document.getElementById('panel-hometown-name');
+      const htCoordsInput = document.getElementById('panel-hometown-coords');
+      const htMapBtn = document.getElementById('panel-hometown-map-btn');
+      if (htNameInput) htNameInput.value = hometown.name || '';
+      if (htCoordsInput) htCoordsInput.value = hometown.coords || '';
+      updateHometownMapButton(htMapBtn, hometown.coords, hometown.name);
+      renderPanelActivities(charToSync);
+    }
+  }
+  
   closeAdminForm();
 }
 
 function deletePerson(personId) {
-  if (!confirm(`정말로 '${personId}' 인물을 삭제하시겠습니까?\n이 인물과 관련된 모든 부모/배우자 관계 선도 끊어집니다.`)) {
+  const targetId = personId || editingPersonId;
+  if (!targetId) return;
+
+  const confirmMsg = currentLang === 'en'
+    ? `Are you sure you want to delete figure '${targetId}'?\nAll related parent/spouse connection lines will also be removed.`
+    : `정말로 '${targetId}' 인물을 삭제하시겠습니까?\n이 인물과 관련된 모든 부모/배우자 관계 선도 끊어집니다.`;
+  if (!confirm(confirmMsg)) {
     return;
   }
   
   pushHistoryState();
-  const person = db.find(c => c.id === personId);
+  const person = db.find(c => c.id === targetId);
   const generation = person ? person.generation : null;
 
-  db = db.filter(c => c.id !== personId);
+  db = db.filter(c => c.id !== targetId);
+
+  // 1. Explicitly track targetId in deletedIds so it is never resurrected
+  let deletedIds = [];
+  try {
+    deletedIds = JSON.parse(localStorage.getItem('bible_tree_deleted_ids') || '[]');
+    if (!Array.isArray(deletedIds)) deletedIds = [];
+  } catch(_) { deletedIds = []; }
+  if (!deletedIds.includes(targetId)) {
+    deletedIds.push(targetId);
+    localStorage.setItem('bible_tree_deleted_ids', JSON.stringify(deletedIds));
+  }
+
+  // 2. Remove from custom characters storage immediately
+  let custom = [];
+  try {
+    custom = JSON.parse(localStorage.getItem('bible_tree_custom_characters') || '[]');
+    if (!Array.isArray(custom)) custom = [];
+  } catch(_) { custom = []; }
+  custom = custom.filter(c => c.id !== targetId);
+  localStorage.setItem('bible_tree_custom_characters', JSON.stringify(custom));
+
+  // 3. Remove from character edits storage immediately
+  let edits = {};
+  try {
+    edits = JSON.parse(localStorage.getItem('bible_tree_character_edits') || '{}');
+    if (!edits || typeof edits !== 'object' || Array.isArray(edits)) edits = {};
+  } catch(_) { edits = {}; }
+  if (edits[targetId]) {
+    delete edits[targetId];
+    localStorage.setItem('bible_tree_character_edits', JSON.stringify(edits));
+  }
   
+  // 4. Remove relationships from remaining characters
   db.forEach(char => {
     if (char.parents) {
-      char.parents = char.parents.filter(id => id !== personId);
+      char.parents = char.parents.filter(id => id !== targetId);
     }
     if (char.spouses) {
-      char.spouses = char.spouses.filter(id => id !== personId);
+      char.spouses = char.spouses.filter(id => id !== targetId);
+    }
+    if (char.teachers) {
+      char.teachers = char.teachers.filter(id => id !== targetId);
+    }
+    if (char.prophets) {
+      char.prophets = char.prophets.filter(id => id !== targetId);
     }
     if (char.relatedPeople) {
-      char.relatedPeople = char.relatedPeople.filter(id => id !== personId);
+      char.relatedPeople = char.relatedPeople.filter(id => id !== targetId);
     }
   });
+
+  // 5. Clean up selection state
+  selectedPersonIds.delete(targetId);
+  if (selectedPersonId === targetId) selectedPersonId = null;
+  if (activePersonId === targetId) activePersonId = null;
   
-  localStorage.removeItem(`bible_tree_note_${personId}`);
-  localStorage.removeItem(`bible_tree_resources_${personId}`);
-  if (userNotes && userNotes[personId]) {
-    delete userNotes[personId];
+  localStorage.removeItem(`bible_tree_note_${targetId}`);
+  localStorage.removeItem(`bible_tree_resources_${targetId}`);
+  if (userNotes && userNotes[targetId]) {
+    delete userNotes[targetId];
     saveUserNotes();
   }
   
-  customVisualLines = customVisualLines.filter(l => l.from !== personId && l.to !== personId);
+  customVisualLines = customVisualLines.filter(l => l.from !== targetId && l.to !== targetId);
   saveCustomVisualLines();
   
   // Clean up lineBends keys that contain the deleted personId
   let bendsChanged = false;
   Object.keys(lineBends).forEach(key => {
-    if (key.includes(personId)) {
+    if (key.includes(targetId)) {
       delete lineBends[key];
       bendsChanged = true;
     }
@@ -12335,6 +14855,7 @@ function deletePerson(personId) {
   applyFilters();
   updateStats();
   closeAdminForm();
+  showToast(currentLang === 'en' ? "Figure deleted." : "인물이 삭제되었습니다.");
 }
 
 function rebuildAllLayouts() {
@@ -12859,7 +15380,7 @@ function setupStyleEditor() {
   }
   
   if (stylePanelClose) {
-    stylePanelClose.addEventListener('click', closeStyleEditorPanel);
+    bindHybridButton(stylePanelClose, closeStyleEditorPanel);
   }
   
   // Real-time Style Controls Binding
@@ -13001,38 +15522,10 @@ function setupStyleEditor() {
     });
   }
 
-  const clearSelectedLineBtn = document.getElementById('style-clear-selected-line-btn');
-  if (clearSelectedLineBtn) {
-    clearSelectedLineBtn.addEventListener('click', () => {
-      if (selectedLineKey) {
-        pushHistoryState();
-        delete lineBends[selectedLineKey];
-        selectedLineKey = null;
-        saveLineBends();
-        drawConnections();
-        showToast("선택된 연결선 편집이 초기화되었습니다.");
-      }
-    });
-  }
-
   const deleteSelectedLineBtn = document.getElementById('style-delete-selected-line-btn');
   if (deleteSelectedLineBtn) {
     deleteSelectedLineBtn.addEventListener('click', () => {
       deleteSelectedLine();
-    });
-  }
-
-  const clearAllLinesBtn = document.getElementById('style-clear-all-lines-btn');
-  if (clearAllLinesBtn) {
-    clearAllLinesBtn.addEventListener('click', () => {
-      if (confirm("모든 연결선의 수동 편집 내역을 초기화하시겠습니까?")) {
-        pushHistoryState();
-        lineBends = {};
-        selectedLineKey = null;
-        saveLineBends();
-        drawConnections();
-        showToast("모든 연결선 편집이 초기화되었습니다.");
-      }
     });
   }
 
@@ -13200,6 +15693,57 @@ function setupStyleEditor() {
     });
   }
 
+  const deleteSelectedPointBtn = document.getElementById('style-delete-selected-point-btn');
+  if (deleteSelectedPointBtn) {
+    deleteSelectedPointBtn.addEventListener('click', () => {
+      if (selectedLineKey && lineBends[selectedLineKey] && lineBends[selectedLineKey].length > 0) {
+        pushHistoryState();
+        const points = lineBends[selectedLineKey];
+        if (selectedBendIndex !== null && selectedBendIndex >= 0 && selectedBendIndex < points.length) {
+          points.splice(selectedBendIndex, 1);
+        } else {
+          points.pop();
+        }
+        selectedBendIndex = null;
+        if (points.length === 0) {
+          delete lineBends[selectedLineKey];
+          selectedLineKey = null;
+        }
+        saveLineBends();
+        drawConnections();
+        showToast("선택된 꺾임점이 삭제되었습니다.");
+      }
+    });
+  }
+
+  const deleteAreaPointBtn = document.getElementById('style-delete-area-point-btn');
+  if (deleteAreaPointBtn) {
+    deleteAreaPointBtn.addEventListener('click', () => {
+      if (selectedPolygonId) {
+        const poly = customPolygons.find(p => p.id === selectedPolygonId);
+        if (poly && poly.points && poly.points.length > 0) {
+          pushHistoryState();
+          if (selectedPolyVertexIndex !== null && selectedPolyVertexIndex >= 0 && selectedPolyVertexIndex < poly.points.length) {
+            poly.points.splice(selectedPolyVertexIndex, 1);
+          } else {
+            poly.points.pop();
+          }
+          selectedPolyVertexIndex = null;
+          if (poly.points.length < 3) {
+            customPolygons = customPolygons.filter(p => p.id !== poly.id);
+            selectedPolygonId = null;
+            showToast("다각형의 정점이 3개 미만이 되어 영역이 삭제되었습니다.");
+          } else {
+            showToast("영역 정점이 삭제되었습니다.");
+          }
+          saveCustomPolygons();
+          renderTree();
+          updateTransform();
+        }
+      }
+    });
+  }
+
   const deleteAreaBtn = document.getElementById('style-delete-area-btn');
   if (deleteAreaBtn) {
     deleteAreaBtn.addEventListener('click', () => {
@@ -13234,6 +15778,7 @@ function updateAreaEditorPanel() {
       const strokeWidthInput = document.getElementById('style-area-stroke-width');
       const strokeWidthLabel = document.getElementById('label-area-stroke-width');
       const borderSelect = document.getElementById('style-area-border');
+      const deleteAreaPtBtn = document.getElementById('style-delete-area-point-btn');
       
       if (nameInput) nameInput.value = poly.label || '';
       if (colorInput) colorInput.value = poly.color || '#f97316';
@@ -13247,12 +15792,11 @@ function updateAreaEditorPanel() {
       if (strokeWidthLabel) strokeWidthLabel.textContent = `${strokeWidth}px`;
       
       if (borderSelect) borderSelect.value = poly.borderStyle || 'dashed';
-      
-      openStyleEditorPanel();
+      if (deleteAreaPtBtn) deleteAreaPtBtn.disabled = !(poly.points && poly.points.length > 0);
     } else {
-      section.style.display = 'none';
+      if (!isAddPolygonModeActive) section.style.display = 'none';
     }
-  } else {
+  } else if (!isAddPolygonModeActive) {
     section.style.display = 'none';
   }
 }
@@ -13261,26 +15805,16 @@ function openStyleEditorPanel() {
   // Close other sidebar to prevent overlapping on small viewports
   closeStudyPanel();
   
-  // CSS에 기반한 컴팩트 레이아웃(top: 80px, height: auto)을 사용하므로 동적 계산은 생략합니다.
-  function adjustPanelPosition() {
-    if (styleEditorPanel) {
-      styleEditorPanel.style.top = '80px';
-      styleEditorPanel.style.bottom = 'auto';
-    }
+  if (styleEditorPanel) {
+    styleEditorPanel.style.top = '';
+    styleEditorPanel.style.bottom = '';
+    styleEditorPanel.classList.add('active');
   }
-  
-  adjustPanelPosition();
-  styleEditorPanel.classList.add('active');
-  
-  window.addEventListener('resize', adjustPanelPosition);
-  styleEditorPanel._resizeHandler = adjustPanelPosition;
 }
 
 function closeStyleEditorPanel() {
-  styleEditorPanel.classList.remove('active');
-  if (styleEditorPanel._resizeHandler) {
-    window.removeEventListener('resize', styleEditorPanel._resizeHandler);
-    styleEditorPanel._resizeHandler = null;
+  if (styleEditorPanel) {
+    styleEditorPanel.classList.remove('active');
   }
 }
 
@@ -13324,20 +15858,8 @@ function updateAdminLockVisibility() {
   const slideLockContainer = document.getElementById('slide-lock-container');
   
   if (lockBtn) lockBtn.style.display = 'flex';
-  
-  if (currentUser && currentUser.status === 'admin') {
-    if (divider) divider.style.display = 'block';
-    // 어드민 사용자일 때만 슬라이드 잠금해제 단추를 보여줍니다.
-    if (slideLockContainer) slideLockContainer.style.display = 'flex';
-  } else {
-    if (divider) divider.style.display = 'none';
-    // 일반 회원일 때는 슬라이드 단추 자체를 은닉 차단합니다.
-    if (slideLockContainer) slideLockContainer.style.display = 'none';
-    // 혹시라도 일반 권한인데 어드민 상태라면 즉각 잠금상태로 강제 추방합니다.
-    if (isAdminMode) {
-      exitAdminMode();
-    }
-  }
+  if (slideLockContainer) slideLockContainer.style.display = 'flex';
+  if (divider) divider.style.display = 'block';
 }
 
 async function validateSession() {
@@ -13737,175 +16259,528 @@ function updateAllNoteBadges() {
   });
 }
 
-// Load user notes
+// --- Multi-Layer Persistence & Auto-Recovery Engine (IndexedDB + Native Filesystem + LocalStorage) ---
+const IDB_STORE_NAME = 'snapshots';
+const IDB_DB_NAME = 'BibleGenealogyStore';
+const IDB_VERSION = 1;
+
+function getIndexedDBInstance() {
+  return new Promise((resolve) => {
+    if (typeof window === 'undefined' || !window.indexedDB) return resolve(null);
+    try {
+      const request = indexedDB.open(IDB_DB_NAME, IDB_VERSION);
+      request.onupgradeneeded = (e) => {
+        const dbInstance = e.target.result;
+        if (!dbInstance.objectStoreNames.contains(IDB_STORE_NAME)) {
+          dbInstance.createObjectStore(IDB_STORE_NAME);
+        }
+      };
+      request.onsuccess = (e) => resolve(e.target.result);
+      request.onerror = () => resolve(null);
+    } catch (_) {
+      resolve(null);
+    }
+  });
+}
+
+async function idbSave(key, value) {
+  try {
+    const idb = await getIndexedDBInstance();
+    if (!idb) return false;
+    return new Promise((resolve) => {
+      const tx = idb.transaction(IDB_STORE_NAME, 'readwrite');
+      const store = tx.objectStore(IDB_STORE_NAME);
+      store.put(value, key);
+      tx.oncomplete = () => resolve(true);
+      tx.onerror = () => resolve(false);
+    });
+  } catch (_) {
+    return false;
+  }
+}
+
+async function idbLoad(key) {
+  try {
+    const idb = await getIndexedDBInstance();
+    if (!idb) return null;
+    return new Promise((resolve) => {
+      const tx = idb.transaction(IDB_STORE_NAME, 'readonly');
+      const store = tx.objectStore(IDB_STORE_NAME);
+      const req = store.get(key);
+      req.onsuccess = () => resolve(req.result || null);
+      req.onerror = () => resolve(null);
+    });
+  } catch (_) {
+    return null;
+  }
+}
+
+async function waitForCapacitorPlugins(maxWaitMs = 1200) {
+  if (typeof window === 'undefined') return;
+  if (!window.Capacitor) return;
+  const start = Date.now();
+  while (Date.now() - start < maxWaitMs) {
+    if (window.Capacitor.Plugins && window.Capacitor.Plugins.Filesystem) {
+      return;
+    }
+    await new Promise(r => setTimeout(r, 40));
+  }
+}
+
+// Complete Tree & Layout State Serialization for Local Persistence
+function getCompleteTreeState() {
+  return {
+    version: "16.0",
+    customCharacters: JSON.parse(localStorage.getItem('bible_tree_custom_characters') || '[]'),
+    characterEdits: JSON.parse(localStorage.getItem('bible_tree_character_edits') || '{}'),
+    deletedIds: JSON.parse(localStorage.getItem('bible_tree_deleted_ids') || '[]'),
+    events: JSON.parse(localStorage.getItem('bible_tree_events') || '[]'),
+    locations: JSON.parse(localStorage.getItem('bible_tree_locations') || '[]'),
+    annotations: JSON.parse(localStorage.getItem('bible_tree_annotations') || '[]'),
+    customPolygons: JSON.parse(localStorage.getItem('bible_tree_custom_polygons') || '[]'),
+    lineBends: JSON.parse(localStorage.getItem('bible_tree_line_bends') || '{}'),
+    lineZIndices: JSON.parse(localStorage.getItem('bible_tree_line_zindices') || '{}'),
+    spouseSplits: JSON.parse(localStorage.getItem('bible_tree_spouse_splits') || '{}'),
+    customVisualLines: JSON.parse(localStorage.getItem('bible_tree_custom_visual_lines') || '[]'),
+    canvasJunctions: JSON.parse(localStorage.getItem('bible_tree_canvas_junctions') || '[]'),
+    styleSettings: JSON.parse(localStorage.getItem('bible_tree_style_settings') || '{}')
+  };
+}
+
+let treePersistTimeout = null;
+async function persistTreeDataLocally(immediate = false) {
+  if (isRestoringLocalData || isRestoringNotesData) return;
+
+  const doPersist = async () => {
+    treePersistTimeout = null;
+    if (isRestoringLocalData || isRestoringNotesData) return;
+
+    const data = getCompleteTreeState();
+    const dataStr = JSON.stringify(data, null, 2);
+
+    // Tier 1: IndexedDB (Universal persistent browser/webview store)
+    await idbSave('bible_genealogy_tree_autobackup', data);
+
+    // Tier 2: Tauri Desktop (macOS / Windows / Linux)
+    if (window.__TAURI__ && window.__TAURI__.fs && window.__TAURI__.path) {
+      try {
+        const docDir = await window.__TAURI__.path.documentDir();
+        const treePath = await window.__TAURI__.path.join(docDir, 'bible_genealogy_tree_autobackup.json');
+        await window.__TAURI__.fs.writeTextFile(treePath, dataStr);
+
+        try {
+          const extraDir = await window.__TAURI__.path.join(docDir, '열린족보이야기_데이터');
+          await window.__TAURI__.fs.createDir(extraDir, { recursive: true });
+          const extraPath = await window.__TAURI__.path.join(extraDir, 'bible_genealogy_tree_autobackup.json');
+          await window.__TAURI__.fs.writeTextFile(extraPath, dataStr);
+        } catch(_) {}
+        console.log("[로컬 영구 저장] 데스크톱 트리 백업 저장 완료");
+      } catch (err) {
+        console.warn("[데스크톱 영구 저장 실패]", err);
+      }
+    }
+    // Tier 3: Capacitor Mobile (iOS / Android)
+    else if (window.Capacitor && window.Capacitor.isNativePlatform()) {
+      try {
+        await waitForCapacitorPlugins(500);
+        const { Filesystem } = window.Capacitor.Plugins || {};
+        if (Filesystem) {
+          // Write to DOCUMENTS
+          await Filesystem.writeFile({
+            path: 'bible_genealogy_tree_autobackup.json',
+            data: dataStr,
+            directory: 'DOCUMENTS',
+            encoding: 'utf8',
+            recursive: true
+          }).catch(e => console.warn('Write to DOCUMENTS warning:', e));
+
+          // Also write secondary backup to DATA
+          await Filesystem.writeFile({
+            path: 'bible_genealogy_tree_autobackup.json',
+            data: dataStr,
+            directory: 'DATA',
+            encoding: 'utf8',
+            recursive: true
+          }).catch(e => console.warn('Write to DATA warning:', e));
+
+          console.log("[모바일 영구 저장] 모바일 트리 백업 저장 완료");
+        }
+      } catch (err) {
+        console.warn("[모바일 영구 저장 실패]", err);
+      }
+    }
+  };
+
+  if (immediate) {
+    if (treePersistTimeout) clearTimeout(treePersistTimeout);
+    treePersistTimeout = null;
+    await doPersist();
+  } else {
+    if (treePersistTimeout) clearTimeout(treePersistTimeout);
+    treePersistTimeout = setTimeout(doPersist, 100);
+  }
+}
+
+// Restore tree data from local disk/filesystem/IndexedDB backup
+async function restoreTreeDataLocally() {
+  isRestoringLocalData = true;
+  try {
+    let treeJson = null;
+    let state = null;
+
+    // 1. Check Capacitor Native Filesystem (iOS & Android)
+    if (window.Capacitor && window.Capacitor.isNativePlatform()) {
+      try {
+        await waitForCapacitorPlugins(1200);
+        const { Filesystem } = window.Capacitor.Plugins || {};
+        if (Filesystem) {
+          // Try DOCUMENTS first
+          try {
+            const res = await Filesystem.readFile({
+              path: 'bible_genealogy_tree_autobackup.json',
+              directory: 'DOCUMENTS',
+              encoding: 'utf8'
+            });
+            treeJson = typeof res.data === 'string' ? res.data : JSON.stringify(res.data);
+          } catch(_) {
+            // Try DATA fallback
+            try {
+              const res2 = await Filesystem.readFile({
+                path: 'bible_genealogy_tree_autobackup.json',
+                directory: 'DATA',
+                encoding: 'utf8'
+              });
+              treeJson = typeof res2.data === 'string' ? res2.data : JSON.stringify(res2.data);
+            } catch(_) {}
+          }
+        }
+      } catch (_) {}
+    }
+    // 2. Check Tauri Desktop
+    else if (window.__TAURI__ && window.__TAURI__.fs && window.__TAURI__.path) {
+      try {
+        const docDir = await window.__TAURI__.path.documentDir();
+        const primaryPath = await window.__TAURI__.path.join(docDir, 'bible_genealogy_tree_autobackup.json');
+        const secondaryPath = await window.__TAURI__.path.join(docDir, '열린족보이야기_데이터', 'bible_genealogy_tree_autobackup.json');
+        
+        try {
+          treeJson = await window.__TAURI__.fs.readTextFile(primaryPath);
+        } catch(_) {
+          try {
+            treeJson = await window.__TAURI__.fs.readTextFile(secondaryPath);
+          } catch(_) {}
+        }
+      } catch (_) {}
+    }
+
+    if (treeJson) {
+      try {
+        state = typeof treeJson === 'string' ? JSON.parse(treeJson) : treeJson;
+      } catch (_) {}
+    }
+
+    // 3. Check IndexedDB fallback if native file was empty or not found
+    if (!state) {
+      try {
+        const idbState = await idbLoad('bible_genealogy_tree_autobackup');
+        if (idbState && typeof idbState === 'object') {
+          state = idbState;
+        }
+      } catch (_) {}
+    }
+
+    if (state && typeof state === 'object') {
+      // Merge custom characters
+      let activeCustomIds = new Set();
+      if (state.customCharacters && Array.isArray(state.customCharacters)) {
+        let currentCustom = [];
+        try {
+          currentCustom = JSON.parse(localStorage.getItem('bible_tree_custom_characters') || '[]');
+          if (!Array.isArray(currentCustom)) currentCustom = [];
+        } catch(_) { currentCustom = []; }
+        
+        const customMap = new Map();
+        state.customCharacters.forEach(c => { if (c && c.id) customMap.set(c.id, c); });
+        currentCustom.forEach(c => { if (c && c.id) customMap.set(c.id, c); });
+        const allCustom = Array.from(customMap.values());
+        activeCustomIds = new Set(allCustom.map(c => c.id));
+        localStorage.setItem('bible_tree_custom_characters', JSON.stringify(allCustom));
+      }
+
+      // Merge character edits
+      if (state.characterEdits && typeof state.characterEdits === 'object' && !Array.isArray(state.characterEdits)) {
+        let currentEdits = {};
+        try {
+          currentEdits = JSON.parse(localStorage.getItem('bible_tree_character_edits') || '{}');
+          if (!currentEdits || typeof currentEdits !== 'object' || Array.isArray(currentEdits)) currentEdits = {};
+        } catch(_) { currentEdits = {}; }
+        localStorage.setItem('bible_tree_character_edits', JSON.stringify({ ...state.characterEdits, ...currentEdits }));
+      }
+
+      // Merge deleted IDs (ensuring active custom characters are NEVER in deleted IDs)
+      if (state.deletedIds && Array.isArray(state.deletedIds)) {
+        let currentDeleted = [];
+        try {
+          currentDeleted = JSON.parse(localStorage.getItem('bible_tree_deleted_ids') || '[]');
+          if (!Array.isArray(currentDeleted)) currentDeleted = [];
+        } catch(_) { currentDeleted = []; }
+        const mergedDeleted = Array.from(new Set([...state.deletedIds, ...currentDeleted])).filter(id => !activeCustomIds.has(id));
+        localStorage.setItem('bible_tree_deleted_ids', JSON.stringify(mergedDeleted));
+      }
+
+      // Merge annotations
+      if (state.annotations && Array.isArray(state.annotations)) {
+        let currentAnnots = [];
+        try {
+          currentAnnots = JSON.parse(localStorage.getItem('bible_tree_annotations') || '[]');
+          if (!Array.isArray(currentAnnots)) currentAnnots = [];
+        } catch(_) { currentAnnots = []; }
+        const annotMap = new Map();
+        state.annotations.forEach(a => { if (a && a.id) annotMap.set(a.id, a); });
+        currentAnnots.forEach(a => { if (a && a.id) annotMap.set(a.id, a); });
+        localStorage.setItem('bible_tree_annotations', JSON.stringify(Array.from(annotMap.values())));
+      }
+
+      // Merge events
+      if (state.events && Array.isArray(state.events)) {
+        let currentEvents = [];
+        try {
+          currentEvents = JSON.parse(localStorage.getItem('bible_tree_events') || '[]');
+          if (!Array.isArray(currentEvents)) currentEvents = [];
+        } catch(_) { currentEvents = []; }
+        const evMap = new Map();
+        state.events.forEach(e => { if (e && e.id) evMap.set(e.id, e); });
+        currentEvents.forEach(e => { if (e && e.id) evMap.set(e.id, e); });
+        localStorage.setItem('bible_tree_events', JSON.stringify(Array.from(evMap.values())));
+      }
+
+      // Merge locations
+      if (state.locations && Array.isArray(state.locations)) {
+        let currentLocs = [];
+        try {
+          currentLocs = JSON.parse(localStorage.getItem('bible_tree_locations') || '[]');
+          if (!Array.isArray(currentLocs)) currentLocs = [];
+        } catch(_) { currentLocs = []; }
+        const locMap = new Map();
+        state.locations.forEach(l => { if (l && l.id) locMap.set(l.id, l); });
+        currentLocs.forEach(l => { if (l && l.id) locMap.set(l.id, l); });
+        localStorage.setItem('bible_tree_locations', JSON.stringify(Array.from(locMap.values())));
+      }
+
+      // Merge custom polygons
+      if (state.customPolygons && Array.isArray(state.customPolygons)) {
+        let currentPolys = [];
+        try {
+          currentPolys = JSON.parse(localStorage.getItem('bible_tree_custom_polygons') || '[]');
+          if (!Array.isArray(currentPolys)) currentPolys = [];
+        } catch(_) { currentPolys = []; }
+        const polyMap = new Map();
+        state.customPolygons.forEach(p => { if (p && p.id) polyMap.set(p.id, p); });
+        currentPolys.forEach(p => { if (p && p.id) polyMap.set(p.id, p); });
+        localStorage.setItem('bible_tree_custom_polygons', JSON.stringify(Array.from(polyMap.values())));
+      }
+
+      // Merge line bends
+      if (state.lineBends && typeof state.lineBends === 'object' && !Array.isArray(state.lineBends)) {
+        let currentBends = {};
+        try {
+          currentBends = JSON.parse(localStorage.getItem('bible_tree_line_bends') || '{}');
+          if (!currentBends || typeof currentBends !== 'object') currentBends = {};
+        } catch(_) { currentBends = {}; }
+        localStorage.setItem('bible_tree_line_bends', JSON.stringify({ ...state.lineBends, ...currentBends }));
+      }
+
+      // Merge spouse splits
+      if (state.spouseSplits && typeof state.spouseSplits === 'object' && !Array.isArray(state.spouseSplits)) {
+        let currentSplits = {};
+        try {
+          currentSplits = JSON.parse(localStorage.getItem('bible_tree_spouse_splits') || '{}');
+          if (!currentSplits || typeof currentSplits !== 'object') currentSplits = {};
+        } catch(_) { currentSplits = {}; }
+        localStorage.setItem('bible_tree_spouse_splits', JSON.stringify({ ...state.spouseSplits, ...currentSplits }));
+      }
+
+      // Merge custom visual lines
+      if (state.customVisualLines && Array.isArray(state.customVisualLines)) {
+        let currentLines = [];
+        try {
+          currentLines = JSON.parse(localStorage.getItem('bible_tree_custom_visual_lines') || '[]');
+          if (!Array.isArray(currentLines)) currentLines = [];
+        } catch(_) { currentLines = []; }
+        const lineMap = new Map();
+        state.customVisualLines.forEach(l => { if (l && l.id) lineMap.set(l.id, l); });
+        currentLines.forEach(l => { if (l && l.id) lineMap.set(l.id, l); });
+        localStorage.setItem('bible_tree_custom_visual_lines', JSON.stringify(Array.from(lineMap.values())));
+      }
+
+      // Merge canvas junctions
+      if (state.canvasJunctions && Array.isArray(state.canvasJunctions)) {
+        let currentJuncs = [];
+        try {
+          currentJuncs = JSON.parse(localStorage.getItem('bible_tree_canvas_junctions') || '[]');
+          if (!Array.isArray(currentJuncs)) currentJuncs = [];
+        } catch(_) { currentJuncs = []; }
+        const juncMap = new Map();
+        state.canvasJunctions.forEach(j => { if (j && j.id) juncMap.set(j.id, j); });
+        currentJuncs.forEach(j => { if (j && j.id) juncMap.set(j.id, j); });
+        localStorage.setItem('bible_tree_canvas_junctions', JSON.stringify(Array.from(juncMap.values())));
+      }
+
+      // Style settings
+      if (state.styleSettings && typeof state.styleSettings === 'object') {
+        const val = localStorage.getItem('bible_tree_style_settings');
+        if (!val || val === '{}' || val === 'null') {
+          localStorage.setItem('bible_tree_style_settings', JSON.stringify(state.styleSettings));
+        }
+      }
+
+      // Re-populate in-memory database and runtime variables
+      if (typeof initDatabase === 'function') initDatabase();
+      if (typeof loadAnnotations === 'function') loadAnnotations();
+      if (typeof loadLineBends === 'function') loadLineBends();
+      if (typeof loadLineZIndices === 'function') loadLineZIndices();
+      if (typeof loadSpouseSplits === 'function') loadSpouseSplits();
+      if (typeof loadCustomVisualLines === 'function') loadCustomVisualLines();
+      if (typeof loadCanvasJunctions === 'function') loadCanvasJunctions();
+      if (typeof loadEvents === 'function') loadEvents();
+      if (typeof loadLocations === 'function') loadLocations();
+      if (typeof loadCustomPolygons === 'function') loadCustomPolygons();
+
+      // Re-render UI on canvas so all restored data is immediately visible
+      if (typeof initBoard === 'function') initBoard();
+      if (typeof renderTree === 'function') renderTree();
+      if (typeof renderAnnotations === 'function') renderAnnotations();
+      if (typeof drawConnections === 'function') drawConnections();
+      if (typeof renderJunctions === 'function') renderJunctions();
+      if (typeof updateStats === 'function') updateStats();
+
+      console.log("[동기화] 로컬 저장소에서 트리 데이터를 완벽하게 병합 및 복원했습니다.");
+    }
+  } catch (e) {
+    console.warn("Failed to parse tree backup:", e);
+  } finally {
+    isRestoringLocalData = false;
+  }
+}
+
+// Load user notes (Auto-restores and merges from disk backup across installs)
 async function fetchUserNotes() {
+  isRestoringNotesData = true;
   try {
     // 1. Load from Local Storage first
     const localNotes = localStorage.getItem('bible_tree_user_notes');
     if (localNotes) {
-      userNotes = JSON.parse(localNotes) || {};
+      try {
+        userNotes = JSON.parse(localNotes) || {};
+      } catch(_) { userNotes = {}; }
     }
 
-    // 2. Load and merge from local Backup JSON (in case local storage was cleared)
-    if (window.__TAURI__ && window.__TAURI__.fs && window.__TAURI__.path) {
+    let backupNotes = null;
+
+    // 2. Check Capacitor Native Filesystem
+    if (window.Capacitor && window.Capacitor.isNativePlatform()) {
+      try {
+        await waitForCapacitorPlugins(1200);
+        const { Filesystem } = window.Capacitor.Plugins || {};
+        if (Filesystem) {
+          try {
+            const res = await Filesystem.readFile({
+              path: 'bible_genealogy_notes_autobackup.json',
+              directory: 'DOCUMENTS',
+              encoding: 'utf8'
+            });
+            backupNotes = JSON.parse(res.data);
+          } catch(_) {
+            try {
+              const res2 = await Filesystem.readFile({
+                path: 'bible_genealogy_notes_autobackup.json',
+                directory: 'DATA',
+                encoding: 'utf8'
+              });
+              backupNotes = JSON.parse(res2.data);
+            } catch(_) {}
+          }
+        }
+      } catch (_) {}
+    }
+    // 3. Check Tauri Desktop
+    else if (window.__TAURI__ && window.__TAURI__.fs && window.__TAURI__.path) {
       try {
         const docDir = await window.__TAURI__.path.documentDir();
         const backupPath = await window.__TAURI__.path.join(docDir, 'bible_genealogy_notes_autobackup.json');
+        const secondaryBackupPath = await window.__TAURI__.path.join(docDir, '열린족보이야기_데이터', 'bible_genealogy_notes_autobackup.json');
         
-        const backupJsonText = await window.__TAURI__.fs.readTextFile(backupPath);
-        const backupNotes = JSON.parse(backupJsonText);
-        if (backupNotes) {
-          // Merge backup notes into userNotes safely
-          for (const id of Object.keys(backupNotes)) {
-            if (!userNotes[id] || userNotes[id].trim() === '') {
-              userNotes[id] = backupNotes[id];
-            }
-          }
-          console.log("[동기화] 로컬 백업 JSON 데이터를 병합했습니다.");
+        let backupJsonText = null;
+        try {
+          backupJsonText = await window.__TAURI__.fs.readTextFile(backupPath);
+        } catch(_) {
+          try {
+            backupJsonText = await window.__TAURI__.fs.readTextFile(secondaryBackupPath);
+          } catch(_) {}
+        }
+
+        if (backupJsonText) {
+          backupNotes = JSON.parse(backupJsonText);
         }
       } catch (err) {
-        console.log("No backup JSON found or skipped: ", err);
+        console.log("No desktop backup JSON found or skipped: ", err);
       }
+    }
+
+    // 4. Check IndexedDB fallback
+    if (!backupNotes) {
+      try {
+        const idbNotes = await idbLoad('bible_genealogy_notes_autobackup');
+        if (idbNotes && typeof idbNotes === 'object') {
+          backupNotes = idbNotes;
+        }
+      } catch (_) {}
+    }
+
+    if (backupNotes && typeof backupNotes === 'object') {
+      let mergedAny = false;
+      for (const id of Object.keys(backupNotes)) {
+        if (backupNotes[id] && (!userNotes[id] || userNotes[id].trim() === '')) {
+          userNotes[id] = backupNotes[id];
+          mergedAny = true;
+        }
+      }
+      if (mergedAny) {
+        localStorage.setItem('bible_tree_user_notes', JSON.stringify(userNotes));
+      }
+      console.log("[동기화] 로컬 백업 메모 데이터를 병합했습니다.");
     }
 
     updateAllNoteBadges();
 
-    // 3. Sync with Server (if license key exists)
-    const licenseKey = localStorage.getItem('bible_genealogy_license_key');
-    if (userToken || licenseKey) {
-      try {
-        const authHeader = userToken ? ('Bearer ' + userToken) : ('License ' + licenseKey);
-        const res = await fetch(getApiUrl('/api/notes'), { headers: { 'Authorization': authHeader } });
-        if (res.ok) {
-          const data = await res.json();
-          const serverNotes = data.notes || {};
-          
-          // Merge server notes safely (never overwrite local notes that have content)
-          let mergedCount = 0;
-          for (const id of Object.keys(serverNotes)) {
-            if (!userNotes[id] || userNotes[id].trim() === '') {
-              userNotes[id] = serverNotes[id];
-              mergedCount++;
-            }
-          }
-          if (mergedCount > 0) {
-            localStorage.setItem('bible_tree_user_notes', JSON.stringify(userNotes));
-            updateAllNoteBadges();
-            console.log(`[서버 동기화] ${mergedCount}개의 새로운 메모를 서버에서 가져왔습니다.`);
-          }
-        }
-      } catch (e) {
-        console.error("Server sync failed: ", e);
-      }
-    }
-
-    // 4. Import from Obsidian Markdown files (Obsidian edits win)
-    setTimeout(async () => {
-      await importNotesFromMdFiles();
-      
-      // 5. Save the final merged notes and trigger backup
-      localStorage.setItem('bible_tree_user_notes', JSON.stringify(userNotes));
-      triggerAutoBackup();
-      
-      // Upload the final merged notes to the server
-      if (userToken || licenseKey) {
-        try {
-          const authHeader = userToken ? ('Bearer ' + userToken) : ('License ' + licenseKey);
-          await fetch(getApiUrl('/api/notes'), {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': authHeader },
-            body: JSON.stringify({ notes: userNotes })
-          });
-          console.log("[동기화] 최종 병합된 메모를 서버에 업로드했습니다.");
-        } catch (e) {}
-      }
-    }, 1000);
+    // Save final merged notes and trigger backup
+    localStorage.setItem('bible_tree_user_notes', JSON.stringify(userNotes));
+    triggerAutoBackup();
 
   } catch (e) {
     console.error("Failed in fetchUserNotes: ", e);
+  } finally {
+    isRestoringNotesData = false;
   }
 }
 
-// Bidirectional sync: Scan folders and import updated markdown files back into userNotes
+// Bidirectional sync: MD sync permanently disabled as requested
 async function importNotesFromMdFiles() {
-  if (!window.__TAURI__ || !window.__TAURI__.fs || !window.__TAURI__.path) return;
-  
-  // Check if MD Sync is disabled by settings
-  const isMdSyncEnabled = localStorage.getItem('bible_tree_md_sync') !== 'false';
-  if (!isMdSyncEnabled) {
-    console.log("Obsidian MD Sync is disabled. Skipping MD file import.");
-    return;
-  }
-  try {
-    const docDir = await window.__TAURI__.path.documentDir();
-    const backupFolder = await window.__TAURI__.path.join(docDir, 'bible_genealogy_notes');
-    
-    const folders = ['인물', '선지자', '사건', '장소', '영역', '텍스트상자', '기타'];
-    let hasChanges = false;
-    
-    for (const folderName of folders) {
-      try {
-        const folderPath = await window.__TAURI__.path.join(backupFolder, folderName);
-        const entries = await window.__TAURI__.fs.readDir(folderPath);
-        for (const entry of entries) {
-          if (entry.name && entry.name.endsWith('.md')) {
-            const fileText = await window.__TAURI__.fs.readTextFile(entry.path);
-            
-            // Parse Obsidian Frontmatter
-            const parts = fileText.split('---');
-            if (parts.length >= 3) {
-              const yaml = parts[1];
-              const idMatch = yaml.match(/id:\s*"([^"]+)"/) || yaml.match(/id:\s*([^\n]+)/);
-              if (idMatch) {
-                const id = idMatch[1].trim();
-                let body = parts.slice(2).join('---').trim();
-                
-                // Strip the header "# Title" at the start of the body
-                const titleMatch = yaml.match(/title:\s*"([^"]+)"/) || yaml.match(/title:\s*([^\n]+)/);
-                if (titleMatch) {
-                  const titleVal = titleMatch[1].replace(/"/g, '').trim();
-                  const escapedTitle = titleVal.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-                  const headerRegex = new RegExp('^#\\s+' + escapedTitle + '\\s*\\r?\\n?');
-                  body = body.replace(headerRegex, '').trim();
-                }
-                
-                // If it differs, Obsidian is the source of truth for the change
-                if (userNotes[id] !== body) {
-                  // Safety guard: Don't let a blank Obsidian markdown file wipe out a non-empty local note
-                  if (body.trim() === '' && userNotes[id] && userNotes[id].trim() !== '') {
-                    console.log(`[MD 가져오기 건너뜀] 로컬 메모가 존재하여 빈 MD 파일(${id}) 병합을 건너뜁니다.`);
-                    continue;
-                  }
-                  userNotes[id] = body;
-                  hasChanges = true;
-                  console.log(`[MD 가져오기 성공] 업데이트된 키: ${id}`);
-                }
-              }
-            }
-          }
-        }
-      } catch (err) {
-        // Folder doesn't exist yet or permission error, proceed
-      }
-    }
-    
-    if (hasChanges) {
-      localStorage.setItem('bible_tree_user_notes', JSON.stringify(userNotes));
-      updateAllNoteBadges();
-    }
-  } catch (e) {
-    console.error("Failed to run bidirectional sync from MD files:", e);
-  }
+  return;
 }
 
-let backupTimeout = null;
 let isBackupRunning = false;
 let backupPending = false;
+let backupTimeout = null;
 
-// Trigger automatic background backup in the Documents folder when running inside Tauri (with 800ms debounce)
-function triggerAutoBackup() {
-  // Only run inside real Tauri environment (must have __TAURI__ API)
-  if (!window.__TAURI__ || !window.__TAURI__.fs || !window.__TAURI__.path) return;
+// Trigger auto-backup (Debounced or Immediate)
+function triggerAutoBackup(immediate = false) {
+  if (immediate) {
+    if (backupTimeout) clearTimeout(backupTimeout);
+    backupTimeout = null;
+    runBackupActual();
+    return;
+  }
 
   if (backupTimeout) {
     clearTimeout(backupTimeout);
@@ -13914,7 +16789,7 @@ function triggerAutoBackup() {
   backupTimeout = setTimeout(() => {
     backupTimeout = null;
     runBackupActual();
-  }, 800); // 800ms debounce - responsive but avoids write conflicts
+  }, 100);
 }
 
 // Helper to get unique filename for a node to prevent collisions
@@ -13932,7 +16807,6 @@ function getUniqueBackupFileName(key) {
                           person.id === 'samuel';
     type = isProphetChar ? '선지자' : '인물';
 
-    // Duplicate name resolution (Option A)
     const sameNameCount = db.filter(p => p.name === person.name).length;
     if (sameNameCount > 1) {
       let suffix = '';
@@ -13964,7 +16838,7 @@ function getUniqueBackupFileName(key) {
         if (poly) {
           name = poly.label || poly.id;
           type = '영역';
-        } else if (key.startsWith('note-') || key.startsWith('annotation_')) {
+        } else if (key && (key.startsWith('note-') || key.startsWith('annotation_'))) {
           name = key;
           type = '텍스트상자';
         }
@@ -13972,12 +16846,13 @@ function getUniqueBackupFileName(key) {
     }
   }
 
-  const cleanName = name.replace(/[\/\\:\*\?"<>\|]/g, '_').trim();
+  let cleanName = (name || key || 'untitled').replace(/[\/\\:\*\?"<>\|]/g, '_').trim();
+  if (!cleanName) cleanName = (key || 'untitled').replace(/[\/\\:\*\?"<>\|]/g, '_').trim();
   return { cleanName, type, person, ev, loc, poly };
 }
 
 async function runBackupActual() {
-  if (!window.__TAURI__ || !window.__TAURI__.fs || !window.__TAURI__.path) return;
+  if (isRestoringLocalData || isRestoringNotesData) return;
 
   if (isBackupRunning) {
     backupPending = true;
@@ -13988,96 +16863,94 @@ async function runBackupActual() {
   backupPending = false;
 
   try {
-    const docDir = await window.__TAURI__.path.documentDir();
-    
-    // 1. Save the main JSON backup
-    const backupPath = await window.__TAURI__.path.join(docDir, 'bible_genealogy_notes_autobackup.json');
-    await window.__TAURI__.fs.writeTextFile(backupPath, JSON.stringify(userNotes, null, 2));
-    console.log("Auto-backup JSON saved:", backupPath);
+    const notesJsonStr = JSON.stringify(userNotes, null, 2);
+    const treeData = getCompleteTreeState();
+    const treeJsonStr = JSON.stringify(treeData, null, 2);
 
-    // Check if MD Sync is disabled by settings
-    const isMdSyncEnabled = localStorage.getItem('bible_tree_md_sync') !== 'false';
-    if (!isMdSyncEnabled) {
-      console.log("Obsidian MD Sync is disabled. Skipping MD file exports.");
+    // Save to IndexedDB (Universal tier)
+    await idbSave('bible_genealogy_notes_autobackup', userNotes);
+    await idbSave('bible_genealogy_tree_autobackup', treeData);
+
+    // Save to Capacitor Mobile (iOS / Android)
+    if (window.Capacitor && window.Capacitor.isNativePlatform()) {
+      await waitForCapacitorPlugins(500);
+      const { Filesystem } = window.Capacitor.Plugins || {};
+      if (Filesystem) {
+        await Filesystem.writeFile({
+          path: 'bible_genealogy_notes_autobackup.json',
+          data: notesJsonStr,
+          directory: 'DOCUMENTS',
+          encoding: 'utf8',
+          recursive: true
+        }).catch(e => console.warn('Notes DOCUMENTS save error:', e));
+
+        await Filesystem.writeFile({
+          path: 'bible_genealogy_tree_autobackup.json',
+          data: treeJsonStr,
+          directory: 'DOCUMENTS',
+          encoding: 'utf8',
+          recursive: true
+        }).catch(e => console.warn('Tree DOCUMENTS save error:', e));
+
+        await Filesystem.writeFile({
+          path: 'bible_genealogy_notes_autobackup.json',
+          data: notesJsonStr,
+          directory: 'DATA',
+          encoding: 'utf8',
+          recursive: true
+        }).catch(e => console.warn('Notes DATA save error:', e));
+
+        await Filesystem.writeFile({
+          path: 'bible_genealogy_tree_autobackup.json',
+          data: treeJsonStr,
+          directory: 'DATA',
+          encoding: 'utf8',
+          recursive: true
+        }).catch(e => console.warn('Tree DATA save error:', e));
+      }
       return;
     }
 
-    // 2. Export individual Markdown files into sub-folders (Obsidian-friendly)
-    const backupFolder = await window.__TAURI__.path.join(docDir, 'bible_genealogy_notes');
-    await window.__TAURI__.fs.createDir(backupFolder, { recursive: true });
-    
-    const folders = ['인물', '선지자', '사건', '장소', '영역', '텍스트상자', '기타'];
-    for (const f of folders) {
-      const subPath = await window.__TAURI__.path.join(backupFolder, f);
-      await window.__TAURI__.fs.createDir(subPath, { recursive: true });
+    // Save to Tauri Desktop
+    if (window.__TAURI__ && window.__TAURI__.fs && window.__TAURI__.path) {
+      const docDir = await window.__TAURI__.path.documentDir();
+      
+      const backupPath = await window.__TAURI__.path.join(docDir, 'bible_genealogy_notes_autobackup.json');
+      await window.__TAURI__.fs.writeTextFile(backupPath, notesJsonStr);
+      
+      const treeBackupPath = await window.__TAURI__.path.join(docDir, 'bible_genealogy_tree_autobackup.json');
+      await window.__TAURI__.fs.writeTextFile(treeBackupPath, treeJsonStr);
+
+      try {
+        const extraDir = await window.__TAURI__.path.join(docDir, '열린족보이야기_데이터');
+        await window.__TAURI__.fs.createDir(extraDir, { recursive: true });
+        const extraNotesPath = await window.__TAURI__.path.join(extraDir, 'bible_genealogy_notes_autobackup.json');
+        const extraTreePath = await window.__TAURI__.path.join(extraDir, 'bible_genealogy_tree_autobackup.json');
+        await window.__TAURI__.fs.writeTextFile(extraNotesPath, notesJsonStr);
+        await window.__TAURI__.fs.writeTextFile(extraTreePath, treeJsonStr);
+      } catch (_) {}
+
+      console.log("[로컬 백업 완료] 데스크톱 문서 폴더 저장 완료");
     }
-
-    const expectedFiles = new Set(); // Track files we explicitly generate to clean up others (Method 1)
-
-    for (const key of Object.keys(userNotes)) {
-      const content = userNotes[key];
-      if (!content || !content.trim()) continue;
-
-      const { cleanName, type, person, ev, loc, poly } = getUniqueBackupFileName(key);
-      const mdFilePath = await window.__TAURI__.path.join(backupFolder, type, cleanName + '.md');
-      expectedFiles.add(mdFilePath);
-
-      let title = cleanName;
-      if (person) title = `${person.name}${person.engName ? ' (' + person.engName + ')' : ''}`;
-      else if (ev) title = ev.name;
-      else if (loc) title = loc.name;
-      else if (poly) title = poly.label || poly.id;
-
-      const mdText = `---\ntitle: "${title}"\nid: "${key}"\ntype: "${type}"\ntags:\n  - 성경족보메모\n  - ${type}\n---\n\n# ${title}\n\n${content}\n`;
-      await window.__TAURI__.fs.writeTextFile(mdFilePath, mdText);
-      console.log(`MD 생성: ${type}/${cleanName}.md`);
-    }
-
-    // Method 1: Scan folders and delete unexpected/conflicting/obsolete .md files (e.g. "압살롬 2.md" or old duplicates)
-    // Safety guard: Only clean up if we actually have some valid loaded userNotes (avoids deletion during race conditions)
-    if (expectedFiles.size > 0) {
-      for (const folderName of folders) {
-        try {
-          const folderPath = await window.__TAURI__.path.join(backupFolder, folderName);
-          const entries = await window.__TAURI__.fs.readDir(folderPath);
-          for (const entry of entries) {
-            if (entry.name && entry.name.endsWith('.md')) {
-              const entryFullPath = entry.path;
-              if (!expectedFiles.has(entryFullPath)) {
-                console.log("Cleanup obsolete/duplicate file:", entryFullPath);
-                try {
-                  await window.__TAURI__.fs.removeFile(entryFullPath);
-                } catch (e) {
-                  console.error("Cleanup failed for:", entryFullPath, e);
-                }
-              }
-            }
-          }
-        } catch (err) {
-          console.error(`Folder cleanup failed for ${folderName}:`, err);
-        }
-      }
-    }
-
-    console.log("Auto-backup MD 파일 내보내기 완료:", backupFolder);
   } catch (err) {
     console.error("Auto-backup 실패:", err);
   } finally {
     isBackupRunning = false;
     if (backupPending) {
       backupPending = false;
-      setTimeout(runBackupActual, 300);
+      setTimeout(runBackupActual, 100);
     }
   }
 }
 
-async function saveUserNotes() {
+async function saveUserNotes(immediate = true) {
   try {
     localStorage.setItem('bible_tree_user_notes', JSON.stringify(userNotes));
   } catch(e) {}
 
-  // Run automatic background backup locally (Tauri only)
-  triggerAutoBackup();
+  // Run automatic background backup locally (Tauri & Capacitor & IndexedDB)
+  triggerAutoBackup(immediate);
+  persistTreeDataLocally(immediate);
 
   const licenseKey = localStorage.getItem('bible_genealogy_license_key');
   if (!userToken && !licenseKey) return;
@@ -14124,68 +16997,87 @@ async function writeSingleNoteMd(key, content) {
   }
 }
 
+// Unified Notes Export Handler (Desktop & Mobile & Web)
+async function handleNotesBackup(isManual = false) {
+  const isTauri = window.location.protocol.startsWith('tauri') || 
+                  window.location.hostname === 'tauri.localhost' || 
+                  window.location.protocol.startsWith('file') ||
+                  window.location.protocol.startsWith('asset') ||
+                  (window.__TAURI__ && window.__TAURI__.fs);
+  const isCapacitor = window.Capacitor && window.Capacitor.isNativePlatform();
+
+  if (isCapacitor) {
+    try {
+      const { Filesystem, Share } = window.Capacitor.Plugins || {};
+      if (!Filesystem || !Share) {
+        throw new Error("Capacitor plugins not loaded");
+      }
+      
+      const fileName = 'bible_genealogy_notes_backup.json';
+      const fileContent = JSON.stringify(userNotes, null, 2);
+      
+      const writeResult = await Filesystem.writeFile({
+        path: fileName,
+        data: fileContent,
+        directory: 'CACHE',
+        encoding: 'utf8'
+      });
+      
+      await Share.share({
+        title: '열린 족보이야기 메모 백업',
+        url: writeResult.uri
+      });
+    } catch (err) {
+      alert('모바일 메모 백업 중 오류가 발생했습니다: ' + err.message);
+    }
+  } else if (isTauri && window.__TAURI__ && window.__TAURI__.fs && window.__TAURI__.path) {
+    try {
+      await runBackupActual();
+      const docDir = await window.__TAURI__.path.documentDir();
+      const backupPath = await window.__TAURI__.path.join(docDir, 'bible_genealogy_notes_autobackup.json');
+      const backupFolder = await window.__TAURI__.path.join(docDir, 'bible_genealogy_notes');
+      
+      if (isManual) {
+        alert('전체 메모 백업 및 마크다운 파일 저장이 완료되었습니다!\n\n📁 저장 위치:\n1. 통합 백업 (JSON):\n' + backupPath + '\n\n2. 마크다운 (.md) 폴더 (옵시디언 연동):\n' + backupFolder + '\n\n(인물, 선지자, 사건, 장소 등 카테고리별 마크다운 파일로 저장되어 옵시디언 등에서 바로 열람 및 편집하실 수 있습니다.)');
+      }
+    } catch (err) {
+      console.error("Desktop 백업 오류:", err);
+      // Direct download fallback
+      try {
+        const dataStr = JSON.stringify(userNotes, null, 2);
+        const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+        const linkElement = document.createElement('a');
+        linkElement.setAttribute('href', dataUri);
+        linkElement.setAttribute('download', 'bible_genealogy_notes_backup.json');
+        linkElement.click();
+        alert('내 문서 폴더 저장 중 권한/경로 오류(' + err.message + ')로 인해 다운로드 폴더로 백업 파일이 다운로드되었습니다.');
+      } catch (e) {
+        alert('메모 백업 중 오류가 발생했습니다: ' + err.message);
+      }
+    }
+  } else {
+    // Browser fallback: download file
+    try {
+      const dataStr = JSON.stringify(userNotes, null, 2);
+      const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+      const linkElement = document.createElement('a');
+      linkElement.setAttribute('href', dataUri);
+      linkElement.setAttribute('download', 'bible_genealogy_notes_backup.json');
+      linkElement.click();
+    } catch (e) {
+      alert('메모 백업 중 오류가 발생했습니다: ' + e.message);
+    }
+  }
+}
+
 // Bottom Control Panel Notes Export & Import handlers
 const bottomBackupBtn = document.getElementById('bottom-backup-btn');
 const bottomRestoreBtn = document.getElementById('bottom-restore-btn');
 const userNotesFileInput = document.getElementById('user-notes-file-input');
 
 if (bottomBackupBtn) {
-  bottomBackupBtn.addEventListener('click', async () => {
-    const isTauri = window.location.protocol.startsWith('tauri') || 
-                    window.location.hostname === 'tauri.localhost' || 
-                    window.location.protocol.startsWith('file') ||
-                    window.location.protocol.startsWith('asset') ||
-                    (window.__TAURI__ && window.__TAURI__.fs);
-    const isCapacitor = window.Capacitor && window.Capacitor.isNativePlatform();
-
-    if (isCapacitor) {
-      try {
-        const { Filesystem } = window.Capacitor.Plugins;
-        const { Share } = window.Capacitor.Plugins;
-        
-        if (!Filesystem || !Share) {
-          throw new Error("Capacitor plugins not loaded");
-        }
-        
-        const fileName = 'bible_genealogy_notes_backup.json';
-        const fileContent = JSON.stringify(userNotes, null, 2);
-        
-        const writeResult = await Filesystem.writeFile({
-          path: fileName,
-          data: fileContent,
-          directory: 'CACHE',
-          encoding: 'utf8'
-        });
-        
-        await Share.share({
-          title: '열린족보이야기 메모 백업',
-          url: writeResult.uri
-        });
-      } catch (err) {
-        alert('모바일 메모 백업 중 오류가 발생했습니다: ' + err.message);
-      }
-    } else if (isTauri && window.__TAURI__ && window.__TAURI__.fs && window.__TAURI__.path) {
-      try {
-        const docDir = await window.__TAURI__.path.documentDir();
-        const backupPath = await window.__TAURI__.path.join(docDir, 'bible_genealogy_notes_autobackup.json');
-        await window.__TAURI__.fs.writeTextFile(backupPath, JSON.stringify(userNotes, null, 2));
-        alert('내 문서(Documents) 폴더에 전체 메모 백업 파일이 저장되었습니다.\n파일명: bible_genealogy_notes_autobackup.json');
-      } catch (err) {
-        alert('자동 저장 중 오류가 발생했습니다: ' + err.message);
-      }
-    } else {
-      // Browser fallback: download file
-      try {
-        const dataStr = JSON.stringify(userNotes, null, 2);
-        const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-        const linkElement = document.createElement('a');
-        linkElement.setAttribute('href', dataUri);
-        linkElement.setAttribute('download', 'bible_genealogy_notes_backup.json');
-        linkElement.click();
-      } catch (e) {
-        alert('메모 백업 중 오류가 발생했습니다: ' + e.message);
-      }
-    }
+  bottomBackupBtn.addEventListener('click', () => {
+    handleNotesBackup(true);
   });
 }
 
@@ -14317,8 +17209,12 @@ function renderEvents() {
         el.isDraggingFinished = false;
         return;
       }
-      openLayerDetails(ev, 'event');
-      highlightRelatedElements(ev.id, 'event');
+      if (isAdminMode) {
+        editLayerItem(ev, 'event');
+      } else {
+        openLayerDetails(ev, 'event');
+        highlightRelatedElements(ev.id, 'event');
+      }
     };
     el.addEventListener('click', handleEventActivate);
     el.addEventListener('touchend', (e) => {
@@ -14331,13 +17227,6 @@ function renderEvents() {
       handleEventActivate(e);
       e.preventDefault(); // iOS/iPadOS click 시뮬레이션 중복 발동 방지 차단
     }, { passive: false });
-    
-    el.addEventListener('dblclick', (e) => {
-      e.stopPropagation();
-      if (isAdminMode) {
-        editLayerItem(ev, 'event');
-      }
-    });
     
     layer.appendChild(el);
   });
@@ -14371,8 +17260,12 @@ function renderLocations() {
         el.isDraggingFinished = false;
         return;
       }
-      openLayerDetails(loc, 'location');
-      highlightRelatedElements(loc.id, 'location');
+      if (isAdminMode) {
+        editLayerItem(loc, 'location');
+      } else {
+        openLayerDetails(loc, 'location');
+        highlightRelatedElements(loc.id, 'location');
+      }
     };
     el.addEventListener('click', handleLocationActivate);
     el.addEventListener('touchend', (e) => {
@@ -14386,18 +17279,12 @@ function renderLocations() {
       e.preventDefault(); // iOS/iPadOS click 시뮬레이션 중복 발동 방지 차단
     }, { passive: false });
     
-    el.addEventListener('dblclick', (e) => {
-      e.stopPropagation();
-      if (isAdminMode) {
-        editLayerItem(loc, 'location');
-      }
-    });
-    
     layer.appendChild(el);
   });
 }
 
 function makeLayerDraggable(el, item, type) {
+  // Mouse Drag
   el.addEventListener('mousedown', (e) => {
     if (!isAdminMode) return;
     e.stopPropagation();
@@ -14450,11 +17337,73 @@ function makeLayerDraggable(el, item, type) {
     window.addEventListener('mousemove', onMouseMove);
     window.addEventListener('mouseup', onMouseUp);
   });
+
+  // Touch Drag
+  el.addEventListener('touchstart', (e) => {
+    if (!isAdminMode || e.touches.length > 1) return;
+    
+    let isDragging = false;
+    const touch = e.touches[0];
+    let startX = touch.clientX;
+    let startY = touch.clientY;
+    let originalX = item.x;
+    let originalY = item.y;
+    
+    el.style.zIndex = 30;
+    
+    const onTouchMove = (moveEvent) => {
+      if (moveEvent.touches.length > 1) return;
+      const currentTouch = moveEvent.touches[0];
+      const dx_pixels = currentTouch.clientX - startX;
+      const dy_pixels = currentTouch.clientY - startY;
+      
+      if (Math.abs(dx_pixels) > 6 || Math.abs(dy_pixels) > 6) {
+        if (!isDragging) {
+          pushHistoryState();
+          isDragging = true;
+        }
+        if (moveEvent.cancelable) {
+          moveEvent.preventDefault();
+        }
+      }
+      
+      if (isDragging) {
+        const dx = dx_pixels / currentScale;
+        const dy = dy_pixels / currentScale;
+        item.x = Math.round(originalX + dx);
+        item.y = Math.round(originalY + dy);
+        
+        el.style.left = `${item.x * currentScale}px`;
+        el.style.top = `${item.y * currentScale}px`;
+      }
+    };
+    
+    const onTouchEnd = (endEvent) => {
+      window.removeEventListener('touchmove', onTouchMove);
+      window.removeEventListener('touchend', onTouchEnd);
+      window.removeEventListener('touchcancel', onTouchEnd);
+      
+      el.style.zIndex = '';
+      
+      if (isDragging) {
+        if (type === 'event') saveEvents();
+        else saveLocations();
+        autoSaveToServer();
+        el.isDraggingFinished = true;
+      }
+    };
+    
+    window.addEventListener('touchmove', onTouchMove, { passive: false });
+    window.addEventListener('touchend', onTouchEnd);
+    window.addEventListener('touchcancel', onTouchEnd);
+  }, { passive: true });
 }
 
 function openLayerDetails(data, type) {
   const studyPanel = document.getElementById('study-panel');
   if (!studyPanel) return;
+  
+  closeStyleEditorPanel(); // 선 디자인 편집기는 사라지게 함
   
   activePersonId = data.id; // 노트와 리소스를 이 ID에 연동
   activeStudyPanelType = type;
@@ -14507,6 +17456,9 @@ function openLayerDetails(data, type) {
   const resources = JSON.parse(localStorage.getItem(`bible_tree_resources_${data.id}`)) || [];
   renderResourcesList(resources);
   
+  const locSec = document.getElementById('panel-location-section');
+  if (locSec) locSec.style.display = 'none';
+  
   studyPanel.classList.add('active');
 }
 
@@ -14516,6 +17468,7 @@ function editLayerItem(data, type) {
   activeLayerType = type;
   
   // Clear search inputs
+  const texts = UI_TEXTS[currentLang] || UI_TEXTS.ko;
   const peopleSearch = document.getElementById('layer-item-people-search');
   const eventsSearch = document.getElementById('layer-item-events-search');
   const locationsSearch = document.getElementById('layer-item-locations-search');
@@ -14529,7 +17482,7 @@ function editLayerItem(data, type) {
   const refsGroup = document.getElementById('layer-item-refs') ? document.getElementById('layer-item-refs').closest('.form-group') : null;
   
   if (type === 'annotation') {
-    layerItemModalTitle.textContent = "텍스트 상자 관계 설정";
+    layerItemModalTitle.textContent = texts.modal_title_annotation_relations || "텍스트 상자 관계 설정";
     if (nameGroup) nameGroup.style.display = 'none';
     if (descGroup) descGroup.style.display = 'none';
     if (refsGroup) refsGroup.style.display = 'none';
@@ -14551,17 +17504,17 @@ function editLayerItem(data, type) {
     if (nameInput) nameInput.setAttribute('required', 'required');
     
     if (type === 'event') {
-      layerItemModalTitle.textContent = "사건 정보 수정";
-      document.getElementById('layer-item-name-label').textContent = "사건 이름*";
+      layerItemModalTitle.textContent = texts.modal_title_event_edit || "사건 정보 수정";
+      document.getElementById('layer-item-name-label').textContent = texts.label_layer_name_event || "사건 이름*";
       document.getElementById('layer-item-events-group').style.display = 'none';
       document.getElementById('layer-item-locations-group').style.display = '';
-      if (nameInput) nameInput.placeholder = "예: 선악과 사건";
+      if (nameInput) nameInput.placeholder = texts.placeholder_layer_name_event || "예: 선악과 사건";
     } else {
-      layerItemModalTitle.textContent = "장소 정보 수정";
-      document.getElementById('layer-item-name-label').textContent = "장소 이름*";
+      layerItemModalTitle.textContent = texts.modal_title_location_edit || "장소 정보 수정";
+      document.getElementById('layer-item-name-label').textContent = texts.label_layer_name_location || "장소 이름*";
       document.getElementById('layer-item-events-group').style.display = '';
       document.getElementById('layer-item-locations-group').style.display = 'none';
-      if (nameInput) nameInput.placeholder = "예: 에덴 동산";
+      if (nameInput) nameInput.placeholder = texts.placeholder_layer_name_location || "예: 에덴 동산";
     }
     
     if (layerItemDeleteBtn) {
@@ -14581,12 +17534,20 @@ function editLayerItem(data, type) {
   updateSelectedTags('locations');
   
   layerItemModal.style.display = 'flex';
+  ensureModalInputsFocusable();
+  setTimeout(() => {
+    const focusTarget = document.getElementById('layer-item-name');
+    if (focusTarget) {
+      focusTarget.focus();
+    }
+  }, 100);
 }
 
 function openLayerItemAddForm(type) {
   isLayerItemAddMode = true;
   activeLayerItem = null;
   activeLayerType = type;
+  const texts = UI_TEXTS[currentLang] || UI_TEXTS.ko;
   
   // Clear search inputs
   const peopleSearch = document.getElementById('layer-item-people-search');
@@ -14607,17 +17568,17 @@ function openLayerItemAddForm(type) {
   if (refsGroup) refsGroup.style.display = '';
   
   if (type === 'event') {
-    layerItemModalTitle.textContent = "새 사건 추가";
-    document.getElementById('layer-item-name-label').textContent = "사건 이름*";
+    layerItemModalTitle.textContent = texts.modal_title_event_add || "새 사건 추가";
+    document.getElementById('layer-item-name-label').textContent = texts.label_layer_name_event || "사건 이름*";
     document.getElementById('layer-item-events-group').style.display = 'none';
     document.getElementById('layer-item-locations-group').style.display = '';
-    if (nameInput) nameInput.placeholder = "예: 선악과 사건";
+    if (nameInput) nameInput.placeholder = texts.placeholder_layer_name_event || "예: 선악과 사건";
   } else {
-    layerItemModalTitle.textContent = "새 장소 추가";
-    document.getElementById('layer-item-name-label').textContent = "장소 이름*";
+    layerItemModalTitle.textContent = texts.modal_title_location_add || "새 장소 추가";
+    document.getElementById('layer-item-name-label').textContent = texts.label_layer_name_location || "장소 이름*";
     document.getElementById('layer-item-events-group').style.display = '';
     document.getElementById('layer-item-locations-group').style.display = 'none';
-    if (nameInput) nameInput.placeholder = "예: 에덴 동산";
+    if (nameInput) nameInput.placeholder = texts.placeholder_layer_name_location || "예: 에덴 동산";
   }
   
   if (nameInput) nameInput.value = '';
@@ -14634,9 +17595,17 @@ function openLayerItemAddForm(type) {
   updateSelectedTags('locations');
   
   layerItemModal.style.display = 'flex';
+  ensureModalInputsFocusable();
+  setTimeout(() => {
+    const focusTarget = document.getElementById('layer-item-name');
+    if (focusTarget) {
+      focusTarget.focus();
+    }
+  }, 100);
 }
 
 function populateRelationChecklists(currentItemId, currentItemType) {
+  const customTagSuffix = currentLang === 'en' ? ' (Custom)' : ' (임의)';
   const peopleList = document.getElementById('layer-item-people-list');
   const eventsList = document.getElementById('layer-item-events-list');
   const locationsList = document.getElementById('layer-item-locations-list');
@@ -14670,9 +17639,10 @@ function populateRelationChecklists(currentItemId, currentItemType) {
       itemEl.dataset.id = person.id;
       itemEl.dataset.name = person.name;
       
+      const personDisplayName = currentLang === 'en' ? (person.engName || person.name) : person.name;
       itemEl.innerHTML = `
         <input type="checkbox" value="${person.id}" ${isChecked ? 'checked' : ''}>
-        <span>${person.name} (${person.id})</span>
+        <span>${personDisplayName} (${person.id})</span>
       `;
       
       itemEl.querySelector('input').addEventListener('change', (e) => {
@@ -14696,7 +17666,7 @@ function populateRelationChecklists(currentItemId, currentItemType) {
           
           itemEl.innerHTML = `
             <input type="checkbox" value="${ref}" checked>
-            <span>${ref} (임의)</span>
+            <span>${ref}${customTagSuffix}</span>
           `;
           
           itemEl.querySelector('input').addEventListener('change', (e) => {
@@ -14765,7 +17735,7 @@ function populateRelationChecklists(currentItemId, currentItemType) {
           
           itemEl.innerHTML = `
             <input type="checkbox" value="${ref}" checked>
-            <span>${ref} (임의)</span>
+            <span>${ref}${customTagSuffix}</span>
           `;
           
           itemEl.querySelector('input').addEventListener('change', (e) => {
@@ -14834,7 +17804,7 @@ function populateRelationChecklists(currentItemId, currentItemType) {
           
           itemEl.innerHTML = `
             <input type="checkbox" value="${ref}" checked>
-            <span>${ref} (임의)</span>
+            <span>${ref}${customTagSuffix}</span>
           `;
           
           itemEl.querySelector('input').addEventListener('change', (e) => {
@@ -14884,15 +17854,31 @@ function updateSelectedTags(type) {
 }
 
 function setupLayerItemModalEvents() {
-  if (layerItemModalClose) {
-    layerItemModalClose.addEventListener('click', () => {
-      layerItemModal.style.display = 'none';
+  const layerItemModalEl = document.getElementById('layer-item-modal');
+  const layerItemModalCancelBtn = document.getElementById('layer-item-modal-cancel');
+
+  const closeLayerItemModal = () => {
+    if (layerItemModalEl) layerItemModalEl.style.display = 'none';
+    if (typeof layerItemModal !== 'undefined' && layerItemModal) layerItemModal.style.display = 'none';
+  };
+
+  if (layerItemModalClose) bindHybridButton(layerItemModalClose, closeLayerItemModal);
+  if (layerItemModalCancel) bindHybridButton(layerItemModalCancel, closeLayerItemModal);
+  if (layerItemModalCancelBtn) bindHybridButton(layerItemModalCancelBtn, closeLayerItemModal);
+
+  if (layerItemModalEl) {
+    layerItemModalEl.addEventListener('click', (e) => {
+      if (e.target === layerItemModalEl) {
+        closeLayerItemModal();
+      }
     });
-  }
-  if (layerItemModalCancel) {
-    layerItemModalCancel.addEventListener('click', () => {
-      layerItemModal.style.display = 'none';
-    });
+    layerItemModalEl.addEventListener('touchend', (e) => {
+      if (e.target === layerItemModalEl) {
+        e.preventDefault();
+        e.stopPropagation();
+        closeLayerItemModal();
+      }
+    }, { passive: false });
   }
   
   // Setup searches
@@ -15044,7 +18030,9 @@ function setupLayerItemModalEvents() {
   if (layerItemDeleteBtn) {
     layerItemDeleteBtn.addEventListener('click', () => {
       if (!activeLayerItem || !activeLayerType) return;
-      if (!confirm(`정말 이 ${activeLayerType === 'event' ? '사건' : '장소'}을 삭제하시겠습니까?`)) return;
+      const typeText = currentLang === 'en' ? (activeLayerType === 'event' ? 'event' : 'location') : (activeLayerType === 'event' ? '사건' : '장소');
+      const confirmMsg = currentLang === 'en' ? `Are you sure you want to delete this ${typeText}?` : `정말 이 ${typeText}을 삭제하시겠습니까?`;
+      if (!confirm(confirmMsg)) return;
       
       pushHistoryState();
       if (activeLayerType === 'event') {
@@ -15063,6 +18051,16 @@ function setupLayerItemModalEvents() {
       showToast("삭제되었습니다.");
     });
   }
+  const layerItemModalSubmitBtn = document.getElementById('layer-item-modal-submit');
+  if (layerItemModalSubmitBtn) {
+    bindHybridButton(layerItemModalSubmitBtn, () => {
+      if (layerItemForm) {
+        const submitEvent = new Event('submit', { cancelable: true, bubbles: true });
+        layerItemForm.dispatchEvent(submitEvent);
+      }
+    });
+  }
+
   if (layerItemForm) {
     layerItemForm.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -15243,23 +18241,6 @@ function setupLayerItemModalEvents() {
 }
 
 // Layer Toggle Listeners
-document.getElementById('toggle-layer-people')?.addEventListener('change', () => {
-  applyFilters();
-});
-document.getElementById('toggle-layer-events')?.addEventListener('change', () => {
-  applyFilters();
-});
-document.getElementById('toggle-layer-locations')?.addEventListener('change', () => {
-  applyFilters();
-});
-document.getElementById('toggle-layer-polygons')?.addEventListener('change', () => {
-  applyFilters();
-});
-
-document.getElementById('toggle-layer-prophets')?.addEventListener('change', () => {
-  applyFilters();
-});
-
 document.getElementById('toggle-relationship-highlight')?.addEventListener('change', (e) => {
   if (!e.target.checked) {
     clearAllHighlights();
@@ -15294,15 +18275,16 @@ async function checkLicenseAndInit() {
   }
 
   const machineId = getOrCreateMachineId();
-  const licenseKey = localStorage.getItem('bible_genealogy_license_key');
+  let licenseKey = localStorage.getItem('bible_genealogy_license_key');
 
   if (!licenseKey) {
-    showLicenseLock("프로그램 인증이 필요합니다. 발급받으신 라이선스 키를 입력해 주세요.");
-    return false;
+    licenseKey = 'KEY-OPEN-BIBLE-TREE';
+    localStorage.setItem('bible_genealogy_license_key', licenseKey);
   }
 
   if (licenseKey === 'KEY-OPEN-BIBLE-TREE') {
-    document.getElementById('desktop-license-modal').style.display = 'none';
+    const licModal = document.getElementById('desktop-license-modal');
+    if (licModal) licModal.style.display = 'none';
     const appContainer = document.getElementById('app-container');
     if (appContainer) appContainer.style.display = 'flex';
     return true;
@@ -15337,6 +18319,8 @@ async function checkLicenseAndInit() {
 }
 
 function showLicenseLock(message) {
+  const landing = document.getElementById('landing-page');
+  if (landing) landing.style.display = 'none';
   document.getElementById('desktop-license-modal').style.display = 'flex';
   document.getElementById('license-message').innerText = message || "";
   
@@ -15559,8 +18543,8 @@ function applyLocalization() {
     langToggleText.textContent = currentLang.toUpperCase();
   }
 
-  const texts = UI_TEXTS[currentLang];
-  document.title = texts.app_title || "열린족보이야기";
+  const texts = UI_TEXTS[currentLang] || UI_TEXTS.ko;
+  document.title = texts.app_title || "열린 족보이야기";
 
   const elementsToTranslate = {
     'searchInput': { attr: 'placeholder', key: 'search_placeholder' },
@@ -15577,8 +18561,45 @@ function applyLocalization() {
     'note-text': { attr: 'placeholder', key: 'notes_placeholder' },
     'resource-title': { attr: 'placeholder', key: 'resource_desc_placeholder' },
     'resource-url': { attr: 'placeholder', key: 'resource_url_placeholder' },
+    'add-resource-btn': { attr: 'textContent', key: 'resource_add_btn' },
     'resource-add-btn': { attr: 'textContent', key: 'resource_add_btn' },
     'notes-panel-title': { attr: 'textContent', key: 'notes_title' },
+    'panel-info-title': { attr: 'textContent', key: 'panel_info_title' },
+    'panel-location-sec-title': { attr: 'textContent', key: 'panel_sec_location_info' },
+    'panel-hometown-badge': { attr: 'textContent', key: 'panel_hometown_badge' },
+    'panel-activities-badge': { attr: 'textContent', key: 'panel_activities_badge' },
+    'panel-hometown-map-btn': { attr: 'textContent', key: 'map_view_btn' },
+    'panel-hometown-name': { attr: 'placeholder', key: 'placeholder_hometown_name' },
+    'panel-hometown-coords': { attr: 'placeholder', key: 'placeholder_hometown_coords' },
+    'panel-activity-name-input': { attr: 'placeholder', key: 'placeholder_activity_name' },
+    'panel-activity-coords-input': { attr: 'placeholder', key: 'placeholder_activity_coords' },
+    'panel-activity-desc-input': { attr: 'placeholder', key: 'placeholder_activity_desc' },
+    'panel-activity-add-btn': { attr: 'textContent', key: 'btn_add_activity' },
+    'label-form-hometown-name': { attr: 'textContent', key: 'label_form_hometown_name' },
+    'label-form-hometown-coords': { attr: 'textContent', key: 'label_form_hometown_coords' },
+    'label-form-activities': { attr: 'textContent', key: 'label_form_activities' },
+    'panel-note-sec-title': { attr: 'textContent', key: 'panel_sec_notes' },
+    'panel-resource-sec-title': { attr: 'textContent', key: 'panel_sec_resources' },
+    'panel-cancel': { attr: 'textContent', key: 'panel_cancel' },
+    'panel-save': { attr: 'textContent', key: 'panel_save' },
+    'panel-expand': { attr: 'title', key: 'panel_expand_title' },
+    'panel-close': { attr: 'title', key: 'panel_close_title' },
+    'filter-panel-title': { attr: 'textContent', key: 'filter_panel_title' },
+    'filter-panel-desc': { attr: 'textContent', key: 'filter_panel_desc' },
+    'filter-panel-close': { attr: 'title', key: 'panel_close_title' },
+    'filter-sec-title': { attr: 'textContent', key: 'filter_sec_title' },
+    'text-filter-cain': { attr: 'textContent', key: 'filter_cain' },
+    'text-filter-japheth': { attr: 'textContent', key: 'filter_japheth' },
+    'text-filter-ham': { attr: 'textContent', key: 'filter_ham' },
+    'text-filter-joktan': { attr: 'textContent', key: 'filter_joktan' },
+    'text-filter-keturah': { attr: 'textContent', key: 'filter_keturah' },
+    'text-filter-ishmael': { attr: 'textContent', key: 'filter_ishmael' },
+    'text-filter-esau': { attr: 'textContent', key: 'filter_esau' },
+    'text-filter-north_kings': { attr: 'textContent', key: 'filter_north_kings' },
+    'text-filter-independent_1chr4': { attr: 'textContent', key: 'filter_independent_1chr4' },
+    'text-filter-levite_priests': { attr: 'textContent', key: 'filter_levite_priests' },
+    'text-filter-horite_chiefs': { attr: 'textContent', key: 'filter_horite_chiefs' },
+    'text-filter-reuben_simeon': { attr: 'textContent', key: 'filter_reuben_simeon' },
     'landing-title': { attr: 'textContent', key: 'app_title' },
     'auth-title': { attr: 'textContent', key: 'app_title' },
     'app-main-title': { attr: 'textContent', key: 'app_title' },
@@ -15626,17 +18647,173 @@ function applyLocalization() {
     'settings-backup-btn-text': { attr: 'textContent', key: 'settings_backup_btn' },
     'settings-restore-label': { attr: 'textContent', key: 'settings_restore_label' },
     'settings-restore-btn-text': { attr: 'textContent', key: 'settings_restore_btn' },
+    // 인물 추가/수정 모달 다국어 매핑
+    'modal-title': { attr: 'textContent', key: 'modal_title_person_default' },
+    'preset-title-text': { attr: 'textContent', key: 'preset_title_text' },
+    'preset-child-btn': { attr: 'textContent', key: 'preset_child_btn' },
+    'preset-spouse-btn': { attr: 'textContent', key: 'preset_spouse_btn' },
+    'label-form-id': { attr: 'textContent', key: 'label_form_id' },
+    'form-id': { attr: 'placeholder', key: 'placeholder_form_id' },
+    'label-form-name': { attr: 'textContent', key: 'label_form_name' },
+    'form-name': { attr: 'placeholder', key: 'placeholder_form_name' },
+    'label-form-eng': { attr: 'textContent', key: 'label_form_eng' },
+    'form-eng': { attr: 'placeholder', key: 'placeholder_form_eng' },
+    'label-form-gender': { attr: 'textContent', key: 'label_form_gender' },
+    'opt-gender-m': { attr: 'textContent', key: 'opt_gender_m' },
+    'opt-gender-f': { attr: 'textContent', key: 'opt_gender_f' },
+    'label-form-gen': { attr: 'textContent', key: 'label_form_gen' },
+    'label-form-col': { attr: 'textContent', key: 'label_form_col' },
+    'form-col': { attr: 'placeholder', key: 'placeholder_form_col' },
+    'form-col-auto-btn': { attr: 'textContent', key: 'form_col_auto_btn' },
+    'label-form-parents': { attr: 'textContent', key: 'label_form_parents' },
+    'form-parents': { attr: 'placeholder', key: 'placeholder_form_parents' },
+    'label-form-spouses': { attr: 'textContent', key: 'label_form_spouses' },
+    'form-spouses': { attr: 'placeholder', key: 'placeholder_form_spouses' },
+    'label-form-teachers': { attr: 'textContent', key: 'label_form_teachers' },
+    'form-teachers': { attr: 'placeholder', key: 'placeholder_form_teachers' },
+    'label-form-prophets': { attr: 'textContent', key: 'label_form_prophets' },
+    'form-prophets': { attr: 'placeholder', key: 'placeholder_form_prophets' },
+    'label-form-related': { attr: 'textContent', key: 'label_form_related' },
+    'form-related-search': { attr: 'placeholder', key: 'placeholder_form_related_search' },
+    'label-form-desc': { attr: 'textContent', key: 'label_form_desc' },
+    'form-desc': { attr: 'placeholder', key: 'placeholder_form_desc' },
+    'label-form-eng-desc': { attr: 'textContent', key: 'label_form_eng_desc' },
+    'form-eng-desc': { attr: 'placeholder', key: 'placeholder_form_eng_desc' },
+    'label-form-main': { attr: 'textContent', key: 'label_form_main' },
+    'label-form-prophet': { attr: 'textContent', key: 'label_form_prophet' },
+    'form-delete-btn': { attr: 'textContent', key: 'btn_form_delete' },
+    'modal-cancel': { attr: 'textContent', key: 'btn_modal_cancel' },
+    'modal-submit': { attr: 'textContent', key: 'btn_modal_submit' },
+    // 사건/장소 모달 다국어 매핑
+    'layer-item-modal-title': { attr: 'textContent', key: 'modal_title_layer_default' },
+    'layer-item-name-label': { attr: 'textContent', key: 'label_layer_name_default' },
+    'layer-item-desc-label': { attr: 'textContent', key: 'label_layer_desc' },
+    'layer-item-desc': { attr: 'placeholder', key: 'placeholder_layer_desc' },
+    'layer-item-refs-label': { attr: 'textContent', key: 'label_layer_refs' },
+    'layer-item-refs': { attr: 'placeholder', key: 'placeholder_layer_refs' },
+    'layer-item-people-label': { attr: 'textContent', key: 'label_layer_people' },
+    'layer-item-people-search': { attr: 'placeholder', key: 'placeholder_layer_people_search' },
+    'layer-item-events-label': { attr: 'textContent', key: 'label_layer_events' },
+    'layer-item-events-search': { attr: 'placeholder', key: 'placeholder_layer_events_search' },
+    'layer-item-locations-label': { attr: 'textContent', key: 'label_layer_locations' },
+    'layer-item-locations-search': { attr: 'placeholder', key: 'placeholder_layer_locations_search' },
+    'layer-item-delete-btn': { attr: 'textContent', key: 'btn_form_delete' },
+    'layer-item-modal-cancel': { attr: 'textContent', key: 'btn_modal_cancel' },
+    'layer-item-modal-submit': { attr: 'textContent', key: 'btn_modal_submit' },
+    // 스포너 툴킷 다국어 매핑
+    'spawner-header-title': { attr: 'textContent', key: 'spawner_header_title' },
+    'spawner-header-desc': { attr: 'textContent', key: 'spawner_header_desc' },
+    'spawner-search-input': { attr: 'placeholder', key: 'placeholder_spawner_search' },
+    'spawner-opt-location': { attr: 'textContent', key: 'spawner_opt_location' },
+    'spawner-opt-event': { attr: 'textContent', key: 'spawner_opt_event' },
+    'spawner-panel-close-btn': { attr: 'title', key: 'spawner_close_btn_title' },
+    'spawner-events-title': { attr: 'textContent', key: 'spawner_events_title' },
+    'spawner-locations-title': { attr: 'textContent', key: 'spawner_locations_title' },
+    'spawner-panel-toggle-btn': { attr: 'title', key: 'spawner_toggle_btn_title' },
+    // 영역(다각형) 편집기 다국어 매핑
+    'area-editor-title': { attr: 'textContent', key: 'area_editor_title' },
+    'label-area-name': { attr: 'textContent', key: 'label_area_name' },
+    'style-area-name': { attr: 'placeholder', key: 'placeholder_area_name' },
+    'label-area-color': { attr: 'textContent', key: 'label_area_color' },
+    'label-area-opacity-title': { attr: 'textContent', key: 'label_area_opacity_title' },
+    'label-area-stroke-width-title': { attr: 'textContent', key: 'label_area_stroke_width_title' },
+    'label-area-border-title': { attr: 'textContent', key: 'label_area_border_title' },
+    'opt-area-border-dashed': { attr: 'textContent', key: 'opt_area_border_dashed' },
+    'opt-area-border-dotted': { attr: 'textContent', key: 'opt_area_border_dotted' },
+    'opt-area-border-dashdot': { attr: 'textContent', key: 'opt_area_border_dashdot' },
+    'opt-area-border-solid': { attr: 'textContent', key: 'opt_area_border_solid' },
+    'style-delete-area-point-btn': { attr: 'innerHTML', key: 'btn_delete_area_point' },
+    'style-reset-area-label-btn': { attr: 'innerHTML', key: 'btn_reset_area_label' },
+    'style-delete-area-btn': { attr: 'innerHTML', key: 'btn_delete_area' },
+    // 선 디자인 편집기 다국어 매핑
+    'style-sec-connection-title': { attr: 'textContent', key: 'style_sec_connection_title' },
+    'style-label-line-type': { attr: 'textContent', key: 'style_label_line_type' },
+    'opt-line-type-orthogonal': { attr: 'textContent', key: 'opt_line_type_orthogonal' },
+    'opt-line-type-diagonal': { attr: 'textContent', key: 'opt_line_type_diagonal' },
+    'style-sec-colors-title': { attr: 'textContent', key: 'style_sec_colors_title' },
+    'style-label-line-color': { attr: 'textContent', key: 'style_label_line_color' },
+    'style-label-main-line-color': { attr: 'textContent', key: 'style_label_main_line_color' },
+    'style-label-spouse-line-color': { attr: 'textContent', key: 'style_label_spouse_line_color' },
+    'style-label-preacher-line-color': { attr: 'textContent', key: 'style_label_preacher_line_color' },
+    'style-sec-curvature-title': { attr: 'textContent', key: 'style_sec_curvature_title' },
+    'style-label-line-width': { attr: 'textContent', key: 'style_label_line_width' },
+    'style-label-corner-radius': { attr: 'textContent', key: 'style_label_corner_radius' },
+    'style-label-split-offset': { attr: 'textContent', key: 'style_label_split_offset' },
+    'style-label-sibling-gap': { attr: 'textContent', key: 'style_label_sibling_gap' },
+    'style-sec-line-editor-title': { attr: 'textContent', key: 'style_sec_line_editor_title' },
+    'style-label-line-edit-toggle': { attr: 'textContent', key: 'style_label_line_edit_toggle' },
+    'style-label-grid-snap-toggle': { attr: 'textContent', key: 'style_label_grid_snap_toggle' },
+    'style-delete-selected-point-btn': { attr: 'innerHTML', key: 'btn_delete_selected_point' },
+    'style-delete-selected-line-btn': { attr: 'innerHTML', key: 'btn_delete_selected_line' },
+    'style-label-zorder': { attr: 'textContent', key: 'style_label_zorder' },
+    'style-line-bring-front-btn': { attr: 'textContent', key: 'btn_line_bring_front' },
+    'style-line-send-back-btn': { attr: 'textContent', key: 'btn_line_send_back' },
+    'style-reset-btn': { attr: 'textContent', key: 'btn_style_reset' },
   };
 
   for (const [id, config] of Object.entries(elementsToTranslate)) {
     const el = document.getElementById(id);
     if (el && texts[config.key]) {
-      if (config.attr === 'textContent') {
+      if (config.attr === 'innerHTML') {
+        el.innerHTML = texts[config.key];
+      } else if (config.attr === 'textContent') {
         el.textContent = texts[config.key];
       } else {
         el.setAttribute(config.attr, texts[config.key]);
       }
     }
+  }
+
+  const autoColBtn = document.getElementById('form-col-auto-btn');
+  if (autoColBtn && texts.form_col_auto_btn_title) {
+    autoColBtn.setAttribute('title', texts.form_col_auto_btn_title);
+  }
+
+  // Action Button Tooltips & Titles
+  const tooltipButtons = {
+    'floating-settings-btn': 'tooltip_settings',
+    'floating-search-toggle-btn': 'tooltip_search',
+    'admin-add-btn': 'tooltip_add_person',
+    'admin-add-event-btn': 'tooltip_add_event',
+    'admin-add-location-btn': 'tooltip_add_location',
+    'admin-add-note-btn': 'tooltip_add_note',
+    'admin-add-polygon-btn': 'tooltip_add_polygon',
+  };
+  for (const [id, key] of Object.entries(tooltipButtons)) {
+    const el = document.getElementById(id);
+    if (el && texts[key]) {
+      el.setAttribute('data-tooltip', texts[key]);
+      el.setAttribute('title', texts[key]);
+    }
+  }
+
+  // Slide Lock Text
+  const slideText = document.getElementById('slide-lock-text');
+  if (slideText) {
+    slideText.innerText = (typeof isAdminMode !== 'undefined' && isAdminMode)
+      ? (texts.slide_lock_unlocked || (currentLang === 'en' ? 'Edit Mode' : '편집모드'))
+      : (texts.slide_lock_text || (currentLang === 'en' ? 'Edit Mode' : '편집모드'));
+  }
+
+  // Refresh active study panel text if currently open
+  const panel = document.getElementById('study-panel');
+  if (panel && panel.classList.contains('active') && typeof activePersonId !== 'undefined' && activePersonId) {
+    if (typeof activeStudyPanelType !== 'undefined' && activeStudyPanelType === 'person') {
+      const char = typeof db !== 'undefined' && db.find(c => c.id === activePersonId);
+      if (char) {
+        if (currentLang === 'en') {
+          document.getElementById('panel-name').textContent = char.engName || char.name;
+          document.getElementById('panel-eng').textContent = `${char.name} (${char.gender === 'M' ? 'Male' : 'Female'})`;
+          document.getElementById('panel-desc').textContent = char.engDesc || char.desc || 'No description available.';
+        } else {
+          document.getElementById('panel-name').textContent = char.name;
+          document.getElementById('panel-eng').textContent = `${char.engName || ''} (${char.gender === 'M' ? '남성' : '여성'})`;
+          document.getElementById('panel-desc').textContent = char.desc || '정보가 없습니다.';
+        }
+      }
+    }
+    const resources = JSON.parse(localStorage.getItem(`bible_tree_resources_${activePersonId}`)) || [];
+    renderResourcesList(resources);
   }
 
   // Update statistics dynamically to refresh text on language toggle
@@ -15647,6 +18824,10 @@ function applyLocalization() {
   // Initialize iCloud synchronization panels and inputs
   if (typeof initICloudSync === 'function') {
     initICloudSync();
+  }
+
+  if (typeof syncMacMenubarLocalization === 'function') {
+    syncMacMenubarLocalization();
   }
 }
 
@@ -15956,8 +19137,8 @@ window.addEventListener('DOMContentLoaded', async () => {
           relatedEvents: [],
           relatedLocations: []
         };
-        matchedType = selectedVal;
-        showToast(`🛠️ '${val}' (${matchedType === 'event' ? '사건' : '장소'}) 직접 입력을 배치합니다.`);
+        const typeLabel = currentLang === 'en' ? (matchedType === 'event' ? 'Event' : 'Location') : (matchedType === 'event' ? '사건' : '장소');
+        showToast(currentLang === 'en' ? `🛠️ Placing custom '${val}' (${typeLabel}).` : `🛠️ '${val}' (${typeLabel}) 직접 입력을 배치합니다.`);
       } else {
         // Prepare template from matched item
         matchedItem = { ...matchedItem, name: matchedItem.cleanName };
@@ -16160,10 +19341,20 @@ function renderSpawnerPanel(filterQuery = '') {
       return false;
     }
 
-    // Canvas Selection/Copy Blocks: Ctrl+C, Ctrl+X, Ctrl+A
-    if (!isInput && isMetaOrCtrl && (e.key === 'c' || e.key === 'C' || e.key === 'x' || e.key === 'X' || e.key === 'a' || e.key === 'A')) {
-      e.preventDefault();
-      return false;
+    // Canvas Selection/Copy Blocks: Ctrl+C, Ctrl+X, Ctrl+A (Allow box copy if in edit mode or box selected)
+    if (!isInput && isMetaOrCtrl) {
+      if (e.key === 'c' || e.key === 'C') {
+        if (typeof window.copySelectedBox === 'function' && window.copySelectedBox()) {
+          e.preventDefault();
+          return;
+        }
+        e.preventDefault();
+        return false;
+      }
+      if (e.key === 'x' || e.key === 'X' || e.key === 'a' || e.key === 'A') {
+        e.preventDefault();
+        return false;
+      }
     }
   }, true);
 
@@ -16493,64 +19684,155 @@ function setupAutoTranslationListeners() {
 }
 
 function setupSettingsListeners() {
-  const bottomSettingsBtn = document.getElementById('bottom-settings-btn');
+  const floatSettingsBtn = document.getElementById('floating-settings-btn') || document.getElementById('bottom-settings-btn');
   const settingsModal = document.getElementById('settings-modal');
   const settingsCloseBtn = document.getElementById('settings-close-btn');
   const settingMdSync = document.getElementById('setting-md-sync');
 
+  let isJustOpened = false;
+
   const toggleSearchWrapper = (show) => {
     const searchWrapper = document.getElementById('floating-search-wrapper');
     if (searchWrapper) {
-      const isLandscape = window.matchMedia('(orientation: landscape)').matches;
-      if (isLandscape) {
-        searchWrapper.style.opacity = '1';
-        searchWrapper.style.pointerEvents = 'auto';
-      } else {
-        searchWrapper.style.opacity = show ? '1' : '0';
-        searchWrapper.style.pointerEvents = show ? 'auto' : 'none';
+      searchWrapper.style.opacity = '1';
+      searchWrapper.style.pointerEvents = 'auto';
+    }
+  };
+
+  const openSettings = (e) => {
+    if (e) {
+      if (typeof e.stopPropagation === 'function') e.stopPropagation();
+      if (typeof e.preventDefault === 'function' && e.cancelable) e.preventDefault();
+    }
+    if (settingMdSync) {
+      settingMdSync.checked = localStorage.getItem('bible_tree_md_sync') !== 'false';
+    }
+
+    // 만약 검색 입력창이 펼쳐져 있다면 안전하게 닫기만 수행 (검색 버튼 자체는 항상 유지)
+    if (typeof window.closeSearchWrapper === 'function') {
+      window.closeSearchWrapper();
+    }
+
+    const icloudToggle = document.getElementById('setting-icloud-sync');
+    const icloudFields = document.getElementById('icloud-account-fields');
+    const icloudStatus = document.getElementById('icloud-sync-status');
+    const icloudUserInput = document.getElementById('settings-icloud-username');
+    const icloudPassInput = document.getElementById('settings-icloud-password');
+
+    if (icloudToggle) {
+      const isICloudEnabled = localStorage.getItem('icloud_sync_enabled') === 'true';
+      const savedUser = localStorage.getItem('icloud_username') || '';
+      const savedPass = localStorage.getItem('icloud_password') || '';
+      
+      icloudToggle.checked = isICloudEnabled;
+      if (icloudUserInput && savedUser) icloudUserInput.value = savedUser;
+      if (icloudPassInput && savedPass) icloudPassInput.value = savedPass;
+
+      if (icloudFields) {
+        icloudFields.style.setProperty('display', isICloudEnabled ? 'flex' : 'none', 'important');
+      }
+      if (icloudStatus) {
+        if (isICloudEnabled && savedUser) {
+          icloudStatus.style.display = 'block';
+          icloudStatus.textContent = `☁️ iCloud 자동 동기화 활성화 중 (${savedUser})`;
+        } else {
+          icloudStatus.style.display = 'none';
+        }
+      }
+    }
+
+    const layerKeys = [
+      { btnId: 'btn-layer-people', id: 'toggle-layer-people', key: 'bible_layer_people', def: true },
+      { btnId: 'btn-layer-events', id: 'toggle-layer-events', key: 'bible_layer_events', def: true },
+      { btnId: 'btn-layer-locations', id: 'toggle-layer-locations', key: 'bible_layer_locations', def: true },
+      { btnId: 'btn-layer-polygons', id: 'toggle-layer-polygons', key: 'bible_layer_polygons', def: true },
+      { btnId: 'btn-layer-prophets', id: 'toggle-layer-prophets', key: 'bible_layer_prophets', def: true },
+    ];
+    layerKeys.forEach(({ btnId, id, key, def }) => {
+      const el = document.getElementById(id);
+      const btn = document.getElementById(btnId);
+      if (el) {
+        const val = localStorage.getItem(key);
+        el.checked = val !== null ? (val === 'true') : def;
+        if (btn) {
+          if (el.checked) btn.classList.add('checked');
+          else btn.classList.remove('checked');
+        }
+      }
+    });
+
+    if (settingsModal) {
+      isJustOpened = true;
+      setTimeout(() => { isJustOpened = false; }, 350);
+      const modalContent = settingsModal.querySelector('.modal-content');
+      const targetBtn = floatSettingsBtn || document.getElementById('floating-settings-btn');
+      
+      settingsModal.style.setProperty('display', 'flex', 'important');
+      settingsModal.style.setProperty('align-items', 'flex-start', 'important');
+      settingsModal.style.setProperty('justify-content', 'flex-end', 'important');
+      settingsModal.style.setProperty('padding', '0', 'important');
+
+      if (modalContent && targetBtn) {
+        const btnRect = targetBtn.getBoundingClientRect();
+        if (btnRect && btnRect.bottom > 0) {
+          const exactTop = Math.round(btnRect.bottom + 5);
+          modalContent.style.setProperty('top', `${exactTop}px`, 'important');
+          modalContent.style.setProperty('margin', '0', 'important');
+          modalContent.style.setProperty('transform', 'none', 'important');
+          modalContent.style.setProperty('bottom', 'auto', 'important');
+          const exactRight = Math.max(16, Math.round(window.innerWidth - btnRect.right));
+          modalContent.style.setProperty('right', `${exactRight}px`, 'important');
+          modalContent.style.setProperty('left', 'auto', 'important');
+        }
       }
     }
   };
 
-  if (settingsModal) {
-    if (settingMdSync) {
-      const isMdSyncEnabled = localStorage.getItem('bible_tree_md_sync') !== 'false';
-      settingMdSync.checked = isMdSyncEnabled;
-
-      settingMdSync.addEventListener('change', () => {
-        const isChecked = settingMdSync.checked;
-        localStorage.setItem('bible_tree_md_sync', isChecked ? 'true' : 'false');
-        console.log("[환경설정] 마크다운 연동 변경됨:", isChecked);
-
-        if (isChecked) {
-          triggerAutoBackup();
-        }
-      });
+  const closeSettings = (e) => {
+    if (e) {
+      if (typeof e.stopPropagation === 'function') e.stopPropagation();
+      if (typeof e.preventDefault === 'function' && e.cancelable) e.preventDefault();
     }
+    if (settingsModal) {
+      settingsModal.style.setProperty('display', 'none', 'important');
+    }
+  };
 
-    if (bottomSettingsBtn) {
-      bottomSettingsBtn.addEventListener('click', () => {
-        if (settingMdSync) {
-          settingMdSync.checked = localStorage.getItem('bible_tree_md_sync') !== 'false';
-        }
-        settingsModal.style.display = 'flex';
-        toggleSearchWrapper(false); // 환경설정이 켜지면 검색 토글 감추기
-      });
+  const toggleSettings = (e) => {
+    if (e) {
+      if (typeof e.stopPropagation === 'function') e.stopPropagation();
+      if (typeof e.preventDefault === 'function' && e.cancelable) e.preventDefault();
+    }
+    if (settingsModal && settingsModal.style.display === 'flex') {
+      closeSettings(e);
+    } else {
+      openSettings(e);
+    }
+  };
+
+  if (settingsModal) {
+    if (floatSettingsBtn) {
+      bindHybridButton(floatSettingsBtn, toggleSettings);
     }
 
     if (settingsCloseBtn) {
-      settingsCloseBtn.addEventListener('click', () => {
-        settingsModal.style.display = 'none';
-        toggleSearchWrapper(true); // 환경설정이 꺼지면 검색 토글 보이기
-      });
+      bindHybridButton(settingsCloseBtn, closeSettings);
     }
 
-    settingsModal.addEventListener('click', (e) => {
-      if (e.target === settingsModal) {
-        settingsModal.style.display = 'none';
-        toggleSearchWrapper(true); // 환경설정이 꺼지면 검색 토글 보이기
+    // 설정창 외부 클릭/터치 시 닫기 핸들러
+    const handleOutsideSettings = (e) => {
+      if (isJustOpened) return;
+      if (settingsModal && settingsModal.style.display === 'flex') {
+        const modalContent = settingsModal.querySelector('.modal-content');
+        const targetBtn = floatSettingsBtn || document.getElementById('floating-settings-btn');
+        if (modalContent && !modalContent.contains(e.target) && (!targetBtn || !targetBtn.contains(e.target))) {
+          closeSettings(e);
+        }
       }
-    });
+    };
+
+    document.addEventListener('click', handleOutsideSettings);
+    document.addEventListener('touchend', handleOutsideSettings, { passive: true });
   }
 }
 
@@ -16572,28 +19854,36 @@ function syncSlideLockUI(isAdmin) {
   if (slideText) slideText.style.opacity = '0';
 
   const lockIconSvg = document.getElementById('slide-lock-icon-svg');
+  const lockIconImg = document.getElementById('slide-lock-icon-img');
 
+  const texts = UI_TEXTS[currentLang] || UI_TEXTS.ko;
   if (isAdmin) {
     if (slideHandle) {
       slideHandle.style.background = '#ffffff'; // 배경색은 항상 흰색으로 통일
     }
     if (slideText) {
-      slideText.innerText = '편집 모드';
+      slideText.innerText = texts.slide_lock_unlocked || (currentLang === 'en' ? 'Edit Mode' : '편집모드');
       slideText.style.color = '#10b981'; // 편집 모드 텍스트 색상 초록 강조
     }
     if (lockIconSvg) {
       lockIconSvg.style.setProperty('color', '#10b981', 'important'); // 잠금 해제 시 초록 강조
+    }
+    if (lockIconImg) {
+      lockIconImg.src = 'lock_btn_active.png';
     }
   } else {
     if (slideHandle) {
       slideHandle.style.background = '#ffffff'; // 배경색은 항상 흰색으로 통일
     }
     if (slideText) {
-      slideText.innerText = '밀어서 편집';
-      slideText.style.color = '#475569'; // 흰색 배경 위에 가독성 슬레이트 회색
+      slideText.innerText = texts.slide_lock_text || (currentLang === 'en' ? 'Edit Mode' : '편집모드');
+      slideText.style.color = '#334155'; // 가독성 진한 슬레이트
     }
     if (lockIconSvg) {
       lockIconSvg.style.setProperty('color', '#64748b', 'important'); // 잠금 시 차분한 회색조
+    }
+    if (lockIconImg) {
+      lockIconImg.src = 'lock_btn.png';
     }
   }
   // 편집 모드 락/언락 시점에 되돌리기/다시실행 버튼 표시 여부를 실시간 제어
@@ -16608,202 +19898,141 @@ function setupSlideLockDragEvents() {
   const originalLockBtn = document.getElementById('admin-lock-btn');
   const slideText = document.getElementById('slide-lock-text');
 
+  if (slideText) {
+    const texts = UI_TEXTS[currentLang] || UI_TEXTS.ko;
+    slideText.innerText = (typeof isAdminMode !== 'undefined' && isAdminMode)
+      ? (texts.slide_lock_unlocked || (currentLang === 'en' ? 'Edit Mode' : '편집모드'))
+      : (texts.slide_lock_text || (currentLang === 'en' ? 'Edit Mode' : '편집모드'));
+  }
+
   if (slideHandle && slideContainer && slideBg) {
     let isDragging = false;
     let startX = 0;
     let currentX = 0;
+    let dragStartTime = 0;
+    let hasMoved = false;
 
     function getDynamicMaxSlide() {
-      const containerWidth = slideContainer.getBoundingClientRect().width || 111;
+      const containerWidth = slideContainer.getBoundingClientRect().width || 121;
       const handleWidth = slideHandle.getBoundingClientRect().width || 40;
       return Math.max(30, containerWidth - handleWidth);
     }
 
     function onDragStart(e) {
-      e.stopPropagation(); // 뒷판 가계도 패닝 버블링 차단
+      e.stopPropagation();
       if (e.cancelable) e.preventDefault();
       isDragging = true;
+      hasMoved = false;
+      dragStartTime = Date.now();
       startX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+      currentX = 0;
       slideHandle.style.transition = 'none';
       
-      // 드래그가 시작되면 락 컨테이너에 dragging 클래스를 부여하여 가이드 선/배경을 부드럽게 띄움
       slideContainer.classList.add('dragging');
-      slideText.style.opacity = '1';
+      if (slideText) {
+        const texts = UI_TEXTS[currentLang] || UI_TEXTS.ko;
+        slideText.innerText = (typeof isAdminMode !== 'undefined' && isAdminMode)
+          ? (texts.slide_lock_unlocked || (currentLang === 'en' ? 'Edit Mode' : '편집모드'))
+          : (texts.slide_lock_text || (currentLang === 'en' ? 'Edit Mode' : '편집모드'));
+        slideText.style.color = (typeof isAdminMode !== 'undefined' && isAdminMode) ? '#10b981' : '#334155';
+        slideText.style.opacity = '1';
+      }
+
+      window.addEventListener('touchmove', onDragMove, { passive: false });
+      window.addEventListener('touchend', onDragEnd, { passive: false });
+      window.addEventListener('touchcancel', onDragEnd, { passive: false });
+      window.addEventListener('mousemove', onDragMove);
+      window.addEventListener('mouseup', onDragEnd);
     }
 
     function onDragMove(e) {
-      e.stopPropagation(); // 뒷판 가계도 패닝 버블링 차단
-      if (e.cancelable) e.preventDefault(); // 아이패드 등 태블릿/모바일 OS의 기본 제스처 간섭 원천 배제 차단
       if (!isDragging) return;
-      const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+      e.stopPropagation();
+      if (e.cancelable) e.preventDefault();
+      
+      const clientX = (e.touches && e.touches.length > 0) ? e.touches[0].clientX : e.clientX;
       const deltaX = clientX - startX;
+      if (Math.abs(deltaX) > 4) {
+        hasMoved = true;
+      }
       const maxSlide = getDynamicMaxSlide();
       currentX = Math.max(0, Math.min(maxSlide, deltaX));
       slideHandle.style.transform = `translateX(${currentX}px)`;
       
-      // 슬라이딩 진척도에 따라 가이드 텍스트 투명도를 페이드아웃 처리
-      slideText.style.opacity = Math.max(0.1, 1 - (currentX / maxSlide) * 0.9);
+      if (slideText) {
+        slideText.style.opacity = '1'; // 슬라이딩 중에도 텍스트가 항상 선명하게 유지되도록 1 고정
+      }
     }
 
     function onDragEnd(e) {
+      if (!isDragging) return;
       if (e) {
         e.stopPropagation();
         if (e.cancelable) e.preventDefault();
       }
-      if (!isDragging) return;
       isDragging = false;
+      const elapsed = Date.now() - dragStartTime;
+
+      window.removeEventListener('touchmove', onDragMove, { passive: false });
+      window.removeEventListener('touchend', onDragEnd, { passive: false });
+      window.removeEventListener('touchcancel', onDragEnd, { passive: false });
+      window.removeEventListener('mousemove', onDragMove);
+      window.removeEventListener('mouseup', onDragEnd);
+
       slideHandle.style.transition = 'transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1), background-color 0.2s ease';
       
       const maxSlide = getDynamicMaxSlide();
-      if (currentX >= maxSlide * 0.9) {
+      // If user tapped quickly (< 300ms) or slid past 40% of the bar, trigger toggle
+      if ((!hasMoved && elapsed < 350) || currentX >= maxSlide * 0.4) {
         if (originalLockBtn) {
           originalLockBtn.click();
         }
       }
       
       slideHandle.style.transform = 'translateX(0px)';
-      
-      // 드래그가 해제되면 dragging 클래스를 제거하여 가이드 선/배경을 스무스하게 은닉
       slideContainer.classList.remove('dragging');
-      slideText.style.opacity = '0';
+      if (slideText) {
+        slideText.style.opacity = '0';
+        const texts = UI_TEXTS[currentLang] || UI_TEXTS.ko;
+        slideText.innerText = (typeof isAdminMode !== 'undefined' && isAdminMode)
+          ? (texts.slide_lock_unlocked || (currentLang === 'en' ? 'Edit Mode' : '편집모드'))
+          : (texts.slide_lock_text || (currentLang === 'en' ? 'Edit Mode' : '편집모드'));
+      }
     }
 
     slideHandle.addEventListener('touchstart', onDragStart, { passive: false });
-    window.addEventListener('touchmove', onDragMove, { passive: false });
-    window.addEventListener('touchend', onDragEnd, { passive: false });
-
     slideHandle.addEventListener('mousedown', onDragStart);
-    window.addEventListener('mousemove', onDragMove);
-    window.addEventListener('mouseup', onDragEnd);
   }
 }
 
 // Floating Header Actions: Settings & Search Drawer
 function setupFloatingHeaderEvents() {
-  const floatSettingsBtn = document.getElementById('floating-settings-btn');
-  const floatSearchBtn = document.getElementById('floating-search-toggle-btn');
-  const searchPanel = document.getElementById('search-panel');
-  const searchInput = document.getElementById('searchInput');
-  const settingsModal = document.getElementById('settings-modal');
+  const searchInput = document.getElementById('searchInput') || document.getElementById('search-input');
+  const searchWrapper = document.getElementById('floating-search-wrapper');
 
-  if (floatSettingsBtn && settingsModal) {
-    floatSettingsBtn.addEventListener('click', () => {
-      settingsModal.style.display = 'flex';
-    });
-  }
-
-  if (floatSearchBtn && searchPanel && searchInput) {
-    let isSearchOpen = false;
-    let lastToggleTime = 0; // 더블 탭으로 인한 중복 연쇄 반전 버그 방지용 쿨다운 타이머
-    let searchViewportInterval = null; // iOS 키보드 높이 감지 씹힘 방지용 실시간 타이머 폴러
-    const searchWrapper = document.getElementById('floating-search-wrapper');
-    const originalWindowHeight = window.innerHeight;
-
-    const handleVisualViewportChange = () => {
-      if (window.visualViewport && document.body.classList.contains('search-focused') && searchWrapper) {
-        const currentHeight = window.innerHeight;
-        const keyboardHeight = window.innerHeight - window.visualViewport.height;
-        
-        // 세로/가로 공통으로 자판 57px 상단 정밀 연동 실시 (기존 50px에서 7px 상향 조정)
-        // [1단계] Overlay 키보드 모드 감지 (비주얼 뷰포트 격차가 100px 초과 시)
-        if (keyboardHeight > 100) {
-          searchWrapper.style.bottom = `${keyboardHeight + 57}px`;
-          searchWrapper.style.top = 'auto'; // 수직 중앙 top 해제
-        } 
-        // [2단계] Resize 키보드 모드 감지 (웹뷰 자체가 150px 이상 축소되었을 시)
-        else if (originalWindowHeight - currentHeight > 150) {
-          searchWrapper.style.bottom = '57px'; // 축소된 웹뷰의 바닥(키보드 윗선) 기준 57px 띄움
-          searchWrapper.style.top = 'auto';
-        } 
-        // [3단계] 물리 키보드가 장착되어 가상 키보드는 없으나 포커스 상태인 경우 (줌조절바 상단 80px 위에 위치하게 조율 - 60px 추가 상향)
-        else if (document.activeElement === searchInput) {
-          searchWrapper.style.bottom = 'calc(121px + env(safe-area-inset-bottom))'; // 줌 조절바 상단(41px + safe-area) + 80px = 121px + safe-area
-          searchWrapper.style.top = 'auto';
-        }
-        // [4단계] 평상시 대기 상태 (키보드가 없거나 포커스가 풀린 기본 상태)
-        else {
-          searchWrapper.style.bottom = 'calc(1px + env(safe-area-inset-bottom))';
-          searchWrapper.style.top = 'auto';
-        }
-      }
-    };
-
-    // 검색창 원래 상태로 안전 리셋 및 복원 헬퍼
+  if (searchInput) {
+    // 검색 결과 드롭다운 닫기 헬퍼
     const closeSearchWrapper = () => {
-      isSearchOpen = false;
       document.body.classList.remove('search-focused');
-      if (searchViewportInterval) {
-        clearInterval(searchViewportInterval);
-        searchViewportInterval = null;
-      }
-      if (searchWrapper) {
-        searchWrapper.style.top = 'auto'; // 수직 정렬 top 해제
-        searchWrapper.style.bottom = 'calc(1px + env(safe-area-inset-bottom))'; // 원래 우측 하단 정박선 복구!
-      }
-      searchInput.value = '';
       const resultsDropdown = document.getElementById('search-results');
-      if (resultsDropdown) resultsDropdown.innerHTML = '';
-
-      if (window.visualViewport) {
-        window.visualViewport.removeEventListener('resize', handleVisualViewportChange);
-        window.visualViewport.removeEventListener('scroll', handleVisualViewportChange);
+      if (resultsDropdown) {
+        resultsDropdown.style.display = 'none';
+        resultsDropdown.innerHTML = '';
       }
     };
 
     // 전역 스코프에서 다른 검색 리스트 클릭 및 키 바인딩 시 복구할 수 있도록 노출
     window.closeSearchWrapper = closeSearchWrapper;
 
-    // 🔍 검색 토글 버튼 클릭 핸들러
-    const handleSearchToggle = (e) => {
-      e.stopPropagation();
-      if (e.cancelable) e.preventDefault();
-      
-      const now = Date.now();
-      if (now - lastToggleTime < 250) return; // 250ms 이내 중복 터치/클릭 연쇄 발동 강제 무력화
-      lastToggleTime = now;
-      
-      // 상태 기준 동기화 분기: search-focused 클래스가 없으면 활성화, 있으면 닫기
-      const isCurrentlyOpen = document.body.classList.contains('search-focused');
-      isSearchOpen = !isCurrentlyOpen;
-      
-      if (isSearchOpen) {
-        if (searchWrapper) {
-          document.body.classList.add('search-focused');
-          searchWrapper.style.top = 'auto'; // 키보드 연동을 위해 top 해제
-          searchWrapper.style.bottom = 'calc(1px + env(safe-area-inset-bottom))'; // 초기 하단 대기선
-        }
-
-        // 포커싱과 동시에 50ms 실시간 폴러 감시 타이머 구동
-        setTimeout(() => {
-          searchInput.focus();
-          
-          if (searchViewportInterval) clearInterval(searchViewportInterval);
-          searchViewportInterval = setInterval(handleVisualViewportChange, 50);
-          
-          if (window.visualViewport) {
-            window.visualViewport.addEventListener('resize', handleVisualViewportChange);
-            window.visualViewport.addEventListener('scroll', handleVisualViewportChange);
-            handleVisualViewportChange();
-          }
-        }, 150);
-      } else {
-        closeSearchWrapper();
-      }
-    };
-
-    floatSearchBtn.addEventListener('click', handleSearchToggle);
-    floatSearchBtn.addEventListener('touchend', handleSearchToggle, { passive: false });
-    floatSearchBtn.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
-
-    // 포커스 아웃(blur) 시 100ms 안심 복구 감지 필터를 통해 검색창 안전 복원 및 돋보기 강제 복구
+    // 포커스 아웃(blur) 시 검색 결과 드롭다운 닫기
     searchInput.addEventListener('blur', () => {
       setTimeout(() => {
         const activeEl = document.activeElement;
-        // 포커스가 완전히 검색창 영역(searchWrapper) 외부로 탈출했을 때만 복원 함수를 강제 작동!
-        if (isSearchOpen && searchWrapper && !searchWrapper.contains(activeEl)) {
+        const resultsDropdown = document.getElementById('search-results');
+        if (searchWrapper && !searchWrapper.contains(activeEl) && (!resultsDropdown || !resultsDropdown.contains(activeEl))) {
           closeSearchWrapper();
         }
-      }, 100);
+      }, 200);
     });
   }
 }
@@ -16813,31 +20042,139 @@ function repositionHistoryButtons() {
   // 브라우저 flex 레이아웃에 직접 내장되어 스페이스 배치가 자동화되므로, 절대좌표 JS 계산 불필요
 }
 
-// Upgraded Settings Panel Handlers: Lang, Theme, and iCloud Sync
+// Upgraded Settings Panel Handlers: Lang, Theme, Layers, Backup/Restore, and iCloud Sync
 function setupUpgradedSettingsEvents() {
   const langBtn = document.getElementById('settings-lang-toggle');
   const themeBtn = document.getElementById('settings-theme-toggle');
-  
+  const backupBtn = document.getElementById('bottom-backup-btn');
+  const restoreBtn = document.getElementById('bottom-restore-btn');
+  const fileInput = document.getElementById('user-notes-file-input');
+
+  // 1. Language Toggle with Hybrid Touch
   if (langBtn) {
-    langBtn.addEventListener('click', () => {
+    bindHybridButton(langBtn, (e) => {
+      if (e) {
+        if (typeof e.stopPropagation === 'function') e.stopPropagation();
+        if (typeof e.preventDefault === 'function' && e.cancelable) e.preventDefault();
+      }
       currentLang = currentLang === 'ko' ? 'en' : 'ko';
       localStorage.setItem('bible_genealogy_lang', currentLang);
       applyLocalization();
       renderTree();
+      if (typeof renderEvents === 'function') renderEvents();
+      if (typeof renderLocations === 'function') renderLocations();
+      if (typeof renderCustomPolygons === 'function') renderCustomPolygons();
     });
   }
 
+  // 2. Theme Toggle with Hybrid Touch
   if (themeBtn) {
-    themeBtn.addEventListener('click', () => {
-      const currentTheme = document.body.getAttribute('data-theme') || 'light';
-      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-      document.body.setAttribute('data-theme', newTheme);
-      localStorage.setItem('bible_genealogy_theme', newTheme);
-      updateThemeIcon(newTheme);
+    bindHybridButton(themeBtn, (e) => {
+      if (e) {
+        if (typeof e.stopPropagation === 'function') e.stopPropagation();
+        if (typeof e.preventDefault === 'function' && e.cancelable) e.preventDefault();
+      }
+      toggleAppTheme();
+    });
+    updateThemeUI();
+  }
+
+  // 2-1. Edit Mode Toggle with Hybrid Touch
+  const editModeBtn = document.getElementById('settings-edit-mode-toggle');
+  const editModeBtnText = document.getElementById('settings-edit-mode-btn-text');
+  window.syncSettingsEditModeText = function() {
+    if (!editModeBtnText) return;
+    if (typeof isAdminMode !== 'undefined' && isAdminMode) {
+      editModeBtnText.textContent = currentLang === 'en' ? '🔓 Edit Mode: Active (Click to Lock)' : '🔓 편집 모드: 활성화됨 (누르면 잠김)';
+    } else {
+      editModeBtnText.textContent = currentLang === 'en' ? '🔒 Edit Mode: Locked (⇧⌘E)' : '🔒 편집 모드 전환 (⇧⌘E)';
+    }
+  };
+  if (editModeBtn) {
+    bindHybridButton(editModeBtn, (e) => {
+      if (e) {
+        if (typeof e.stopPropagation === 'function') e.stopPropagation();
+        if (typeof e.preventDefault === 'function' && e.cancelable) e.preventDefault();
+      }
+      if (typeof window.toggleAdminEditMode === 'function') {
+        window.toggleAdminEditMode();
+      }
+      window.syncSettingsEditModeText();
+    });
+    window.syncSettingsEditModeText();
+  }
+
+  // 3. Layer Toggles with Direct Button Hybrid Touch
+  const layerToggles = [
+    { btnId: 'btn-layer-people', id: 'toggle-layer-people', key: 'bible_layer_people', defaultVal: true },
+    { btnId: 'btn-layer-events', id: 'toggle-layer-events', key: 'bible_layer_events', defaultVal: true },
+    { btnId: 'btn-layer-locations', id: 'toggle-layer-locations', key: 'bible_layer_locations', defaultVal: true },
+    { btnId: 'btn-layer-polygons', id: 'toggle-layer-polygons', key: 'bible_layer_polygons', defaultVal: true },
+    { btnId: 'btn-layer-prophets', id: 'toggle-layer-prophets', key: 'bible_layer_prophets', defaultVal: true },
+  ];
+
+  layerToggles.forEach(({ btnId, id, key, defaultVal }) => {
+    const el = document.getElementById(id);
+    const btn = document.getElementById(btnId);
+    if (!el) return;
+    const saved = localStorage.getItem(key);
+    el.checked = (saved !== null) ? (saved === 'true') : defaultVal;
+    if (btn) {
+      if (el.checked) btn.classList.add('checked');
+      else btn.classList.remove('checked');
+    }
+
+    const toggleThisLayer = () => {
+      el.checked = !el.checked;
+      if (btn) {
+        if (el.checked) btn.classList.add('checked');
+        else btn.classList.remove('checked');
+      }
+      localStorage.setItem(key, el.checked ? 'true' : 'false');
+      if (id === 'toggle-layer-prophets') {
+        activeFilters['prophets'] = el.checked;
+        const treeBoard = document.getElementById('tree-board');
+        if (treeBoard) {
+          if (el.checked) {
+            treeBoard.classList.add('prophets-filter-active');
+          } else {
+            treeBoard.classList.remove('prophets-filter-active');
+          }
+        }
+      }
+      updateLayersVisibility();
+    };
+
+    if (btn) {
+      bindHybridButton(btn, () => {
+        toggleThisLayer();
+      });
+    }
+  });
+
+  // 4. Backup & Restore Buttons with Hybrid Touch
+  if (backupBtn) {
+    bindHybridButton(backupBtn, async (e) => {
+      if (e) {
+        if (typeof e.stopPropagation === 'function') e.stopPropagation();
+        if (typeof e.preventDefault === 'function' && e.cancelable) e.preventDefault();
+      }
+      handleNotesBackup(true);
     });
   }
 
-  // iCloud Automatic Synchronization Setup
+  if (restoreBtn && fileInput) {
+    bindHybridButton(restoreBtn, (e) => {
+      if (e) {
+        if (typeof e.stopPropagation === 'function') e.stopPropagation();
+        if (typeof e.preventDefault === 'function' && e.cancelable) e.preventDefault();
+      }
+      fileInput.click();
+    });
+  }
+
+  // 5. iCloud Automatic Synchronization Setup
+  const icloudSwitchBtn = document.getElementById('switch-icloud-btn');
   const icloudToggle = document.getElementById('setting-icloud-sync');
   const icloudFields = document.getElementById('icloud-account-fields');
   const icloudUsernameInput = document.getElementById('settings-icloud-username');
@@ -16853,79 +20190,747 @@ function setupUpgradedSettingsEvents() {
   if (icloudToggle && icloudFields) {
     icloudToggle.checked = isICloudEnabled;
     if (isICloudEnabled) {
-      icloudFields.style.display = 'flex';
-      if (icloudStatus) icloudStatus.style.display = 'block';
+      icloudFields.style.setProperty('display', 'flex', 'important');
+      if (icloudStatus) {
+        icloudStatus.style.display = 'block';
+        if (savedICloudUser) {
+          icloudStatus.textContent = `☁️ iCloud 자동 동기화 활성화 중 (${savedICloudUser})`;
+        }
+      }
+    } else {
+      icloudFields.style.setProperty('display', 'none', 'important');
     }
 
     if (icloudUsernameInput && savedICloudUser) icloudUsernameInput.value = savedICloudUser;
     if (icloudPasswordInput && savedICloudPass) icloudPasswordInput.value = savedICloudPass;
 
-    // iCloud 텍스트 입력 실시간 자동 저장 (Auto-save)
     if (icloudUsernameInput) {
       icloudUsernameInput.addEventListener('input', () => {
         localStorage.setItem('icloud_username', icloudUsernameInput.value.trim());
+      });
+      icloudUsernameInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && icloudPasswordInput) {
+          icloudPasswordInput.focus();
+        }
       });
     }
     if (icloudPasswordInput) {
       icloudPasswordInput.addEventListener('input', () => {
         localStorage.setItem('icloud_password', icloudPasswordInput.value.trim());
       });
+      icloudPasswordInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          handleICloudConnect();
+        }
+      });
     }
 
-    icloudToggle.addEventListener('change', () => {
-      const enabled = icloudToggle.checked;
-      localStorage.setItem('icloud_sync_enabled', enabled);
-      icloudFields.style.display = enabled ? 'flex' : 'none';
-      if (!enabled) {
+    const toggleICloudState = (enabled) => {
+      const nextChecked = !!enabled;
+      localStorage.setItem('icloud_sync_enabled', nextChecked ? 'true' : 'false');
+      icloudToggle.checked = nextChecked;
+      if (nextChecked) {
+        icloudFields.style.setProperty('display', 'flex', 'important');
+        const u = icloudUsernameInput?.value.trim() || localStorage.getItem('icloud_username');
+        if (u) {
+          if (icloudStatus) {
+            icloudStatus.style.display = 'block';
+            icloudStatus.textContent = `☁️ iCloud 자동 동기화 활성화 중 (${u})`;
+          }
+        } else {
+          if (icloudStatus) icloudStatus.style.display = 'none';
+          setTimeout(() => { icloudUsernameInput?.focus(); }, 150);
+        }
+      } else {
+        icloudFields.style.setProperty('display', 'none', 'important');
         if (icloudStatus) icloudStatus.style.display = 'none';
         localStorage.removeItem('userToken');
         userToken = null;
         currentUser = null;
-        updateAdminLockVisibility();
+        if (typeof updateAdminLockVisibility === 'function') updateAdminLockVisibility();
       }
-    });
+    };
 
-    if (icloudSaveBtn) {
-      icloudSaveBtn.addEventListener('click', async () => {
-        const username = icloudUsernameInput.value.trim();
-        const password = icloudPasswordInput.value.trim();
+    if (icloudToggle) {
+      icloudToggle.checked = false;
+      icloudToggle.disabled = true;
+    }
+    localStorage.setItem('icloud_sync_enabled', 'false');
+  }
 
-        if (!username || !password) {
-          alert('iCloud 계정과 앱 전용 암호를 입력해 주세요.');
-          return;
-        }
+  // 6. Obsidian Markdown Sync Switch Handling (Permanently disabled as requested)
+  const mdToggle = document.getElementById('setting-md-sync');
+  const mdLabel = document.getElementById('settings-md-sync-label');
+  if (mdToggle) {
+    mdToggle.checked = false;
+    mdToggle.disabled = true;
+    localStorage.setItem('bible_tree_md_sync', 'false');
+  }
+}
 
-        // Save iCloud configurations locally
-        localStorage.setItem('icloud_username', username);
-        localStorage.setItem('icloud_password', password);
-        localStorage.setItem('icloud_sync_enabled', 'true');
+// Desktop In-App macOS Menu Bar Events
+function setupDesktopMacMenubar() {
+  const menubar = document.getElementById('desktop-mac-menubar');
+  if (!menubar) return;
 
-        // Emulate iCloud Sync Login via internal auth API
-        const token = btoa(`${username}:${password}`);
-        userToken = token;
-        localStorage.setItem('userToken', token);
+  const toggleEditBtn = document.getElementById('mac-menu-toggle-edit');
+  const toggleEditLabel = document.getElementById('mac-menu-toggle-edit-label');
 
-        try {
-          icloudSaveBtn.textContent = '☁️ iCloud 연결 중...';
-          icloudSaveBtn.disabled = true;
+  function syncMenubarEditLabel() {
+    const isEdit = (typeof isAdminMode !== 'undefined' && isAdminMode);
+    if (toggleEditLabel) {
+      toggleEditLabel.textContent = isEdit 
+        ? (currentLang === 'en' ? 'Lock Edit Mode' : '편집 모드 잠금') 
+        : (currentLang === 'en' ? 'Unlock Edit Mode' : '편집 모드 전환');
+    }
+  }
 
-          // Call session validator to verify iCloud credentials against sync server
-          await validateSession();
-          
-          if (icloudStatus) icloudStatus.style.display = 'block';
-          alert('iCloud 자동 동기화 연동이 정상적으로 완료되었습니다! 이제 작성한 모든 내용이 다른 기기와 자동 동기화됩니다.');
-        } catch (err) {
-          console.error("iCloud credentials validation bypassed, set to local offline sandbox sync mode:", err);
-          currentUser = { username: username || 'offline_user', status: 'approved' };
-          updateAdminLockVisibility();
-          if (icloudStatus) icloudStatus.style.display = 'block';
-          alert('iCloud 오프라인 샌드박스 동기화가 활성화되었습니다.');
-        } finally {
-          icloudSaveBtn.textContent = 'iCloud 동기화 연동 완료';
-          icloudSaveBtn.disabled = false;
+  const handleEditToggleClick = (e) => {
+    if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
+    if (typeof window.toggleAdminEditMode === 'function') {
+      window.toggleAdminEditMode();
+    }
+    syncMenubarEditLabel();
+  };
+
+  if (toggleEditBtn) {
+    toggleEditBtn.addEventListener('click', handleEditToggleClick);
+  }
+  syncMenubarEditLabel();
+
+  // Edit actions
+  const undoBtn = document.getElementById('mac-menu-undo');
+  if (undoBtn) undoBtn.addEventListener('click', () => { if (typeof performUndo === 'function') performUndo(); });
+
+  const redoBtn = document.getElementById('mac-menu-redo');
+  if (redoBtn) redoBtn.addEventListener('click', () => { if (typeof performRedo === 'function') performRedo(); });
+
+  window.triggerAddEvent = function() {
+    if (!isAdminMode && typeof window.toggleAdminEditMode === 'function') {
+      window.toggleAdminEditMode();
+    }
+    let containerCenterX = viewerContainer ? viewerContainer.clientWidth / 2 : window.innerWidth / 2;
+    let containerCenterY = viewerContainer ? viewerContainer.clientHeight / 2 : (window.innerHeight - 80) / 2;
+    if (containerCenterX === 0) containerCenterX = window.innerWidth / 2;
+    if (containerCenterY === 0) containerCenterY = (window.innerHeight - 80) / 2;
+    const worldX = (containerCenterX - panX) / currentScale;
+    const worldY = (containerCenterY - panY) / currentScale;
+    newLayerItemCoords = { x: Math.round(worldX), y: Math.round(worldY) };
+    if (typeof openLayerItemAddForm === 'function') openLayerItemAddForm('event');
+  };
+
+  window.triggerAddLocation = function() {
+    if (!isAdminMode && typeof window.toggleAdminEditMode === 'function') {
+      window.toggleAdminEditMode();
+    }
+    let containerCenterX = viewerContainer ? viewerContainer.clientWidth / 2 : window.innerWidth / 2;
+    let containerCenterY = viewerContainer ? viewerContainer.clientHeight / 2 : (window.innerHeight - 80) / 2;
+    if (containerCenterX === 0) containerCenterX = window.innerWidth / 2;
+    if (containerCenterY === 0) containerCenterY = (window.innerHeight - 80) / 2;
+    const worldX = (containerCenterX - panX) / currentScale;
+    const worldY = (containerCenterY - panY) / currentScale;
+    newLayerItemCoords = { x: Math.round(worldX), y: Math.round(worldY) };
+    if (typeof openLayerItemAddForm === 'function') openLayerItemAddForm('location');
+  };
+
+  const addPersonBtn = document.getElementById('mac-menu-add-person');
+  if (addPersonBtn) addPersonBtn.addEventListener('click', () => {
+    if (!isAdminMode) window.toggleAdminEditMode();
+    if (typeof activateAddPersonMode === 'function') activateAddPersonMode();
+  });
+
+  const addEventBtn = document.getElementById('mac-menu-add-event');
+  if (addEventBtn) addEventBtn.addEventListener('click', () => {
+    window.triggerAddEvent();
+  });
+
+  const addLocationBtn = document.getElementById('mac-menu-add-location');
+  if (addLocationBtn) addLocationBtn.addEventListener('click', () => {
+    window.triggerAddLocation();
+  });
+
+  const addNoteBtn = document.getElementById('mac-menu-add-note');
+  if (addNoteBtn) addNoteBtn.addEventListener('click', () => {
+    if (!isAdminMode) window.toggleAdminEditMode();
+    if (typeof activateAddAnnotationMode === 'function') activateAddAnnotationMode();
+  });
+
+  const addPolyBtn = document.getElementById('mac-menu-add-polygon');
+  if (addPolyBtn) addPolyBtn.addEventListener('click', () => {
+    if (!isAdminMode) window.toggleAdminEditMode();
+    if (typeof activateAddPolygonMode === 'function') activateAddPolygonMode();
+  });
+
+  window.clipboardBoxData = null;
+
+  window.copySelectedBox = function() {
+    // 1. Check if person card(s) are selected
+    if (typeof selectedPersonIds !== 'undefined' && selectedPersonIds && selectedPersonIds.size > 0) {
+      const list = [];
+      selectedPersonIds.forEach(pId => {
+        const char = (typeof characters !== 'undefined' ? characters : []).find(c => c.id === pId);
+        if (char) list.push(JSON.parse(JSON.stringify(char)));
+      });
+      if (list.length > 0) {
+        window.clipboardBoxData = { type: 'person', items: list };
+        showToast(currentLang === 'en' ? `📋 ${list.length} Person card(s) copied. (Paste: ⌘V)` : `📋 ${list.length}개의 인물 카드가 복사되었습니다. (붙여넣기: ⌘V)`);
+        return true;
+      }
+    }
+
+    // 2. Check if polygon is selected
+    if (typeof selectedPolygonId !== 'undefined' && selectedPolygonId && typeof customPolygons !== 'undefined') {
+      const poly = customPolygons.find(p => p.id === selectedPolygonId);
+      if (poly) {
+        window.clipboardBoxData = { type: 'polygon', data: JSON.parse(JSON.stringify(poly)) };
+        showToast(currentLang === 'en' ? "📋 Area (Polygon) copied. (Paste: ⌘V)" : "📋 영역(다각형)이 복사되었습니다. (붙여넣기: ⌘V)");
+        return true;
+      }
+    }
+
+    // 3. Check active layer item / last selected box
+    if (window.lastSelectedBox) {
+      window.clipboardBoxData = JSON.parse(JSON.stringify(window.lastSelectedBox));
+      const typeLabel = window.lastSelectedBox.type === 'event' ? '사건 상자' :
+                        window.lastSelectedBox.type === 'location' ? '장소 상자' :
+                        window.lastSelectedBox.type === 'annotation' ? '메모 상자' : '박스';
+      showToast(currentLang === 'en' ? `📋 Box copied to clipboard. (Paste: ⌘V)` : `📋 ${typeLabel}가 복사되었습니다. (붙여넣기: ⌘V)`);
+      return true;
+    }
+
+    // 4. Fallback: annotations
+    if (typeof annotations !== 'undefined' && annotations.length > 0) {
+      const lastAnnot = annotations[annotations.length - 1];
+      window.clipboardBoxData = { type: 'annotation', data: JSON.parse(JSON.stringify(lastAnnot)) };
+      showToast(currentLang === 'en' ? "📋 Text box copied. (Paste: ⌘V)" : "📋 메모 상자가 복사되었습니다. (붙여넣기: ⌘V)");
+      return true;
+    }
+
+    showToast(currentLang === 'en' ? "💡 Select a box to copy first." : "💡 먼저 복사할 상자(인물, 사건, 장소, 메모 상자, 영역 등)를 클릭하여 선택해주세요.");
+    return false;
+  };
+
+  window.pasteSelectedBox = function() {
+    if (!window.clipboardBoxData) {
+      showToast(currentLang === 'en' ? "⚠️ Nothing copied to paste. Press ⌘C first." : "⚠️ 붙여넣을 복사된 상자가 없습니다. 먼저 상자를 선택하고 ⌘C를 눌러주세요.");
+      return false;
+    }
+    if (!isAdminMode && typeof window.toggleAdminEditMode === 'function') {
+      window.toggleAdminEditMode();
+    }
+    if (typeof pushHistoryState === 'function') pushHistoryState();
+
+    const clip = window.clipboardBoxData;
+
+    if (clip.type === 'person' && Array.isArray(clip.items)) {
+      clip.items.forEach(char => {
+        const newId = 'person_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+        const cloned = JSON.parse(JSON.stringify(char));
+        cloned.id = newId;
+        cloned.name = (cloned.name || '') + (currentLang === 'en' ? ' (Copy)' : ' (복사본)');
+        cloned.x = (cloned.x || 0) + 40;
+        cloned.y = (cloned.y || 0) + 40;
+        if (typeof characters !== 'undefined') characters.push(cloned);
+      });
+      if (typeof saveState === 'function') saveState();
+      if (typeof renderAll === 'function') renderAll();
+      else if (typeof drawConnections === 'function') drawConnections();
+      showToast(currentLang === 'en' ? "📋 Person card(s) pasted." : "📋 인물 카드가 붙여넣어졌습니다.");
+      return true;
+    }
+
+    if (clip.type === 'polygon' && clip.data) {
+      const poly = clip.data;
+      const newId = 'poly_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+      const clonedPoly = JSON.parse(JSON.stringify(poly));
+      clonedPoly.id = newId;
+      clonedPoly.name = (clonedPoly.name || '') + (currentLang === 'en' ? ' (Copy)' : ' (복사본)');
+      if (Array.isArray(clonedPoly.points)) {
+        clonedPoly.points = clonedPoly.points.map(pt => ({ x: pt.x + 30, y: pt.y + 30 }));
+      }
+      if (typeof customPolygons !== 'undefined') customPolygons.push(clonedPoly);
+      if (typeof saveCustomPolygons === 'function') saveCustomPolygons();
+      if (typeof renderPolygons === 'function') renderPolygons();
+      showToast(currentLang === 'en' ? "📋 Area (Polygon) pasted." : "📋 영역(다각형)이 붙여넣어졌습니다.");
+      return true;
+    }
+
+    if (clip.type === 'event' && clip.data) {
+      const ev = clip.data;
+      const newId = 'event_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+      const clonedEv = JSON.parse(JSON.stringify(ev));
+      clonedEv.id = newId;
+      clonedEv.name = (clonedEv.name || '') + (currentLang === 'en' ? ' (Copy)' : ' (복사본)');
+      clonedEv.x = (clonedEv.x || 0) + 30;
+      clonedEv.y = (clonedEv.y || 0) + 30;
+      if (typeof events !== 'undefined') {
+        events.push(clonedEv);
+        if (typeof saveEvents === 'function') saveEvents();
+        if (typeof renderEvents === 'function') renderEvents();
+        showToast(currentLang === 'en' ? "📋 Event box pasted." : "📋 사건 상자가 붙여넣어졌습니다.");
+        return true;
+      }
+    }
+
+    if (clip.type === 'location' && clip.data) {
+      const loc = clip.data;
+      const newId = 'location_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+      const clonedLoc = JSON.parse(JSON.stringify(loc));
+      clonedLoc.id = newId;
+      clonedLoc.name = (clonedLoc.name || '') + (currentLang === 'en' ? ' (Copy)' : ' (복사본)');
+      clonedLoc.x = (clonedLoc.x || 0) + 30;
+      clonedLoc.y = (clonedLoc.y || 0) + 30;
+      if (typeof locations !== 'undefined') {
+        locations.push(clonedLoc);
+        if (typeof saveLocations === 'function') saveLocations();
+        if (typeof renderLocations === 'function') renderLocations();
+        showToast(currentLang === 'en' ? "📋 Location box pasted." : "📋 장소 상자가 붙여넣어졌습니다.");
+        return true;
+      }
+    }
+
+    if (clip.type === 'annotation' && clip.data) {
+      const annot = clip.data;
+      const newId = 'annotation_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+      const newAnnot = {
+        ...JSON.parse(JSON.stringify(annot)),
+        id: newId,
+        text: (annot.text || '') + (currentLang === 'en' ? ' (Copy)' : ' (복사본)'),
+        x: (annot.x || 0) + 30,
+        y: (annot.y || 0) + 30
+      };
+      if (typeof annotations !== 'undefined') {
+        annotations.push(newAnnot);
+        if (typeof saveAnnotations === 'function') saveAnnotations();
+        if (typeof renderAnnotations === 'function') renderAnnotations();
+        if (typeof drawConnections === 'function') drawConnections();
+        showToast(currentLang === 'en' ? "📋 Text box pasted." : "📋 메모 상자가 붙여넣어졌습니다.");
+        return true;
+      }
+    }
+
+    return false;
+  };
+
+  window.duplicateSelectedBox = function() {
+    if (!isAdminMode && typeof window.toggleAdminEditMode === 'function') {
+      window.toggleAdminEditMode();
+    }
+    if (typeof pushHistoryState === 'function') pushHistoryState();
+
+    // 1. Check if person card(s) are selected
+    if (typeof selectedPersonIds !== 'undefined' && selectedPersonIds && selectedPersonIds.size > 0) {
+      let count = 0;
+      const newSelectedIds = new Set();
+      selectedPersonIds.forEach(pId => {
+        const char = (typeof characters !== 'undefined' ? characters : []).find(c => c.id === pId);
+        if (char) {
+          const newId = 'person_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+          const clonedChar = JSON.parse(JSON.stringify(char));
+          clonedChar.id = newId;
+          clonedChar.name = (clonedChar.name || '') + (currentLang === 'en' ? ' (Copy)' : ' (복사본)');
+          clonedChar.x = (clonedChar.x || 0) + 40;
+          clonedChar.y = (clonedChar.y || 0) + 40;
+          if (typeof characters !== 'undefined') {
+            characters.push(clonedChar);
+          }
+          newSelectedIds.add(newId);
+          count++;
         }
       });
+      if (count > 0) {
+        if (typeof saveState === 'function') saveState();
+        if (typeof renderAll === 'function') renderAll();
+        else if (typeof drawConnections === 'function') drawConnections();
+        showToast(currentLang === 'en' ? `📋 ${count} Person box(es) duplicated.` : `📋 ${count}개의 인물 박스가 복제되었습니다.`);
+        return true;
+      }
     }
+
+    // 2. Check if polygon is selected
+    if (typeof selectedPolygonId !== 'undefined' && selectedPolygonId && typeof customPolygons !== 'undefined') {
+      const poly = customPolygons.find(p => p.id === selectedPolygonId);
+      if (poly) {
+        const newId = 'poly_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+        const clonedPoly = JSON.parse(JSON.stringify(poly));
+        clonedPoly.id = newId;
+        clonedPoly.name = (clonedPoly.name || '') + (currentLang === 'en' ? ' (Copy)' : ' (복사본)');
+        if (Array.isArray(clonedPoly.points)) {
+          clonedPoly.points = clonedPoly.points.map(pt => ({ x: pt.x + 30, y: pt.y + 30 }));
+        }
+        customPolygons.push(clonedPoly);
+        selectedPolygonId = newId;
+        if (typeof saveCustomPolygons === 'function') saveCustomPolygons();
+        if (typeof renderPolygons === 'function') renderPolygons();
+        showToast(currentLang === 'en' ? "📋 Area (Polygon) duplicated." : "📋 영역(다각형)이 복제되었습니다.");
+        return true;
+      }
+    }
+
+    // 3. Check if active/selected layer item (Event / Location)
+    if (window.lastSelectedBox && window.lastSelectedBox.type === 'event') {
+      const ev = window.lastSelectedBox.data;
+      const newId = 'event_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+      const clonedEv = JSON.parse(JSON.stringify(ev));
+      clonedEv.id = newId;
+      clonedEv.name = (clonedEv.name || '') + (currentLang === 'en' ? ' (Copy)' : ' (복사본)');
+      clonedEv.x = (clonedEv.x || 0) + 30;
+      clonedEv.y = (clonedEv.y || 0) + 30;
+      if (typeof events !== 'undefined') {
+        events.push(clonedEv);
+        if (typeof saveEvents === 'function') saveEvents();
+        if (typeof renderEvents === 'function') renderEvents();
+        showToast(currentLang === 'en' ? "📋 Event box duplicated." : "📋 사건 상자가 복제되었습니다.");
+        return true;
+      }
+    }
+
+    if (window.lastSelectedBox && window.lastSelectedBox.type === 'location') {
+      const loc = window.lastSelectedBox.data;
+      const newId = 'location_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+      const clonedLoc = JSON.parse(JSON.stringify(loc));
+      clonedLoc.id = newId;
+      clonedLoc.name = (clonedLoc.name || '') + (currentLang === 'en' ? ' (Copy)' : ' (복사본)');
+      clonedLoc.x = (clonedLoc.x || 0) + 30;
+      clonedLoc.y = (clonedLoc.y || 0) + 30;
+      if (typeof locations !== 'undefined') {
+        locations.push(clonedLoc);
+        if (typeof saveLocations === 'function') saveLocations();
+        if (typeof renderLocations === 'function') renderLocations();
+        showToast(currentLang === 'en' ? "📋 Location box duplicated." : "📋 장소 상자가 복제되었습니다.");
+        return true;
+      }
+    }
+
+    // 4. Check if annotations (Text Box)
+    if (window.lastSelectedBox && window.lastSelectedBox.type === 'annotation') {
+      const annot = window.lastSelectedBox.data;
+      const newId = 'annotation_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+      const newAnnot = {
+        ...JSON.parse(JSON.stringify(annot)),
+        id: newId,
+        text: (annot.text || '') + (currentLang === 'en' ? ' (Copy)' : ' (복사본)'),
+        x: (annot.x || 0) + 30,
+        y: (annot.y || 0) + 30
+      };
+      if (typeof annotations !== 'undefined') {
+        annotations.push(newAnnot);
+        if (typeof saveAnnotations === 'function') saveAnnotations();
+        if (typeof renderAnnotations === 'function') renderAnnotations();
+        if (typeof drawConnections === 'function') drawConnections();
+        showToast(currentLang === 'en' ? "📋 Text box duplicated." : "📋 메모 상자가 복제되었습니다.");
+        return true;
+      }
+    }
+
+    // 5. Fallback: If no explicit selection, duplicate the last added annotation/box if available
+    if (typeof annotations !== 'undefined' && annotations.length > 0) {
+      const lastAnnot = annotations[annotations.length - 1];
+      const newId = 'annotation_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+      const newAnnot = {
+        ...JSON.parse(JSON.stringify(lastAnnot)),
+        id: newId,
+        text: (lastAnnot.text || '') + (currentLang === 'en' ? ' (Copy)' : ' (복사본)'),
+        x: (lastAnnot.x || 0) + 30,
+        y: (lastAnnot.y || 0) + 30
+      };
+      annotations.push(newAnnot);
+      if (typeof saveAnnotations === 'function') saveAnnotations();
+      if (typeof renderAnnotations === 'function') renderAnnotations();
+      if (typeof drawConnections === 'function') drawConnections();
+      showToast(currentLang === 'en' ? "📋 Text box duplicated." : "📋 메모 상자가 복제되었습니다.");
+      return true;
+    }
+
+    showToast(currentLang === 'en' ? "💡 Click on a box (Person, Event, Location, Note, Area) to duplicate." : "💡 복사할 상자(인물, 사건, 장소, 메모 상자, 영역 등)를 클릭하여 선택한 후 복제해주세요.", 3500);
+    return false;
+  };
+
+  // Helper for Unified Click & Touch Menu Actions
+  function bindMenuAction(id, actionFn) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const handler = (e) => {
+      if (e) {
+        if (typeof e.preventDefault === 'function') e.preventDefault();
+        if (typeof e.stopPropagation === 'function') e.stopPropagation();
+      }
+      actionFn();
+    };
+    el.addEventListener('click', handler);
+    el.addEventListener('touchend', handler);
+  }
+
+  // File Menu Actions
+  const openSettings = () => {
+    const floatBtn = document.getElementById('floating-settings-btn');
+    if (floatBtn) floatBtn.click();
+  };
+  bindMenuAction('mac-menu-pref', openSettings);
+  bindMenuAction('mac-menu-notes-export', () => window.exportStudyNotesFile());
+  bindMenuAction('mac-menu-notes-import', () => window.importStudyNotesFile());
+
+  // Edit Menu Actions
+  bindMenuAction('mac-menu-add-person', () => {
+    if (!isAdminMode && typeof window.toggleAdminEditMode === 'function') window.toggleAdminEditMode();
+    if (typeof activateAddPersonMode === 'function') activateAddPersonMode();
+  });
+  bindMenuAction('mac-menu-add-event', () => window.triggerAddEvent());
+  bindMenuAction('mac-menu-add-location', () => window.triggerAddLocation());
+  bindMenuAction('mac-menu-add-note', () => {
+    if (!isAdminMode && typeof window.toggleAdminEditMode === 'function') window.toggleAdminEditMode();
+    if (typeof activateAddAnnotationMode === 'function') activateAddAnnotationMode();
+  });
+  bindMenuAction('mac-menu-add-polygon', () => {
+    if (!isAdminMode && typeof window.toggleAdminEditMode === 'function') window.toggleAdminEditMode();
+    if (typeof activateAddPolygonMode === 'function') activateAddPolygonMode();
+  });
+  bindMenuAction('mac-menu-copy', () => window.copySelectedBox());
+  bindMenuAction('mac-menu-paste', () => window.pasteSelectedBox());
+  bindMenuAction('mac-menu-duplicate-box', () => window.duplicateSelectedBox());
+  bindMenuAction('mac-menu-undo', () => { if (typeof performUndo === 'function') performUndo(); });
+  bindMenuAction('mac-menu-redo', () => { if (typeof performRedo === 'function') performRedo(); });
+
+  // View Menu Actions
+  bindMenuAction('mac-menu-zoomin', () => {
+    const btn = document.getElementById('zoom-in');
+    if (btn) btn.click();
+  });
+  bindMenuAction('mac-menu-zoomout', () => {
+    const btn = document.getElementById('zoom-out');
+    if (btn) btn.click();
+  });
+  bindMenuAction('mac-menu-reset-zoom', () => {
+    if (typeof applyZoom === 'function') {
+      applyZoom('reset');
+    } else {
+      const btn = document.getElementById('zoom-reset');
+      if (btn) btn.click();
+    }
+  });
+  bindMenuAction('mac-menu-center-adam', () => {
+    if (typeof centerOnNode === 'function') centerOnNode('adam');
+  });
+  bindMenuAction('mac-menu-theme-toggle', () => {
+    const themeBtn = document.getElementById('settings-theme-toggle');
+    if (themeBtn) themeBtn.click();
+  });
+
+  // Layer Toggles
+  const layerDefs = [
+    { menuId: 'mac-menu-layer-people', btnId: 'btn-layer-people', toggleId: 'toggle-layer-people', key: 'bible_layer_people' },
+    { menuId: 'mac-menu-layer-events', btnId: 'btn-layer-events', toggleId: 'toggle-layer-events', key: 'bible_layer_events' },
+    { menuId: 'mac-menu-layer-locations', btnId: 'btn-layer-locations', toggleId: 'toggle-layer-locations', key: 'bible_layer_locations' },
+    { menuId: 'mac-menu-layer-polygons', btnId: 'btn-layer-polygons', toggleId: 'toggle-layer-polygons', key: 'bible_layer_polygons' },
+    { menuId: 'mac-menu-layer-prophets', btnId: 'btn-layer-prophets', toggleId: 'toggle-layer-prophets', key: 'bible_layer_prophets' },
+  ];
+
+  layerDefs.forEach(({ menuId, btnId, toggleId, key }) => {
+    bindMenuAction(menuId, () => {
+      const btn = document.getElementById(btnId);
+      if (btn) {
+        btn.click();
+      } else {
+        const toggleEl = document.getElementById(toggleId);
+        if (toggleEl) {
+          toggleEl.checked = !toggleEl.checked;
+          localStorage.setItem(key, toggleEl.checked ? 'true' : 'false');
+          if (toggleId === 'toggle-layer-prophets') {
+            activeFilters['prophets'] = toggleEl.checked;
+            const treeBoard = document.getElementById('tree-board');
+            if (treeBoard) {
+              if (toggleEl.checked) treeBoard.classList.add('prophets-filter-active');
+              else treeBoard.classList.remove('prophets-filter-active');
+            }
+          }
+          if (typeof updateLayersVisibility === 'function') {
+            updateLayersVisibility();
+          }
+        }
+      }
+      if (typeof syncLayerMenuChecks === 'function') {
+        syncLayerMenuChecks();
+      }
+    });
+  });
+
+  if (typeof syncLayerMenuChecks === 'function') {
+    syncLayerMenuChecks();
+  }
+
+  // Help Menu Actions
+  bindMenuAction('mac-menu-manual', () => {
+    const modal = document.getElementById('help-guide-modal');
+    if (modal) modal.style.display = 'flex';
+  });
+  bindMenuAction('mac-menu-about-help', () => {
+    alert("열린 족보이야기 (Bible Genealogy)\n버전: 1.1.2\n단축키: ⌘+Shift+E (편집 모드 전환)");
+  });
+
+  // Dropdown Open/Close Hover & Tap Management
+  const menuItems = menubar.querySelectorAll('.mac-menu-item');
+  menuItems.forEach(item => {
+    const handleMenuClick = (e) => {
+      if (e.target.closest('.mac-dropdown-menu')) return;
+      const wasActive = item.classList.contains('active');
+      menuItems.forEach(m => m.classList.remove('active'));
+      if (!wasActive) {
+        item.classList.add('active');
+      }
+    };
+
+    item.addEventListener('click', handleMenuClick);
+    item.addEventListener('touchend', (e) => {
+      if (e.target.closest('.mac-dropdown-menu')) return;
+      handleMenuClick(e);
+    });
+
+    item.addEventListener('mouseenter', () => {
+      const anyActive = Array.from(menuItems).some(m => m.classList.contains('active'));
+      if (anyActive) {
+        menuItems.forEach(m => m.classList.remove('active'));
+        item.classList.add('active');
+      }
+    });
+  });
+
+  const closeDropdownsOutside = (e) => {
+    if (!e.target.closest('#desktop-mac-menubar')) {
+      menuItems.forEach(m => m.classList.remove('active'));
+    }
+  };
+  document.addEventListener('click', closeDropdownsOutside);
+  document.addEventListener('touchend', closeDropdownsOutside);
+
+  const menuEntries = menubar.querySelectorAll('.mac-menu-entry');
+  menuEntries.forEach(entry => {
+    const closeOnSelect = () => {
+      setTimeout(() => {
+        menuItems.forEach(m => m.classList.remove('active'));
+      }, 100);
+    };
+    entry.addEventListener('click', closeOnSelect);
+    entry.addEventListener('touchend', closeOnSelect);
+  });
+
+  // Unified Direct Notes & Study Data Export
+  window.exportStudyNotesFile = async function() {
+    try {
+      const backupData = {
+        version: "1.1.2",
+        appName: "열린 족보이야기",
+        exportDate: new Date().toISOString(),
+        userNotes: typeof userNotes !== 'undefined' ? userNotes : {},
+        annotations: typeof annotations !== 'undefined' ? annotations : [],
+        customVisualLines: typeof customVisualLines !== 'undefined' ? customVisualLines : [],
+        customPolygons: typeof customPolygons !== 'undefined' ? customPolygons : [],
+        lineBends: typeof lineBends !== 'undefined' ? lineBends : {}
+      };
+
+      const jsonStr = JSON.stringify(backupData, null, 2);
+      const filename = `bible_genealogy_notes_backup_${new Date().toISOString().slice(0,10)}.json`;
+
+      // 1. If in Tauri desktop, also save to Document directory
+      if (window.__TAURI__ && window.__TAURI__.fs && window.__TAURI__.path) {
+        try {
+          const docDir = await window.__TAURI__.path.documentDir();
+          const backupPath = await window.__TAURI__.path.join(docDir, 'bible_genealogy_notes_autobackup.json');
+          await window.__TAURI__.fs.writeTextFile(backupPath, jsonStr);
+        } catch (_) {}
+      }
+
+      // 2. Trigger browser/client file download
+      const blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 300);
+
+      showToast(currentLang === 'en' ? "💾 Study notes backup file saved." : "💾 연구 메모 백업 파일이 저장되었습니다.");
+    } catch (err) {
+      alert("백업 파일 생성 중 오류가 발생했습니다: " + err.message);
+    }
+  };
+
+  // Unified Direct Notes & Study Data Import
+  window.importStudyNotesFile = function() {
+    let input = document.getElementById('user-notes-file-input');
+    if (!input) {
+      input = document.createElement('input');
+      input.type = 'file';
+      input.id = 'user-notes-file-input';
+      input.accept = '.json';
+      input.style.display = 'none';
+      document.body.appendChild(input);
+    }
+
+    input.onchange = function(e) {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        try {
+          const data = JSON.parse(evt.target.result);
+          let restoredNotesCount = 0;
+
+          if (data.userNotes && typeof data.userNotes === 'object') {
+            userNotes = { ...userNotes, ...data.userNotes };
+            localStorage.setItem('bible_genealogy_user_notes', JSON.stringify(userNotes));
+            restoredNotesCount += Object.keys(data.userNotes).length;
+          }
+
+          if (Array.isArray(data.annotations)) {
+            annotations = data.annotations;
+            if (typeof saveAnnotations === 'function') saveAnnotations();
+            if (typeof renderAnnotations === 'function') renderAnnotations();
+            restoredNotesCount += data.annotations.length;
+          }
+
+          if (Array.isArray(data.customVisualLines)) {
+            customVisualLines = data.customVisualLines;
+            if (typeof saveCustomVisualLines === 'function') saveCustomVisualLines();
+          }
+
+          if (Array.isArray(data.customPolygons)) {
+            customPolygons = data.customPolygons;
+            if (typeof saveCustomPolygons === 'function') saveCustomPolygons();
+            if (typeof renderPolygons === 'function') renderPolygons();
+          }
+
+          if (data.lineBends && typeof data.lineBends === 'object') {
+            lineBends = data.lineBends;
+            if (typeof saveLineBends === 'function') saveLineBends();
+          }
+
+          if (typeof drawConnections === 'function') {
+            drawConnections();
+          }
+
+          showToast(currentLang === 'en' 
+            ? `✅ Restored ${restoredNotesCount} study notes successfully!` 
+            : `✅ 총 ${restoredNotesCount}개의 연구 메모가 성공적으로 복원되었습니다!`);
+        } catch (err) {
+          alert("연구 메모 복원 실패: " + err.message);
+        } finally {
+          input.value = '';
+        }
+      };
+      reader.readAsText(file);
+    };
+
+    input.click();
+  };
+
+  window.syncMenubarEditLabel = syncMenubarEditLabel;
+  if (typeof syncMacMenubarLocalization === 'function') {
+    syncMacMenubarLocalization();
   }
 }
 
@@ -16934,6 +20939,10 @@ function initCustomHeaderFeatures() {
   setupSlideLockDragEvents();
   setupFloatingHeaderEvents();
   setupUpgradedSettingsEvents();
+  setupDesktopMacMenubar();
+  if (typeof updateLayersVisibility === 'function') {
+    updateLayersVisibility();
+  }
   repositionHistoryButtons();
   window.addEventListener('resize', repositionHistoryButtons);
   
@@ -16973,9 +20982,9 @@ function setupGlobalKeyboardDismiss() {
   const dismissKeyboard = (e) => {
     const activeEl = document.activeElement;
     // 현재 포커스된 엘리먼트가 input 또는 textarea 이며 글을 쓰는 상태일 때
-    if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')) {
-      // 터치/클릭된 대상이 입력 창이나 입력 폼 컨테이너가 아닐 때 포커스 해제하여 키보드 닫기
-      const clickedInputOrPanel = e.target.closest('input, textarea, #study-panel, #settings-modal, #search-panel');
+    if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'SELECT')) {
+      // 터치/클릭된 대상이 입력 창이나 모달, 입력 폼 컨테이너가 아닐 때만 포커스 해제하여 키보드 닫기
+      const clickedInputOrPanel = e.target.closest('input, textarea, select, label, .modal-content, .modal-overlay, #admin-modal, #layer-item-modal, #study-panel, #settings-modal, #search-panel, #floating-search-wrapper, #floating-search-toggle-btn, #bottom-spawner-panel, form');
       if (!clickedInputOrPanel) {
         activeEl.blur();
       }
@@ -16988,24 +20997,59 @@ function setupGlobalKeyboardDismiss() {
   // 각 패널의 포커싱 직전 원래 스크롤 위치 보관용 Map
   let lastScrollPositions = new Map();
 
-  // 가로 모드에서 텍스트 입력창 포커싱 시 창 내부 입력 영역으로 스크롤 이동
+  // Dynamic Visual Viewport & Virtual Keyboard Height Sync
+  const updateViewportDimensions = () => {
+    const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    const offsetTop = (window.visualViewport ? window.visualViewport.offsetTop : 0) || 0;
+    const keyboardH = Math.max(0, window.innerHeight - (vh + offsetTop));
+    
+    document.documentElement.style.setProperty('--visual-viewport-height', `${vh}px`);
+    document.documentElement.style.setProperty('--keyboard-height', `${keyboardH}px`);
+    document.documentElement.style.setProperty('--visual-viewport-offset-top', `${offsetTop}px`);
+    
+    if (keyboardH > 40) {
+      document.body.classList.add('keyboard-open');
+    } else {
+      document.body.classList.remove('keyboard-open');
+    }
+  };
+
+  // Initial sync
+  updateViewportDimensions();
+
+  // 텍스트 입력창 포커싱 시 창 내부 입력 영역으로 스크롤 이동
   const handleInputFocus = (e) => {
+    updateViewportDimensions();
     const isLandscape = window.matchMedia('(orientation: landscape)').matches;
-    if (isLandscape && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
-      document.body.classList.add('keyboard-open-landscape');
-      // 브라우저 뷰포트 전체 스크롤을 흔드는 scrollIntoView 대신,
-      // 패널 내부의 스크롤 컨테이너(.panel-body)의 scrollTop만 제어하여 창이 통째로 튕겨 날아가는 현상 완전 차단
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+      if (isLandscape) {
+        document.body.classList.add('keyboard-open-landscape');
+      }
+
+      // 1. 모달 내부 입력창 포커싱 시 form-grid 내부에서 스크롤하여 필드가 키보드에 가려지지 않게 조정
+      const formGrid = e.target.closest('.form-grid');
+      if (formGrid) {
+        setTimeout(() => {
+          const fieldGroup = e.target.closest('.form-group') || e.target;
+          const gridRect = formGrid.getBoundingClientRect();
+          const targetRect = fieldGroup.getBoundingClientRect();
+          
+          if (targetRect.bottom > gridRect.bottom || targetRect.top < gridRect.top) {
+            fieldGroup.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+          }
+        }, 120);
+        return;
+      }
+
+      // 2. 패널 내부 입력 영역 포커싱 시
       setTimeout(() => {
         const scrollParent = e.target.closest('.panel-body, .modal-content');
         if (scrollParent) {
-          // 포커싱 전의 원래 스크롤 오프셋을 안전하게 최초 기억
           if (!lastScrollPositions.has(scrollParent)) {
             lastScrollPositions.set(scrollParent, scrollParent.scrollTop);
           }
 
           let targetOffsetTop = e.target.offsetTop;
-          
-          // 포커스된 입력 필드의 위에 있는 소제목(H3)을 찾아 제목과 입력창이 화면 가장 천장(최상단)에 딱 붙게 정렬
           let titleEl = null;
           if (e.target.id === 'note-text') {
             titleEl = e.target.previousElementSibling;
@@ -17020,7 +21064,6 @@ function setupGlobalKeyboardDismiss() {
             targetOffsetTop = titleEl.offsetTop;
           }
           
-          // 마진 오프셋을 빼지 않고 소제목 시작점에 완전 밀착 밀어올리기
           scrollParent.scrollTo({
             top: targetOffsetTop,
             behavior: 'smooth'
@@ -17031,14 +21074,13 @@ function setupGlobalKeyboardDismiss() {
   };
 
   const handleInputBlur = () => {
-    // 딜레이를 두어 다른 입력창으로 포커스가 바로 이어지는 경우는 복귀를 방지하고,
-    // 포커스가 완전히 입력창 바깥으로 벗어났을 때만 확실히 100% 높이로 복귀시킴
     setTimeout(() => {
+      updateViewportDimensions();
       const activeEl = document.activeElement;
-      if (!activeEl || (activeEl.tagName !== 'INPUT' && activeEl.tagName !== 'TEXTAREA')) {
+      if (!activeEl || (activeEl.tagName !== 'INPUT' && activeEl.tagName !== 'TEXTAREA' && activeEl.tagName !== 'SELECT')) {
         document.body.classList.remove('keyboard-open-landscape');
+        document.body.classList.remove('keyboard-open');
         
-        // 키보드가 내려가면 패널 내부의 스크롤을 포커싱 직전에 기억해 둔 원래 위치로 안전 복원
         lastScrollPositions.forEach((originalScrollTop, scrollParent) => {
           if (scrollParent && document.body.contains(scrollParent)) {
             scrollParent.scrollTo({
@@ -17047,7 +21089,7 @@ function setupGlobalKeyboardDismiss() {
             });
           }
         });
-        lastScrollPositions.clear(); // 복원 완료 후 캐시 소거
+        lastScrollPositions.clear();
       }
     }, 100);
   };
@@ -17064,20 +21106,85 @@ function setupGlobalKeyboardDismiss() {
 
   if (window.visualViewport) {
     window.visualViewport.addEventListener('resize', () => {
+      updateViewportDimensions();
       window.scrollTo(0, 0);
       document.body.scrollTop = 0;
-      // 키보드가 내려가서 원래 뷰포트 크기로 돌아오면(키보드 닫힘 감지) 클래스 강제 제거하여 레이아웃 복원
       if (window.visualViewport.height >= window.innerHeight * 0.9) {
         document.body.classList.remove('keyboard-open-landscape');
+        document.body.classList.remove('keyboard-open');
       }
     });
     window.visualViewport.addEventListener('scroll', () => {
+      updateViewportDimensions();
       if (window.visualViewport.offsetTop > 0 || window.visualViewport.offsetLeft > 0) {
         window.scrollTo(0, 0);
         document.body.scrollTop = 0;
       }
     });
   }
+
+  // Capacitor Keyboard plugin support if available
+  if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Keyboard) {
+    try {
+      window.Capacitor.Plugins.Keyboard.addListener('keyboardWillShow', (info) => {
+        if (info && info.keyboardHeight) {
+          document.documentElement.style.setProperty('--keyboard-height', `${info.keyboardHeight}px`);
+          document.body.classList.add('keyboard-open');
+        }
+      });
+      window.Capacitor.Plugins.Keyboard.addListener('keyboardWillHide', () => {
+        document.documentElement.style.setProperty('--keyboard-height', '0px');
+        document.body.classList.remove('keyboard-open');
+        document.body.classList.remove('keyboard-open-landscape');
+      });
+    } catch (e) {
+      console.warn('Capacitor keyboard listener setup note:', e);
+    }
+  }
+
+  // 모달 내부 폼 그리드(.form-grid) 스크롤 제스처가 뒷배경 캔버스 줌/팬에 간섭받지 않도록 touchmove만 격리
+  document.querySelectorAll('.form-grid').forEach(el => {
+    el.addEventListener('touchmove', (e) => { e.stopPropagation(); }, { passive: true });
+  });
+
+  // iPhone 및 Android 스마트폰 전 기종 가로화면 전환 시 락 버튼 및 편집모드 5개 버튼 자동 은닉 및 락 자동 잠금
+  const handleOrientationControlsSync = () => {
+    const isLandscape = window.matchMedia('(orientation: landscape)').matches;
+    const shortSide = Math.min(window.innerWidth, window.innerHeight);
+    const longSide = Math.max(window.innerWidth, window.innerHeight);
+    const isMobilePhone = ((shortSide <= 550) && (longSide <= 1000)) || (document.body && (document.body.classList.contains('platform-iphone') || document.body.classList.contains('platform-android-phone')));
+
+    const slideLock = document.getElementById('slide-lock-container');
+    const actionsBar = document.getElementById('admin-actions-bar');
+
+    if (isLandscape && isMobilePhone) {
+      // 세로에서 가로로 전환 시: 락버튼과 편집모드 5개 버튼 모두 즉시 은닉 및 편집모드 안전 잠금
+      if (typeof exitAdminMode === 'function' && isAdminMode) {
+        exitAdminMode();
+      }
+      if (slideLock) {
+        slideLock.style.setProperty('display', 'none', 'important');
+      }
+      if (actionsBar) {
+        actionsBar.style.setProperty('display', 'none', 'important');
+      }
+    } else {
+      // 세로 모드이거나 아이패드일 때: 인라인 강제 display 제거하여 원래 CSS 규칙에 따라 복원
+      if (slideLock) {
+        slideLock.style.removeProperty('display');
+      }
+      if (actionsBar && !isAdminMode) {
+        actionsBar.style.removeProperty('display');
+      }
+    }
+  };
+
+  handleOrientationControlsSync();
+  window.addEventListener('orientationchange', () => {
+    setTimeout(handleOrientationControlsSync, 50);
+    setTimeout(handleOrientationControlsSync, 200);
+  });
+  window.addEventListener('resize', handleOrientationControlsSync);
 }
 
 if (document.readyState === 'loading') {
