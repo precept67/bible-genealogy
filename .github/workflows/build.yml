@@ -46,7 +46,7 @@ jobs:
           mkdir -p dist
           cp index.html style_v16_v2.css app_v16_v2.js data_v16_v2.js database.json app_logo.png dist/
 
-      - name: Disable updater and set msi target
+      - name: Disable updater and set nsis target
         shell: bash
         run: |
           node -e "
@@ -57,10 +57,10 @@ jobs:
               data.tauri.updater.active = false;
             }
             if (data.tauri && data.tauri.bundle) {
-              data.tauri.bundle.targets = ['msi'];
+              data.tauri.bundle.targets = ['nsis'];
             }
             fs.writeFileSync(path, JSON.stringify(data, null, 2), 'utf8');
-            console.log('tauri.conf.json patched: updater disabled, target set to msi');
+            console.log('tauri.conf.json patched: updater disabled, target set to nsis');
           "
 
       - name: Build Tauri Windows app
@@ -70,6 +70,6 @@ jobs:
         with:
           tagName: v${{ steps.get_version.outputs.version }}-${{ github.run_number }}
           releaseName: "Bible Genealogy v${{ steps.get_version.outputs.version }} (Build ${{ github.run_number }})"
-          releaseBody: "Windows MSI installer auto-built from main branch."
-          releaseDraft: true
+          releaseBody: "Windows setup installer auto-built from main branch."
+          releaseDraft: false
           prerelease: false
