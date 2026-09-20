@@ -231,6 +231,22 @@
       display: none !important;
     }
 
+    /* Exclude Multi-Select & Alignment tool on Phones and iPads */
+    html.platform-iphone .admin-dropdown-container,
+    body.platform-iphone .admin-dropdown-container,
+    html.platform-android-phone .admin-dropdown-container,
+    body.platform-android-phone .admin-dropdown-container,
+    html.platform-ipad .admin-dropdown-container,
+    body.platform-ipad .admin-dropdown-container,
+    html.platform-android-pad .admin-dropdown-container,
+    body.platform-android-pad .admin-dropdown-container,
+    html.platform-ios .admin-dropdown-container,
+    body.platform-ios .admin-dropdown-container,
+    html.platform-android .admin-dropdown-container,
+    body.platform-android .admin-dropdown-container {
+      display: none !important;
+    }
+
     /* Slide-to-Unlock Lock Button (Top-Left -18px, 40px handle, 153.5px pill, aligned with search and admin bars) */
     #slide-lock-container {
       position: fixed !important;
@@ -319,7 +335,10 @@
       padding: 0 !important;
       margin: 0 !important;
     }
-    body.admin-mode #floating-settings-btn {
+    body.admin-mode.platform-iphone #floating-settings-btn,
+    body.admin-mode.platform-android-phone #floating-settings-btn,
+    body.admin-mode.platform-ipad #floating-settings-btn,
+    body.admin-mode.platform-android-pad #floating-settings-btn {
       display: flex !important;
     }
     [data-theme="dark"] #floating-settings-btn {
@@ -368,7 +387,7 @@
       height: 40px !important;
       border-radius: 20px !important;
       padding: 0 16px !important;
-      font-size: 14px !important;
+      font-size: 16px !important;
       margin: 0 !important;
       box-sizing: border-box !important;
       background: rgba(255, 255, 255, 0.95) !important;
@@ -412,7 +431,7 @@
     html.platform-ios:not(.platform-ipad) #floating-search-wrapper,
     body.platform-ios:not(.platform-ipad) #floating-search-wrapper {
       position: fixed !important;
-      top: calc(clamp(6px, 1.8vw, 10px) + env(safe-area-inset-top, 0px)) !important;
+      top: calc(clamp(6px, 1.8vw, 10px) + env(safe-area-inset-top, 0px) - 15px) !important;
       bottom: auto !important;
       left: 50% !important;
       right: auto !important;
@@ -430,7 +449,7 @@
     body.platform-ios:not(.platform-ipad) #searchInput {
       height: clamp(36px, 9.5vw, 42px) !important;
       border-radius: clamp(18px, 4.75vw, 21px) !important;
-      font-size: clamp(11.5px, 3.2vw, 13.5px) !important;
+      font-size: 16px !important;
       padding: 0 clamp(8px, 2.2vw, 14px) !important;
     }
     html.platform-iphone #search-results,
@@ -451,7 +470,7 @@
     html.platform-ios:not(.platform-ipad) #slide-lock-container,
     body.platform-ios:not(.platform-ipad) #slide-lock-container {
       position: fixed !important;
-      top: calc(clamp(6px, 1.8vw, 10px) + env(safe-area-inset-top, 0px)) !important;
+      top: calc(clamp(6px, 1.8vw, 10px) + env(safe-area-inset-top, 0px) - 15px) !important;
       bottom: auto !important;
       left: calc(clamp(8px, 2.5vw, 14px) + env(safe-area-inset-left, 0px)) !important;
       right: auto !important;
@@ -505,7 +524,7 @@
     html.platform-ios:not(.platform-ipad) #floating-settings-btn,
     body.platform-ios:not(.platform-ipad) #floating-settings-btn {
       position: fixed !important;
-      top: calc(clamp(6px, 1.8vw, 10px) + env(safe-area-inset-top, 0px)) !important;
+      top: calc(clamp(6px, 1.8vw, 10px) + env(safe-area-inset-top, 0px) - 15px) !important;
       bottom: auto !important;
       right: calc(clamp(8px, 2.5vw, 14px) + env(safe-area-inset-right, 0px)) !important;
       left: auto !important;
@@ -645,8 +664,10 @@
       bottom: calc(40px + env(safe-area-inset-bottom, 0px)) !important;
       right: 12px !important;
       left: auto !important;
-      width: min(60vh, calc(100vw - 24px)) !important;
-      max-width: calc(100vw - 24px) !important;
+      width: 70vw !important;
+      max-width: 70vw !important;
+      min-width: 70vw !important;
+      box-sizing: border-box !important;
       height: auto !important;
       max-height: calc(100vh - (clamp(6px, 1.8vw, 10px) + env(safe-area-inset-top, 0px) + clamp(36px, 9.5vw, 42px) + 2px) - 40px - env(safe-area-inset-bottom, 0px)) !important;
       transform: translateX(calc(100% + 40px)) !important;
@@ -692,13 +713,88 @@
       bottom: auto !important;
       right: calc(clamp(8px, 2.5vw, 14px) + env(safe-area-inset-right, 0px)) !important;
       left: auto !important;
-      width: min(248px, calc(100vw - 24px)) !important;
-      max-width: calc(100vw - 24px) !important;
+      width: 70vw !important;
+      max-width: 70vw !important;
+      min-width: 70vw !important;
+      box-sizing: border-box !important;
       max-height: calc(100vh - (clamp(6px, 1.8vw, 10px) + env(safe-area-inset-top, 0px) + clamp(36px, 9.5vw, 42px) + 4px) - 20px - env(safe-area-inset-bottom, 0px)) !important;
       border-radius: 16px !important;
       box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25) !important;
       overflow-y: auto !important;
       z-index: 25000 !important;
+    }
+
+    /* 📱 iPhone 및 Android 스마트폰 모든 창/모달 너비 70% 표준화 원칙 */
+    html.platform-iphone .modal-content,
+    body.platform-iphone .modal-content,
+    html.platform-android-phone .modal-content,
+    body.platform-android-phone .modal-content,
+    html.platform-ios:not(.platform-ipad) .modal-content,
+    body.platform-ios:not(.platform-ipad) .modal-content,
+    html.platform-iphone #admin-modal .modal-content,
+    body.platform-iphone #admin-modal .modal-content,
+    html.platform-android-phone #admin-modal .modal-content,
+    body.platform-android-phone #admin-modal .modal-content,
+    html.platform-ios:not(.platform-ipad) #admin-modal .modal-content,
+    body.platform-ios:not(.platform-ipad) #admin-modal .modal-content,
+    html.platform-iphone #layer-item-modal .modal-content,
+    body.platform-iphone #layer-item-modal .modal-content,
+    html.platform-android-phone #layer-item-modal .modal-content,
+    body.platform-android-phone #layer-item-modal .modal-content,
+    html.platform-ios:not(.platform-ipad) #layer-item-modal .modal-content,
+    body.platform-ios:not(.platform-ipad) #layer-item-modal .modal-content,
+    html.platform-iphone #layer-item-modal .layer-item-modal-content,
+    body.platform-iphone #layer-item-modal .layer-item-modal-content,
+    html.platform-android-phone #layer-item-modal .layer-item-modal-content,
+    body.platform-android-phone #layer-item-modal .layer-item-modal-content,
+    html.platform-ios:not(.platform-ipad) #layer-item-modal .layer-item-modal-content,
+    body.platform-ios:not(.platform-ipad) #layer-item-modal .layer-item-modal-content,
+    html.platform-iphone #admin-dashboard-modal .modal-content,
+    body.platform-iphone #admin-dashboard-modal .modal-content,
+    html.platform-android-phone #admin-dashboard-modal .modal-content,
+    body.platform-android-phone #admin-dashboard-modal .modal-content,
+    html.platform-ios:not(.platform-ipad) #admin-dashboard-modal .modal-content,
+    body.platform-ios:not(.platform-ipad) #admin-dashboard-modal .modal-content,
+    html.platform-iphone #filter-panel,
+    body.platform-iphone #filter-panel,
+    html.platform-android-phone #filter-panel,
+    body.platform-android-phone #filter-panel,
+    html.platform-ios:not(.platform-ipad) #filter-panel,
+    body.platform-ios:not(.platform-ipad) #filter-panel,
+    html.platform-iphone #style-editor-panel,
+    body.platform-iphone #style-editor-panel,
+    html.platform-android-phone #style-editor-panel,
+    body.platform-android-phone #style-editor-panel,
+    html.platform-ios:not(.platform-ipad) #style-editor-panel,
+    body.platform-ios:not(.platform-ipad) #style-editor-panel,
+    html.platform-iphone #help-guide-modal > div,
+    body.platform-iphone #help-guide-modal > div,
+    html.platform-android-phone #help-guide-modal > div,
+    body.platform-android-phone #help-guide-modal > div,
+    html.platform-ios:not(.platform-ipad) #help-guide-modal > div,
+    body.platform-ios:not(.platform-ipad) #help-guide-modal > div,
+    html.platform-iphone #install-guide-modal > div,
+    body.platform-iphone #install-guide-modal > div,
+    html.platform-android-phone #install-guide-modal > div,
+    body.platform-android-phone #install-guide-modal > div,
+    html.platform-ios:not(.platform-ipad) #install-guide-modal > div,
+    body.platform-ios:not(.platform-ipad) #install-guide-modal > div,
+    html.platform-iphone #auth-modal > div,
+    body.platform-iphone #auth-modal > div,
+    html.platform-android-phone #auth-modal > div,
+    body.platform-android-phone #auth-modal > div,
+    html.platform-ios:not(.platform-ipad) #auth-modal > div,
+    body.platform-ios:not(.platform-ipad) #auth-modal > div,
+    html.platform-iphone #desktop-license-modal > div,
+    body.platform-iphone #desktop-license-modal > div,
+    html.platform-android-phone #desktop-license-modal > div,
+    body.platform-android-phone #desktop-license-modal > div,
+    html.platform-ios:not(.platform-ipad) #desktop-license-modal > div,
+    body.platform-ios:not(.platform-ipad) #desktop-license-modal > div {
+      width: 70vw !important;
+      max-width: 70vw !important;
+      min-width: 70vw !important;
+      box-sizing: border-box !important;
     }
 
     /* ==========================================================================
@@ -709,7 +805,7 @@
     html.platform-android-pad #floating-search-wrapper,
     body.platform-android-pad #floating-search-wrapper {
       position: fixed !important;
-      top: calc(clamp(8px, 1.5vw, 14px) + env(safe-area-inset-top, 0px)) !important;
+      top: calc(clamp(8px, 1.5vw, 14px) + env(safe-area-inset-top, 0px) - 15px) !important;
       bottom: auto !important;
       left: 50% !important;
       transform: translateX(-50%) !important;
@@ -724,7 +820,7 @@
       height: clamp(40px, 4.5vw, 46px) !important;
       border-radius: clamp(20px, 2.25vw, 23px) !important;
       padding: 0 clamp(12px, 1.5vw, 16px) !important;
-      font-size: clamp(13px, 1.5vw, 14.5px) !important;
+      font-size: 16px !important;
     }
 
     html.platform-ipad #slide-lock-container,
@@ -732,7 +828,7 @@
     html.platform-android-pad #slide-lock-container,
     body.platform-android-pad #slide-lock-container {
       position: fixed !important;
-      top: calc(clamp(8px, 1.5vw, 14px) + env(safe-area-inset-top, 0px)) !important;
+      top: calc(clamp(8px, 1.5vw, 14px) + env(safe-area-inset-top, 0px) - 15px) !important;
       bottom: auto !important;
       left: calc(clamp(16px, 2.2vw, 24px) + env(safe-area-inset-left, 0px)) !important;
       right: auto !important;
@@ -776,7 +872,7 @@
     html.platform-android-pad #floating-settings-btn,
     body.platform-android-pad #floating-settings-btn {
       position: fixed !important;
-      top: calc(clamp(8px, 1.5vw, 14px) + env(safe-area-inset-top, 0px)) !important;
+      top: calc(clamp(8px, 1.5vw, 14px) + env(safe-area-inset-top, 0px) - 15px) !important;
       bottom: auto !important;
       right: calc(clamp(16px, 2.2vw, 24px) + env(safe-area-inset-right, 0px)) !important;
       left: auto !important;
@@ -968,27 +1064,10 @@
 
       #floating-settings-btn,
       html.platform-macos #floating-settings-btn,
-      body.platform-macos #floating-settings-btn {
-        position: fixed !important;
-        top: calc(-20px + env(safe-area-inset-top)) !important;
-        bottom: auto !important;
-        right: 16px !important;
-        left: auto !important;
-        width: 44px !important;
-        height: 44px !important;
-        min-width: 44px !important;
-        min-height: 44px !important;
-        max-width: 44px !important;
-        max-height: 44px !important;
-        border-radius: 50% !important;
-        z-index: 20000 !important;
-      }
-      #floating-settings-btn img,
-      #floating-settings-btn .emoji-icon,
-      html.platform-macos #floating-settings-btn img,
-      html.platform-macos #floating-settings-btn .emoji-icon {
-        width: 29px !important;
-        height: 29px !important;
+      body.platform-macos #floating-settings-btn,
+      body.admin-mode.platform-macos #floating-settings-btn,
+      body.admin-mode #floating-settings-btn {
+        display: none !important;
       }
 
       #admin-actions-bar,
@@ -1055,14 +1134,20 @@
         position: fixed !important;
         margin: 0 !important;
         transform: none !important;
-        top: calc(29px + env(safe-area-inset-top, 0px)) !important;
+        top: calc(77px + env(safe-area-inset-top, 0px)) !important;
         right: 16px !important;
         left: auto !important;
         bottom: auto !important;
         width: 322px !important;
         max-width: calc(100vw - 32px) !important;
-        max-height: calc(100vh - 70px) !important;
+        max-height: calc(100vh - 90px) !important;
         border-radius: 16px !important;
+      }
+      html.is-fullscreen #settings-modal .modal-content,
+      body.is-fullscreen #settings-modal .modal-content,
+      html.is-fullscreen.platform-macos #settings-modal .modal-content,
+      body.is-fullscreen.platform-macos #settings-modal .modal-content {
+        top: calc(43px + env(safe-area-inset-top, 0px)) !important;
       }
       #settings-modal .settings-body,
       html.platform-macos #settings-modal .settings-body,
@@ -1642,7 +1727,7 @@
             <span>🔄</span> 프로그램 버전 및 최신 다운로드
           </h4>
           <p style="margin: 0 0 10px 0; font-size: 12.5px; color: var(--text-muted, #64748b);">
-            현재 사용 중인 버전: <b>v1.1.2 (Universal Desktop & Web)</b><br>
+            현재 사용 중인 버전: <b>v1.1.3 (Universal Desktop & Web)</b><br>
             아래 버튼을 클릭하면 사용 중인 기기(Mac/Windows)에 최적화된 최신 설치 프로그램 파일이 즉시 다운로드됩니다.
           </p>
           <button onclick="window.downloadLatestProgram()" style="display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 10px; background: var(--text-accent, #3b82f6); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; transition: opacity 0.15s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
@@ -1729,9 +1814,24 @@
   </div>
 
   <div id="app-container">
-    <!-- macOS Native-Style Top System Menu Bar (Visible on Desktop / Virtual PC) -->
+    <!-- macOS Native-Style Top System Menu Bar (Unified Single Bar) -->
     <header id="desktop-mac-menubar" class="desktop-top-menubar">
+      <!-- Minimized pill shown when bar is collapsed -->
+      <div class="mac-menubar-minimized-pill" id="mac-menubar-minimized-pill" title="클릭하여 메뉴바 펼치기">
+        <span class="pill-icon">☰</span>
+        <span class="pill-text">메뉴</span>
+      </div>
+
       <div class="mac-menubar-left">
+        <!-- Drag Handle for floating / moving -->
+        <div class="mac-drag-handle" id="mac-menubar-drag-handle" title="드래그하여 원하는 위치로 이동">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+            <circle cx="8" cy="6" r="2"></circle><circle cx="16" cy="6" r="2"></circle>
+            <circle cx="8" cy="12" r="2"></circle><circle cx="16" cy="12" r="2"></circle>
+            <circle cx="8" cy="18" r="2"></circle><circle cx="16" cy="18" r="2"></circle>
+          </svg>
+        </div>
+
         <!-- File Menu (Contains Info, Preferences, Fullscreen, Backup/Restore) -->
         <div class="mac-menu-item" id="menu-item-file">
           <span class="mac-menu-title" id="mac-menu-title-file">파일</span>
@@ -1809,6 +1909,16 @@
             <div class="mac-menu-divider"></div>
             <div class="mac-menu-entry" id="mac-menu-about-help">열린 족보이야기 정보</div>
           </div>
+        </div>
+
+        <!-- Menubar Controls: Minimize & Dock / Undock -->
+        <div class="mac-menubar-controls">
+          <button type="button" class="mac-bar-control-btn" id="mac-menubar-minimize-btn" title="메뉴바 최소화 / 접기" aria-label="최소화">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          </button>
+          <button type="button" class="mac-bar-control-btn" id="mac-menubar-dock-btn" title="상단 고정 / 플로팅 이동 전환" aria-label="고정/이동">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v8"></path><path d="m4.93 10.93 1.41 1.41"></path><path d="M2 18h20"></path><path d="M12 10a5 5 0 0 0 5-5"></path><path d="M7 5a5 5 0 0 0 5 5"></path><path d="M12 18v4"></path></svg>
+          </button>
         </div>
       </div>
     </header>
@@ -1897,7 +2007,7 @@
     </div>
     
     <!-- 6. Right Top Settings Button (Opposite to Lock Button) -->
-    <button id="floating-settings-btn" class="admin-action-btn-circle has-tooltip tooltip-down" data-tooltip="환경설정" title="환경설정" style="width: 40px; height: 40px; min-width: 40px; min-height: 40px;">
+    <button id="floating-settings-btn" class="admin-action-btn-circle has-tooltip tooltip-down" data-tooltip="환경설정" title="환경설정" style="display: none !important; width: 40px; height: 40px; min-width: 40px; min-height: 40px;">
       <span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 26.5px; height: 26.5px;">
         <img class="custom-settings-icon" src="settings_btn.png" alt="환경설정" style="width: 26.5px; height: 26.5px; object-fit: contain; pointer-events: none;" />
       </span>
@@ -2141,6 +2251,53 @@
             <img class="custom-add-polygon-icon" src="add_polygon_btn.png" alt="영역(다각형) 추가" style="width: 26.5px; height: 26.5px; object-fit: contain; pointer-events: none;" />
           </span>
         </button>
+        
+        <!-- Multi-Select & Alignment Dropdown Tool -->
+        <div class="admin-dropdown-container">
+          <button id="admin-align-dropdown-toggle" class="admin-action-btn-circle has-tooltip tooltip-down" data-tooltip="다중 선택 및 정렬 도구" title="다중 선택 및 정렬 도구">
+            <span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 26.5px; height: 26.5px;">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+                <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+                <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+                <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+              </svg>
+            </span>
+          </button>
+          
+          <div id="admin-align-dropdown-menu">
+            <div class="dropdown-header">
+              <span>📐 다중 선택 (Shift+클릭)</span>
+              <span id="multiselect-count-badge" style="font-size: 10px; background: #2563eb; color: #fff; padding: 1px 6px; border-radius: 10px;">0개 선택</span>
+            </div>
+            
+            <button id="admin-align-height-btn" class="dropdown-item-btn" type="button">
+              <span>📐</span> <span>가로선(높이) 일괄 맞춤</span>
+            </button>
+            
+            <button id="admin-align-column-btn" class="dropdown-item-btn" type="button">
+              <span>📏</span> <span>세로열 일괄 맞춤</span>
+            </button>
+            
+            <button id="admin-distribute-width-btn" class="dropdown-item-btn" type="button">
+              <span>↔️</span> <span>가로 간격 균등 분배</span>
+            </button>
+            
+            <button id="admin-distribute-height-btn" class="dropdown-item-btn" type="button">
+              <span>↕️</span> <span>세로 간격 균등 분배</span>
+            </button>
+            
+            <div style="height: 1px; background: rgba(0, 0, 0, 0.08); margin: 3px 0;"></div>
+            
+            <button id="admin-multiselect-delete-btn" class="dropdown-item-btn danger" type="button">
+              <span>🗑️</span> <span>선택 항목 일괄 삭제</span>
+            </button>
+            
+            <button id="admin-multiselect-clear-btn" class="dropdown-item-btn" type="button">
+              <span>✖️</span> <span>선택 전체 해제 (ESC)</span>
+            </button>
+          </div>
+        </div>
 
        
        <label class="admin-checkbox-label" style="display: none !important; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; color: #f8fafc; cursor: pointer; padding: 0 8px; margin-left: auto;">

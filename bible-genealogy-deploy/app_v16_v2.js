@@ -2217,6 +2217,30 @@ let isLayerItemAddMode = false;
 let newLayerItemCoords = { x: 0, y: 0 };
 let selectedPersonIds = new Set();
 let hoveredPersonId = null; // Currently hovered card in admin mode
+let selectedEventIds = new Set();
+let selectedEventId = null; // Currently selected event ID in admin mode
+let selectedLocationIds = new Set();
+let selectedLocationId = null; // Currently selected location ID in admin mode
+let selectedAnnotationIds = new Set();
+let selectedAnnotationId = null; // Currently selected annotation ID in admin mode
+
+function updateMultiSelectCountBadge() {
+  const badge = document.getElementById('multiselect-count-badge');
+  if (!badge) return;
+  const count = (selectedPersonIds ? selectedPersonIds.size : 0) +
+                (selectedEventIds ? selectedEventIds.size : (selectedEventId ? 1 : 0)) +
+                (selectedLocationIds ? selectedLocationIds.size : (selectedLocationId ? 1 : 0)) +
+                (selectedAnnotationIds ? selectedAnnotationIds.size : (selectedAnnotationId ? 1 : 0)) +
+                (selectedPolygonId ? 1 : 0);
+  badge.textContent = `${count}개 선택`;
+  if (count > 0) {
+    badge.style.background = '#2563eb';
+    badge.style.color = '#ffffff';
+  } else {
+    badge.style.background = '#94a3b8';
+    badge.style.color = '#ffffff';
+  }
+}
 let selectedLineKey = null; // Currently selected line key for editing bends
 let isLineEditModeActive = true; // Toggle for line custom editing capability
 let isGridSnapActive = true; // Toggle for snapping dragged line bend points to 10px grid
@@ -2572,6 +2596,19 @@ function isInputTarget(el) {
   return false;
 }
 
+window.toggleSettingsModal = function() {
+  const modal = document.getElementById('settings-modal');
+  if (!modal) return;
+  const isVisible = (modal.style.display === 'flex' || modal.classList.contains('active'));
+  if (isVisible) {
+    modal.style.display = 'none';
+    modal.classList.remove('active');
+  } else {
+    modal.style.display = 'flex';
+    modal.classList.add('active');
+  }
+};
+
 // Attach capture-phase keydown handler on window and document
 function handleGlobalKeydown(e) {
   const isCmdOrCtrl = e.metaKey || e.ctrlKey;
@@ -2580,11 +2617,77 @@ function handleGlobalKeydown(e) {
   // 1. Shortcut to Toggle Edit / Lock Mode (Cmd+Shift+E, Ctrl+Shift+E, or Shift+E outside inputs)
   if (isEKey && e.shiftKey && !e.altKey) {
     const inInput = isInputTarget(e.target) || isInputTarget(document.activeElement);
-    // If Cmd or Ctrl + Shift + E is pressed (even in inputs), or Shift + E outside inputs, toggle edit mode
     if (isCmdOrCtrl || !inInput) {
       e.preventDefault();
       e.stopPropagation();
       window.toggleAdminEditMode();
+      return;
+    }
+  }
+
+  // 2. Shortcut for Preferences / 환경설정: Cmd + , or Ctrl + ,
+  if (isCmdOrCtrl && (e.key === ',' || e.code === 'Comma' || e.keyCode === 188)) {
+    e.preventDefault();
+    e.stopPropagation();
+    window.toggleSettingsModal();
+    return;
+  }
+
+  // 3. Escape key to close open modals
+  if (e.key === 'Escape') {
+    const settingsModal = document.getElementById('settings-modal');
+    if (settingsModal && (settingsModal.style.display === 'flex' || settingsModal.classList.contains('active'))) {
+      e.preventDefault();
+      e.stopPropagation();
+      window.toggleSettingsModal();
+      return;
+    }
+    const helpModal = document.getElementById('help-guide-modal');
+    if (helpModal && helpModal.style.display === 'flex') {
+      e.preventDefault();
+      e.stopPropagation();
+      helpModal.style.display = 'none';
+      return;
+    }
+  }
+
+  // 4. Zoom shortcuts: Cmd+Plus, Cmd+Minus, Cmd+0
+  if (isCmdOrCtrl && (e.key === '=' || e.key === '+' || e.code === 'Equal' || e.code === 'NumpadAdd')) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (typeof applyZoom === 'function') applyZoom(0.15);
+    else { const btn = document.getElementById('zoom-in'); if (btn) btn.click(); }
+    return;
+  }
+  if (isCmdOrCtrl && (e.key === '-' || e.key === '_' || e.code === 'Minus' || e.code === 'NumpadSubtract')) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (typeof applyZoom === 'function') applyZoom(-0.15);
+    else { const btn = document.getElementById('zoom-out'); if (btn) btn.click(); }
+    return;
+  }
+  if (isCmdOrCtrl && (e.key === '0' || e.code === 'Digit0' || e.code === 'Numpad0')) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (typeof applyZoom === 'function') applyZoom('reset');
+    else { const btn = document.getElementById('zoom-reset'); if (btn) btn.click(); }
+    return;
+  }
+
+  // 5. Option/Alt shortcuts: ⌥A (Adam), ⌥T (Theme)
+  if (e.altKey && !isCmdOrCtrl) {
+    if (e.code === 'KeyA' || (e.key && e.key.toLowerCase() === 'a') || e.key === 'ㅁ') {
+      e.preventDefault();
+      e.stopPropagation();
+      if (typeof centerOnNode === 'function') centerOnNode('adam');
+      return;
+    }
+    if (e.code === 'KeyT' || (e.key && e.key.toLowerCase() === 't') || e.key === 'ㅅ') {
+      e.preventDefault();
+      e.stopPropagation();
+      const themeBtn = document.getElementById('settings-theme-toggle');
+      if (themeBtn) themeBtn.click();
+      else if (typeof toggleAppTheme === 'function') toggleAppTheme();
       return;
     }
   }
@@ -3148,8 +3251,12 @@ window.addEventListener('DOMContentLoaded', async () => {
     if (window.__TAURI__ && window.__TAURI__.event) {
       try {
         window.__TAURI__.event.listen('open-settings', () => {
-          const floatBtn = document.getElementById('floating-settings-btn');
-          if (floatBtn) floatBtn.click();
+          if (typeof window.openSettingsModal === 'function') {
+            window.openSettingsModal();
+          } else {
+            const floatBtn = document.getElementById('floating-settings-btn');
+            if (floatBtn) floatBtn.click();
+          }
         });
         window.__TAURI__.event.listen('toggle-edit-mode', () => {
           if (typeof window.toggleAdminEditMode === 'function') {
@@ -3227,7 +3334,7 @@ window.addEventListener('DOMContentLoaded', async () => {
           if (modal) modal.style.display = 'flex';
         });
         window.__TAURI__.event.listen('menu-about-app', () => {
-          alert("열린 족보이야기 (Bible Genealogy)\n버전: 1.1.2\n단축키: ⌘+Shift+E (편집 모드 전환)");
+          alert("열린 족보이야기 (Bible Genealogy)\n버전: 1.1.3\n단축키: ⌘+Shift+E (편집 모드 전환)");
         });
       } catch (_) {}
     }
@@ -3537,6 +3644,17 @@ window.addEventListener('DOMContentLoaded', async () => {
       e.preventDefault();
       selectedPersonIds.clear();
       selectedPersonId = null;
+      selectedEventIds.clear();
+      selectedEventId = null;
+      selectedLocationIds.clear();
+      selectedLocationId = null;
+      selectedAnnotationIds.clear();
+      selectedAnnotationId = null;
+      selectedPolygonId = null;
+      document.querySelectorAll('.person-card').forEach(c => c.classList.remove('selected-for-edit'));
+      document.querySelectorAll('.layer-marker').forEach(m => m.classList.remove('selected-layer-item'));
+      document.querySelectorAll('.canvas-annotation').forEach(n => n.classList.remove('selected'));
+      updateMultiSelectCountBadge();
       renderTree();
     }
   });
@@ -4962,7 +5080,8 @@ function renderAnnotations() {
     const el = document.createElement('div');
     el.id = `annot-${annot.id}`;
     const filterClass = getAnnotationFilterClass(annot);
-    el.className = `canvas-annotation ${filterClass}`;
+    const isSelected = selectedAnnotationIds.has(annot.id) || selectedAnnotationId === annot.id;
+    el.className = `canvas-annotation ${filterClass} ${isSelected ? 'selected' : ''}`;
     el.dataset.x = annot.x;
     el.dataset.y = annot.y;
     el.style.width = `${annot.width}px`;
@@ -5380,25 +5499,43 @@ function renderAnnotations() {
       el.appendChild(resizeHandle);
     }
     
-    // Click to select & open details or edit
+    // Click to select (admin mode) or open details (user mode)
     el.addEventListener('click', (e) => {
       if (e.target.closest('.annotation-toolbar') || e.target.closest('.annot-resize-handle')) return;
       
       e.stopPropagation();
       
       if (isAdminMode) {
-        if (el.classList.contains('selected')) {
-          startEditingAnnotation(annot.id);
-          return;
+        const isModifierPressed = e.shiftKey || e.ctrlKey || e.metaKey || e.altKey;
+        if (isModifierPressed) {
+          if (selectedAnnotationIds.has(annot.id)) {
+            selectedAnnotationIds.delete(annot.id);
+            el.classList.remove('selected');
+          } else {
+            selectedAnnotationIds.add(annot.id);
+            el.classList.add('selected');
+          }
+          selectedAnnotationId = selectedAnnotationIds.size > 0 ? Array.from(selectedAnnotationIds)[selectedAnnotationIds.size - 1] : null;
+        } else {
+          selectedAnnotationIds.clear();
+          selectedAnnotationIds.add(annot.id);
+          selectedAnnotationId = annot.id;
+          selectedEventIds.clear(); selectedEventId = null;
+          selectedLocationIds.clear(); selectedLocationId = null;
+          selectedPersonIds.clear(); selectedPersonId = null;
+          selectedPolygonId = null;
+          document.querySelectorAll('.person-card').forEach(c => c.classList.remove('selected-for-edit'));
+          document.querySelectorAll('.layer-marker').forEach(m => m.classList.remove('selected-layer-item'));
+          document.querySelectorAll('.canvas-annotation').forEach(n => n.classList.remove('selected'));
+          el.classList.add('selected');
         }
-        document.querySelectorAll('.canvas-annotation').forEach(n => n.classList.remove('selected'));
-        el.classList.add('selected');
+        updateMultiSelectCountBadge();
       } else {
         if (annot.auraEnabled !== false) {
           highlightRelatedElementsForAnnotation(annot);
         }
+        openLayerDetails(annot, 'annotation');
       }
-      openLayerDetails(annot, 'annotation');
     });
 
     // Double-click to Edit
@@ -7444,7 +7581,7 @@ function syncMacMenubarLocalization() {
     if (typeof isAdminMode !== 'undefined' && isAdminMode) {
       editToggleLabel.textContent = isEn ? 'Lock Edit Mode' : '편집 모드 잠금';
     } else {
-      editToggleLabel.textContent = isEn ? 'Unlock Edit Mode' : '편집 모드 전환';
+      editToggleLabel.textContent = isEn ? 'Unlock Edit Mode' : '편집 모드 전환 (잠금 해제)';
     }
   }
 
@@ -7742,9 +7879,17 @@ function renderTree() {
         isDragging = false;
         
         // Handle selection during drag start
-        const isDraggedSelected = selectedPersonIds.has(char.id);
+        const isMobileDevice = (document.body && (
+          document.body.classList.contains('platform-iphone') ||
+          document.body.classList.contains('platform-android-phone') ||
+          document.body.classList.contains('platform-ipad') ||
+          document.body.classList.contains('platform-android-pad') ||
+          document.body.classList.contains('platform-ios') ||
+          document.body.classList.contains('platform-android')
+        ));
+        const isDraggedSelected = !isMobileDevice && selectedPersonIds.has(char.id);
         if (!isDraggedSelected) {
-          if (!e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
+          if (isMobileDevice || (!e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey)) {
             selectedPersonIds.clear();
           }
           selectedPersonIds.add(char.id);
@@ -7958,7 +8103,15 @@ function renderTree() {
         openAdminFormWithParent(char.id);
       } else {
         if (isAdminMode) {
-          const isModifierPressed = e.shiftKey || e.ctrlKey || e.metaKey || e.altKey;
+          const isMobileDevice = (document.body && (
+            document.body.classList.contains('platform-iphone') ||
+            document.body.classList.contains('platform-android-phone') ||
+            document.body.classList.contains('platform-ipad') ||
+            document.body.classList.contains('platform-android-pad') ||
+            document.body.classList.contains('platform-ios') ||
+            document.body.classList.contains('platform-android')
+          ));
+          const isModifierPressed = !isMobileDevice && (e.shiftKey || e.ctrlKey || e.metaKey || e.altKey);
           if (isModifierPressed) {
             if (selectedPersonIds.has(char.id)) {
               selectedPersonIds.delete(char.id);
@@ -7971,6 +8124,12 @@ function renderTree() {
             selectedPersonIds.clear();
             selectedPersonIds.add(char.id);
             selectedPersonId = char.id;
+            selectedEventIds.clear(); selectedEventId = null;
+            selectedLocationIds.clear(); selectedLocationId = null;
+            selectedAnnotationIds.clear(); selectedAnnotationId = null;
+            selectedPolygonId = null;
+            document.querySelectorAll('.layer-marker').forEach(m => m.classList.remove('selected-layer-item'));
+            document.querySelectorAll('.canvas-annotation').forEach(n => n.classList.remove('selected'));
           }
           // Update selected-for-edit classes on cards directly
           document.querySelectorAll('.person-card').forEach(el => {
@@ -7982,9 +8141,7 @@ function renderTree() {
             }
           });
           updateTransform();
-          
-          // 편집모드일 때는 연필 조준 없이, 상자 자체 클릭 시 즉시 인물편집 팝업 폼 오픈!
-          openAdminForm(char.id);
+          updateMultiSelectCountBadge();
         } else {
           // 일반모드일 때만 스터디 상세 설명 우측 패널 오픈!
           openStudyPanel(char.id);
@@ -7993,6 +8150,16 @@ function renderTree() {
     };
 
     card.addEventListener('click', handleCardActivate);
+    
+    // 편집모드에서 더블클릭 시 인물 상세/편집 팝업창 오픈!
+    card.addEventListener('dblclick', (e) => {
+      e.stopPropagation();
+      if (isAdminMode) {
+        openAdminForm(char.id);
+      }
+    });
+
+    let lastCardTouchTime = 0;
     card.addEventListener('touchend', (e) => {
       if (card.isDraggingFinished) {
         card.isDraggingFinished = false;
@@ -8000,6 +8167,15 @@ function renderTree() {
         e.preventDefault();
         return;
       }
+      const now = Date.now();
+      if (isAdminMode && (now - lastCardTouchTime < 380)) {
+        lastCardTouchTime = 0;
+        e.stopPropagation();
+        e.preventDefault();
+        openAdminForm(char.id);
+        return;
+      }
+      lastCardTouchTime = now;
       handleCardActivate(e);
       e.preventDefault(); // iOS/iPadOS click 시뮬레이션 중복 발동 방지 차단
     }, { passive: false });
@@ -9338,17 +9514,25 @@ function renderCustomPolygons() {
     
     // Custom class for selection styling
     polyEl.setAttribute('class', `family-group-panel-poly ${isSelected ? 'poly-selected' : ''} ${filterClass}`);
-    if (isAdminMode) {
-      polyEl.style.pointerEvents = 'visiblePainted'; // Admins can drag/select the polygon
-    } else {
-      polyEl.style.pointerEvents = 'none'; // Clicks pass through in user mode to prevent blocking other elements
-    }
+    polyEl.style.pointerEvents = 'none'; // Pass-through for inner fill in all modes
     polyGroup.appendChild(polyEl);
     
-    // Admin Drag entire polygon or Click to select / Edit boundary
+    // Admin Drag entire polygon or Click to select / Edit boundary (via Stroke Helper or Title Label)
     if (isAdminMode) {
-      // Double click to rename SVG polygon shape directly in admin mode
-      polyEl.addEventListener('dblclick', (e) => {
+      // Invisible wide stroke helper path to easily grab / click the border
+      const polyStrokeHelper = document.createElementNS(svgNS, 'path');
+      polyStrokeHelper.id = `svg-poly-stroke-${poly.id}`;
+      polyStrokeHelper.setAttribute('d', polyEl.getAttribute('d'));
+      polyStrokeHelper.setAttribute('fill', 'none');
+      polyStrokeHelper.setAttribute('stroke', 'transparent');
+      polyStrokeHelper.setAttribute('stroke-width', '16');
+      polyStrokeHelper.setAttribute('class', 'family-group-panel-poly-stroke');
+      polyStrokeHelper.style.pointerEvents = 'stroke';
+      polyStrokeHelper.style.cursor = 'move';
+      polyGroup.appendChild(polyStrokeHelper);
+
+      // Double click to rename SVG polygon shape directly on border
+      polyStrokeHelper.addEventListener('dblclick', (e) => {
         e.stopPropagation();
         const newName = prompt("영역 이름을 변경하시겠습니까?", poly.label);
         if (newName !== null) {
@@ -9414,7 +9598,7 @@ function renderCustomPolygons() {
             openStyleEditorPanel();
             if (styleEditorPanel) styleEditorPanel.scrollTop = 0;
           } else {
-            // It was a simple click / tap: select the polygon and open line design editor panel!
+            // It was a simple click / tap on border: select the polygon and open area design editor panel!
             if (selectedPolygonId !== poly.id) {
               selectedPolygonId = poly.id;
               selectedLineKey = null;
@@ -9458,13 +9642,13 @@ function renderCustomPolygons() {
         window.addEventListener('touchcancel', onTouchEnd);
       };
       
-      polyEl.addEventListener('mousedown', (e) => {
+      polyStrokeHelper.addEventListener('mousedown', (e) => {
         if (e.button !== 0 || isAddPolygonModeActive) return;
         e.stopPropagation();
         startDragPolygon(e.clientX, e.clientY);
       });
 
-      polyEl.addEventListener('touchstart', (e) => {
+      polyStrokeHelper.addEventListener('touchstart', (e) => {
         if (isAddPolygonModeActive) return;
         if (e.touches && e.touches.length === 1) {
           e.stopPropagation();
@@ -9472,7 +9656,6 @@ function renderCustomPolygons() {
         }
       }, { passive: true });
     } else {
-      // Clicks pass through in user mode, so no click listener on the polygon shape itself.
       polyEl.style.cursor = 'default';
     }
     
@@ -9490,8 +9673,12 @@ function renderCustomPolygons() {
     label.id = `label-poly-${poly.id}`;
     const offX = poly.labelOffsetX || 0;
     const offY = poly.labelOffsetY || 0;
-    label.style.left = `${(labelPt.x + offX) * currentScale}px`; // set panned coordinates
-    label.style.top = `${(labelPt.y - 12 + offY) * currentScale}px`;
+    const labelWorldX = labelPt.x + offX;
+    const labelWorldY = labelPt.y - 12 + offY;
+    label.style.left = `${labelWorldX * currentScale}px`; // set panned coordinates
+    label.style.top = `${labelWorldY * currentScale}px`;
+    label.style.transform = `scale(${currentScale})`;
+    label.style.transformOrigin = '0 0';
     label.style.color = poly.color;
     label.style.borderColor = poly.color + '40'; // add opacity to border
     label.textContent = getPolygonLabel(poly);
@@ -9529,8 +9716,12 @@ function renderCustomPolygons() {
             }
             poly.labelOffsetX = startOffsetX + dx;
             poly.labelOffsetY = startOffsetY + dy;
-            label.style.left = `${(labelPt.x + poly.labelOffsetX) * currentScale}px`;
-            label.style.top = `${(labelPt.y - 12 + poly.labelOffsetY) * currentScale}px`;
+            const labelWorldX = labelPt.x + poly.labelOffsetX;
+            const labelWorldY = labelPt.y - 12 + poly.labelOffsetY;
+            label.style.left = `${labelWorldX * currentScale}px`;
+            label.style.top = `${labelWorldY * currentScale}px`;
+            label.style.transform = `scale(${currentScale})`;
+            label.style.transformOrigin = '0 0';
           }
         };
 
@@ -9630,6 +9821,8 @@ function renderCustomPolygons() {
         handle.dataset.index = idx;
         handle.style.left = `${pt.x * currentScale}px`;
         handle.style.top = `${pt.y * currentScale}px`;
+        handle.style.transform = `translate(-50%, -50%) scale(${currentScale})`;
+        handle.style.transformOrigin = '50% 50%';
         handle.title = "드래그하여 정점 이동, 클릭하여 선택, 더블클릭 또는 우클릭하여 삭제";
         handle.style.display = isLayerVisible ? '' : 'none';
         
@@ -9773,16 +9966,27 @@ function updateLabelRealTime(poly) {
         labelPt = pt;
       }
     });
-    label.style.left = `${labelPt.x * currentScale}px`;
-    label.style.top = `${(labelPt.y - 12) * currentScale}px`;
+    const offX = poly.labelOffsetX || 0;
+    const offY = poly.labelOffsetY || 0;
+    const labelWorldX = labelPt.x + offX;
+    const labelWorldY = labelPt.y - 12 + offY;
+    label.style.left = `${labelWorldX * currentScale}px`;
+    label.style.top = `${labelWorldY * currentScale}px`;
+    label.style.transform = `scale(${currentScale})`;
+    label.style.transformOrigin = '0 0';
   }
 }
 
 function drawPolygonsRealTime() {
   customPolygons.forEach(poly => {
+    const d = getPathDFromPoints(poly.points, 7);
     const el = document.getElementById(`svg-poly-${poly.id}`);
     if (el) {
-      el.setAttribute('d', getPathDFromPoints(poly.points, 7));
+      el.setAttribute('d', d);
+    }
+    const strokeEl = document.getElementById(`svg-poly-stroke-${poly.id}`);
+    if (strokeEl) {
+      strokeEl.setAttribute('d', d);
     }
   });
 }
@@ -10923,13 +11127,23 @@ function setupZoomPan() {
                               
     if (clickedEmptySpace) {
       if (isAdminMode) {
-        if (selectedPersonId || selectedPersonIds.size > 0 || selectedLineKey || selectedJunctionId || selectedPolygonId) {
+        if (selectedPersonId || selectedPersonIds.size > 0 || selectedLineKey || selectedJunctionId || selectedPolygonId || selectedEventId || selectedEventIds.size > 0 || selectedLocationId || selectedLocationIds.size > 0 || selectedAnnotationId || selectedAnnotationIds.size > 0) {
           selectedPersonId = null;
           selectedPersonIds.clear();
           selectedLineKey = null;
           selectedJunctionId = null;
           selectedPolygonId = null;
+          selectedEventId = null;
+          selectedEventIds.clear();
+          selectedLocationId = null;
+          selectedLocationIds.clear();
+          selectedAnnotationId = null;
+          selectedAnnotationIds.clear();
+          document.querySelectorAll('.person-card').forEach(c => c.classList.remove('selected-for-edit'));
           document.querySelectorAll('.canvas-junction-node').forEach(n => n.classList.remove('selected-junction'));
+          document.querySelectorAll('.layer-marker').forEach(m => m.classList.remove('selected-layer-item'));
+          document.querySelectorAll('.canvas-annotation').forEach(n => n.classList.remove('selected'));
+          updateMultiSelectCountBadge();
           renderTree();
         }
         closeStyleEditorPanel();
@@ -11380,10 +11594,12 @@ function updateTransform(onlyPan = false) {
       });
       const offX = poly.labelOffsetX || 0;
       const offY = poly.labelOffsetY || 0;
-      label.style.left = `${(labelPt.x + offX) * currentScale}px`;
-      label.style.top = `${(labelPt.y - 12 + offY) * currentScale}px`;
+      const labelWorldX = labelPt.x + offX;
+      const labelWorldY = labelPt.y - 12 + offY;
+      label.style.left = `${labelWorldX * currentScale}px`;
+      label.style.top = `${labelWorldY * currentScale}px`;
       label.style.transform = `scale(${currentScale})`;
-      label.style.transformOrigin = '0 100%';
+      label.style.transformOrigin = '0 0';
     }
   });
 
@@ -13395,6 +13611,7 @@ function setupAdminMode() {
       e.stopPropagation();
       const isVisible = alignDropdownMenu.style.display === 'flex';
       alignDropdownMenu.style.display = isVisible ? 'none' : 'flex';
+      updateMultiSelectCountBadge();
     });
     
     // Close dropdown when clicking outside
@@ -13434,7 +13651,118 @@ function setupAdminMode() {
     });
   }
 
+  const multiselectDeleteBtn = document.getElementById('admin-multiselect-delete-btn');
+  if (multiselectDeleteBtn) {
+    multiselectDeleteBtn.addEventListener('click', () => {
+      if (alignDropdownMenu) alignDropdownMenu.style.display = 'none';
+      deleteSelectedItems();
+    });
+  }
+
+  const multiselectClearBtn = document.getElementById('admin-multiselect-clear-btn');
+  if (multiselectClearBtn) {
+    multiselectClearBtn.addEventListener('click', () => {
+      if (alignDropdownMenu) alignDropdownMenu.style.display = 'none';
+      clearAllAdminSelections();
+    });
+  }
+
   setupAutocomplete();
+}
+
+function clearAllAdminSelections() {
+  selectedPersonIds.clear();
+  selectedPersonId = null;
+  selectedEventIds.clear();
+  selectedEventId = null;
+  selectedLocationIds.clear();
+  selectedLocationId = null;
+  selectedAnnotationIds.clear();
+  selectedAnnotationId = null;
+  selectedPolygonId = null;
+  document.querySelectorAll('.person-card').forEach(c => c.classList.remove('selected-for-edit'));
+  document.querySelectorAll('.layer-marker').forEach(m => m.classList.remove('selected-layer-item'));
+  document.querySelectorAll('.canvas-annotation').forEach(n => n.classList.remove('selected'));
+  updateMultiSelectCountBadge();
+  renderTree();
+}
+
+function deleteSelectedItems() {
+  const totalCount = (selectedPersonIds ? selectedPersonIds.size : 0) +
+                     (selectedEventIds ? selectedEventIds.size : (selectedEventId ? 1 : 0)) +
+                     (selectedLocationIds ? selectedLocationIds.size : (selectedLocationId ? 1 : 0)) +
+                     (selectedAnnotationIds ? selectedAnnotationIds.size : (selectedAnnotationId ? 1 : 0)) +
+                     (selectedPolygonId ? 1 : 0);
+                     
+  if (totalCount === 0) {
+    showToast("선택된 항목이 없습니다. (Shift+클릭으로 항목을 선택하세요)");
+    return;
+  }
+
+  if (!confirm(`선택한 ${totalCount}개 항목을 일괄 삭제하시겠습니까?`)) {
+    return;
+  }
+
+  pushHistoryState();
+
+  // Delete selected person cards
+  if (selectedPersonIds.size > 0) {
+    const idsToDelete = new Set(selectedPersonIds);
+    db = db.filter(c => !idsToDelete.has(c.id));
+    // Clean up relationships
+    db.forEach(c => {
+      if (c.fatherId && idsToDelete.has(c.fatherId)) delete c.fatherId;
+      if (c.motherId && idsToDelete.has(c.motherId)) delete c.motherId;
+      if (c.spouseIds && Array.isArray(c.spouseIds)) {
+        c.spouseIds = c.spouseIds.filter(sId => !idsToDelete.has(sId));
+      }
+      if (c.teacherIds && Array.isArray(c.teacherIds)) {
+        c.teacherIds = c.teacherIds.filter(tId => !idsToDelete.has(tId));
+      }
+    });
+    saveDatabase();
+  }
+
+  // Delete selected events
+  if (selectedEventIds.size > 0 || selectedEventId) {
+    const evIds = new Set(selectedEventIds);
+    if (selectedEventId) evIds.add(selectedEventId);
+    events = events.filter(ev => !evIds.has(ev.id));
+    saveEvents();
+    renderEvents();
+  }
+
+  // Delete selected locations
+  if (selectedLocationIds.size > 0 || selectedLocationId) {
+    const locIds = new Set(selectedLocationIds);
+    if (selectedLocationId) locIds.add(selectedLocationId);
+    locations = locations.filter(loc => !locIds.has(loc.id));
+    saveLocations();
+    renderLocations();
+  }
+
+  // Delete selected annotations
+  if (selectedAnnotationIds.size > 0 || selectedAnnotationId) {
+    const annotIds = new Set(selectedAnnotationIds);
+    if (selectedAnnotationId) annotIds.add(selectedAnnotationId);
+    annotations = annotations.filter(a => !annotIds.has(a.id));
+    customVisualLines = customVisualLines.filter(l => !annotIds.has(l.from?.replace('annot-', '')) && !annotIds.has(l.to?.replace('annot-', '')));
+    saveAnnotations();
+    saveCustomVisualLines();
+    renderAnnotations();
+  }
+
+  // Delete selected polygon
+  if (selectedPolygonId) {
+    customPolygons = customPolygons.filter(p => p.id !== selectedPolygonId);
+    saveCustomPolygons();
+  }
+
+  clearAllAdminSelections();
+  autoSaveToServer();
+  initBoard();
+  renderTree();
+  showToast(`🗑️ 선택한 ${totalCount}개 항목이 삭제되었습니다.`);
 }
 
 function alignSelectedHeights() {
@@ -13944,7 +14272,18 @@ function enterAdminMode() {
 
   const floatSettingsBtn = document.getElementById('floating-settings-btn');
   if (floatSettingsBtn) {
-    floatSettingsBtn.style.setProperty('display', 'flex', 'important');
+    const isMobileDevice = (document.body && (
+      document.body.classList.contains('platform-iphone') ||
+      document.body.classList.contains('platform-android-phone') ||
+      document.body.classList.contains('platform-ipad') ||
+      document.body.classList.contains('platform-android-pad')
+    )) || (window.innerWidth <= 768 && ('ontouchstart' in window || navigator.maxTouchPoints > 0));
+    
+    if (isMobileDevice) {
+      floatSettingsBtn.style.setProperty('display', 'flex', 'important');
+    } else {
+      floatSettingsBtn.style.setProperty('display', 'none', 'important');
+    }
   }
 
   repositionHistoryButtons();
@@ -17189,7 +17528,8 @@ function renderEvents() {
   events.forEach(ev => {
     const el = document.createElement('div');
     const filterClass = getEventFilterClass(ev);
-    el.className = `layer-marker marker-event ${filterClass}`;
+    const isSelected = selectedEventIds.has(ev.id) || selectedEventId === ev.id;
+    el.className = `layer-marker marker-event ${filterClass} ${isSelected ? 'selected-layer-item' : ''}`;
     el.style.left = `${ev.x * currentScale}px`;
     el.style.top = `${ev.y * currentScale}px`;
     el.style.transform = `translate(-50%, -50%) scale(${currentScale})`;
@@ -17210,13 +17550,46 @@ function renderEvents() {
         return;
       }
       if (isAdminMode) {
-        editLayerItem(ev, 'event');
+        const isModifierPressed = e.shiftKey || e.ctrlKey || e.metaKey || e.altKey;
+        if (isModifierPressed) {
+          if (selectedEventIds.has(ev.id)) {
+            selectedEventIds.delete(ev.id);
+            el.classList.remove('selected-layer-item');
+          } else {
+            selectedEventIds.add(ev.id);
+            el.classList.add('selected-layer-item');
+          }
+          selectedEventId = selectedEventIds.size > 0 ? Array.from(selectedEventIds)[selectedEventIds.size - 1] : null;
+        } else {
+          selectedEventIds.clear();
+          selectedEventIds.add(ev.id);
+          selectedEventId = ev.id;
+          selectedLocationIds.clear(); selectedLocationId = null;
+          selectedPersonIds.clear(); selectedPersonId = null;
+          selectedAnnotationIds.clear(); selectedAnnotationId = null;
+          selectedPolygonId = null;
+          document.querySelectorAll('.person-card').forEach(c => c.classList.remove('selected-for-edit'));
+          document.querySelectorAll('.layer-marker').forEach(m => m.classList.remove('selected-layer-item'));
+          document.querySelectorAll('.canvas-annotation').forEach(n => n.classList.remove('selected'));
+          el.classList.add('selected-layer-item');
+        }
+        updateMultiSelectCountBadge();
       } else {
         openLayerDetails(ev, 'event');
         highlightRelatedElements(ev.id, 'event');
       }
     };
     el.addEventListener('click', handleEventActivate);
+    
+    // 편집모드: 더블클릭 시 사건 수정/상세 팝업 오픈!
+    el.addEventListener('dblclick', (e) => {
+      e.stopPropagation();
+      if (isAdminMode) {
+        editLayerItem(ev, 'event');
+      }
+    });
+
+    let lastEvTouchTime = 0;
     el.addEventListener('touchend', (e) => {
       if (el.isDraggingFinished) {
         el.isDraggingFinished = false;
@@ -17224,6 +17597,15 @@ function renderEvents() {
         e.preventDefault();
         return;
       }
+      const now = Date.now();
+      if (isAdminMode && (now - lastEvTouchTime < 380)) {
+        lastEvTouchTime = 0;
+        e.stopPropagation();
+        e.preventDefault();
+        editLayerItem(ev, 'event');
+        return;
+      }
+      lastEvTouchTime = now;
       handleEventActivate(e);
       e.preventDefault(); // iOS/iPadOS click 시뮬레이션 중복 발동 방지 차단
     }, { passive: false });
@@ -17240,7 +17622,8 @@ function renderLocations() {
   locations.forEach(loc => {
     const el = document.createElement('div');
     const filterClass = getLocationFilterClass(loc);
-    el.className = `layer-marker marker-location ${filterClass}`;
+    const isSelected = selectedLocationIds.has(loc.id) || selectedLocationId === loc.id;
+    el.className = `layer-marker marker-location ${filterClass} ${isSelected ? 'selected-layer-item' : ''}`;
     el.style.left = `${loc.x * currentScale}px`;
     el.style.top = `${loc.y * currentScale}px`;
     el.style.transform = `translate(-50%, -50%) scale(${currentScale})`;
@@ -17261,13 +17644,46 @@ function renderLocations() {
         return;
       }
       if (isAdminMode) {
-        editLayerItem(loc, 'location');
+        const isModifierPressed = e.shiftKey || e.ctrlKey || e.metaKey || e.altKey;
+        if (isModifierPressed) {
+          if (selectedLocationIds.has(loc.id)) {
+            selectedLocationIds.delete(loc.id);
+            el.classList.remove('selected-layer-item');
+          } else {
+            selectedLocationIds.add(loc.id);
+            el.classList.add('selected-layer-item');
+          }
+          selectedLocationId = selectedLocationIds.size > 0 ? Array.from(selectedLocationIds)[selectedLocationIds.size - 1] : null;
+        } else {
+          selectedLocationIds.clear();
+          selectedLocationIds.add(loc.id);
+          selectedLocationId = loc.id;
+          selectedEventIds.clear(); selectedEventId = null;
+          selectedPersonIds.clear(); selectedPersonId = null;
+          selectedAnnotationIds.clear(); selectedAnnotationId = null;
+          selectedPolygonId = null;
+          document.querySelectorAll('.person-card').forEach(c => c.classList.remove('selected-for-edit'));
+          document.querySelectorAll('.layer-marker').forEach(m => m.classList.remove('selected-layer-item'));
+          document.querySelectorAll('.canvas-annotation').forEach(n => n.classList.remove('selected'));
+          el.classList.add('selected-layer-item');
+        }
+        updateMultiSelectCountBadge();
       } else {
         openLayerDetails(loc, 'location');
         highlightRelatedElements(loc.id, 'location');
       }
     };
     el.addEventListener('click', handleLocationActivate);
+    
+    // 편집모드: 더블클릭 시 장소 수정/상세 팝업 오픈!
+    el.addEventListener('dblclick', (e) => {
+      e.stopPropagation();
+      if (isAdminMode) {
+        editLayerItem(loc, 'location');
+      }
+    });
+
+    let lastLocTouchTime = 0;
     el.addEventListener('touchend', (e) => {
       if (el.isDraggingFinished) {
         el.isDraggingFinished = false;
@@ -17275,6 +17691,15 @@ function renderLocations() {
         e.preventDefault();
         return;
       }
+      const now = Date.now();
+      if (isAdminMode && (now - lastLocTouchTime < 380)) {
+        lastLocTouchTime = 0;
+        e.stopPropagation();
+        e.preventDefault();
+        editLayerItem(loc, 'location');
+        return;
+      }
+      lastLocTouchTime = now;
       handleLocationActivate(e);
       e.preventDefault(); // iOS/iPadOS click 시뮬레이션 중복 발동 방지 차단
     }, { passive: false });
@@ -19834,6 +20259,10 @@ function setupSettingsListeners() {
     document.addEventListener('click', handleOutsideSettings);
     document.addEventListener('touchend', handleOutsideSettings, { passive: true });
   }
+
+  window.openSettingsModal = openSettings;
+  window.closeSettingsModal = closeSettings;
+  window.toggleSettingsModal = toggleSettings;
 }
 
 // Slide to Unlock UI Synchronization Helper
@@ -20273,37 +20702,17 @@ function setupDesktopMacMenubar() {
   const menubar = document.getElementById('desktop-mac-menubar');
   if (!menubar) return;
 
-  const toggleEditBtn = document.getElementById('mac-menu-toggle-edit');
-  const toggleEditLabel = document.getElementById('mac-menu-toggle-edit-label');
-
   function syncMenubarEditLabel() {
+    const toggleEditLabel = document.getElementById('mac-menu-toggle-edit-label');
     const isEdit = (typeof isAdminMode !== 'undefined' && isAdminMode);
     if (toggleEditLabel) {
       toggleEditLabel.textContent = isEdit 
         ? (currentLang === 'en' ? 'Lock Edit Mode' : '편집 모드 잠금') 
-        : (currentLang === 'en' ? 'Unlock Edit Mode' : '편집 모드 전환');
+        : (currentLang === 'en' ? 'Unlock Edit Mode' : '편집 모드 전환 (잠금 해제)');
     }
   }
-
-  const handleEditToggleClick = (e) => {
-    if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
-    if (typeof window.toggleAdminEditMode === 'function') {
-      window.toggleAdminEditMode();
-    }
-    syncMenubarEditLabel();
-  };
-
-  if (toggleEditBtn) {
-    toggleEditBtn.addEventListener('click', handleEditToggleClick);
-  }
+  window.syncMenubarEditLabel = syncMenubarEditLabel;
   syncMenubarEditLabel();
-
-  // Edit actions
-  const undoBtn = document.getElementById('mac-menu-undo');
-  if (undoBtn) undoBtn.addEventListener('click', () => { if (typeof performUndo === 'function') performUndo(); });
-
-  const redoBtn = document.getElementById('mac-menu-redo');
-  if (redoBtn) redoBtn.addEventListener('click', () => { if (typeof performRedo === 'function') performRedo(); });
 
   window.triggerAddEvent = function() {
     if (!isAdminMode && typeof window.toggleAdminEditMode === 'function') {
@@ -20332,34 +20741,6 @@ function setupDesktopMacMenubar() {
     newLayerItemCoords = { x: Math.round(worldX), y: Math.round(worldY) };
     if (typeof openLayerItemAddForm === 'function') openLayerItemAddForm('location');
   };
-
-  const addPersonBtn = document.getElementById('mac-menu-add-person');
-  if (addPersonBtn) addPersonBtn.addEventListener('click', () => {
-    if (!isAdminMode) window.toggleAdminEditMode();
-    if (typeof activateAddPersonMode === 'function') activateAddPersonMode();
-  });
-
-  const addEventBtn = document.getElementById('mac-menu-add-event');
-  if (addEventBtn) addEventBtn.addEventListener('click', () => {
-    window.triggerAddEvent();
-  });
-
-  const addLocationBtn = document.getElementById('mac-menu-add-location');
-  if (addLocationBtn) addLocationBtn.addEventListener('click', () => {
-    window.triggerAddLocation();
-  });
-
-  const addNoteBtn = document.getElementById('mac-menu-add-note');
-  if (addNoteBtn) addNoteBtn.addEventListener('click', () => {
-    if (!isAdminMode) window.toggleAdminEditMode();
-    if (typeof activateAddAnnotationMode === 'function') activateAddAnnotationMode();
-  });
-
-  const addPolyBtn = document.getElementById('mac-menu-add-polygon');
-  if (addPolyBtn) addPolyBtn.addEventListener('click', () => {
-    if (!isAdminMode) window.toggleAdminEditMode();
-    if (typeof activateAddPolygonMode === 'function') activateAddPolygonMode();
-  });
 
   window.clipboardBoxData = null;
 
@@ -20655,22 +21036,49 @@ function setupDesktopMacMenubar() {
         if (typeof e.preventDefault === 'function') e.preventDefault();
         if (typeof e.stopPropagation === 'function') e.stopPropagation();
       }
-      actionFn();
+      try {
+        actionFn();
+      } catch (err) {
+        console.error("Menu action error on", id, err);
+      }
     };
     el.addEventListener('click', handler);
-    el.addEventListener('touchend', handler);
+    el.addEventListener('pointerdown', (e) => {
+      if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
+    });
   }
 
   // File Menu Actions
   const openSettings = () => {
-    const floatBtn = document.getElementById('floating-settings-btn');
-    if (floatBtn) floatBtn.click();
+    if (typeof window.toggleSettingsModal === 'function') {
+      window.toggleSettingsModal();
+    } else {
+      const modal = document.getElementById('settings-modal');
+      if (modal) {
+        const isVisible = (modal.style.display === 'flex' || modal.classList.contains('active'));
+        modal.style.display = isVisible ? 'none' : 'flex';
+      }
+    }
   };
   bindMenuAction('mac-menu-pref', openSettings);
   bindMenuAction('mac-menu-notes-export', () => window.exportStudyNotesFile());
   bindMenuAction('mac-menu-notes-import', () => window.importStudyNotesFile());
 
+  // Background click to close settings modal
+  const settingsModalEl = document.getElementById('settings-modal');
+  if (settingsModalEl) {
+    settingsModalEl.addEventListener('click', (e) => {
+      if (e.target === settingsModalEl) {
+        window.toggleSettingsModal();
+      }
+    });
+  }
+
   // Edit Menu Actions
+  bindMenuAction('mac-menu-toggle-edit', () => {
+    if (typeof window.toggleAdminEditMode === 'function') window.toggleAdminEditMode();
+    syncMenubarEditLabel();
+  });
   bindMenuAction('mac-menu-add-person', () => {
     if (!isAdminMode && typeof window.toggleAdminEditMode === 'function') window.toggleAdminEditMode();
     if (typeof activateAddPersonMode === 'function') activateAddPersonMode();
@@ -20695,10 +21103,12 @@ function setupDesktopMacMenubar() {
   bindMenuAction('mac-menu-zoomin', () => {
     const btn = document.getElementById('zoom-in');
     if (btn) btn.click();
+    else if (typeof applyZoom === 'function') applyZoom(0.15);
   });
   bindMenuAction('mac-menu-zoomout', () => {
     const btn = document.getElementById('zoom-out');
     if (btn) btn.click();
+    else if (typeof applyZoom === 'function') applyZoom(-0.15);
   });
   bindMenuAction('mac-menu-reset-zoom', () => {
     if (typeof applyZoom === 'function') {
@@ -20714,6 +21124,7 @@ function setupDesktopMacMenubar() {
   bindMenuAction('mac-menu-theme-toggle', () => {
     const themeBtn = document.getElementById('settings-theme-toggle');
     if (themeBtn) themeBtn.click();
+    else if (typeof toggleAppTheme === 'function') toggleAppTheme();
   });
 
   // Layer Toggles
@@ -20761,17 +21172,21 @@ function setupDesktopMacMenubar() {
   // Help Menu Actions
   bindMenuAction('mac-menu-manual', () => {
     const modal = document.getElementById('help-guide-modal');
-    if (modal) modal.style.display = 'flex';
+    if (modal) {
+      modal.style.display = 'flex';
+    }
   });
   bindMenuAction('mac-menu-about-help', () => {
-    alert("열린 족보이야기 (Bible Genealogy)\n버전: 1.1.2\n단축키: ⌘+Shift+E (편집 모드 전환)");
+    alert("열린 족보이야기 (Bible Genealogy)\n버전: 1.1.3\n단축키: ⌘+Shift+E (편집 모드 전환)");
   });
 
   // Dropdown Open/Close Hover & Tap Management
   const menuItems = menubar.querySelectorAll('.mac-menu-item');
   menuItems.forEach(item => {
+    const titleEl = item.querySelector('.mac-menu-title') || item;
     const handleMenuClick = (e) => {
-      if (e.target.closest('.mac-dropdown-menu')) return;
+      if (e && e.target && e.target.closest('.mac-dropdown-menu')) return;
+      if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
       const wasActive = item.classList.contains('active');
       menuItems.forEach(m => m.classList.remove('active'));
       if (!wasActive) {
@@ -20779,10 +21194,10 @@ function setupDesktopMacMenubar() {
       }
     };
 
-    item.addEventListener('click', handleMenuClick);
-    item.addEventListener('touchend', (e) => {
-      if (e.target.closest('.mac-dropdown-menu')) return;
-      handleMenuClick(e);
+    titleEl.addEventListener('click', handleMenuClick);
+    titleEl.addEventListener('pointerdown', (e) => {
+      if (e && e.target && e.target.closest('.mac-dropdown-menu')) return;
+      if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
     });
 
     item.addEventListener('mouseenter', () => {
@@ -20795,29 +21210,29 @@ function setupDesktopMacMenubar() {
   });
 
   const closeDropdownsOutside = (e) => {
-    if (!e.target.closest('#desktop-mac-menubar')) {
+    if (!e.target || !e.target.closest('#desktop-mac-menubar')) {
       menuItems.forEach(m => m.classList.remove('active'));
     }
   };
   document.addEventListener('click', closeDropdownsOutside);
-  document.addEventListener('touchend', closeDropdownsOutside);
+  document.addEventListener('pointerdown', closeDropdownsOutside);
 
   const menuEntries = menubar.querySelectorAll('.mac-menu-entry');
   menuEntries.forEach(entry => {
-    const closeOnSelect = () => {
+    const closeOnSelect = (e) => {
+      if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
       setTimeout(() => {
         menuItems.forEach(m => m.classList.remove('active'));
-      }, 100);
+      }, 120);
     };
     entry.addEventListener('click', closeOnSelect);
-    entry.addEventListener('touchend', closeOnSelect);
   });
 
   // Unified Direct Notes & Study Data Export
   window.exportStudyNotesFile = async function() {
     try {
       const backupData = {
-        version: "1.1.2",
+        version: "1.1.3",
         appName: "열린 족보이야기",
         exportDate: new Date().toISOString(),
         userNotes: typeof userNotes !== 'undefined' ? userNotes : {},
@@ -20976,6 +21391,270 @@ function initCustomHeaderFeatures() {
 
   // 전역 가상 키보드 닫기 핸들러 기동 (빈 공간 터치 시 키보드 내리기)
   setupGlobalKeyboardDismiss();
+  setupFullscreenStateWatcher();
+  initSmartMenubar();
+}
+
+function setupFullscreenStateWatcher() {
+  window.setMacCatalystFullscreen = function(isFS) {
+    window.__isMacCatalystFullscreen = !!isFS;
+    if (isFS) {
+      document.documentElement.classList.add('is-fullscreen');
+      document.body.classList.add('is-fullscreen');
+    } else {
+      document.documentElement.classList.remove('is-fullscreen');
+      document.body.classList.remove('is-fullscreen');
+    }
+    const menubar = document.getElementById('desktop-mac-menubar');
+    if (menubar && !menubar.classList.contains('is-floating')) {
+      menubar.style.setProperty('top', isFS ? '0px' : '38px', 'important');
+      menubar.style.setProperty('padding-left', '16px', 'important');
+    }
+    if (typeof updateTransform === 'function') {
+      updateTransform();
+    }
+  };
+
+  function updateFS() {
+    if (typeof window.__isMacCatalystFullscreen === 'boolean') {
+      window.setMacCatalystFullscreen(window.__isMacCatalystFullscreen);
+      return;
+    }
+
+    const isStandardFS = !!(
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      window.fullScreen
+    );
+
+    if (isStandardFS) {
+      document.documentElement.classList.add('is-fullscreen');
+      document.body.classList.add('is-fullscreen');
+    } else {
+      document.documentElement.classList.remove('is-fullscreen');
+      document.body.classList.remove('is-fullscreen');
+    }
+
+    const menubar = document.getElementById('desktop-mac-menubar');
+    if (menubar && !menubar.classList.contains('is-floating')) {
+      menubar.style.setProperty('top', isStandardFS ? '0px' : '38px', 'important');
+      menubar.style.setProperty('padding-left', '16px', 'important');
+    }
+    if (typeof updateTransform === 'function') {
+      updateTransform();
+    }
+  }
+
+  window.updateFullscreenMenubarState = updateFS;
+  document.addEventListener('fullscreenchange', updateFS);
+  document.addEventListener('webkitfullscreenchange', updateFS);
+  window.addEventListener('resize', updateFS);
+  window.addEventListener('orientationchange', updateFS);
+  updateFS();
+}
+
+function initSmartMenubar() {
+  const menubar = document.getElementById('desktop-mac-menubar');
+  if (!menubar) return;
+
+  const dragHandle = document.getElementById('mac-menubar-drag-handle');
+  const dockBtn = document.getElementById('mac-menubar-dock-btn');
+  const minBtn = document.getElementById('mac-menubar-minimize-btn');
+  const minPill = document.getElementById('mac-menubar-minimized-pill');
+
+  let isFloating = false;
+  let isMinimized = false;
+  let startX = 0, startY = 0;
+  let initialLeft = 0, initialTop = 0;
+  let isDragging = false;
+
+  function saveState() {
+    try {
+      const rect = menubar.getBoundingClientRect();
+      localStorage.setItem('mac_menubar_dock_state_v1', JSON.stringify({
+        isFloating,
+        isMinimized,
+        x: rect.left,
+        y: rect.top
+      }));
+    } catch (err) {}
+  }
+
+  function setFloatingMode(floating, customX, customY) {
+    isFloating = !!floating;
+    if (isFloating) {
+      document.documentElement.classList.add('is-menubar-floating');
+      document.body.classList.add('is-menubar-floating');
+      menubar.classList.add('is-floating');
+      if (dockBtn) dockBtn.title = "상단 2행에 다시 고정하기 (Dock)";
+
+      const winWidth = window.innerWidth;
+      const menubarWidth = menubar.offsetWidth || 520;
+      let left = typeof customX === 'number' ? customX : Math.max(16, (winWidth - menubarWidth) / 2);
+      let top = typeof customY === 'number' ? customY : 48;
+
+      left = Math.max(10, Math.min(winWidth - menubarWidth - 10, left));
+      top = Math.max(10, Math.min(window.innerHeight - 50, top));
+
+      menubar.style.setProperty('left', left + 'px', 'important');
+      menubar.style.setProperty('top', top + 'px', 'important');
+      menubar.style.setProperty('right', 'auto', 'important');
+    } else {
+      document.documentElement.classList.remove('is-menubar-floating');
+      document.body.classList.remove('is-menubar-floating');
+      menubar.classList.remove('is-floating');
+      menubar.classList.remove('is-minimized');
+      isMinimized = false;
+      if (dockBtn) dockBtn.title = "자유 이동(플로팅) 모드로 전환";
+
+      const isFS = document.documentElement.classList.contains('is-fullscreen');
+      menubar.style.setProperty('left', '0px', 'important');
+      menubar.style.setProperty('right', '0px', 'important');
+      menubar.style.setProperty('top', isFS ? '0px' : '38px', 'important');
+    }
+    saveState();
+  }
+
+  function setMinimizedMode(minimized) {
+    if (!isFloating && minimized) {
+      setFloatingMode(true);
+    }
+    isMinimized = !!minimized;
+    if (isMinimized) {
+      menubar.classList.add('is-minimized');
+    } else {
+      menubar.classList.remove('is-minimized');
+    }
+    saveState();
+  }
+
+  // Load saved preference
+  try {
+    const saved = localStorage.getItem('mac_menubar_dock_state_v1');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (parsed.isFloating) {
+        setFloatingMode(true, parsed.x, parsed.y);
+      }
+      if (parsed.isMinimized) {
+        setMinimizedMode(true);
+      }
+    }
+  } catch (err) {}
+
+  if (dockBtn) {
+    dockBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      setFloatingMode(!isFloating);
+    });
+  }
+
+  if (minBtn) {
+    minBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      setMinimizedMode(!isMinimized);
+    });
+  }
+
+  if (minPill) {
+    minPill.addEventListener('click', (e) => {
+      e.stopPropagation();
+      setMinimizedMode(false);
+    });
+  }
+
+  // Dragging Implementation
+  function onPointerDown(e) {
+    if (e.button !== 0) return; // Only left click
+    const target = e.target;
+    // Don't drag if clicking interactive controls
+    if (target.closest('input, button, .mac-dropdown-menu, .mac-menu-title, #search-results')) {
+      if (!target.closest('#mac-menubar-drag-handle')) {
+        return;
+      }
+    }
+
+    if (!isFloating) {
+      const rect = menubar.getBoundingClientRect();
+      setFloatingMode(true, rect.left, rect.top);
+    }
+
+    isDragging = true;
+    menubar.classList.add('is-dragging');
+    const rect = menubar.getBoundingClientRect();
+    startX = e.clientX;
+    startY = e.clientY;
+    initialLeft = rect.left;
+    initialTop = rect.top;
+
+    window.addEventListener('pointermove', onPointerMove, { passive: false });
+    window.addEventListener('pointerup', onPointerUp, { passive: false });
+    window.addEventListener('pointercancel', onPointerUp, { passive: false });
+    e.preventDefault();
+  }
+
+  function onPointerMove(e) {
+    if (!isDragging) return;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+
+    let newLeft = initialLeft + dx;
+    let newTop = initialTop + dy;
+
+    const winW = window.innerWidth;
+    const winH = window.innerHeight;
+    const barW = menubar.offsetWidth;
+    const barH = menubar.offsetHeight;
+
+    newLeft = Math.max(8, Math.min(winW - barW - 8, newLeft));
+    newTop = Math.max(8, Math.min(winH - barH - 8, newTop));
+
+    menubar.style.setProperty('left', newLeft + 'px', 'important');
+    menubar.style.setProperty('top', newTop + 'px', 'important');
+    e.preventDefault();
+  }
+
+  function onPointerUp(e) {
+    if (!isDragging) return;
+    isDragging = false;
+    menubar.classList.remove('is-dragging');
+
+    window.removeEventListener('pointermove', onPointerMove);
+    window.removeEventListener('pointerup', onPointerUp);
+    window.removeEventListener('pointercancel', onPointerUp);
+
+    const rect = menubar.getBoundingClientRect();
+    if (rect.top <= 25) {
+      setFloatingMode(false);
+    } else {
+      saveState();
+    }
+  }
+
+  if (dragHandle) {
+    dragHandle.addEventListener('pointerdown', onPointerDown);
+  }
+  menubar.addEventListener('pointerdown', (e) => {
+    if (isFloating) {
+      onPointerDown(e);
+    }
+  });
+
+  // Global Shortcut: Cmd + \ to toggle minimize
+  window.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === '\\') {
+      e.preventDefault();
+      if (!isFloating) {
+        setFloatingMode(true);
+        setMinimizedMode(true);
+      } else {
+        setMinimizedMode(!isMinimized);
+      }
+    }
+  });
+
+  window.setMenubarFloating = setFloatingMode;
+  window.setMenubarMinimized = setMinimizedMode;
 }
 
 function setupGlobalKeyboardDismiss() {
@@ -21149,6 +21828,11 @@ function setupGlobalKeyboardDismiss() {
 
   // iPhone 및 Android 스마트폰 전 기종 가로화면 전환 시 락 버튼 및 편집모드 5개 버튼 자동 은닉 및 락 자동 잠금
   const handleOrientationControlsSync = () => {
+    const isDesktop = document.documentElement.classList.contains('platform-macos') || 
+                      (document.body && document.body.classList.contains('platform-macos')) || 
+                      (window.innerWidth >= 900 && (!window.Capacitor || !(/iPad|iPhone|iPod|Android/.test(navigator.userAgent))));
+    if (isDesktop) return; // Mac Desktop 환경에서는 자동 잠금 및 모바일 전용 로직 적용 제외
+
     const isLandscape = window.matchMedia('(orientation: landscape)').matches;
     const shortSide = Math.min(window.innerWidth, window.innerHeight);
     const longSide = Math.max(window.innerWidth, window.innerHeight);
