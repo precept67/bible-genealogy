@@ -46,6 +46,9 @@ jobs:
           if (Test-Path "$payloadDir\uninstall.exe") { Remove-Item -Force "$payloadDir\uninstall.exe" }
 
           $exes = Get-ChildItem -Path $payloadDir -Filter "*.exe"
+          Write-Host "Found executables:"
+          $exes | ForEach-Object { Write-Host " - $($_.Name)" }
+
           $mainExe = ($exes | Where-Object { $_.Name -notlike "*uninstall*" } | Select-Object -First 1).Name
           Write-Host "Selected Main Executable: $mainExe"
 
@@ -67,47 +70,64 @@ jobs:
               if (Test-Path "$assetsDir\32x32.png") { Copy-Item "$assetsDir\32x32.png" "$assetsDir\Square44x44Logo.png" }
           }
 
-          $manifestContent = @"
-<?xml version="1.0" encoding="utf-8"?>
-<Package
-  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
-  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
-  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities">
-  <Identity
-    Name="SANGHYUNKIM.OpenBibleGenealogyStory"
-    Publisher="CN=8F713185-F19D-4EBC-B893-639B07A18161"
-    Version="1.1.3.0"
-    ProcessorArchitecture="x64" />
-  <Properties>
-    <DisplayName>Open Bible Genealogy Story</DisplayName>
-    <PublisherDisplayName>SANGHYUN KIM</PublisherDisplayName>
-    <Logo>Assets\StoreLogo.png</Logo>
-  </Properties>
-  <Dependencies>
-    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.22621.0" />
-  </Dependencies>
-  <Capabilities>
-    <rescap:Capability Name="runFullTrust" />
-  </Capabilities>
-  <Applications>
-    <Application Id="App"
-      Executable="$mainExe"
-      EntryPoint="Windows.FullTrustApplication">
-      <uap:VisualElements
-        DisplayName="Open Bible Genealogy Story"
-        Description="Open Bible Genealogy Story"
-        BackgroundColor="transparent"
-        Square150x150Logo="Assets\Square150x150Logo.png"
-        Square44x44Logo="Assets\Square44x44Logo.png">
-      </uap:VisualElements>
-    </Application>
-  </Applications>
-</Package>
-"@
-
-          [System.IO.File]::WriteAllText("$payloadDir\AppxManifest.xml", $manifestContent, [System.Text.Encoding]::UTF8)
+          $manifestLines = @(
+              '<?xml version="1.0" encoding="utf-8"?>',
+              '<Package',
+              '  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"',
+              '  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"',
+              '  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities">',
+              '  <Identity',
+              '    Name="SANGHYUNKIM.OpenBibleGenealogyStory"',
+              '    Publisher="CN=8F713185-F19D-4EBC-B893-639B07A18161"',
+              '    Version="1.1.3.0"',
+              '    ProcessorArchitecture="x64" />',
+              '  <Properties>',
+              '    <DisplayName>Open Bible Genealogy Story</DisplayName>',
+              '    <PublisherDisplayName>SANGHYUN KIM</PublisherDisplayName>',
+              '    <Logo>Assets\StoreLogo.png</Logo>',
+              '  </Properties>',
+              '  <Dependencies>',
+              '    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.22621.0" />',
+              '  </Dependencies>',
+              '  <Capabilities>',
+              '    <rescap:Capability Name="runFullTrust" />',
+              '  </Capabilities>',
+              '  <Applications>',
+              '    <Application Id="App"',
+              "      Executable=`"$mainExe`"",
+              '      EntryPoint="Windows.FullTrustApplication">',
+              '      <uap:VisualElements',
+              '        DisplayName="Open Bible Genealogy Story"',
+              '        Description="Open Bible Genealogy Story"',
+              '        BackgroundColor="transparent"',
+              '        Square150x150Logo="Assets\Square150x150Logo.png"',
+              '        Square44x44Logo="Assets\Square44x44Logo.png">',
+              '      </uap:VisualElements>',
+              '    </Application>',
+              '  </Applications>',
+              '</Package>'
+          )
+          $manifestLines | Out-File -FilePath "$payloadDir\AppxManifest.xml" -Encoding utf8
 
       - name: Build MSIX with MakeAppx
         shell: powershell
         run: |
-          $makeAppx = (Get-ChildItem -Path "C:\Program Files (x86)\Windows Kits\10\bin" -Filter "makeappx.exe" -Recurse | Where-Object { $_.FullName -like "*x64*" } | Select-Object -
+          $makeAppx = (Get-ChildItem -Path "C:\Program Files (x86)\Windows Kits\10\bin" -Filter "makeappx.exe" -Recurse | Where-Object { $_.FullName -like "*x64*" } | Select-Object -First 1).FullName
+          $outputMsix = "C:\OpenBibleGenealogyStory.msix"
+          & $makeAppx pack /d "C:\msix_payload" /p $outputMsix /nv /v
+
+          $cert = New-SelfSignedCertificate -Type Custom -Subject "CN=8F713185-F19D-4EBC-B893-639B07A18161" -KeyUsage DigitalSignature -FriendlyName "StoreCert" -CertStoreLocation "Cert:\CurrentUser\My"
+          $password = ConvertTo-SecureString -String "Pass12345!" -Force -AsPlainText
+          Export-PfxCertificate -Cert $cert -FilePath "C:\cert.pfx" -Password $password | Out-Null
+
+          $signTool = (Get-ChildItem -Path "C:\Program Files (x86)\Windows Kits\10\bin" -Filter "signtool.exe" -Recurse | Where-Object { $_.FullName -like "*x64*" } | Select-Object -First 1).FullName
+          & $signTool sign /fd SHA256 /a /f "C:\cert.pfx" /p "Pass12345!" $outputMsix
+
+          Copy-Item $outputMsix -Destination "OpenBibleGenealogyStory.msix" -Force
+
+      - name: Upload MSIX Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: OpenBibleGenealogyStory-MSIX
+          path: OpenBibleGenealogyStory.msix
+          if-no-files-found: error
