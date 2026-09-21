@@ -1,11 +1,23 @@
 {
-  "version": "1.0.34",
-  "notes": "성경 족보 5분 데모 및 레몬스퀴지 자동 웹훅 연동 버전",
-  "pub_date": "2026-07-31T19:20:00Z",
+  "version": "1.1.5",
+  "notes": "v1.1.5: 다각형 영역 생성 모달 창 개선 및 Mac/맥북 간 iCloud Drive 실시간 자동 동기화 지원",
+  "pub_date": "2026-09-22T05:50:00Z",
   "platforms": {
     "darwin-universal": {
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVSL1RDeVhIeFhLYmJrbm45aGpSRjVyaXFvSE9oUnlvMkJ2Rlg0Q2NFaEpnVlVPbWd1RHdxdVVBTkRiQ212Q0llWU1vWVljb3BiT0NHZ1pHb3crbExrMGNTV2Z0ZVVqa1FZPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg1NDkzMjc1CWZpbGU6QmlibGVHZW5lYWxvZ3kuYXBwLnRhci5negpLSGx3UVA1Y1BHb3MzQ2FENCtWa3AzVmx5Y2o0NU5WMGFQUlQxMnpmNFpuaUxqV3JEekVCZVlZa3FZK2U3dWxweEMwS1VpOEUzdlQyZUNJWXNCc3hBZz09Cg==",
-      "url": "https://f.jubilee.or.kr/BibleGenealogy.app.tar.gz"
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVSL1RDeVhIeFhLYmFPRm1QQ1k4cTc4TTlVYUNJaE1TZmU2UWwwa2lJWi9rcHVVNUNTVEFkQ21jd2E2d29HYld5ekFHMkgzUktsSDFHdCtkbVpPdE5sY25sd1c5YWZ3cFFrPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg1Nzc4NTI5CWZpbGU6QmlibGVHZW5lYWxvZ3kuYXBwLnRhci5nego5L21vc2hkWW1pRW5PNDhram9td2VrZU1IMlR2NTNTVVZQaG51aU9TbUZSOENVa2kvd3g3ZFNPV3JyeDh2U3Y4aDUzMlVubEtJMDhUNm5NL21vNmhBdz09Cg==",
+      "url": "https://f.jubilee.or.kr/downloads/열린_족보이야기_v1.1.5.dmg"
+    },
+    "darwin-x86_64": {
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVSL1RDeVhIeFhLYmFPRm1QQ1k4cTc4TTlVYUNJaE1TZmU2UWwwa2lJWi9rcHVVNUNTVEFkQ21jd2E2d29HYld5ekFHMkgzUktsSDFHdCtkbVpPdE5sY25sd1c5YWZ3cFFrPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg1Nzc4NTI5CWZpbGU6QmlibGVHZW5lYWxvZ3kuYXBwLnRhci5nego5L21vc2hkWW1pRW5PNDhram9td2VrZU1IMlR2NTNTVVZQaG51aU9TbUZSOENVa2kvd3g3ZFNPV3JyeDh2U3Y4aDUzMlVubEtJMDhUNm5NL21vNmhBdz09Cg==",
+      "url": "https://f.jubilee.or.kr/downloads/열린_족보이야기_v1.1.5.dmg"
+    },
+    "darwin-aarch64": {
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVSL1RDeVhIeFhLYmFPRm1QQ1k4cTc4TTlVYUNJaE1TZmU2UWwwa2lJWi9rcHVVNUNTVEFkQ21jd2E2d29HYld5ekFHMkgzUktsSDFHdCtkbVpPdE5sY25sd1c5YWZ3cFFrPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg1Nzc4NTI5CWZpbGU6QmlibGVHZW5lYWxvZ3kuYXBwLnRhci5nego5L21vc2hkWW1pRW5PNDhram9td2VrZU1IMlR2NTNTVVZQaG51aU9TbUZSOENVa2kvd3g3ZFNPV3JyeDh2U3Y4aDUzMlVubEtJMDhUNm5NL21vNmhBdz09Cg==",
+      "url": "https://f.jubilee.or.kr/downloads/열린_족보이야기_v1.1.5.dmg"
+    },
+    "windows-x86_64": {
+      "signature": "",
+      "url": "https://f.jubilee.or.kr/downloads/열린족보이야기_v1.1.5_Windows_Setup.exe"
     }
   }
 }
