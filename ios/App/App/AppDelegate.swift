@@ -30,8 +30,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         let sceneNotifications = [
-            UIScene.willConnectNotification,
-            UIScene.didActivateNotification,
+            UIApplication.didBecomeActiveNotification,
             UIWindow.didBecomeKeyNotification,
             UIWindow.didBecomeVisibleNotification
         ]
