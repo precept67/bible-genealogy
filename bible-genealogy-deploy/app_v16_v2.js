@@ -21408,8 +21408,8 @@ function setupFullscreenStateWatcher() {
     const menubar = document.getElementById('desktop-mac-menubar');
     if (menubar && !menubar.classList.contains('is-floating')) {
       const isMacFS = document.documentElement.classList.contains('is-fullscreen');
-      menubar.style.setProperty('top', isMacFS ? '0px' : '28px', 'important');
-      menubar.style.setProperty('padding-left', '16px', 'important');
+      menubar.style.setProperty('top', '0px', 'important');
+      menubar.style.setProperty('padding-left', isMacFS ? '16px' : '80px', 'important');
     }
     if (typeof updateTransform === 'function') {
       updateTransform();
@@ -21439,8 +21439,8 @@ function setupFullscreenStateWatcher() {
     const menubar = document.getElementById('desktop-mac-menubar');
     if (menubar && !menubar.classList.contains('is-floating')) {
       const isMacFS = document.documentElement.classList.contains('is-fullscreen');
-      menubar.style.setProperty('top', isMacFS ? '0px' : '28px', 'important');
-      menubar.style.setProperty('padding-left', '16px', 'important');
+      menubar.style.setProperty('top', '0px', 'important');
+      menubar.style.setProperty('padding-left', isMacFS ? '16px' : '80px', 'important');
     }
     if (typeof updateTransform === 'function') {
       updateTransform();
@@ -21493,7 +21493,7 @@ function initSmartMenubar() {
       const winWidth = window.innerWidth;
       const menubarWidth = menubar.offsetWidth || 520;
       let left = typeof customX === 'number' ? customX : Math.max(16, (winWidth - menubarWidth) / 2);
-      let top = typeof customY === 'number' ? Math.max(34, customY) : 34;
+      let top = typeof customY === 'number' ? Math.max(6, customY) : 6;
 
       left = Math.max(10, Math.min(winWidth - menubarWidth - 10, left));
       top = Math.max(0, Math.min(window.innerHeight - 50, top));
@@ -21513,8 +21513,8 @@ function initSmartMenubar() {
       const isMacFS = document.documentElement.classList.contains('is-fullscreen');
       menubar.style.setProperty('left', '0px', 'important');
       menubar.style.setProperty('right', '0px', 'important');
-      menubar.style.setProperty('top', isMacFS ? '0px' : '28px', 'important');
-      menubar.style.setProperty('padding-left', '16px', 'important');
+      menubar.style.setProperty('top', '0px', 'important');
+      menubar.style.setProperty('padding-left', isMacFS ? '16px' : '80px', 'important');
     }
     saveState();
   }
@@ -21538,7 +21538,7 @@ function initSmartMenubar() {
     if (saved) {
       const parsed = JSON.parse(saved);
       if (parsed.isFloating) {
-        let py = typeof parsed.y === 'number' ? Math.max(34, parsed.y) : 34;
+        let py = typeof parsed.y === 'number' ? Math.max(6, parsed.y) : 6;
         setFloatingMode(true, parsed.x, py);
       }
       if (parsed.isMinimized) {
