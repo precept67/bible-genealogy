@@ -52,6 +52,10 @@ let isRestoringNotesData = false;
 
     // Sync only genealogy/memos specific app data keys
     if (key.startsWith('bible_tree_') || key.startsWith('bible_genealogy_')) {
+      if (key !== 'bible_tree_last_modified' && key !== 'icloud_last_sync_time') {
+        originalSetItem.call(localStorage, 'bible_tree_last_modified', String(Date.now()));
+      }
+
       if (typeof window.triggerICloudSync === 'function') {
         // Debounce sync triggers by 80ms for instant responsiveness
         clearTimeout(syncTimeout);
@@ -3190,9 +3194,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         new Promise(resolve => setTimeout(resolve, 1200))
       ]);
     }
-    // Check and pull latest iCloud Drive sync if enabled
-    if (localStorage.getItem('icloud_sync_enabled') === 'true' && typeof pullDataFromICloud === 'function') {
-      pullDataFromICloud(false).catch(e => console.warn("Startup iCloud pull note:", e));
+    // Check and synchronize with latest iCloud Drive based on most recent timestamp
+    if (localStorage.getItem('icloud_sync_enabled') === 'true' && typeof syncLatestWithICloud === 'function') {
+      syncLatestWithICloud(false).catch(e => console.warn("Startup iCloud sync note:", e));
     }
   } catch (err) {
     console.warn("Storage restore startup note:", err);
@@ -3200,23 +3204,9 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   // Automatic iCloud remote change detector on window focus & fast periodic check (every 3s)
   const checkRemoteICloudSync = async () => {
-    if (localStorage.getItem('icloud_sync_enabled') === 'true' && typeof getICloudSyncDirectory === 'function' && window.__TAURI__) {
+    if (localStorage.getItem('icloud_sync_enabled') === 'true' && typeof syncLatestWithICloud === 'function' && window.__TAURI__) {
       try {
-        const syncDir = await getICloudSyncDirectory();
-        if (syncDir) {
-          const syncFilePath = await window.__TAURI__.path.join(syncDir, 'bible_genealogy_full_sync.json');
-          const exists = await window.__TAURI__.fs.exists(syncFilePath);
-          if (exists) {
-            const content = await window.__TAURI__.fs.readTextFile(syncFilePath);
-            const parsed = JSON.parse(content);
-            const remoteTime = parsed.lastModified || 0;
-            const localTime = parseInt(localStorage.getItem('icloud_last_sync_time') || '0', 10);
-            if (remoteTime > localTime + 500) {
-              console.log("[iCloud] Remote changes detected from another Mac, pulling latest data...");
-              await pullDataFromICloud(false);
-            }
-          }
-        }
+        await syncLatestWithICloud(false);
       } catch (_) {}
     }
   };
@@ -17264,7 +17254,7 @@ async function pushDataToICloud(showNotification = false, immediate = false) {
   
   if (icloudPushDebounceTimer) clearTimeout(icloudPushDebounceTimer);
   
-  const delay = (immediate || showNotification) ? 0 : 100;
+  const delay = (immediate || showNotification) ? 0 : 80;
 
   return new Promise((resolve) => {
     icloudPushDebounceTimer = setTimeout(async () => {
@@ -17297,12 +17287,14 @@ async function pushDataToICloud(showNotification = false, immediate = false) {
         await window.__TAURI__.fs.writeTextFile(treeFilePath, JSON.stringify(treeState, null, 2));
         await window.__TAURI__.fs.writeTextFile(notesFilePath, JSON.stringify(notesData, null, 2));
 
+        localStorage.setItem('bible_tree_last_modified', String(timestamp));
         localStorage.setItem('icloud_last_sync_time', String(timestamp));
         updateICloudSyncStatusUI(timestamp);
         triggerICloudSyncToast();
 
         if (showNotification) {
-          showToast(currentLang === 'en' ? "☁️ Exported to iCloud Drive successfully!" : "☁️ iCloud Drive로 전체 데이터가 성공적으로 백업/동기화되었습니다!");
+          const dStr = new Date(timestamp).toLocaleString();
+          showToast(currentLang === 'en' ? `☁️ Uploaded to iCloud Drive (${dStr})` : `☁️ 최신 시간대(${dStr}) 기준으로 iCloud 백업/동기화가 완료되었습니다!`);
         }
         resolve(true);
       } catch (err) {
@@ -17314,7 +17306,8 @@ async function pushDataToICloud(showNotification = false, immediate = false) {
   });
 }
 
-async function pullDataFromICloud(isManual = false) {
+// Timestamp-based Bidirectional Sync Engine (가장 최근 수정 시간대 기준 동기화)
+async function syncLatestWithICloud(isManual = false) {
   if (isRestoringLocalData || isRestoringNotesData) return false;
   try {
     const syncDir = await getICloudSyncDirectory();
@@ -17327,18 +17320,19 @@ async function pullDataFromICloud(isManual = false) {
     const treeFilePath = await window.__TAURI__.path.join(syncDir, 'bible_genealogy_tree_autobackup.json');
     const notesFilePath = await window.__TAURI__.path.join(syncDir, 'bible_genealogy_notes_autobackup.json');
 
-    let payload = null;
+    let remotePayload = null;
+    let remoteTime = 0;
 
     const fullExists = await window.__TAURI__.fs.exists(syncFilePath);
     if (fullExists) {
       try {
         const content = await window.__TAURI__.fs.readTextFile(syncFilePath);
-        payload = JSON.parse(content);
+        remotePayload = JSON.parse(content);
+        remoteTime = parseInt(remotePayload?.lastModified || '0', 10);
       } catch (_) {}
     }
 
-    if (!payload) {
-      // Fallback: check individual tree and notes files
+    if (!remotePayload) {
       let tree = null;
       let notes = null;
       try {
@@ -17353,44 +17347,63 @@ async function pullDataFromICloud(isManual = false) {
       } catch (_) {}
 
       if (tree || notes) {
-        payload = { tree, notes, lastModified: Date.now() };
+        remoteTime = Date.now();
+        remotePayload = { tree, notes, lastModified: remoteTime };
       }
     }
 
-    if (!payload || (!payload.tree && !payload.notes)) {
+    const localTime = parseInt(localStorage.getItem('bible_tree_last_modified') || localStorage.getItem('icloud_last_sync_time') || '0', 10);
+
+    // 1. Remote file in iCloud has a NEWER timestamp -> Pull & Apply latest cloud version
+    if (remotePayload && remoteTime > localTime + 200) {
+      console.log(`[iCloud 동기화] 클라우드에 더 최신 데이터 발견 (원격: ${new Date(remoteTime).toLocaleTimeString()}, 로컬: ${new Date(localTime).toLocaleTimeString()}) -> 최신 원격 데이터 반영 중...`);
+      if (remotePayload.tree) {
+        await applyRestoredTreeState(remotePayload.tree);
+      }
+      if (remotePayload.notes) {
+        await applyRestoredNotesData(remotePayload.notes);
+      }
+      localStorage.setItem('bible_tree_last_modified', String(remoteTime));
+      localStorage.setItem('icloud_last_sync_time', String(remoteTime));
+      updateICloudSyncStatusUI(remoteTime);
+      triggerICloudSyncToast();
+
       if (isManual) {
+        const dStr = new Date(remoteTime).toLocaleString();
         alert(currentLang === 'en'
-          ? "No backup file found in iCloud Drive yet. Click 'Export to iCloud' to create your first backup."
-          : "iCloud Drive에 저장된 백업 파일이 없습니다. 먼저 'iCloud로 백업/내보내기'를 실행해 첫 백업을 만드세요.");
+          ? `☁️ Synchronized to the latest version based on timestamp (${dStr}).`
+          : `☁️ 가장 최근 시간대(${dStr})의 클라우드 데이터 기준으로 완벽하게 동기화되었습니다.`);
+      } else {
+        showToast(currentLang === 'en' ? "☁️ iCloud data synchronized." : "☁️ 최신 시간대 기준으로 iCloud 데이터가 동기화되었습니다.");
       }
-      return false;
+      return true;
     }
-
-    if (payload.tree) {
-      await applyRestoredTreeState(payload.tree);
+    // 2. Local device has a NEWER timestamp or No cloud file -> Push latest local version to iCloud
+    else if (!remotePayload || localTime > remoteTime + 200) {
+      console.log(`[iCloud 동기화] 로컬 기기에 더 최신 변경사항 발견 (로컬: ${new Date(localTime).toLocaleTimeString()}, 원격: ${new Date(remoteTime).toLocaleTimeString()}) -> 클라우드로 업로드 중...`);
+      await pushDataToICloud(isManual, true);
+      return true;
     }
-    if (payload.notes) {
-      await applyRestoredNotesData(payload.notes);
+    // 3. Timestamps are identical / already synchronized
+    else {
+      updateICloudSyncStatusUI(localTime || remoteTime);
+      if (isManual) {
+        const dStr = new Date(localTime || remoteTime || Date.now()).toLocaleString();
+        alert(currentLang === 'en'
+          ? `☁️ Already synchronized with latest cloud data (${dStr}).`
+          : `☁️ 현재 기기와 클라우드 데이터가 이미 최신 시간대(${dStr})로 완벽하게 일치합니다.`);
+      }
+      return true;
     }
-
-    const timestamp = payload.lastModified || Date.now();
-    localStorage.setItem('icloud_last_sync_time', String(timestamp));
-    updateICloudSyncStatusUI(timestamp);
-    triggerICloudSyncToast();
-
-    if (isManual) {
-      alert(currentLang === 'en'
-        ? "☁️ iCloud sync complete! All genealogical records, annotations, polygons, and study notes have been synchronized."
-        : "☁️ iCloud 동기화 완료! 모든 족보 인물, 메모 상자, 영역, 연구 노트가 성공적으로 동기화되었습니다.");
-    } else {
-      showToast(currentLang === 'en' ? "☁️ iCloud data synchronized." : "☁️ iCloud에서 최신 데이터를 동기화했습니다.");
-    }
-    return true;
   } catch (err) {
-    console.warn("iCloud pull failed:", err);
-    if (isManual) alert("iCloud 데이터 가져오기 중 오류가 발생했습니다: " + err.message);
+    console.warn("syncLatestWithICloud failed:", err);
+    if (isManual) alert("iCloud 동기화 중 오류가 발생했습니다: " + err.message);
     return false;
   }
+}
+
+async function pullDataFromICloud(isManual = false) {
+  return syncLatestWithICloud(isManual);
 }
 
 function updateICloudSyncStatusUI(timestamp = null) {
@@ -17454,7 +17467,8 @@ function triggerICloudSyncToast() {
 
 window.pushDataToICloud = pushDataToICloud;
 window.pullDataFromICloud = pullDataFromICloud;
-window.triggerICloudSync = pushDataToICloud;
+window.syncLatestWithICloud = syncLatestWithICloud;
+window.triggerICloudSync = syncLatestWithICloud;
 
 // Clean Tree State Applier (Shared across Local, Backup, and iCloud restore)
 async function applyRestoredTreeState(state) {
