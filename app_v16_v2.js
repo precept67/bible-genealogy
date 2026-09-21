@@ -3059,6 +3059,7 @@ const modalClose = document.getElementById('modal-close');
 const modalCancel = document.getElementById('modal-cancel');
 const adminForm = document.getElementById('admin-form');
 const formDeleteBtn = document.getElementById('form-delete-btn');
+let isSavingAdminForm = false;
 
 // Layer Item Modal Elements
 const layerItemModal = document.getElementById('layer-item-modal');
@@ -3067,6 +3068,7 @@ const layerItemModalClose = document.getElementById('layer-item-modal-close');
 const layerItemModalCancel = document.getElementById('layer-item-modal-cancel');
 const layerItemForm = document.getElementById('layer-item-form');
 const layerItemDeleteBtn = document.getElementById('layer-item-delete-btn');
+let isSavingLayerItemForm = false;
 
 // Style Editor Elements
 const styleEditorToggle = document.getElementById('style-editor-toggle');
@@ -3334,7 +3336,7 @@ window.addEventListener('DOMContentLoaded', async () => {
           if (modal) modal.style.display = 'flex';
         });
         window.__TAURI__.event.listen('menu-about-app', () => {
-          alert("열린 족보이야기 (Bible Genealogy)\n버전: 1.1.4\n단축키: ⌘+Shift+E (편집 모드 전환)");
+          alert("열린 족보이야기 (Bible Genealogy)\n버전: 1.1.5\n단축키: ⌘+Shift+E (편집 모드 전환)");
         });
       } catch (_) {}
     }
@@ -10881,21 +10883,35 @@ function setupZoomPan() {
       
       let finalX = clickX;
       let finalY = clickY;
+      let isNearStart = false;
       
-      const lastPt = tempPolygonPoints[tempPolygonPoints.length - 1];
-      const dx = clickX - lastPt.x;
-      const dy = clickY - lastPt.y;
-      
-      if (isGridSnapActive) {
-        finalX = Math.round(finalX / 10) * 10;
-        finalY = Math.round(finalY / 10) * 10;
-      } else {
-        // 스마트 근접 스냅 (8px 이내 시 수평/수직 자동 정렬)
-        if (Math.abs(dy) <= 8) finalY = lastPt.y;
-        if (Math.abs(dx) <= 8) finalX = lastPt.x;
+      if (tempPolygonPoints.length >= 3) {
+        const startPt = tempPolygonPoints[0];
+        const distToStart = Math.hypot(clickX - startPt.x, clickY - startPt.y);
+        const snapThreshold = Math.max(25, 30 / currentScale);
+        if (distToStart <= snapThreshold) {
+          finalX = startPt.x;
+          finalY = startPt.y;
+          isNearStart = true;
+        }
       }
       
-      updateTempPolygonPreview({ x: finalX, y: finalY });
+      if (!isNearStart) {
+        const lastPt = tempPolygonPoints[tempPolygonPoints.length - 1];
+        const dx = clickX - lastPt.x;
+        const dy = clickY - lastPt.y;
+        
+        if (isGridSnapActive) {
+          finalX = Math.round(finalX / 10) * 10;
+          finalY = Math.round(finalY / 10) * 10;
+        } else {
+          // 스마트 근접 스냅 (8px 이내 시 수평/수직 자동 정렬)
+          if (Math.abs(dy) <= 8) finalY = lastPt.y;
+          if (Math.abs(dx) <= 8) finalX = lastPt.x;
+        }
+      }
+      
+      updateTempPolygonPreview({ x: finalX, y: finalY }, isNearStart);
     }
 
     if (activeAnnotationId) {
@@ -11068,6 +11084,17 @@ function setupZoomPan() {
       const rect = treeBoard.getBoundingClientRect();
       const clickX = (clientX - rect.left) / currentScale;
       const clickY = (clientY - rect.top) / currentScale;
+      
+      // 시작점과 만났는지 (마감) 체크: 점이 3개 이상일 때 시작점 근처를 클릭하면 마감 후 제목 입력창 표시
+      if (tempPolygonPoints.length >= 3) {
+        const startPt = tempPolygonPoints[0];
+        const distToStart = Math.hypot(clickX - startPt.x, clickY - startPt.y);
+        const closeThreshold = Math.max(25, 30 / currentScale);
+        if (distToStart <= closeThreshold) {
+          completePolygonCreation();
+          return;
+        }
+      }
       
       let finalX = clickX;
       let finalY = clickY;
@@ -13495,7 +13522,7 @@ function setupAdminMode() {
   }
 
   const handleAdminFormSubmit = (e) => {
-    if (e) {
+    if (e && typeof e.preventDefault === 'function') {
       e.preventDefault();
       e.stopPropagation();
     }
@@ -13508,21 +13535,18 @@ function setupAdminMode() {
 
   if (modalSubmitBtn) {
     modalSubmitBtn.onclick = (e) => {
-      e.stopPropagation();
-      if (adminForm && typeof adminForm.requestSubmit === 'function') {
-        adminForm.requestSubmit();
-      } else {
-        handleAdminFormSubmit(e);
+      if (e && typeof e.preventDefault === 'function') {
+        e.preventDefault();
+        e.stopPropagation();
       }
+      handleAdminFormSubmit(e);
     };
     modalSubmitBtn.ontouchend = (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      if (adminForm && typeof adminForm.requestSubmit === 'function') {
-        adminForm.requestSubmit();
-      } else {
-        handleAdminFormSubmit(e);
+      if (e && typeof e.preventDefault === 'function') {
+        e.preventDefault();
+        e.stopPropagation();
       }
+      handleAdminFormSubmit(e);
     };
   }
 
@@ -14245,14 +14269,21 @@ function activateAddPolygonMode() {
     banner.innerHTML = currentLang === 'en'
       ? `<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;">
            <span>⬡ Click/tap on screen to add polygon vertices.</span>
+           <button id="polygon-complete-draw-btn" style="display:none;background:#10b981;border:1px solid rgba(255,255,255,0.8);color:#fff;padding:2px 10px;border-radius:4px;cursor:pointer;font-size:12px;font-weight:bold;">✓ Complete</button>
            <button id="polygon-undo-point-btn" style="background:rgba(255,255,255,0.25);border:1px solid rgba(255,255,255,0.6);color:inherit;padding:2px 8px;border-radius:4px;cursor:pointer;font-size:12px;font-weight:bold;">⌫ Undo Point</button>
            <button id="polygon-cancel-draw-btn" style="background:rgba(255,255,255,0.25);border:1px solid rgba(255,255,255,0.6);color:inherit;padding:2px 8px;border-radius:4px;cursor:pointer;font-size:12px;">✕ Cancel</button>
          </div>`
       : `<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;">
            <span>⬡ 화면을 터치/클릭하여 꼭짓점을 추가하세요.</span>
+           <button id="polygon-complete-draw-btn" style="display:none;background:#10b981;border:1px solid rgba(255,255,255,0.8);color:#fff;padding:2px 10px;border-radius:4px;cursor:pointer;font-size:12px;font-weight:bold;">✓ 마감 및 완료</button>
            <button id="polygon-undo-point-btn" style="background:rgba(255,255,255,0.25);border:1px solid rgba(255,255,255,0.6);color:inherit;padding:2px 8px;border-radius:4px;cursor:pointer;font-size:12px;font-weight:bold;">⌫ 직전 점 삭제</button>
            <button id="polygon-cancel-draw-btn" style="background:rgba(255,255,255,0.25);border:1px solid rgba(255,255,255,0.6);color:inherit;padding:2px 8px;border-radius:4px;cursor:pointer;font-size:12px;">✕ 취소</button>
          </div>`;
+
+    document.getElementById('polygon-complete-draw-btn')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      completePolygonCreation();
+    });
     
     document.getElementById('polygon-undo-point-btn')?.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -14295,7 +14326,7 @@ function completePolygonCreation() {
   }
   
   const name = prompt(currentLang === 'en' ? "Enter the name for the new polygon area:" : "새로운 다각형 영역의 이름을 입력하세요:", currentLang === 'en' ? "New Area" : "새 영역");
-  if (!name) return;
+  if (name === null) return;
   
   pushHistoryState();
   const polyId = `poly-custom-${Date.now()}`;
@@ -14326,10 +14357,10 @@ function completePolygonCreation() {
 
   renderTree();
   updateTransform();
-  showToast(currentLang === 'en' ? `Area "${name}" added.` : `"${name}" 영역이 추가되었습니다.`);
+  showToast(currentLang === 'en' ? `Area "${trimmedName}" added.` : `"${trimmedName}" 영역이 추가되었습니다.`);
 }
 
-function updateTempPolygonPreview(mousePt = null) {
+function updateTempPolygonPreview(mousePt = null, isNearStart = false) {
   const svgNS = "http://www.w3.org/2000/svg";
   let preview = document.getElementById('temp-polygon-preview');
   if (!preview) {
@@ -14349,20 +14380,87 @@ function updateTempPolygonPreview(mousePt = null) {
   }
   
   if (pts.length > 0) {
-    // Connect back to the first point for visual closure preview if we have at least 2 points
-    if (pts.length >= 3 && mousePt) {
+    if (isNearStart && pts.length >= 3) {
       preview.setAttribute('points', pts.map(pt => `${pt.x},${pt.y}`).join(' ') + ` ${pts[0].x},${pts[0].y}`);
+      preview.setAttribute('stroke', '#10b981');
+      preview.setAttribute('fill', '#10b981');
+      preview.setAttribute('fill-opacity', '0.15');
     } else {
+      preview.setAttribute('stroke', '#ea580c');
+      preview.setAttribute('fill', '#ea580c');
+      preview.setAttribute('fill-opacity', '0.1');
       preview.setAttribute('points', pts.map(pt => `${pt.x},${pt.y}`).join(' '));
     }
   } else {
     preview.removeAttribute('points');
+  }
+
+  // Update or render starting point circle indicator
+  let startCircle = document.getElementById('temp-polygon-start-circle');
+  if (tempPolygonPoints.length > 0) {
+    const startPt = tempPolygonPoints[0];
+    if (!startCircle) {
+      startCircle = document.createElementNS(svgNS, 'circle');
+      startCircle.id = 'temp-polygon-start-circle';
+      startCircle.style.cursor = 'pointer';
+      startCircle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (tempPolygonPoints.length >= 3) {
+          completePolygonCreation();
+        }
+      });
+      svgLayer.appendChild(startCircle);
+    }
+    startCircle.setAttribute('cx', startPt.x);
+    startCircle.setAttribute('cy', startPt.y);
+
+    const scaleFactor = Math.min(1.5, Math.max(0.4, currentScale));
+    if (tempPolygonPoints.length >= 3) {
+      const radius = isNearStart ? (14 / scaleFactor) : (8 / scaleFactor);
+      startCircle.setAttribute('r', radius);
+      startCircle.setAttribute('fill', isNearStart ? '#10b981' : '#ea580c');
+      startCircle.setAttribute('stroke', '#ffffff');
+      startCircle.setAttribute('stroke-width', isNearStart ? '3' : '2');
+      startCircle.style.filter = isNearStart ? 'drop-shadow(0 0 6px rgba(16, 185, 129, 0.9))' : 'drop-shadow(0 0 4px rgba(234, 88, 12, 0.7))';
+    } else {
+      startCircle.setAttribute('r', 6 / scaleFactor);
+      startCircle.setAttribute('fill', '#ea580c');
+      startCircle.setAttribute('stroke', '#ffffff');
+      startCircle.setAttribute('stroke-width', '2');
+      startCircle.style.filter = '';
+    }
+  } else if (startCircle) {
+    startCircle.remove();
+  }
+
+  // Update banner complete button visibility & guide text dynamically
+  const completeBtn = document.getElementById('polygon-complete-draw-btn');
+  const banner = document.getElementById('add-person-instruction');
+  const bannerSpan = banner ? banner.querySelector('span') : null;
+  if (completeBtn) {
+    if (tempPolygonPoints.length >= 3) {
+      completeBtn.style.display = 'inline-block';
+      if (bannerSpan) {
+        bannerSpan.innerHTML = currentLang === 'en'
+          ? '⬡ Click <b>starting point</b> to close loop, or click <b>[Complete]</b>.'
+          : '⬡ <b>시작점</b>(원)을 클릭해 마감하거나 <b>[마감 및 완료]</b>를 누르세요.';
+      }
+    } else {
+      completeBtn.style.display = 'none';
+      if (bannerSpan) {
+        bannerSpan.innerHTML = currentLang === 'en'
+          ? '⬡ Click/tap on screen to add polygon vertices.'
+          : '⬡ 화면을 터치/클릭하여 꼭짓점을 추가하세요.';
+      }
+    }
   }
 }
 
 function removeTempPolygonPreview() {
   const preview = document.getElementById('temp-polygon-preview');
   if (preview) preview.remove();
+  const startCircle = document.getElementById('temp-polygon-start-circle');
+  if (startCircle) startCircle.remove();
 }
 
 
@@ -14592,6 +14690,7 @@ function ensureModalInputsFocusable() {
 }
 
 function openAdminForm(personId) {
+  isSavingAdminForm = false;
   editingPersonId = personId;
   const texts = UI_TEXTS[currentLang] || UI_TEXTS.ko;
   const formEl = document.getElementById('admin-form');
@@ -14770,10 +14869,16 @@ function closeAdminForm() {
   const modalEl = document.getElementById('admin-modal');
   if (modalEl) modalEl.style.display = 'none';
   editingPersonId = null;
+  setTimeout(() => {
+    isSavingAdminForm = false;
+  }, 100);
 }
 
 function saveAdminForm() {
-  const texts = UI_TEXTS[currentLang] || UI_TEXTS.ko;
+  if (isSavingAdminForm) return;
+  isSavingAdminForm = true;
+  try {
+    const texts = UI_TEXTS[currentLang] || UI_TEXTS.ko;
   let newId = document.getElementById('form-id') ? document.getElementById('form-id').value.trim() : '';
   const name = document.getElementById('form-name') ? document.getElementById('form-name').value.trim() : '';
   const engName = document.getElementById('form-eng') ? document.getElementById('form-eng').value.trim() : '';
@@ -15218,7 +15323,12 @@ function saveAdminForm() {
     }
   }
   
-  closeAdminForm();
+    closeAdminForm();
+  } finally {
+    setTimeout(() => {
+      isSavingAdminForm = false;
+    }, 300);
+  }
 }
 
 function deletePerson(personId) {
@@ -18613,179 +18723,188 @@ function setupLayerItemModalEvents() {
 
   if (layerItemForm) {
     layerItemForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      if (!activeLayerType) return;
-      
-      const nameVal = document.getElementById('layer-item-name').value.trim();
-      const descVal = document.getElementById('layer-item-desc').value.trim();
-      const refsVal = document.getElementById('layer-item-refs').value.trim();
-      
-      const refsArray = refsVal.split(',').map(r => r.trim()).filter(r => r.length > 0);
-      
-      // Get checkboxes checked
-      let checkedPeople = Array.from(document.querySelectorAll('#layer-item-people-list input[type="checkbox"]:checked'))
-        .map(cb => cb.value);
-      let checkedEvents = Array.from(document.querySelectorAll('#layer-item-events-list input[type="checkbox"]:checked'))
-        .map(cb => cb.value);
-      let checkedLocations = Array.from(document.querySelectorAll('#layer-item-locations-list input[type="checkbox"]:checked'))
-        .map(cb => cb.value);
-      
-      let dbChanged = false;
-      checkedPeople = checkedPeople.map(val => {
-        const matched = db.find(p => p.id === val || p.name === val);
-        if (matched) return matched.id;
-        
-        const newId = 'person-' + Date.now() + '-' + Math.floor(Math.random() * 100);
-        const newPerson = {
-          id: newId,
-          name: val,
-          engName: '',
-          gender: 'M',
-          generation: activeLayerItem && activeLayerItem.generation ? activeLayerItem.generation : 20,
-          column: activeLayerItem && activeLayerItem.column ? activeLayerItem.column : 0,
-          parents: [],
-          spouses: [],
-          desc: "자동 생성된 인물",
-          isMain: false,
-          isManual: true
-        };
-        db.push(newPerson);
-        dbChanged = true;
-        return newId;
-      });
-      if (dbChanged) {
-        saveDatabase();
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
       }
-
-      let eventsChanged = false;
-      checkedEvents = checkedEvents.map(val => {
-        const matched = events.find(e => e.id === val || e.name === val);
-        if (matched) return matched.id;
+      if (isSavingLayerItemForm) return;
+      isSavingLayerItemForm = true;
+      try {
+        if (!activeLayerType) return;
         
-        const newId = 'ev-' + Date.now() + '-' + Math.floor(Math.random() * 100);
-        const newEvent = {
-          id: newId,
-          name: val,
-          desc: "자동 생성된 사건",
-          refs: [],
-          relatedPeople: [],
-          x: 5000,
-          y: 5000
-        };
-        events.push(newEvent);
-        eventsChanged = true;
-        return newId;
-      });
-      if (eventsChanged) {
-        saveEvents();
-      }
-
-      let locationsChanged = false;
-      checkedLocations = checkedLocations.map(val => {
-        const matched = locations.find(l => l.id === val || l.name === val);
-        if (matched) return matched.id;
+        const nameVal = document.getElementById('layer-item-name').value.trim();
+        const descVal = document.getElementById('layer-item-desc').value.trim();
+        const refsVal = document.getElementById('layer-item-refs').value.trim();
         
-        const newId = 'loc-' + Date.now() + '-' + Math.floor(Math.random() * 100);
-        const newLocation = {
-          id: newId,
-          name: val,
-          desc: "자동 생성된 장소",
-          refs: [],
-          relatedPeople: [],
-          x: 5000,
-          y: 5000
-        };
-        locations.push(newLocation);
-        locationsChanged = true;
-        return newId;
-      });
-      if (locationsChanged) {
-        saveLocations();
-      }
-      
-      pushHistoryState();
-      
-      if (isLayerItemAddMode) {
-        const newId = (activeLayerType === 'event' ? 'ev-' : 'loc-') + Date.now();
-        const newItem = {
-          id: newId,
-          name: nameVal,
-          desc: descVal,
-          refs: refsArray,
-          relatedPeople: checkedPeople,
-          x: Math.round(newLayerItemCoords.x),
-          y: Math.round(newLayerItemCoords.y)
-        };
+        const refsArray = refsVal.split(',').map(r => r.trim()).filter(r => r.length > 0);
         
-        if (activeLayerType === 'event') {
-          newItem.relatedLocations = checkedLocations;
-          events.push(newItem);
-          saveEvents();
+        // Get checkboxes checked
+        let checkedPeople = Array.from(document.querySelectorAll('#layer-item-people-list input[type="checkbox"]:checked'))
+          .map(cb => cb.value);
+        let checkedEvents = Array.from(document.querySelectorAll('#layer-item-events-list input[type="checkbox"]:checked'))
+          .map(cb => cb.value);
+        let checkedLocations = Array.from(document.querySelectorAll('#layer-item-locations-list input[type="checkbox"]:checked'))
+          .map(cb => cb.value);
+        
+        let dbChanged = false;
+        checkedPeople = checkedPeople.map(val => {
+          const matched = db.find(p => p.id === val || p.name === val);
+          if (matched) return matched.id;
           
-          // Auto toggle events layer on
-          const toggleLayer = document.getElementById('toggle-layer-events');
-          if (toggleLayer && !toggleLayer.checked) {
-            toggleLayer.checked = true;
-            const layer = document.getElementById('layer-events');
-            if (layer) layer.style.display = '';
-          }
-          
-          renderEvents();
-          showToast("📜 새 사건이 추가되었습니다.");
-        } else {
-          newItem.relatedEvents = checkedEvents;
-          locations.push(newItem);
-          saveLocations();
-          
-          // Auto toggle locations layer on
-          const toggleLayer = document.getElementById('toggle-layer-locations');
-          if (toggleLayer && !toggleLayer.checked) {
-            toggleLayer.checked = true;
-            const layer = document.getElementById('layer-locations');
-            if (layer) layer.style.display = '';
-          }
-          
-          renderLocations();
-          showToast("📍 새 장소가 추가되었습니다.");
+          const newId = 'person-' + Date.now() + '-' + Math.floor(Math.random() * 100);
+          const newPerson = {
+            id: newId,
+            name: val,
+            engName: '',
+            gender: 'M',
+            generation: activeLayerItem && activeLayerItem.generation ? activeLayerItem.generation : 20,
+            column: activeLayerItem && activeLayerItem.column ? activeLayerItem.column : 0,
+            parents: [],
+            spouses: [],
+            desc: "자동 생성된 인물",
+            isMain: false,
+            isManual: true
+          };
+          db.push(newPerson);
+          dbChanged = true;
+          return newId;
+        });
+        if (dbChanged) {
+          saveDatabase();
         }
-      } else {
-        // Edit Mode
-        if (!activeLayerItem) return;
+
+        let eventsChanged = false;
+        checkedEvents = checkedEvents.map(val => {
+          const matched = events.find(e => e.id === val || e.name === val);
+          if (matched) return matched.id;
+          
+          const newId = 'ev-' + Date.now() + '-' + Math.floor(Math.random() * 100);
+          const newEvent = {
+            id: newId,
+            name: val,
+            desc: "자동 생성된 사건",
+            refs: [],
+            relatedPeople: [],
+            relatedLocations: []
+          };
+          events.push(newEvent);
+          eventsChanged = true;
+          return newId;
+        });
+        if (eventsChanged) {
+          saveEvents();
+        }
+
+        let locsChanged = false;
+        checkedLocations = checkedLocations.map(val => {
+          const matched = locations.find(l => l.id === val || l.name === val);
+          if (matched) return matched.id;
+          
+          const newId = 'loc-' + Date.now() + '-' + Math.floor(Math.random() * 100);
+          const newLocation = {
+            id: newId,
+            name: val,
+            coords: '',
+            desc: "자동 생성된 장소",
+            refs: [],
+            relatedPeople: [],
+            relatedEvents: []
+          };
+          locations.push(newLocation);
+          locsChanged = true;
+          return newId;
+        });
+        if (locsChanged) {
+          saveLocations();
+        }
         
-        if (activeLayerType === 'annotation') {
-          activeLayerItem.relatedPeople = checkedPeople;
-          activeLayerItem.relatedEvents = checkedEvents;
-          activeLayerItem.relatedLocations = checkedLocations;
-          saveAnnotations();
-          showToast("텍스트 상자 관계가 저장되었습니다.");
-        } else {
-          activeLayerItem.name = nameVal;
-          activeLayerItem.desc = descVal;
-          activeLayerItem.refs = refsArray;
-          activeLayerItem.relatedPeople = checkedPeople;
+        if (isLayerItemAddMode) {
+          const prefix = activeLayerType === 'event' ? 'ev-' : 'loc-';
+          const newId = prefix + Date.now();
+          const newItem = {
+            id: newId,
+            name: nameVal,
+            desc: descVal,
+            refs: refsArray,
+            relatedPeople: checkedPeople,
+            generation: newLayerItemCoords ? Math.round(newLayerItemCoords.y / 200) : 0,
+            column: newLayerItemCoords ? parseFloat((newLayerItemCoords.x / 140).toFixed(1)) : 0
+          };
           
           if (activeLayerType === 'event') {
-            activeLayerItem.relatedLocations = checkedLocations;
+            newItem.relatedLocations = checkedLocations;
+            events.push(newItem);
             saveEvents();
+            
+            // Auto toggle events layer on
+            const toggleLayer = document.getElementById('toggle-layer-events');
+            if (toggleLayer && !toggleLayer.checked) {
+              toggleLayer.checked = true;
+              const layer = document.getElementById('layer-events');
+              if (layer) layer.style.display = '';
+            }
+            
             renderEvents();
+            showToast("📜 새 사건이 추가되었습니다.");
           } else {
-            activeLayerItem.relatedEvents = checkedEvents;
+            newItem.relatedEvents = checkedEvents;
+            locations.push(newItem);
             saveLocations();
+            
+            // Auto toggle locations layer on
+            const toggleLayer = document.getElementById('toggle-layer-locations');
+            if (toggleLayer && !toggleLayer.checked) {
+              toggleLayer.checked = true;
+              const layer = document.getElementById('layer-locations');
+              if (layer) layer.style.display = '';
+            }
+            
             renderLocations();
+            showToast("📍 새 장소가 추가되었습니다.");
           }
-          showToast("수정되었습니다.");
+        } else {
+          // Edit Mode
+          if (!activeLayerItem) return;
+          
+          if (activeLayerType === 'annotation') {
+            activeLayerItem.relatedPeople = checkedPeople;
+            activeLayerItem.relatedEvents = checkedEvents;
+            activeLayerItem.relatedLocations = checkedLocations;
+            saveAnnotations();
+            showToast("텍스트 상자 관계가 저장되었습니다.");
+          } else {
+            activeLayerItem.name = nameVal;
+            activeLayerItem.desc = descVal;
+            activeLayerItem.refs = refsArray;
+            activeLayerItem.relatedPeople = checkedPeople;
+            
+            if (activeLayerType === 'event') {
+              activeLayerItem.relatedLocations = checkedLocations;
+              saveEvents();
+              renderEvents();
+            } else {
+              activeLayerItem.relatedEvents = checkedEvents;
+              saveLocations();
+              renderLocations();
+            }
+            showToast("수정되었습니다.");
+          }
         }
+        
+        updateTransform();
+        if (dbChanged) {
+          renderTree();
+        }
+        layerItemModal.style.display = 'none';
+        activeLayerItem = null;
+        activeLayerType = null;
+        isLayerItemAddMode = false;
+        autoSaveToServer();
+      } finally {
+        setTimeout(() => {
+          isSavingLayerItemForm = false;
+        }, 300);
       }
-      
-      updateTransform();
-      if (dbChanged) {
-        renderTree();
-      }
-      layerItemModal.style.display = 'none';
-      activeLayerItem = null;
-      activeLayerType = null;
-      isLayerItemAddMode = false;
-      autoSaveToServer();
     });
   }
 }
@@ -21304,7 +21423,7 @@ function setupDesktopMacMenubar() {
     }
   });
   bindMenuAction('mac-menu-about-help', () => {
-    alert("열린 족보이야기 (Bible Genealogy)\n버전: 1.1.4\n단축키: ⌘+Shift+E (편집 모드 전환)");
+    alert("열린 족보이야기 (Bible Genealogy)\n버전: 1.1.5\n단축키: ⌘+Shift+E (편집 모드 전환)");
   });
 
   // Dropdown Open/Close Hover & Tap Management
@@ -21359,7 +21478,7 @@ function setupDesktopMacMenubar() {
   window.exportStudyNotesFile = async function() {
     try {
       const backupData = {
-        version: "1.1.4",
+        version: "1.1.5",
         appName: "열린 족보이야기",
         exportDate: new Date().toISOString(),
         userNotes: typeof userNotes !== 'undefined' ? userNotes : {},

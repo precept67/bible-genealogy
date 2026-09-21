@@ -6193,3 +6193,23 @@ body.admin-mode:not(.platform-iphone):not(.platform-android-phone):not(.platform
   display: none !important;
 }
 
+/* Android Phone Top Controls Position (+15px lowered) */
+html.platform-android-phone #floating-search-wrapper,
+body.platform-android-phone #floating-search-wrapper,
+html.platform-android-phone #slide-lock-container,
+body.platform-android-phone #slide-lock-container,
+html.platform-android-phone #floating-settings-btn,
+body.platform-android-phone #floating-settings-btn {
+  top: calc(clamp(6px, 1.8vw, 10px) + env(safe-area-inset-top, 0px)) !important;
+}
+
+/* Android Pad Top Controls Position (+15px lowered) */
+html.platform-android-pad #floating-search-wrapper,
+body.platform-android-pad #floating-search-wrapper,
+html.platform-android-pad #slide-lock-container,
+body.platform-android-pad #slide-lock-container,
+html.platform-android-pad #floating-settings-btn,
+body.platform-android-pad #floating-settings-btn {
+  top: calc(clamp(8px, 1.5vw, 14px) + env(safe-area-inset-top, 0px)) !important;
+}
+
