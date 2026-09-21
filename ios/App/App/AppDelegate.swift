@@ -37,7 +37,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private func notifyFullscreenState(isFullscreen: Bool) {
         for scene in UIApplication.shared.connectedScenes {
             if let windowScene = scene as? UIWindowScene {
-                windowScene.titlebar?.titleVisibility = .hidden
+                windowScene.titlebar?.titleVisibility = isFullscreen ? .hidden : .visible
                 windowScene.titlebar?.toolbar = nil
                 if #available(iOS 14.0, *) {
                     windowScene.titlebar?.separatorStyle = .none
@@ -92,7 +92,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private func configureMacCatalystWindow() {
         for scene in UIApplication.shared.connectedScenes {
             if let windowScene = scene as? UIWindowScene {
-                windowScene.titlebar?.titleVisibility = .hidden
+                windowScene.titlebar?.titleVisibility = .visible
                 windowScene.titlebar?.toolbar = nil
                 if #available(iOS 14.0, *) {
                     windowScene.titlebar?.separatorStyle = .none
