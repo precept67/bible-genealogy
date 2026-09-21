@@ -17510,127 +17510,58 @@ async function applyRestoredTreeState(state) {
       localStorage.setItem('bible_tree_deleted_ids', JSON.stringify(mergedDeleted));
     }
 
-    // Annotations / Boxes (메모 상자 / 텍스트 상자 - 내용 및 위치 완벽 동기화)
+    // Annotations / Boxes (메모 상자 / 텍스트 상자 - 내용, 위치, 크기, 색상 및 삭제 완벽 동기화)
     if (state.annotations && Array.isArray(state.annotations)) {
-      let currentAnnots = [];
-      try {
-        currentAnnots = JSON.parse(localStorage.getItem('bible_tree_annotations') || '[]');
-        if (!Array.isArray(currentAnnots)) currentAnnots = [];
-      } catch(_) { currentAnnots = []; }
-      const annotMap = new Map();
-      currentAnnots.forEach(a => { if (a && a.id) annotMap.set(a.id, a); });
-      state.annotations.forEach(a => { if (a && a.id) annotMap.set(a.id, a); });
-      const mergedAnnots = Array.from(annotMap.values());
-      annotations = mergedAnnots;
-      localStorage.setItem('bible_tree_annotations', JSON.stringify(mergedAnnots));
+      annotations = state.annotations;
+      localStorage.setItem('bible_tree_annotations', JSON.stringify(annotations));
     }
 
-    // Events (사건 마커 - 이름, 설명, 위치 동기화)
+    // Events (사건 마커 - 이름, 설명, 위치 및 삭제 동기화)
     if (state.events && Array.isArray(state.events)) {
-      let currentEvents = [];
-      try {
-        currentEvents = JSON.parse(localStorage.getItem('bible_tree_events') || '[]');
-        if (!Array.isArray(currentEvents)) currentEvents = [];
-      } catch(_) { currentEvents = []; }
-      const evMap = new Map();
-      currentEvents.forEach(e => { if (e && e.id) evMap.set(e.id, e); });
-      state.events.forEach(e => { if (e && e.id) evMap.set(e.id, e); });
-      const mergedEvents = Array.from(evMap.values());
-      events = mergedEvents;
-      localStorage.setItem('bible_tree_events', JSON.stringify(mergedEvents));
+      events = state.events;
+      localStorage.setItem('bible_tree_events', JSON.stringify(events));
     }
 
-    // Locations (장소 마커 - 이름, 설명, 위치 동기화)
+    // Locations (장소 마커 - 이름, 설명, 위치 및 삭제 동기화)
     if (state.locations && Array.isArray(state.locations)) {
-      let currentLocs = [];
-      try {
-        currentLocs = JSON.parse(localStorage.getItem('bible_tree_locations') || '[]');
-        if (!Array.isArray(currentLocs)) currentLocs = [];
-      } catch(_) { currentLocs = []; }
-      const locMap = new Map();
-      currentLocs.forEach(l => { if (l && l.id) locMap.set(l.id, l); });
-      state.locations.forEach(l => { if (l && l.id) locMap.set(l.id, l); });
-      const mergedLocs = Array.from(locMap.values());
-      locations = mergedLocs;
-      localStorage.setItem('bible_tree_locations', JSON.stringify(mergedLocs));
+      locations = state.locations;
+      localStorage.setItem('bible_tree_locations', JSON.stringify(locations));
     }
 
-    // Custom Polygons / Boxes (다각형 영역 박스 - 라벨, 좌표/위치 목록 points 완벽 동기화)
+    // Custom Polygons / Boxes (다각형 영역 박스 - 라벨, 좌표 목록 points 및 삭제 완벽 동기화)
     if (state.customPolygons && Array.isArray(state.customPolygons)) {
-      let currentPolys = [];
-      try {
-        currentPolys = JSON.parse(localStorage.getItem('bible_tree_custom_polygons') || '[]');
-        if (!Array.isArray(currentPolys)) currentPolys = [];
-      } catch(_) { currentPolys = []; }
-      const polyMap = new Map();
-      currentPolys.forEach(p => { if (p && p.id) polyMap.set(p.id, p); });
-      state.customPolygons.forEach(p => { if (p && p.id) polyMap.set(p.id, p); });
-      const mergedPolys = Array.from(polyMap.values());
-      customPolygons = mergedPolys;
-      localStorage.setItem('bible_tree_custom_polygons', JSON.stringify(mergedPolys));
+      customPolygons = state.customPolygons;
+      localStorage.setItem('bible_tree_custom_polygons', JSON.stringify(customPolygons));
     }
 
     // Line Bends (연결선 꺾임점 좌표 동기화)
     if (state.lineBends && typeof state.lineBends === 'object' && !Array.isArray(state.lineBends)) {
-      let currentBends = {};
-      try {
-        currentBends = JSON.parse(localStorage.getItem('bible_tree_line_bends') || '{}');
-        if (!currentBends || typeof currentBends !== 'object') currentBends = {};
-      } catch(_) { currentBends = {}; }
-      lineBends = { ...currentBends, ...state.lineBends };
+      lineBends = state.lineBends;
       localStorage.setItem('bible_tree_line_bends', JSON.stringify(lineBends));
     }
 
     // Spouse Splits
     if (state.spouseSplits && typeof state.spouseSplits === 'object' && !Array.isArray(state.spouseSplits)) {
-      let currentSplits = {};
-      try {
-        currentSplits = JSON.parse(localStorage.getItem('bible_tree_spouse_splits') || '{}');
-        if (!currentSplits || typeof currentSplits !== 'object') currentSplits = {};
-      } catch(_) { currentSplits = {}; }
-      spouseSplits = { ...currentSplits, ...state.spouseSplits };
+      spouseSplits = state.spouseSplits;
       localStorage.setItem('bible_tree_spouse_splits', JSON.stringify(spouseSplits));
     }
 
     // Line Z-Indices
     if (state.lineZIndices && typeof state.lineZIndices === 'object' && !Array.isArray(state.lineZIndices)) {
-      let currentZ = {};
-      try {
-        currentZ = JSON.parse(localStorage.getItem('bible_tree_line_zindices') || '{}');
-        if (!currentZ || typeof currentZ !== 'object') currentZ = {};
-      } catch(_) { currentZ = {}; }
-      lineZIndices = { ...currentZ, ...state.lineZIndices };
+      lineZIndices = state.lineZIndices;
       localStorage.setItem('bible_tree_line_zindices', JSON.stringify(lineZIndices));
     }
 
-    // Custom Visual Lines
+    // Custom Visual Lines (사용자 선 및 삭제 동기화)
     if (state.customVisualLines && Array.isArray(state.customVisualLines)) {
-      let currentLines = [];
-      try {
-        currentLines = JSON.parse(localStorage.getItem('bible_tree_custom_visual_lines') || '[]');
-        if (!Array.isArray(currentLines)) currentLines = [];
-      } catch(_) { currentLines = []; }
-      const lineMap = new Map();
-      currentLines.forEach(l => { if (l && l.id) lineMap.set(l.id, l); });
-      state.customVisualLines.forEach(l => { if (l && l.id) lineMap.set(l.id, l); });
-      const mergedLines = Array.from(lineMap.values());
-      customVisualLines = mergedLines;
-      localStorage.setItem('bible_tree_custom_visual_lines', JSON.stringify(mergedLines));
+      customVisualLines = state.customVisualLines;
+      localStorage.setItem('bible_tree_custom_visual_lines', JSON.stringify(customVisualLines));
     }
 
-    // Canvas Junctions (분기점 위치 동기화)
+    // Canvas Junctions (분기점 위치 및 삭제 동기화)
     if (state.canvasJunctions && Array.isArray(state.canvasJunctions)) {
-      let currentJuncs = [];
-      try {
-        currentJuncs = JSON.parse(localStorage.getItem('bible_tree_canvas_junctions') || '[]');
-        if (!Array.isArray(currentJuncs)) currentJuncs = [];
-      } catch(_) { currentJuncs = []; }
-      const juncMap = new Map();
-      currentJuncs.forEach(j => { if (j && j.id) juncMap.set(j.id, j); });
-      state.canvasJunctions.forEach(j => { if (j && j.id) juncMap.set(j.id, j); });
-      const mergedJuncs = Array.from(juncMap.values());
-      canvasJunctions = mergedJuncs;
-      localStorage.setItem('bible_tree_canvas_junctions', JSON.stringify(mergedJuncs));
+      canvasJunctions = state.canvasJunctions;
+      localStorage.setItem('bible_tree_canvas_junctions', JSON.stringify(canvasJunctions));
     }
 
     // Style Settings
