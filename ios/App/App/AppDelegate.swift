@@ -32,7 +32,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let sceneNotifications = [
             UIApplication.didBecomeActiveNotification,
             UIWindow.didBecomeKeyNotification,
-            UIWindow.didBecomeVisibleNotification
+            UIWindow.didBecomeVisibleNotification,
+            UIScene.willConnectNotification,
+            UIScene.didActivateNotification
         ]
         for notif in sceneNotifications {
             NotificationCenter.default.addObserver(forName: notif, object: nil, queue: .main) { [weak self] _ in
