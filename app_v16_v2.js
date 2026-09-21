@@ -4376,6 +4376,9 @@ function saveLineBends() {
   if (typeof persistTreeDataLocally === 'function') {
     persistTreeDataLocally(true);
   }
+  if (localStorage.getItem('icloud_sync_enabled') === 'true' && typeof pushDataToICloud === 'function') {
+    pushDataToICloud(false, true);
+  }
   autoSaveToServer();
 }
 
@@ -4383,6 +4386,9 @@ function saveLineZIndices() {
   localStorage.setItem('bible_tree_line_zindices', JSON.stringify(lineZIndices));
   if (typeof persistTreeDataLocally === 'function') {
     persistTreeDataLocally(true);
+  }
+  if (localStorage.getItem('icloud_sync_enabled') === 'true' && typeof pushDataToICloud === 'function') {
+    pushDataToICloud(false, true);
   }
   autoSaveToServer();
 }
@@ -4448,6 +4454,9 @@ function saveSpouseSplits() {
   if (typeof persistTreeDataLocally === 'function') {
     persistTreeDataLocally(true);
   }
+  if (localStorage.getItem('icloud_sync_enabled') === 'true' && typeof pushDataToICloud === 'function') {
+    pushDataToICloud(false, true);
+  }
 }
 
 function loadCustomVisualLines() {
@@ -4470,6 +4479,9 @@ function saveCustomVisualLines() {
   if (typeof persistTreeDataLocally === 'function') {
     persistTreeDataLocally(true);
   }
+  if (localStorage.getItem('icloud_sync_enabled') === 'true' && typeof pushDataToICloud === 'function') {
+    pushDataToICloud(false, true);
+  }
 }
 
 function loadCanvasJunctions() {
@@ -4491,6 +4503,9 @@ function saveCanvasJunctions() {
   localStorage.setItem('bible_tree_canvas_junctions', JSON.stringify(canvasJunctions));
   if (typeof persistTreeDataLocally === 'function') {
     persistTreeDataLocally(true);
+  }
+  if (localStorage.getItem('icloud_sync_enabled') === 'true' && typeof pushDataToICloud === 'function') {
+    pushDataToICloud(false, true);
   }
 }
 
@@ -6501,6 +6516,12 @@ function initStyleSettings() {
 
 function saveStyleSettings() {
   localStorage.setItem('bible_tree_style_settings', JSON.stringify(styleSettings));
+  if (typeof persistTreeDataLocally === 'function') {
+    persistTreeDataLocally(true);
+  }
+  if (localStorage.getItem('icloud_sync_enabled') === 'true' && typeof pushDataToICloud === 'function') {
+    pushDataToICloud(false, true);
+  }
 }
 
 function applyStyleSettings() {
