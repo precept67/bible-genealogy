@@ -5334,7 +5334,7 @@ body.platform-macos #main-titlebar {
 #desktop-mac-menubar {
   display: none;
   position: fixed;
-  top: 0;
+  top: 28px;
   left: 0;
   right: 0;
   height: 38px;
@@ -5361,13 +5361,13 @@ body.platform-macos #main-titlebar {
 html.platform-macos #desktop-mac-menubar,
 body.platform-macos #desktop-mac-menubar {
   display: flex !important;
-  top: 0px !important;
-  padding: 0 16px 0 80px !important;
+  top: 28px !important;
+  padding: 0 16px !important;
   background: #ffffff !important;
   color: #111827 !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
-  transition: top 0.2s ease, padding 0.2s ease;
+  transition: top 0.2s ease;
 }
 
 /* Fullscreen: Move menubar to the very top (top: 0) with 100% TRANSPARENCY */
@@ -5430,8 +5430,8 @@ body.platform-macos[data-theme="dark"] #desktop-mac-menubar {
 
 html.platform-macos #viewer-container,
 body.platform-macos #viewer-container {
-  top: 38px !important;
-  height: calc(100% - 38px) !important;
+  top: 66px !important;
+  height: calc(100% - 66px) !important;
 }
 
 /* In fullscreen mode: Viewer is ALWAYS 100% full height from top: 0 */
@@ -5443,11 +5443,11 @@ body.is-fullscreen.platform-macos #viewer-container {
   height: 100% !important;
 }
 
-/* When menubar is floating in windowed mode: viewer starts at top: 0px */
+/* When menubar is floating in windowed mode: viewer starts at top: 28px (under native titlebar) */
 html.is-menubar-floating.platform-macos #viewer-container,
 body.is-menubar-floating.platform-macos #viewer-container {
-  top: 0px !important;
-  height: 100% !important;
+  top: 28px !important;
+  height: calc(100% - 28px) !important;
 }
 
 /* When menubar is floating in fullscreen mode: viewer uses 100% full screen */
@@ -5620,6 +5620,87 @@ html.platform-android-pad:not(.platform-macos) #desktop-mac-menubar {
   height: 100%;
   -webkit-app-region: no-drag !important;
   pointer-events: auto !important;
+}
+
+.mac-menubar-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  margin: 0 auto;
+  -webkit-app-region: no-drag !important;
+  pointer-events: auto !important;
+}
+
+.mac-zoom-control-box {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 14px;
+  padding: 2px 6px;
+  height: 28px;
+  box-sizing: border-box;
+}
+
+[data-theme="dark"] .mac-zoom-control-box {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.mac-zoom-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.mac-zoom-btn:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .mac-zoom-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.mac-zoom-btn:active {
+  transform: scale(0.92);
+}
+
+.mac-zoom-indicator {
+  font-size: 13px;
+  font-weight: 600;
+  min-width: 44px;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  padding: 0 4px;
+  border-radius: 4px;
+  transition: background 0.15s ease;
+}
+
+.mac-zoom-indicator:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="dark"] .mac-zoom-indicator:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Hide bottom controls wrapper on desktop macOS */
+html.platform-macos #bottom-controls-wrapper,
+body.platform-macos #bottom-controls-wrapper {
+  display: none !important;
 }
 
 .mac-menubar-right {
