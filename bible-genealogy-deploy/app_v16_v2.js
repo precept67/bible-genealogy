@@ -12549,9 +12549,12 @@ function bindUniversalSearchInput(inputEl, resultsEl) {
         
         li.addEventListener('click', (e) => {
           e.stopPropagation();
-          const selectName = matched.dataType === 'person' ? getCharName(matched) : (matched.dataType === 'event' ? getEventName(matched) : getLocationName(matched));
-          inputEl.value = selectName;
-          resultsEl.style.display = 'none';
+          inputEl.value = '';
+          document.querySelectorAll('#searchInput, #mobileSearchInput, .mac-search-input, .search-box').forEach(inp => inp.value = '');
+          if (resultsEl) {
+            resultsEl.innerHTML = '';
+            resultsEl.style.display = 'none';
+          }
           
           document.querySelectorAll('.person-card.highlight, .layer-marker.highlight').forEach(el => {
             el.classList.remove('highlight');
@@ -12585,6 +12588,12 @@ function bindUniversalSearchInput(inputEl, resultsEl) {
 
   inputEl.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
+      inputEl.value = '';
+      document.querySelectorAll('#searchInput, #mobileSearchInput, .mac-search-input, .search-box').forEach(inp => inp.value = '');
+      if (resultsEl) {
+        resultsEl.innerHTML = '';
+        resultsEl.style.display = 'none';
+      }
       inputEl.blur();
       if (window.closeSearchWrapper) {
         window.closeSearchWrapper();
