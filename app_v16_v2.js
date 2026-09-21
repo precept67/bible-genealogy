@@ -10557,7 +10557,14 @@ function getCustomOrthogonalPath(x0, y0, x_child, y_child, points) {
   vertices.push({ x: x_child, y: y_child });
   
   return getRoundedCornersPath(vertices, styleSettings.cornerRadius);
+function syncZoomText() {
+  const percent = `${Math.round(currentScale * 100)}%`;
+  const zoomLevelEl = document.getElementById('zoom-level');
+  if (zoomLevelEl) zoomLevelEl.textContent = percent;
+  const zoomMenubarEl = document.getElementById('zoom-level-menubar');
+  if (zoomMenubarEl) zoomMenubarEl.textContent = percent;
 }
+window.syncZoomText = syncZoomText;
 
 // Setup Zoom and Pan Interaction Handler
 function setupZoomPan() {
@@ -10565,6 +10572,10 @@ function setupZoomPan() {
   const zoomOutBtn = document.getElementById('zoom-out');
   const zoomResetBtn = document.getElementById('zoom-reset');
   const zoomLevelEl = document.getElementById('zoom-level');
+
+  const zoomInMenubar = document.getElementById('zoom-in-menubar');
+  const zoomOutMenubar = document.getElementById('zoom-out-menubar');
+  const zoomLevelMenubar = document.getElementById('zoom-level-menubar');
 
   if (zoomInBtn) {
     bindHybridButton(zoomInBtn, () => applyZoom('in'), 120);
@@ -10577,6 +10588,16 @@ function setupZoomPan() {
   }
   if (zoomLevelEl) {
     bindHybridButton(zoomLevelEl, () => applyZoom('reset'), 120);
+  }
+
+  if (zoomInMenubar) {
+    bindHybridButton(zoomInMenubar, () => applyZoom('in'), 120);
+  }
+  if (zoomOutMenubar) {
+    bindHybridButton(zoomOutMenubar, () => applyZoom('out'), 120);
+  }
+  if (zoomLevelMenubar) {
+    bindHybridButton(zoomLevelMenubar, () => applyZoom('reset'), 120);
   }
   
   // Prevent any native browser scroll offset shifts inside viewerContainer (e.g. from element focus)
@@ -11453,6 +11474,8 @@ function updateTransform(onlyPan = false) {
   if (isNaN(targetScale) || targetScale <= 0) targetScale = currentScale;
   if (isNaN(targetPanX)) targetPanX = panX;
   if (isNaN(targetPanY)) targetPanY = panY;
+
+  syncZoomText();
 
   // Pan zoomWrapper (Using translate3d for GPU-composited, zero-lag rendering!)
   zoomWrapper.style.transform = `translate3d(${panX}px, ${panY}px, 0)`;
@@ -21408,8 +21431,8 @@ function setupFullscreenStateWatcher() {
     const menubar = document.getElementById('desktop-mac-menubar');
     if (menubar && !menubar.classList.contains('is-floating')) {
       const isMacFS = document.documentElement.classList.contains('is-fullscreen');
-      menubar.style.setProperty('top', '0px', 'important');
-      menubar.style.setProperty('padding-left', isMacFS ? '16px' : '80px', 'important');
+      menubar.style.setProperty('top', isMacFS ? '0px' : '28px', 'important');
+      menubar.style.setProperty('padding-left', '16px', 'important');
     }
     if (typeof updateTransform === 'function') {
       updateTransform();
@@ -21439,8 +21462,8 @@ function setupFullscreenStateWatcher() {
     const menubar = document.getElementById('desktop-mac-menubar');
     if (menubar && !menubar.classList.contains('is-floating')) {
       const isMacFS = document.documentElement.classList.contains('is-fullscreen');
-      menubar.style.setProperty('top', '0px', 'important');
-      menubar.style.setProperty('padding-left', isMacFS ? '16px' : '80px', 'important');
+      menubar.style.setProperty('top', isMacFS ? '0px' : '28px', 'important');
+      menubar.style.setProperty('padding-left', '16px', 'important');
     }
     if (typeof updateTransform === 'function') {
       updateTransform();
@@ -21493,7 +21516,7 @@ function initSmartMenubar() {
       const winWidth = window.innerWidth;
       const menubarWidth = menubar.offsetWidth || 520;
       let left = typeof customX === 'number' ? customX : Math.max(16, (winWidth - menubarWidth) / 2);
-      let top = typeof customY === 'number' ? Math.max(6, customY) : 6;
+      let top = typeof customY === 'number' ? Math.max(34, customY) : 34;
 
       left = Math.max(10, Math.min(winWidth - menubarWidth - 10, left));
       top = Math.max(0, Math.min(window.innerHeight - 50, top));
@@ -21513,8 +21536,8 @@ function initSmartMenubar() {
       const isMacFS = document.documentElement.classList.contains('is-fullscreen');
       menubar.style.setProperty('left', '0px', 'important');
       menubar.style.setProperty('right', '0px', 'important');
-      menubar.style.setProperty('top', '0px', 'important');
-      menubar.style.setProperty('padding-left', isMacFS ? '16px' : '80px', 'important');
+      menubar.style.setProperty('top', isMacFS ? '0px' : '28px', 'important');
+      menubar.style.setProperty('padding-left', '16px', 'important');
     }
     saveState();
   }
