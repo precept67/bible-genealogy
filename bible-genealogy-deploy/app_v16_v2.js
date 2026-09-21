@@ -3059,6 +3059,7 @@ const modalClose = document.getElementById('modal-close');
 const modalCancel = document.getElementById('modal-cancel');
 const adminForm = document.getElementById('admin-form');
 const formDeleteBtn = document.getElementById('form-delete-btn');
+let isSavingAdminForm = false;
 
 // Layer Item Modal Elements
 const layerItemModal = document.getElementById('layer-item-modal');
@@ -3067,6 +3068,7 @@ const layerItemModalClose = document.getElementById('layer-item-modal-close');
 const layerItemModalCancel = document.getElementById('layer-item-modal-cancel');
 const layerItemForm = document.getElementById('layer-item-form');
 const layerItemDeleteBtn = document.getElementById('layer-item-delete-btn');
+let isSavingLayerItemForm = false;
 
 // Style Editor Elements
 const styleEditorToggle = document.getElementById('style-editor-toggle');
@@ -3334,7 +3336,7 @@ window.addEventListener('DOMContentLoaded', async () => {
           if (modal) modal.style.display = 'flex';
         });
         window.__TAURI__.event.listen('menu-about-app', () => {
-          alert("열린 족보이야기 (Bible Genealogy)\n버전: 1.1.3\n단축키: ⌘+Shift+E (편집 모드 전환)");
+          alert("열린 족보이야기 (Bible Genealogy)\n버전: 1.1.5\n단축키: ⌘+Shift+E (편집 모드 전환)");
         });
       } catch (_) {}
     }
@@ -10636,7 +10638,7 @@ function setupZoomPan() {
   function isScrollableOverlay(target) {
     if (!target) return false;
     const overlay = target.closest(
-      '#study-panel, .layer-control-panel, #search-panel, .modal-content, #admin-modal, #layer-item-modal, #style-editor-panel, #help-guide-modal, #install-guide-modal, #desktop-license-modal, #admin-dashboard-modal, #bottom-spawner-panel'
+      '#study-panel, .layer-control-panel, #search-panel, #search-results, .search-results-dropdown, .mac-search-results, #mobile-search-results, .modal-content, #admin-modal, #layer-item-modal, #style-editor-panel, #help-guide-modal, #install-guide-modal, #desktop-license-modal, #admin-dashboard-modal, #bottom-spawner-panel'
     );
     if (!overlay) return false;
     const style = window.getComputedStyle(overlay);
@@ -10653,6 +10655,10 @@ function setupZoomPan() {
       target.closest('header') ||
       target.closest('#control-panel') ||
       target.closest('#search-panel') ||
+      target.closest('#search-results') ||
+      target.closest('.search-results-dropdown') ||
+      target.closest('.mac-search-results') ||
+      target.closest('#mobile-search-results') ||
       target.closest('#admin-actions-bar') ||
       target.closest('.modal-content') ||
       target.closest('.modal-overlay') ||
@@ -10877,21 +10883,35 @@ function setupZoomPan() {
       
       let finalX = clickX;
       let finalY = clickY;
+      let isNearStart = false;
       
-      const lastPt = tempPolygonPoints[tempPolygonPoints.length - 1];
-      const dx = clickX - lastPt.x;
-      const dy = clickY - lastPt.y;
-      
-      if (isGridSnapActive) {
-        finalX = Math.round(finalX / 10) * 10;
-        finalY = Math.round(finalY / 10) * 10;
-      } else {
-        // 스마트 근접 스냅 (8px 이내 시 수평/수직 자동 정렬)
-        if (Math.abs(dy) <= 8) finalY = lastPt.y;
-        if (Math.abs(dx) <= 8) finalX = lastPt.x;
+      if (tempPolygonPoints.length >= 3) {
+        const startPt = tempPolygonPoints[0];
+        const distToStart = Math.hypot(clickX - startPt.x, clickY - startPt.y);
+        const snapThreshold = Math.max(25, 30 / currentScale);
+        if (distToStart <= snapThreshold) {
+          finalX = startPt.x;
+          finalY = startPt.y;
+          isNearStart = true;
+        }
       }
       
-      updateTempPolygonPreview({ x: finalX, y: finalY });
+      if (!isNearStart) {
+        const lastPt = tempPolygonPoints[tempPolygonPoints.length - 1];
+        const dx = clickX - lastPt.x;
+        const dy = clickY - lastPt.y;
+        
+        if (isGridSnapActive) {
+          finalX = Math.round(finalX / 10) * 10;
+          finalY = Math.round(finalY / 10) * 10;
+        } else {
+          // 스마트 근접 스냅 (8px 이내 시 수평/수직 자동 정렬)
+          if (Math.abs(dy) <= 8) finalY = lastPt.y;
+          if (Math.abs(dx) <= 8) finalX = lastPt.x;
+        }
+      }
+      
+      updateTempPolygonPreview({ x: finalX, y: finalY }, isNearStart);
     }
 
     if (activeAnnotationId) {
@@ -11064,6 +11084,17 @@ function setupZoomPan() {
       const rect = treeBoard.getBoundingClientRect();
       const clickX = (clientX - rect.left) / currentScale;
       const clickY = (clientY - rect.top) / currentScale;
+      
+      // 시작점과 만났는지 (마감) 체크: 점이 3개 이상일 때 시작점 근처를 클릭하면 마감 후 제목 입력창 표시
+      if (tempPolygonPoints.length >= 3) {
+        const startPt = tempPolygonPoints[0];
+        const distToStart = Math.hypot(clickX - startPt.x, clickY - startPt.y);
+        const closeThreshold = Math.max(25, 30 / currentScale);
+        if (distToStart <= closeThreshold) {
+          completePolygonCreation();
+          return;
+        }
+      }
       
       let finalX = clickX;
       let finalY = clickY;
@@ -12286,30 +12317,30 @@ function highlightRelatedElements(itemId, itemType) {
   }
 }
 
-// Setup Search
-function setupSearch() {
-  const searchResults = document.getElementById('search-results');
+// Setup Search (Universal for Desktop, iPhone, Android, iPad, Tablet)
+function bindUniversalSearchInput(inputEl, resultsEl) {
+  if (!inputEl) return;
   
   let savedPanX = panX;
   let savedPanY = panY;
   let savedScale = currentScale;
 
-  searchInput.addEventListener('focus', () => {
+  inputEl.addEventListener('focus', () => {
     savedPanX = panX;
     savedPanY = panY;
     savedScale = currentScale;
   });
 
-  searchInput.addEventListener('input', (e) => {
+  inputEl.addEventListener('input', (e) => {
     const query = e.target.value.trim().toLowerCase();
     
     document.querySelectorAll('.person-card.highlight, .layer-marker.highlight, .canvas-annotation.highlight, .canvas-junction-node.highlight').forEach(el => {
       el.classList.remove('highlight');
     });
     
-    if (searchResults) {
-      searchResults.innerHTML = '';
-      searchResults.style.display = 'none';
+    if (resultsEl) {
+      resultsEl.innerHTML = '';
+      resultsEl.style.display = 'none';
     }
     
     if (!query) {
@@ -12331,82 +12362,156 @@ function setupSearch() {
       ...(showEvents ? events.map(e => ({...e, dataType: 'event'})) : []),
       ...(showLocations ? locations.map(l => ({...l, dataType: 'location'})) : [])
     ];
-    
-    // Find the best match, prioritizing exact match -> starts-with match -> contains match
-    let partialMatch = combinedData.find(item => {
+
+    // Helper to extract all searchable detail text for an item
+    function getDetailSearchText(item) {
+      let parts = [];
+      if (item.desc) parts.push(item.desc);
+      if (item.engDesc) parts.push(item.engDesc);
+      if (item.meaning) parts.push(item.meaning);
+      if (item.engMeaning) parts.push(item.engMeaning);
+      if (item.verse) parts.push(item.verse);
+      if (item.verses) parts.push(Array.isArray(item.verses) ? item.verses.join(' ') : item.verses);
+      if (item.reference) parts.push(item.reference);
+      if (item.hometown && item.hometown.name) parts.push(item.hometown.name);
+      if (item.activities) {
+        if (Array.isArray(item.activities)) {
+          parts.push(item.activities.map(a => `${a.name || a.title || ''} ${a.desc || ''}`).join(' '));
+        } else {
+          parts.push(item.activities);
+        }
+      }
+      if (typeof userNotes !== 'undefined' && userNotes && userNotes[item.id]) {
+        parts.push(userNotes[item.id]);
+      }
+      return parts.join(' ');
+    }
+
+    // Helper to generate snippet around matched keyword
+    function getSearchSnippet(fullText, q) {
+      if (!fullText) return '';
+      const lower = fullText.toLowerCase();
+      const idx = lower.indexOf(q);
+      if (idx === -1) return '';
+      const start = Math.max(0, idx - 16);
+      const end = Math.min(fullText.length, idx + q.length + 24);
+      let snip = fullText.substring(start, end);
+      if (start > 0) snip = '...' + snip;
+      if (end < fullText.length) snip = snip + '...';
+      
+      const escaped = snip.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const escapedQ = q.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const reg = new RegExp(`(${escapedQ.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+      return escaped.replace(reg, '<mark>$1</mark>');
+    }
+
+    // Collect matches with scoring
+    const matches = [];
+    combinedData.forEach(item => {
       const name = (item.dataType === 'person') ? getCharName(item) : ((item.dataType === 'event') ? getEventName(item) : getLocationName(item));
       const eng = item.engName || '';
-      return name.toLowerCase() === query || eng.toLowerCase() === query;
+      const nameLower = name.toLowerCase();
+      const engLower = eng.toLowerCase();
+      const detailText = getDetailSearchText(item);
+      const detailLower = detailText.toLowerCase();
+
+      let score = 0;
+      let matchType = '';
+      let snippet = '';
+
+      if (nameLower === query || engLower === query) {
+        score = 100;
+        matchType = 'exact_name';
+      } else if (nameLower.startsWith(query) || engLower.startsWith(query)) {
+        score = 80;
+        matchType = 'starts_name';
+      } else if (nameLower.includes(query) || engLower.includes(query)) {
+        score = 60;
+        matchType = 'contains_name';
+      } else if (detailLower.includes(query)) {
+        score = 40;
+        matchType = 'detail';
+        snippet = getSearchSnippet(detailText, query);
+      }
+
+      if (score > 0) {
+        matches.push({ item, score, matchType, snippet, displayName: name, engName: eng });
+      }
     });
-    if (!partialMatch) {
-      partialMatch = combinedData.find(item => {
-        const name = (item.dataType === 'person') ? getCharName(item) : ((item.dataType === 'event') ? getEventName(item) : getLocationName(item));
-        const eng = item.engName || '';
-        return name.toLowerCase().startsWith(query) || eng.toLowerCase().startsWith(query);
-      });
-    }
-    if (!partialMatch) {
-      partialMatch = combinedData.find(item => {
-        const name = (item.dataType === 'person') ? getCharName(item) : ((item.dataType === 'event') ? getEventName(item) : getLocationName(item));
-        const eng = item.engName || '';
-        return name.toLowerCase().includes(query) || eng.toLowerCase().includes(query);
-      });
-    }
-    
-    if (partialMatch) {
-      if (partialMatch.dataType === 'person') {
-        const card = document.getElementById(`card-${partialMatch.id}`);
+
+    // Sort: highest relevance score first, then shorter names
+    matches.sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      return a.displayName.length - b.displayName.length;
+    });
+
+    // Top match will automatically be highlighted & centered on canvas
+    const topMatch = matches[0]?.item;
+    if (topMatch) {
+      if (topMatch.dataType === 'person') {
+        const card = document.getElementById(`card-${topMatch.id}`);
         if (card) {
           card.classList.add('highlight');
-          centerOnNode(partialMatch.id);
+          centerOnNode(topMatch.id);
         }
       } else {
-        const marker = document.getElementById(`${partialMatch.dataType}-${partialMatch.id}`);
+        const marker = document.getElementById(`${topMatch.dataType}-${topMatch.id}`);
         if (marker) {
           marker.classList.add('highlight');
-          centerOnCoords(partialMatch.x, partialMatch.y);
+          centerOnCoords(topMatch.x, topMatch.y);
         }
       }
     }
 
-    // Next, check for EXACT namesakes to populate the dropdown
-    const exactMatches = combinedData.filter(item => {
-      const name = (item.dataType === 'person') ? getCharName(item) : ((item.dataType === 'event') ? getEventName(item) : getLocationName(item));
-      const eng = item.engName || '';
-      return name.toLowerCase() === query || eng.toLowerCase() === query;
-    });
-    
-    // Only show dropdown if they typed a full name that has multiple identical matches
-    if (exactMatches.length > 1 && searchResults) {
-      searchResults.style.display = 'block';
-      exactMatches.forEach(matched => {
+    // Populate search dropdown list
+    if (matches.length > 0 && resultsEl) {
+      resultsEl.style.display = 'block';
+      resultsEl.innerHTML = '';
+      
+      matches.slice(0, 30).forEach(m => {
+        const matched = m.item;
         const li = document.createElement('li');
         li.className = 'search-result-item';
         
-        let parentInfo = '';
-        if (matched.dataType === 'person' && matched.parents && matched.parents.length > 0) {
-          const parentId = matched.parents[0];
-          const parent = db.find(p => p.id === parentId);
-          if (parent) {
-            const parentName = getCharName(parent);
-            const textChild = currentLang === 'en' ? `Child of ${parentName}` : `${parentName}의 자녀`;
-            parentInfo = `<span class="parent-info">(${textChild})</span>`;
+        let badgeInfo = '';
+        if (matched.dataType === 'person') {
+          if (matched.parents && matched.parents.length > 0) {
+            const parentId = matched.parents[0];
+            const parent = db.find(p => p.id === parentId);
+            if (parent) {
+              const parentName = getCharName(parent);
+              const textChild = currentLang === 'en' ? `Child of ${parentName}` : `${parentName}의 자녀`;
+              badgeInfo = `<span class="parent-info">(${textChild})</span>`;
+            }
           }
         } else if (matched.dataType === 'event') {
           const textEvent = currentLang === 'en' ? 'Event' : '사건';
-          parentInfo = `<span class="parent-info">(📜 ${textEvent})</span>`;
+          badgeInfo = `<span class="parent-info">(📜 ${textEvent})</span>`;
         } else if (matched.dataType === 'location') {
           const textLoc = currentLang === 'en' ? 'Location' : '장소';
-          parentInfo = `<span class="parent-info">(📍 ${textLoc})</span>`;
+          badgeInfo = `<span class="parent-info">(📍 ${textLoc})</span>`;
         }
         
         const displayName = matched.dataType === 'person' ? getCharName(matched) : cleanLayerName(matched.dataType === 'event' ? getEventName(matched) : getLocationName(matched));
-        li.innerHTML = `<strong>${displayName}</strong> ${parentInfo}`;
         
-        li.addEventListener('click', () => {
+        let snippetHtml = '';
+        if (m.matchType === 'detail' && m.snippet) {
+          const detailLabel = currentLang === 'en' ? 'Detail' : '상세정보';
+          snippetHtml = `<div class="search-result-snippet"><span class="search-snippet-tag">[${detailLabel}]</span> ${m.snippet}</div>`;
+        }
+        
+        li.innerHTML = `
+          <div class="search-result-header">
+            <strong>${displayName}</strong> ${badgeInfo}
+          </div>
+          ${snippetHtml}
+        `;
+        
+        li.addEventListener('click', (e) => {
+          e.stopPropagation();
           const selectName = matched.dataType === 'person' ? getCharName(matched) : (matched.dataType === 'event' ? getEventName(matched) : getLocationName(matched));
-          searchInput.value = selectName;
-          searchResults.style.display = 'none';
+          inputEl.value = selectName;
+          resultsEl.style.display = 'none';
           
           document.querySelectorAll('.person-card.highlight, .layer-marker.highlight').forEach(el => {
             el.classList.remove('highlight');
@@ -12418,6 +12523,9 @@ function setupSearch() {
               card.classList.add('highlight');
               centerOnNode(matched.id);
             }
+            if (m.matchType === 'detail' && typeof openStudyPanel === 'function') {
+              openStudyPanel(matched.id);
+            }
           } else {
             const marker = document.getElementById(`${matched.dataType}-${matched.id}`);
             if (marker) {
@@ -12425,46 +12533,65 @@ function setupSearch() {
               centerOnCoords(matched.x, matched.y);
             }
           }
-          // 검색 리스트 클릭 완료 즉시 검색창 안전 리셋 및 돋보기 원복!
           if (window.closeSearchWrapper) {
             window.closeSearchWrapper();
           }
         });
         
-        searchResults.appendChild(li);
+        resultsEl.appendChild(li);
       });
     }
   });
-  
-  searchInput.addEventListener('keydown', (e) => {
+
+  inputEl.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
-      searchInput.blur();
-      // 엔터 키 검색 완료 즉시 검색창 안전 리셋 및 돋보기 원복!
+      inputEl.blur();
       if (window.closeSearchWrapper) {
         window.closeSearchWrapper();
       }
     }
   });
 
+  if (resultsEl) {
+    resultsEl.addEventListener('wheel', (e) => {
+      e.stopPropagation();
+    }, { passive: true });
+    resultsEl.addEventListener('touchmove', (e) => {
+      e.stopPropagation();
+    }, { passive: true });
+  }
+}
+
+function setupSearch() {
+  const desktopInput = document.getElementById('searchInput');
+  const desktopResults = document.getElementById('search-results');
+  const mobileInput = document.getElementById('mobileSearchInput') || document.getElementById('search-input');
+  const mobileResults = document.getElementById('mobile-search-results') || desktopResults;
+
+  if (desktopInput) {
+    bindUniversalSearchInput(desktopInput, desktopResults);
+  }
+  if (mobileInput && mobileInput !== desktopInput) {
+    bindUniversalSearchInput(mobileInput, mobileResults);
+  }
+
   const handleGlobalOutsideClick = (e) => {
     // 0. Search Results Panel auto close when clicking/touching outside
     const searchWrapper = document.getElementById('floating-search-wrapper');
-    const searchInput = document.getElementById('searchInput') || document.getElementById('search-input');
-    const searchResults = document.getElementById('search-results');
+    const allSearchResults = document.querySelectorAll('#search-results, #mobile-search-results, .search-results-dropdown');
     
-    if (searchResults && searchResults.style.display !== 'none') {
-      const isClickInsideSearch = 
-        (searchWrapper && searchWrapper.contains(e.target)) || 
-        (searchResults && searchResults.contains(e.target)) ||
-        e.target.closest('#floating-search-wrapper') ||
-        e.target.closest('#search-results');
-        
-      if (!isClickInsideSearch) {
-        if (window.closeSearchWrapper) {
-          window.closeSearchWrapper();
-        } else {
-          searchResults.style.display = 'none';
-        }
+    let isClickInsideAnySearch = false;
+    if (searchWrapper && searchWrapper.contains(e.target)) isClickInsideAnySearch = true;
+    if (e.target.closest('#floating-search-wrapper') || e.target.closest('#desktop-mac-menubar') || e.target.closest('.search-results-dropdown')) {
+      isClickInsideAnySearch = true;
+    }
+    
+    if (!isClickInsideAnySearch) {
+      allSearchResults.forEach(resEl => {
+        resEl.style.display = 'none';
+      });
+      if (window.closeSearchWrapper) {
+        window.closeSearchWrapper();
       }
     }
 
@@ -13395,7 +13522,7 @@ function setupAdminMode() {
   }
 
   const handleAdminFormSubmit = (e) => {
-    if (e) {
+    if (e && typeof e.preventDefault === 'function') {
       e.preventDefault();
       e.stopPropagation();
     }
@@ -13408,21 +13535,18 @@ function setupAdminMode() {
 
   if (modalSubmitBtn) {
     modalSubmitBtn.onclick = (e) => {
-      e.stopPropagation();
-      if (adminForm && typeof adminForm.requestSubmit === 'function') {
-        adminForm.requestSubmit();
-      } else {
-        handleAdminFormSubmit(e);
+      if (e && typeof e.preventDefault === 'function') {
+        e.preventDefault();
+        e.stopPropagation();
       }
+      handleAdminFormSubmit(e);
     };
     modalSubmitBtn.ontouchend = (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      if (adminForm && typeof adminForm.requestSubmit === 'function') {
-        adminForm.requestSubmit();
-      } else {
-        handleAdminFormSubmit(e);
+      if (e && typeof e.preventDefault === 'function') {
+        e.preventDefault();
+        e.stopPropagation();
       }
+      handleAdminFormSubmit(e);
     };
   }
 
@@ -14145,14 +14269,21 @@ function activateAddPolygonMode() {
     banner.innerHTML = currentLang === 'en'
       ? `<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;">
            <span>⬡ Click/tap on screen to add polygon vertices.</span>
+           <button id="polygon-complete-draw-btn" style="display:none;background:#10b981;border:1px solid rgba(255,255,255,0.8);color:#fff;padding:2px 10px;border-radius:4px;cursor:pointer;font-size:12px;font-weight:bold;">✓ Complete</button>
            <button id="polygon-undo-point-btn" style="background:rgba(255,255,255,0.25);border:1px solid rgba(255,255,255,0.6);color:inherit;padding:2px 8px;border-radius:4px;cursor:pointer;font-size:12px;font-weight:bold;">⌫ Undo Point</button>
            <button id="polygon-cancel-draw-btn" style="background:rgba(255,255,255,0.25);border:1px solid rgba(255,255,255,0.6);color:inherit;padding:2px 8px;border-radius:4px;cursor:pointer;font-size:12px;">✕ Cancel</button>
          </div>`
       : `<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;">
            <span>⬡ 화면을 터치/클릭하여 꼭짓점을 추가하세요.</span>
+           <button id="polygon-complete-draw-btn" style="display:none;background:#10b981;border:1px solid rgba(255,255,255,0.8);color:#fff;padding:2px 10px;border-radius:4px;cursor:pointer;font-size:12px;font-weight:bold;">✓ 마감 및 완료</button>
            <button id="polygon-undo-point-btn" style="background:rgba(255,255,255,0.25);border:1px solid rgba(255,255,255,0.6);color:inherit;padding:2px 8px;border-radius:4px;cursor:pointer;font-size:12px;font-weight:bold;">⌫ 직전 점 삭제</button>
            <button id="polygon-cancel-draw-btn" style="background:rgba(255,255,255,0.25);border:1px solid rgba(255,255,255,0.6);color:inherit;padding:2px 8px;border-radius:4px;cursor:pointer;font-size:12px;">✕ 취소</button>
          </div>`;
+
+    document.getElementById('polygon-complete-draw-btn')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      completePolygonCreation();
+    });
     
     document.getElementById('polygon-undo-point-btn')?.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -14195,7 +14326,7 @@ function completePolygonCreation() {
   }
   
   const name = prompt(currentLang === 'en' ? "Enter the name for the new polygon area:" : "새로운 다각형 영역의 이름을 입력하세요:", currentLang === 'en' ? "New Area" : "새 영역");
-  if (!name) return;
+  if (name === null) return;
   
   pushHistoryState();
   const polyId = `poly-custom-${Date.now()}`;
@@ -14226,10 +14357,10 @@ function completePolygonCreation() {
 
   renderTree();
   updateTransform();
-  showToast(currentLang === 'en' ? `Area "${name}" added.` : `"${name}" 영역이 추가되었습니다.`);
+  showToast(currentLang === 'en' ? `Area "${trimmedName}" added.` : `"${trimmedName}" 영역이 추가되었습니다.`);
 }
 
-function updateTempPolygonPreview(mousePt = null) {
+function updateTempPolygonPreview(mousePt = null, isNearStart = false) {
   const svgNS = "http://www.w3.org/2000/svg";
   let preview = document.getElementById('temp-polygon-preview');
   if (!preview) {
@@ -14249,20 +14380,87 @@ function updateTempPolygonPreview(mousePt = null) {
   }
   
   if (pts.length > 0) {
-    // Connect back to the first point for visual closure preview if we have at least 2 points
-    if (pts.length >= 3 && mousePt) {
+    if (isNearStart && pts.length >= 3) {
       preview.setAttribute('points', pts.map(pt => `${pt.x},${pt.y}`).join(' ') + ` ${pts[0].x},${pts[0].y}`);
+      preview.setAttribute('stroke', '#10b981');
+      preview.setAttribute('fill', '#10b981');
+      preview.setAttribute('fill-opacity', '0.15');
     } else {
+      preview.setAttribute('stroke', '#ea580c');
+      preview.setAttribute('fill', '#ea580c');
+      preview.setAttribute('fill-opacity', '0.1');
       preview.setAttribute('points', pts.map(pt => `${pt.x},${pt.y}`).join(' '));
     }
   } else {
     preview.removeAttribute('points');
+  }
+
+  // Update or render starting point circle indicator
+  let startCircle = document.getElementById('temp-polygon-start-circle');
+  if (tempPolygonPoints.length > 0) {
+    const startPt = tempPolygonPoints[0];
+    if (!startCircle) {
+      startCircle = document.createElementNS(svgNS, 'circle');
+      startCircle.id = 'temp-polygon-start-circle';
+      startCircle.style.cursor = 'pointer';
+      startCircle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (tempPolygonPoints.length >= 3) {
+          completePolygonCreation();
+        }
+      });
+      svgLayer.appendChild(startCircle);
+    }
+    startCircle.setAttribute('cx', startPt.x);
+    startCircle.setAttribute('cy', startPt.y);
+
+    const scaleFactor = Math.min(1.5, Math.max(0.4, currentScale));
+    if (tempPolygonPoints.length >= 3) {
+      const radius = isNearStart ? (14 / scaleFactor) : (8 / scaleFactor);
+      startCircle.setAttribute('r', radius);
+      startCircle.setAttribute('fill', isNearStart ? '#10b981' : '#ea580c');
+      startCircle.setAttribute('stroke', '#ffffff');
+      startCircle.setAttribute('stroke-width', isNearStart ? '3' : '2');
+      startCircle.style.filter = isNearStart ? 'drop-shadow(0 0 6px rgba(16, 185, 129, 0.9))' : 'drop-shadow(0 0 4px rgba(234, 88, 12, 0.7))';
+    } else {
+      startCircle.setAttribute('r', 6 / scaleFactor);
+      startCircle.setAttribute('fill', '#ea580c');
+      startCircle.setAttribute('stroke', '#ffffff');
+      startCircle.setAttribute('stroke-width', '2');
+      startCircle.style.filter = '';
+    }
+  } else if (startCircle) {
+    startCircle.remove();
+  }
+
+  // Update banner complete button visibility & guide text dynamically
+  const completeBtn = document.getElementById('polygon-complete-draw-btn');
+  const banner = document.getElementById('add-person-instruction');
+  const bannerSpan = banner ? banner.querySelector('span') : null;
+  if (completeBtn) {
+    if (tempPolygonPoints.length >= 3) {
+      completeBtn.style.display = 'inline-block';
+      if (bannerSpan) {
+        bannerSpan.innerHTML = currentLang === 'en'
+          ? '⬡ Click <b>starting point</b> to close loop, or click <b>[Complete]</b>.'
+          : '⬡ <b>시작점</b>(원)을 클릭해 마감하거나 <b>[마감 및 완료]</b>를 누르세요.';
+      }
+    } else {
+      completeBtn.style.display = 'none';
+      if (bannerSpan) {
+        bannerSpan.innerHTML = currentLang === 'en'
+          ? '⬡ Click/tap on screen to add polygon vertices.'
+          : '⬡ 화면을 터치/클릭하여 꼭짓점을 추가하세요.';
+      }
+    }
   }
 }
 
 function removeTempPolygonPreview() {
   const preview = document.getElementById('temp-polygon-preview');
   if (preview) preview.remove();
+  const startCircle = document.getElementById('temp-polygon-start-circle');
+  if (startCircle) startCircle.remove();
 }
 
 
@@ -14492,6 +14690,7 @@ function ensureModalInputsFocusable() {
 }
 
 function openAdminForm(personId) {
+  isSavingAdminForm = false;
   editingPersonId = personId;
   const texts = UI_TEXTS[currentLang] || UI_TEXTS.ko;
   const formEl = document.getElementById('admin-form');
@@ -14670,10 +14869,16 @@ function closeAdminForm() {
   const modalEl = document.getElementById('admin-modal');
   if (modalEl) modalEl.style.display = 'none';
   editingPersonId = null;
+  setTimeout(() => {
+    isSavingAdminForm = false;
+  }, 100);
 }
 
 function saveAdminForm() {
-  const texts = UI_TEXTS[currentLang] || UI_TEXTS.ko;
+  if (isSavingAdminForm) return;
+  isSavingAdminForm = true;
+  try {
+    const texts = UI_TEXTS[currentLang] || UI_TEXTS.ko;
   let newId = document.getElementById('form-id') ? document.getElementById('form-id').value.trim() : '';
   const name = document.getElementById('form-name') ? document.getElementById('form-name').value.trim() : '';
   const engName = document.getElementById('form-eng') ? document.getElementById('form-eng').value.trim() : '';
@@ -15118,7 +15323,12 @@ function saveAdminForm() {
     }
   }
   
-  closeAdminForm();
+    closeAdminForm();
+  } finally {
+    setTimeout(() => {
+      isSavingAdminForm = false;
+    }, 300);
+  }
 }
 
 function deletePerson(personId) {
@@ -18513,179 +18723,188 @@ function setupLayerItemModalEvents() {
 
   if (layerItemForm) {
     layerItemForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      if (!activeLayerType) return;
-      
-      const nameVal = document.getElementById('layer-item-name').value.trim();
-      const descVal = document.getElementById('layer-item-desc').value.trim();
-      const refsVal = document.getElementById('layer-item-refs').value.trim();
-      
-      const refsArray = refsVal.split(',').map(r => r.trim()).filter(r => r.length > 0);
-      
-      // Get checkboxes checked
-      let checkedPeople = Array.from(document.querySelectorAll('#layer-item-people-list input[type="checkbox"]:checked'))
-        .map(cb => cb.value);
-      let checkedEvents = Array.from(document.querySelectorAll('#layer-item-events-list input[type="checkbox"]:checked'))
-        .map(cb => cb.value);
-      let checkedLocations = Array.from(document.querySelectorAll('#layer-item-locations-list input[type="checkbox"]:checked'))
-        .map(cb => cb.value);
-      
-      let dbChanged = false;
-      checkedPeople = checkedPeople.map(val => {
-        const matched = db.find(p => p.id === val || p.name === val);
-        if (matched) return matched.id;
-        
-        const newId = 'person-' + Date.now() + '-' + Math.floor(Math.random() * 100);
-        const newPerson = {
-          id: newId,
-          name: val,
-          engName: '',
-          gender: 'M',
-          generation: activeLayerItem && activeLayerItem.generation ? activeLayerItem.generation : 20,
-          column: activeLayerItem && activeLayerItem.column ? activeLayerItem.column : 0,
-          parents: [],
-          spouses: [],
-          desc: "자동 생성된 인물",
-          isMain: false,
-          isManual: true
-        };
-        db.push(newPerson);
-        dbChanged = true;
-        return newId;
-      });
-      if (dbChanged) {
-        saveDatabase();
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
       }
-
-      let eventsChanged = false;
-      checkedEvents = checkedEvents.map(val => {
-        const matched = events.find(e => e.id === val || e.name === val);
-        if (matched) return matched.id;
+      if (isSavingLayerItemForm) return;
+      isSavingLayerItemForm = true;
+      try {
+        if (!activeLayerType) return;
         
-        const newId = 'ev-' + Date.now() + '-' + Math.floor(Math.random() * 100);
-        const newEvent = {
-          id: newId,
-          name: val,
-          desc: "자동 생성된 사건",
-          refs: [],
-          relatedPeople: [],
-          x: 5000,
-          y: 5000
-        };
-        events.push(newEvent);
-        eventsChanged = true;
-        return newId;
-      });
-      if (eventsChanged) {
-        saveEvents();
-      }
-
-      let locationsChanged = false;
-      checkedLocations = checkedLocations.map(val => {
-        const matched = locations.find(l => l.id === val || l.name === val);
-        if (matched) return matched.id;
+        const nameVal = document.getElementById('layer-item-name').value.trim();
+        const descVal = document.getElementById('layer-item-desc').value.trim();
+        const refsVal = document.getElementById('layer-item-refs').value.trim();
         
-        const newId = 'loc-' + Date.now() + '-' + Math.floor(Math.random() * 100);
-        const newLocation = {
-          id: newId,
-          name: val,
-          desc: "자동 생성된 장소",
-          refs: [],
-          relatedPeople: [],
-          x: 5000,
-          y: 5000
-        };
-        locations.push(newLocation);
-        locationsChanged = true;
-        return newId;
-      });
-      if (locationsChanged) {
-        saveLocations();
-      }
-      
-      pushHistoryState();
-      
-      if (isLayerItemAddMode) {
-        const newId = (activeLayerType === 'event' ? 'ev-' : 'loc-') + Date.now();
-        const newItem = {
-          id: newId,
-          name: nameVal,
-          desc: descVal,
-          refs: refsArray,
-          relatedPeople: checkedPeople,
-          x: Math.round(newLayerItemCoords.x),
-          y: Math.round(newLayerItemCoords.y)
-        };
+        const refsArray = refsVal.split(',').map(r => r.trim()).filter(r => r.length > 0);
         
-        if (activeLayerType === 'event') {
-          newItem.relatedLocations = checkedLocations;
-          events.push(newItem);
-          saveEvents();
+        // Get checkboxes checked
+        let checkedPeople = Array.from(document.querySelectorAll('#layer-item-people-list input[type="checkbox"]:checked'))
+          .map(cb => cb.value);
+        let checkedEvents = Array.from(document.querySelectorAll('#layer-item-events-list input[type="checkbox"]:checked'))
+          .map(cb => cb.value);
+        let checkedLocations = Array.from(document.querySelectorAll('#layer-item-locations-list input[type="checkbox"]:checked'))
+          .map(cb => cb.value);
+        
+        let dbChanged = false;
+        checkedPeople = checkedPeople.map(val => {
+          const matched = db.find(p => p.id === val || p.name === val);
+          if (matched) return matched.id;
           
-          // Auto toggle events layer on
-          const toggleLayer = document.getElementById('toggle-layer-events');
-          if (toggleLayer && !toggleLayer.checked) {
-            toggleLayer.checked = true;
-            const layer = document.getElementById('layer-events');
-            if (layer) layer.style.display = '';
-          }
-          
-          renderEvents();
-          showToast("📜 새 사건이 추가되었습니다.");
-        } else {
-          newItem.relatedEvents = checkedEvents;
-          locations.push(newItem);
-          saveLocations();
-          
-          // Auto toggle locations layer on
-          const toggleLayer = document.getElementById('toggle-layer-locations');
-          if (toggleLayer && !toggleLayer.checked) {
-            toggleLayer.checked = true;
-            const layer = document.getElementById('layer-locations');
-            if (layer) layer.style.display = '';
-          }
-          
-          renderLocations();
-          showToast("📍 새 장소가 추가되었습니다.");
+          const newId = 'person-' + Date.now() + '-' + Math.floor(Math.random() * 100);
+          const newPerson = {
+            id: newId,
+            name: val,
+            engName: '',
+            gender: 'M',
+            generation: activeLayerItem && activeLayerItem.generation ? activeLayerItem.generation : 20,
+            column: activeLayerItem && activeLayerItem.column ? activeLayerItem.column : 0,
+            parents: [],
+            spouses: [],
+            desc: "자동 생성된 인물",
+            isMain: false,
+            isManual: true
+          };
+          db.push(newPerson);
+          dbChanged = true;
+          return newId;
+        });
+        if (dbChanged) {
+          saveDatabase();
         }
-      } else {
-        // Edit Mode
-        if (!activeLayerItem) return;
+
+        let eventsChanged = false;
+        checkedEvents = checkedEvents.map(val => {
+          const matched = events.find(e => e.id === val || e.name === val);
+          if (matched) return matched.id;
+          
+          const newId = 'ev-' + Date.now() + '-' + Math.floor(Math.random() * 100);
+          const newEvent = {
+            id: newId,
+            name: val,
+            desc: "자동 생성된 사건",
+            refs: [],
+            relatedPeople: [],
+            relatedLocations: []
+          };
+          events.push(newEvent);
+          eventsChanged = true;
+          return newId;
+        });
+        if (eventsChanged) {
+          saveEvents();
+        }
+
+        let locsChanged = false;
+        checkedLocations = checkedLocations.map(val => {
+          const matched = locations.find(l => l.id === val || l.name === val);
+          if (matched) return matched.id;
+          
+          const newId = 'loc-' + Date.now() + '-' + Math.floor(Math.random() * 100);
+          const newLocation = {
+            id: newId,
+            name: val,
+            coords: '',
+            desc: "자동 생성된 장소",
+            refs: [],
+            relatedPeople: [],
+            relatedEvents: []
+          };
+          locations.push(newLocation);
+          locsChanged = true;
+          return newId;
+        });
+        if (locsChanged) {
+          saveLocations();
+        }
         
-        if (activeLayerType === 'annotation') {
-          activeLayerItem.relatedPeople = checkedPeople;
-          activeLayerItem.relatedEvents = checkedEvents;
-          activeLayerItem.relatedLocations = checkedLocations;
-          saveAnnotations();
-          showToast("텍스트 상자 관계가 저장되었습니다.");
-        } else {
-          activeLayerItem.name = nameVal;
-          activeLayerItem.desc = descVal;
-          activeLayerItem.refs = refsArray;
-          activeLayerItem.relatedPeople = checkedPeople;
+        if (isLayerItemAddMode) {
+          const prefix = activeLayerType === 'event' ? 'ev-' : 'loc-';
+          const newId = prefix + Date.now();
+          const newItem = {
+            id: newId,
+            name: nameVal,
+            desc: descVal,
+            refs: refsArray,
+            relatedPeople: checkedPeople,
+            generation: newLayerItemCoords ? Math.round(newLayerItemCoords.y / 200) : 0,
+            column: newLayerItemCoords ? parseFloat((newLayerItemCoords.x / 140).toFixed(1)) : 0
+          };
           
           if (activeLayerType === 'event') {
-            activeLayerItem.relatedLocations = checkedLocations;
+            newItem.relatedLocations = checkedLocations;
+            events.push(newItem);
             saveEvents();
+            
+            // Auto toggle events layer on
+            const toggleLayer = document.getElementById('toggle-layer-events');
+            if (toggleLayer && !toggleLayer.checked) {
+              toggleLayer.checked = true;
+              const layer = document.getElementById('layer-events');
+              if (layer) layer.style.display = '';
+            }
+            
             renderEvents();
+            showToast("📜 새 사건이 추가되었습니다.");
           } else {
-            activeLayerItem.relatedEvents = checkedEvents;
+            newItem.relatedEvents = checkedEvents;
+            locations.push(newItem);
             saveLocations();
+            
+            // Auto toggle locations layer on
+            const toggleLayer = document.getElementById('toggle-layer-locations');
+            if (toggleLayer && !toggleLayer.checked) {
+              toggleLayer.checked = true;
+              const layer = document.getElementById('layer-locations');
+              if (layer) layer.style.display = '';
+            }
+            
             renderLocations();
+            showToast("📍 새 장소가 추가되었습니다.");
           }
-          showToast("수정되었습니다.");
+        } else {
+          // Edit Mode
+          if (!activeLayerItem) return;
+          
+          if (activeLayerType === 'annotation') {
+            activeLayerItem.relatedPeople = checkedPeople;
+            activeLayerItem.relatedEvents = checkedEvents;
+            activeLayerItem.relatedLocations = checkedLocations;
+            saveAnnotations();
+            showToast("텍스트 상자 관계가 저장되었습니다.");
+          } else {
+            activeLayerItem.name = nameVal;
+            activeLayerItem.desc = descVal;
+            activeLayerItem.refs = refsArray;
+            activeLayerItem.relatedPeople = checkedPeople;
+            
+            if (activeLayerType === 'event') {
+              activeLayerItem.relatedLocations = checkedLocations;
+              saveEvents();
+              renderEvents();
+            } else {
+              activeLayerItem.relatedEvents = checkedEvents;
+              saveLocations();
+              renderLocations();
+            }
+            showToast("수정되었습니다.");
+          }
         }
+        
+        updateTransform();
+        if (dbChanged) {
+          renderTree();
+        }
+        layerItemModal.style.display = 'none';
+        activeLayerItem = null;
+        activeLayerType = null;
+        isLayerItemAddMode = false;
+        autoSaveToServer();
+      } finally {
+        setTimeout(() => {
+          isSavingLayerItemForm = false;
+        }, 300);
       }
-      
-      updateTransform();
-      if (dbChanged) {
-        renderTree();
-      }
-      layerItemModal.style.display = 'none';
-      activeLayerItem = null;
-      activeLayerType = null;
-      isLayerItemAddMode = false;
-      autoSaveToServer();
     });
   }
 }
@@ -20461,34 +20680,36 @@ function setupSlideLockDragEvents() {
 
 // Floating Header Actions: Settings & Search Drawer
 function setupFloatingHeaderEvents() {
-  const searchInput = document.getElementById('searchInput') || document.getElementById('search-input');
+  const allInputs = document.querySelectorAll('#searchInput, #mobileSearchInput, .mac-search-input, .search-box');
   const searchWrapper = document.getElementById('floating-search-wrapper');
 
-  if (searchInput) {
-    // 검색 결과 드롭다운 닫기 헬퍼
-    const closeSearchWrapper = () => {
-      document.body.classList.remove('search-focused');
-      const resultsDropdown = document.getElementById('search-results');
-      if (resultsDropdown) {
-        resultsDropdown.style.display = 'none';
-        resultsDropdown.innerHTML = '';
-      }
-    };
+  const closeSearchWrapper = () => {
+    document.body.classList.remove('search-focused');
+    const allDropdowns = document.querySelectorAll('#search-results, #mobile-search-results, .search-results-dropdown');
+    allDropdowns.forEach(dd => {
+      dd.style.display = 'none';
+      dd.innerHTML = '';
+    });
+  };
 
-    // 전역 스코프에서 다른 검색 리스트 클릭 및 키 바인딩 시 복구할 수 있도록 노출
-    window.closeSearchWrapper = closeSearchWrapper;
+  window.closeSearchWrapper = closeSearchWrapper;
 
-    // 포커스 아웃(blur) 시 검색 결과 드롭다운 닫기
-    searchInput.addEventListener('blur', () => {
+  allInputs.forEach(input => {
+    input.addEventListener('blur', () => {
       setTimeout(() => {
         const activeEl = document.activeElement;
-        const resultsDropdown = document.getElementById('search-results');
-        if (searchWrapper && !searchWrapper.contains(activeEl) && (!resultsDropdown || !resultsDropdown.contains(activeEl))) {
+        const allDropdowns = document.querySelectorAll('#search-results, #mobile-search-results, .search-results-dropdown');
+        let isInsideAny = false;
+        allDropdowns.forEach(dd => {
+          if (dd && dd.contains(activeEl)) isInsideAny = true;
+        });
+        if (searchWrapper && searchWrapper.contains(activeEl)) isInsideAny = true;
+        if (!isInsideAny) {
           closeSearchWrapper();
         }
       }, 200);
     });
-  }
+  });
 }
 
 // Reposition separate undo/redo toggles to maintain exactly 4px gap side by side with the centered zoom bar
@@ -21202,7 +21423,7 @@ function setupDesktopMacMenubar() {
     }
   });
   bindMenuAction('mac-menu-about-help', () => {
-    alert("열린 족보이야기 (Bible Genealogy)\n버전: 1.1.3\n단축키: ⌘+Shift+E (편집 모드 전환)");
+    alert("열린 족보이야기 (Bible Genealogy)\n버전: 1.1.5\n단축키: ⌘+Shift+E (편집 모드 전환)");
   });
 
   // Dropdown Open/Close Hover & Tap Management
@@ -21257,7 +21478,7 @@ function setupDesktopMacMenubar() {
   window.exportStudyNotesFile = async function() {
     try {
       const backupData = {
-        version: "1.1.3",
+        version: "1.1.5",
         appName: "열린 족보이야기",
         exportDate: new Date().toISOString(),
         userNotes: typeof userNotes !== 'undefined' ? userNotes : {},
@@ -21432,9 +21653,8 @@ function setupFullscreenStateWatcher() {
     }
     const menubar = document.getElementById('desktop-mac-menubar');
     if (menubar && !menubar.classList.contains('is-floating')) {
-      const isMacFS = document.documentElement.classList.contains('is-fullscreen');
-      menubar.style.setProperty('top', '0px', 'important');
-      menubar.style.setProperty('padding-left', isMacFS ? '16px' : '80px', 'important');
+      menubar.style.removeProperty('top');
+      menubar.style.removeProperty('padding-left');
     }
     if (typeof updateTransform === 'function') {
       updateTransform();
@@ -21463,9 +21683,8 @@ function setupFullscreenStateWatcher() {
 
     const menubar = document.getElementById('desktop-mac-menubar');
     if (menubar && !menubar.classList.contains('is-floating')) {
-      const isMacFS = document.documentElement.classList.contains('is-fullscreen');
-      menubar.style.setProperty('top', '0px', 'important');
-      menubar.style.setProperty('padding-left', isMacFS ? '16px' : '80px', 'important');
+      menubar.style.removeProperty('top');
+      menubar.style.removeProperty('padding-left');
     }
     if (typeof updateTransform === 'function') {
       updateTransform();
@@ -21539,7 +21758,7 @@ function initSmartMenubar() {
       menubar.style.setProperty('left', '0px', 'important');
       menubar.style.setProperty('right', '0px', 'important');
       menubar.style.setProperty('top', '0px', 'important');
-      menubar.style.setProperty('padding-left', isMacFS ? '16px' : '80px', 'important');
+      menubar.style.setProperty('padding-left', '16px', 'important');
     }
     saveState();
   }

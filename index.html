@@ -431,12 +431,23 @@
        ========================================================================== */
     html.platform-iphone #floating-search-wrapper,
     body.platform-iphone #floating-search-wrapper,
-    html.platform-android-phone #floating-search-wrapper,
-    body.platform-android-phone #floating-search-wrapper,
     html.platform-ios:not(.platform-ipad) #floating-search-wrapper,
     body.platform-ios:not(.platform-ipad) #floating-search-wrapper {
       position: fixed !important;
       top: calc(clamp(6px, 1.8vw, 10px) + env(safe-area-inset-top, 0px) - 15px) !important;
+      bottom: auto !important;
+      left: 50% !important;
+      right: auto !important;
+      transform: translateX(-50%) !important;
+      width: clamp(110px, 34vw, 175px) !important;
+      height: clamp(36px, 9.5vw, 42px) !important;
+      z-index: 16000 !important;
+      margin: 0 !important;
+    }
+    html.platform-android-phone #floating-search-wrapper,
+    body.platform-android-phone #floating-search-wrapper {
+      position: fixed !important;
+      top: calc(clamp(6px, 1.8vw, 10px) + env(safe-area-inset-top, 0px)) !important;
       bottom: auto !important;
       left: 50% !important;
       right: auto !important;
@@ -482,12 +493,22 @@
 
     html.platform-iphone #slide-lock-container,
     body.platform-iphone #slide-lock-container,
-    html.platform-android-phone #slide-lock-container,
-    body.platform-android-phone #slide-lock-container,
     html.platform-ios:not(.platform-ipad) #slide-lock-container,
     body.platform-ios:not(.platform-ipad) #slide-lock-container {
       position: fixed !important;
       top: calc(clamp(6px, 1.8vw, 10px) + env(safe-area-inset-top, 0px) - 15px) !important;
+      bottom: auto !important;
+      left: calc(clamp(8px, 2.5vw, 14px) + env(safe-area-inset-left, 0px)) !important;
+      right: auto !important;
+      width: clamp(100px, 28vw, 132px) !important;
+      height: clamp(36px, 9.5vw, 42px) !important;
+      border-radius: clamp(18px, 4.75vw, 21px) !important;
+      z-index: 20000 !important;
+    }
+    html.platform-android-phone #slide-lock-container,
+    body.platform-android-phone #slide-lock-container {
+      position: fixed !important;
+      top: calc(clamp(6px, 1.8vw, 10px) + env(safe-area-inset-top, 0px)) !important;
       bottom: auto !important;
       left: calc(clamp(8px, 2.5vw, 14px) + env(safe-area-inset-left, 0px)) !important;
       right: auto !important;
@@ -536,12 +557,29 @@
 
     html.platform-iphone #floating-settings-btn,
     body.platform-iphone #floating-settings-btn,
-    html.platform-android-phone #floating-settings-btn,
-    body.platform-android-phone #floating-settings-btn,
     html.platform-ios:not(.platform-ipad) #floating-settings-btn,
     body.platform-ios:not(.platform-ipad) #floating-settings-btn {
       position: fixed !important;
       top: calc(clamp(6px, 1.8vw, 10px) + env(safe-area-inset-top, 0px) - 15px) !important;
+      bottom: auto !important;
+      right: calc(clamp(8px, 2.5vw, 14px) + env(safe-area-inset-right, 0px)) !important;
+      left: auto !important;
+      width: clamp(36px, 9.5vw, 42px) !important;
+      height: clamp(36px, 9.5vw, 42px) !important;
+      min-width: clamp(36px, 9.5vw, 42px) !important;
+      min-height: clamp(36px, 9.5vw, 42px) !important;
+      max-width: clamp(36px, 9.5vw, 42px) !important;
+      max-height: clamp(36px, 9.5vw, 42px) !important;
+      border-radius: 50% !important;
+      z-index: 20000 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+    html.platform-android-phone #floating-settings-btn,
+    body.platform-android-phone #floating-settings-btn {
+      position: fixed !important;
+      top: calc(clamp(6px, 1.8vw, 10px) + env(safe-area-inset-top, 0px)) !important;
       bottom: auto !important;
       right: calc(clamp(8px, 2.5vw, 14px) + env(safe-area-inset-right, 0px)) !important;
       left: auto !important;
@@ -818,11 +856,20 @@
        💻 iPad & Android Pad Dedicated Layout (Responsive Safe Area & Proportional Controls)
        ========================================================================== */
     html.platform-ipad #floating-search-wrapper,
-    body.platform-ipad #floating-search-wrapper,
+    body.platform-ipad #floating-search-wrapper {
+      position: fixed !important;
+      top: calc(clamp(8px, 1.5vw, 14px) + env(safe-area-inset-top, 0px) - 15px) !important;
+      bottom: auto !important;
+      left: 50% !important;
+      transform: translateX(-50%) !important;
+      width: clamp(180px, 24vw, 260px) !important;
+      max-width: 260px !important;
+      height: clamp(40px, 4.5vw, 46px) !important;
+    }
     html.platform-android-pad #floating-search-wrapper,
     body.platform-android-pad #floating-search-wrapper {
       position: fixed !important;
-      top: calc(clamp(8px, 1.5vw, 14px) + env(safe-area-inset-top, 0px) - 15px) !important;
+      top: calc(clamp(8px, 1.5vw, 14px) + env(safe-area-inset-top, 0px)) !important;
       bottom: auto !important;
       left: 50% !important;
       transform: translateX(-50%) !important;
@@ -841,11 +888,21 @@
     }
 
     html.platform-ipad #slide-lock-container,
-    body.platform-ipad #slide-lock-container,
+    body.platform-ipad #slide-lock-container {
+      position: fixed !important;
+      top: calc(clamp(8px, 1.5vw, 14px) + env(safe-area-inset-top, 0px) - 15px) !important;
+      bottom: auto !important;
+      left: calc(clamp(16px, 2.2vw, 24px) + env(safe-area-inset-left, 0px)) !important;
+      right: auto !important;
+      width: clamp(130px, 15vw, 155px) !important;
+      height: clamp(40px, 4.5vw, 46px) !important;
+      border-radius: clamp(20px, 2.25vw, 23px) !important;
+      z-index: 20000 !important;
+    }
     html.platform-android-pad #slide-lock-container,
     body.platform-android-pad #slide-lock-container {
       position: fixed !important;
-      top: calc(clamp(8px, 1.5vw, 14px) + env(safe-area-inset-top, 0px) - 15px) !important;
+      top: calc(clamp(8px, 1.5vw, 14px) + env(safe-area-inset-top, 0px)) !important;
       bottom: auto !important;
       left: calc(clamp(16px, 2.2vw, 24px) + env(safe-area-inset-left, 0px)) !important;
       right: auto !important;
@@ -885,11 +942,28 @@
     }
 
     html.platform-ipad #floating-settings-btn,
-    body.platform-ipad #floating-settings-btn,
+    body.platform-ipad #floating-settings-btn {
+      position: fixed !important;
+      top: calc(clamp(8px, 1.5vw, 14px) + env(safe-area-inset-top, 0px) - 15px) !important;
+      bottom: auto !important;
+      right: calc(clamp(16px, 2.2vw, 24px) + env(safe-area-inset-right, 0px)) !important;
+      left: auto !important;
+      width: clamp(40px, 4.5vw, 46px) !important;
+      height: clamp(40px, 4.5vw, 46px) !important;
+      min-width: clamp(40px, 4.5vw, 46px) !important;
+      min-height: clamp(40px, 4.5vw, 46px) !important;
+      max-width: clamp(40px, 4.5vw, 46px) !important;
+      max-height: clamp(40px, 4.5vw, 46px) !important;
+      border-radius: 50% !important;
+      z-index: 20000 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
     html.platform-android-pad #floating-settings-btn,
     body.platform-android-pad #floating-settings-btn {
       position: fixed !important;
-      top: calc(clamp(8px, 1.5vw, 14px) + env(safe-area-inset-top, 0px) - 15px) !important;
+      top: calc(clamp(8px, 1.5vw, 14px) + env(safe-area-inset-top, 0px)) !important;
       bottom: auto !important;
       right: calc(clamp(16px, 2.2vw, 24px) + env(safe-area-inset-right, 0px)) !important;
       left: auto !important;
@@ -1744,7 +1818,7 @@
             <span>🔄</span> 프로그램 버전 및 최신 다운로드
           </h4>
           <p style="margin: 0 0 10px 0; font-size: 12.5px; color: var(--text-muted, #64748b);">
-            현재 사용 중인 버전: <b>v1.1.4 (Universal Desktop & Web)</b><br>
+            현재 사용 중인 버전: <b>v1.1.5 (Universal Desktop & Web)</b><br>
             아래 버튼을 클릭하면 사용 중인 기기(Mac/Windows)에 최적화된 최신 설치 프로그램 파일이 즉시 다운로드됩니다.
           </p>
           <button onclick="window.downloadLatestProgram()" style="display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 10px; background: var(--text-accent, #3b82f6); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; transition: opacity 0.15s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">

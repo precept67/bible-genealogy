@@ -2573,27 +2573,73 @@ datalist {
   display: none;
 }
 .search-result-item {
-  padding: 10px 15px;
+  padding: 8px 12px;
   cursor: pointer;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   text-align: left;
-  font-size: 15px;
-  color: #333;
+  font-size: 13px;
+  color: var(--text-main, #333);
+  transition: background-color 0.12s ease;
 }
 .search-result-item strong {
-  font-size: 15px;
+  font-size: 13.5px;
   font-weight: 600;
+  color: inherit;
 }
 .search-result-item:last-child {
   border-bottom: none;
 }
 .search-result-item:hover {
-  background-color: #f8f9fa;
+  background-color: rgba(0, 122, 255, 0.08);
+}
+[data-theme="dark"] .search-result-item {
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+  color: #f3f4f6;
+}
+[data-theme="dark"] .search-result-item:hover {
+  background-color: rgba(56, 189, 248, 0.12);
 }
 .search-result-item .parent-info {
-  font-size: 12.5px;
-  color: #888;
-  margin-left: 8px;
+  font-size: 11px;
+  color: var(--text-muted, #888);
+  margin-left: 6px;
+}
+.search-result-header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.search-result-snippet {
+  font-size: 11px;
+  color: #6b7280;
+  margin-top: 3px;
+  line-height: 1.35;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+[data-theme="dark"] .search-result-snippet {
+  color: #9ca3af;
+}
+.search-snippet-tag {
+  color: #0284c7;
+  font-weight: 600;
+  font-size: 10px;
+  margin-right: 3px;
+}
+[data-theme="dark"] .search-snippet-tag {
+  color: #38bdf8;
+}
+.search-result-snippet mark {
+  background: rgba(254, 240, 138, 0.85);
+  color: #854d0e;
+  font-weight: 700;
+  padding: 0 2px;
+  border-radius: 2px;
+}
+[data-theme="dark"] .search-result-snippet mark {
+  background: rgba(234, 179, 8, 0.35);
+  color: #fde047;
 }
 
 /* Layer Control Panel */
@@ -5328,27 +5374,18 @@ body.platform-macos #main-titlebar {
    macOS Style Unified Top System Titlebar & Menu Bar
    ========================================================= */
 #desktop-mac-titlebar-bg {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 28px;
-  background: #ffffff;
-  z-index: 24999;
-  -webkit-app-region: drag;
-  pointer-events: auto;
+  display: none !important;
 }
 
 html.platform-macos #desktop-mac-titlebar-bg,
 body.platform-macos #desktop-mac-titlebar-bg {
-  display: block !important;
+  display: none !important;
 }
 
 [data-theme="dark"] #desktop-mac-titlebar-bg,
 html.platform-macos[data-theme="dark"] #desktop-mac-titlebar-bg,
 body.platform-macos[data-theme="dark"] #desktop-mac-titlebar-bg {
-  background: #1e1e1e !important;
+  display: none !important;
 }
 
 html.is-fullscreen #desktop-mac-titlebar-bg,
@@ -5366,18 +5403,18 @@ body.is-fullscreen.platform-macos #desktop-mac-titlebar-bg,
   top: 0;
   left: 0;
   right: 0;
-  height: 38px;
-  background: #ffffff !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.7) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
   z-index: 25000;
   align-items: center;
   justify-content: space-between;
-  padding: 0 16px;
+  padding: 0 14px;
   box-sizing: border-box;
   font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
-  font-size: 14px;
+  font-size: 11.5px;
   color: #111827;
   user-select: none;
   -webkit-user-select: none;
@@ -5390,16 +5427,16 @@ body.is-fullscreen.platform-macos #desktop-mac-titlebar-bg,
 html.platform-macos #desktop-mac-menubar,
 body.platform-macos #desktop-mac-menubar {
   display: flex !important;
-  top: 28px !important;
-  padding: 0 16px !important;
-  background: #ffffff !important;
+  top: 0px !important;
+  padding: 0 14px !important;
+  background: rgba(255, 255, 255, 0.7) !important;
   color: #111827 !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
   transition: top 0.2s ease, padding 0.2s ease;
 }
 
-/* Fullscreen: Move menubar to the very top (top: 0) with 100% TRANSPARENCY */
+/* Fullscreen: Menubar has guaranteed safe-area clearance and clean solid background */
 html.is-fullscreen #desktop-mac-menubar,
 body.is-fullscreen #desktop-mac-menubar,
 html.is-fullscreen.platform-macos #desktop-mac-menubar,
@@ -5407,13 +5444,25 @@ body.is-fullscreen.platform-macos #desktop-mac-menubar,
 :fullscreen #desktop-mac-menubar,
 :-webkit-full-screen #desktop-mac-menubar {
   top: 0 !important;
-  padding: 0 16px !important;
-  background: transparent !important;
-  border: none !important;
-  border-bottom: none !important;
-  box-shadow: none !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
+  padding-top: max(env(safe-area-inset-top, 0px), 14px) !important;
+  padding-bottom: 3px !important;
+  padding-left: 14px !important;
+  padding-right: 14px !important;
+  height: calc(32px + max(env(safe-area-inset-top, 0px), 14px)) !important;
+  align-items: flex-end !important;
+  background: rgba(255, 255, 255, 0.7) !important;
+  color: #111827 !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+}
+
+html.is-fullscreen #desktop-mac-menubar .mac-menubar-left,
+body.is-fullscreen #desktop-mac-menubar .mac-menubar-left,
+html.is-fullscreen #desktop-mac-menubar .mac-menubar-right,
+body.is-fullscreen #desktop-mac-menubar .mac-menubar-right {
+  height: 32px !important;
 }
 
 @media (display-mode: fullscreen) {
@@ -5421,13 +5470,18 @@ body.is-fullscreen.platform-macos #desktop-mac-menubar,
   html.platform-macos #desktop-mac-menubar,
   body.platform-macos #desktop-mac-menubar {
     top: 0 !important;
-    padding: 0 16px !important;
-    background: transparent !important;
-    border: none !important;
-    border-bottom: none !important;
-    box-shadow: none !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
+    padding-top: max(env(safe-area-inset-top, 0px), 14px) !important;
+    padding-bottom: 3px !important;
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+    height: calc(32px + max(env(safe-area-inset-top, 0px), 14px)) !important;
+    align-items: flex-end !important;
+    background: rgba(255, 255, 255, 0.7) !important;
+    color: #111827 !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12) !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
   }
 }
 
@@ -5438,44 +5492,37 @@ body.is-fullscreen.platform-macos #desktop-mac-menubar,
 [data-theme="dark"] #desktop-mac-menubar,
 html.platform-macos[data-theme="dark"] #desktop-mac-menubar,
 body.platform-macos[data-theme="dark"] #desktop-mac-menubar {
-  background: #1e1e1e !important;
+  background: rgba(30, 30, 30, 0.7) !important;
   color: #f3f4f6 !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
 }
 
 [data-theme="dark"] html.is-fullscreen #desktop-mac-menubar,
 [data-theme="dark"] body.is-fullscreen #desktop-mac-menubar,
 [data-theme="dark"] html.is-fullscreen.platform-macos #desktop-mac-menubar,
 [data-theme="dark"] body.is-fullscreen.platform-macos #desktop-mac-menubar {
-  background: transparent !important;
-  border: none !important;
-  border-bottom: none !important;
-  box-shadow: none !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
+  background: rgba(30, 30, 30, 0.7) !important;
+  color: #f3f4f6 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
 }
 
 html.platform-macos #viewer-container,
 body.platform-macos #viewer-container {
-  top: 66px !important;
-  height: calc(100% - 66px) !important;
+  top: 32px !important;
+  height: calc(100% - 32px) !important;
 }
 
 html.is-fullscreen.platform-macos #viewer-container,
-body.is-fullscreen.platform-macos #viewer-container {
-  top: 0px !important;
-  height: 100% !important;
-}
-
-/* In fullscreen mode: Viewer is ALWAYS 100% full height from top: 0 */
+body.is-fullscreen.platform-macos #viewer-container,
 html.is-fullscreen #viewer-container,
-body.is-fullscreen #viewer-container,
-html.is-fullscreen.platform-macos #viewer-container,
-body.is-fullscreen.platform-macos #viewer-container {
-  top: 0px !important;
-  height: 100% !important;
+body.is-fullscreen #viewer-container {
+  top: calc(34px + max(env(safe-area-inset-top, 0px), 14px)) !important;
+  height: calc(100% - 34px - max(env(safe-area-inset-top, 0px), 14px)) !important;
 }
 
 /* When menubar is floating in windowed mode: viewer starts at top: 0px */
@@ -5496,36 +5543,41 @@ body.is-fullscreen.is-menubar-floating.platform-macos #viewer-container {
 #desktop-mac-menubar.is-floating,
 html.platform-macos #desktop-mac-menubar.is-floating,
 body.platform-macos #desktop-mac-menubar.is-floating {
-  left: auto !important;
-  right: auto !important;
-  width: max-content !important;
-  max-width: calc(100vw - 32px) !important;
-  height: 42px !important;
-  border-radius: 21px !important;
-  background: rgba(255, 255, 255, 0.94) !important;
-  backdrop-filter: blur(25px) saturate(190%) !important;
-  -webkit-backdrop-filter: blur(25px) saturate(190%) !important;
+  position: fixed !important;
+  border-radius: 10px !important;
   border: 1px solid rgba(0, 0, 0, 0.16) !important;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22), 0 2px 8px rgba(0, 0, 0, 0.08) !important;
-  padding: 0 14px !important;
-  z-index: 28000 !important;
+  background: rgba(255, 255, 255, 0.7) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.22), 0 2px 6px rgba(0, 0, 0, 0.08) !important;
+  width: auto !important;
+  max-width: 96vw !important;
+  left: 20px;
+  right: auto;
+  top: 14px;
+  padding: 0 12px !important;
+  height: 32px !important;
+  z-index: 26000 !important;
   transition: box-shadow 0.2s ease, opacity 0.2s ease;
 }
 
 [data-theme="dark"] #desktop-mac-menubar.is-floating,
 html.platform-macos[data-theme="dark"] #desktop-mac-menubar.is-floating,
 body.platform-macos[data-theme="dark"] #desktop-mac-menubar.is-floating {
-  background: rgba(36, 36, 38, 0.94) !important;
-  border: 1px solid rgba(255, 255, 255, 0.22) !important;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55), 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+  background: rgba(30, 30, 30, 0.7) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5) !important;
 }
 
 #desktop-mac-menubar.is-dragging {
   cursor: grabbing !important;
   user-select: none !important;
   -webkit-user-select: none !important;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-  opacity: 0.95 !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.28) !important;
+  opacity: 0.94 !important;
+  transition: none !important;
 }
 
 /* Minimized Menubar Pill */
@@ -5535,11 +5587,15 @@ body.platform-macos #desktop-mac-menubar.is-minimized {
   left: auto !important;
   right: auto !important;
   width: auto !important;
-  height: 36px !important;
-  padding: 0 14px !important;
-  border-radius: 18px !important;
+  min-width: 0 !important;
+  height: 28px !important;
+  padding: 0 10px !important;
+  border-radius: 14px !important;
   cursor: pointer !important;
   justify-content: center !important;
+  background: rgba(255, 255, 255, 0.7) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
 }
 
 #desktop-mac-menubar.is-minimized .mac-menubar-left,
@@ -5550,9 +5606,9 @@ body.platform-macos #desktop-mac-menubar.is-minimized {
 .mac-menubar-minimized-pill {
   display: none;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   font-weight: 700;
-  font-size: 13.5px;
+  font-size: 11px;
   color: inherit;
   cursor: pointer;
   user-select: none;
@@ -5564,15 +5620,15 @@ body.platform-macos #desktop-mac-menubar.is-minimized {
 }
 
 .mac-menubar-minimized-pill .pill-icon {
-  font-size: 15px;
+  font-size: 12px;
 }
 
 .mac-drag-handle {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 24px;
+  width: 18px;
+  height: 22px;
   color: #6b7280;
   cursor: grab;
   cursor: -webkit-grab;
@@ -5599,19 +5655,19 @@ body.platform-macos #desktop-mac-menubar.is-minimized {
 .mac-menubar-controls {
   display: flex;
   align-items: center;
-  gap: 4px;
-  margin-left: 4px;
+  gap: 3px;
+  margin-left: 3px;
 }
 
 .mac-bar-control-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   border: none;
   background: transparent;
-  border-radius: 5px;
+  border-radius: 4px;
   color: #6b7280;
   cursor: pointer;
   padding: 0;
@@ -5633,7 +5689,7 @@ body.platform-macos #desktop-mac-menubar.is-minimized {
 }
 
 #desktop-mac-menubar.is-floating #mac-menubar-dock-btn svg {
-  transform: rotate(45deg);
+  transform: none;
   color: #007aff;
 }
 
@@ -5651,7 +5707,7 @@ html.platform-android-pad:not(.platform-macos) #desktop-mac-menubar {
 .mac-menubar-left {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   height: 100%;
   -webkit-app-region: no-drag !important;
   pointer-events: auto !important;
@@ -5670,12 +5726,12 @@ html.platform-android-pad:not(.platform-macos) #desktop-mac-menubar {
 .mac-zoom-control-box {
   display: flex;
   align-items: center;
-  gap: 3px;
+  gap: 2px;
   background: rgba(0, 0, 0, 0.05);
   border: 1px solid rgba(0, 0, 0, 0.12);
-  border-radius: 14px;
-  padding: 2px 6px;
-  height: 28px;
+  border-radius: 12px;
+  padding: 1px 5px;
+  height: 24px;
   box-sizing: border-box;
 }
 
@@ -5688,8 +5744,8 @@ html.platform-android-pad:not(.platform-macos) #desktop-mac-menubar {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 22px;
-  height: 22px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   border: none;
   background: transparent;
@@ -5712,15 +5768,15 @@ html.platform-android-pad:not(.platform-macos) #desktop-mac-menubar {
 }
 
 .mac-zoom-indicator {
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 600;
-  min-width: 44px;
+  min-width: 36px;
   text-align: center;
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
-  padding: 0 4px;
-  border-radius: 4px;
+  padding: 0 3px;
+  border-radius: 3px;
   transition: background 0.15s ease;
 }
 
@@ -5741,7 +5797,7 @@ body.platform-macos #bottom-controls-wrapper {
 .mac-menubar-right {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   height: 100%;
   margin-left: auto;
   -webkit-app-region: no-drag !important;
@@ -5752,12 +5808,12 @@ body.platform-macos #bottom-controls-wrapper {
   position: relative;
   display: flex;
   align-items: center;
-  width: 270px;
-  height: 30px;
+  width: 230px;
+  height: 25px;
   background: rgba(0, 0, 0, 0.06);
   border: 1px solid rgba(0, 0, 0, 0.14);
-  border-radius: 15px;
-  padding: 0 12px;
+  border-radius: 13px;
+  padding: 0 10px;
   transition: all 0.2s ease;
 }
 
@@ -5768,22 +5824,24 @@ body.platform-macos #bottom-controls-wrapper {
 }
 
 .mac-menubar-search:focus-within {
-  width: 330px;
+  width: 280px;
   background: #ffffff;
   border-color: #007aff;
-  box-shadow: 0 0 0 2.5px rgba(0, 122, 255, 0.25);
+  box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.25);
 }
 
 [data-theme="dark"] .mac-menubar-search:focus-within {
   background: #1c1c1e;
   border-color: #38bdf8;
-  box-shadow: 0 0 0 2.5px rgba(56, 189, 248, 0.25);
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.25);
 }
 
 .mac-menubar-search .search-icon-svg {
   color: var(--text-muted);
-  margin-right: 6px;
+  margin-right: 5px;
   flex-shrink: 0;
+  width: 13px;
+  height: 13px;
 }
 
 .mac-menubar-search input,
@@ -5799,10 +5857,10 @@ body.platform-macos #bottom-controls-wrapper {
   background: transparent !important;
   box-shadow: none !important;
   outline: none !important;
-  font-size: 15px !important;
+  font-size: 12px !important;
   font-family: inherit !important;
   color: inherit !important;
-  padding: 0 4px !important;
+  padding: 0 3px !important;
   margin: 0 !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
@@ -5822,18 +5880,42 @@ body.platform-macos #bottom-controls-wrapper {
   top: 100%;
   left: 0;
   right: 0;
-  margin-top: 6px;
-  max-height: 400px;
-  overflow-y: auto;
+  margin-top: 5px;
+  max-height: min(420px, calc(100vh - 80px)) !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+  pointer-events: auto !important;
   border-radius: 8px;
-  z-index: 26000;
+  z-index: 28000 !important;
   background: rgba(255, 255, 255, 0.98);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22), 0 2px 8px rgba(0, 0, 0, 0.08);
+  font-size: 12px !important;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.25) transparent;
+}
+
+.mac-search-results::-webkit-scrollbar {
+  width: 6px;
+}
+
+.mac-search-results::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.mac-search-results::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 3px;
 }
 
 [data-theme="dark"] .mac-search-results {
   background: rgba(36, 36, 38, 0.98);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.6);
+  scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+}
+
+[data-theme="dark"] .mac-search-results::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
 }
 
 /* Hide standalone floating search on desktop */
@@ -5861,12 +5943,12 @@ body.platform-macos #floating-search-wrapper {
 }
 
 .mac-menu-title {
-  padding: 4px 9px;
-  border-radius: 5px;
+  padding: 3px 7px;
+  border-radius: 4px;
   cursor: pointer;
   font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif !important;
   font-weight: 700 !important;
-  font-size: 14px !important;
+  font-size: 11.5px !important;
   line-height: 1.2;
   letter-spacing: -0.01em;
   color: #000000 !important;
@@ -5874,7 +5956,7 @@ body.platform-macos #floating-search-wrapper {
   -webkit-font-smoothing: antialiased !important;
   -moz-osx-font-smoothing: grayscale !important;
   text-rendering: optimizeLegibility !important;
-  text-shadow: 0 0 0.4px #000000 !important;
+  text-shadow: 0 0 0.3px #000000 !important;
   transition: background 0.12s ease;
   white-space: nowrap;
   touch-action: manipulation;
@@ -5903,14 +5985,14 @@ body.platform-macos #floating-search-wrapper {
   position: absolute;
   top: 100%;
   left: 0;
-  min-width: 230px;
+  min-width: 200px;
   background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(25px) saturate(190%);
   -webkit-backdrop-filter: blur(25px) saturate(190%);
   border: 1px solid rgba(0, 0, 0, 0.15);
   border-radius: 6px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.18), 0 2px 6px rgba(0,0,0,0.08);
-  padding: 4px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15), 0 2px 5px rgba(0,0,0,0.06);
+  padding: 3px;
   margin-top: 1px;
   z-index: 26000;
   touch-action: manipulation;
@@ -5922,7 +6004,7 @@ body.platform-macos #floating-search-wrapper {
 [data-theme="dark"] .mac-dropdown-menu {
   background: rgba(45, 45, 48, 0.96);
   border-color: rgba(255, 255, 255, 0.18);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
 }
 
 .mac-menu-item:hover .mac-dropdown-menu,
@@ -5934,10 +6016,10 @@ body.platform-macos #floating-search-wrapper {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 6px 12px;
+  padding: 4px 10px;
   border-radius: 4px;
   font-family: var(--font-family) !important;
-  font-size: 14.5px;
+  font-size: 11.5px;
   font-weight: 400;
   color: #1d1d1f;
   cursor: pointer;
@@ -5961,13 +6043,13 @@ body.platform-macos #floating-search-wrapper {
 .mac-menu-entry .label {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
 }
 
 .mac-menu-entry .shortcut {
-  font-size: 11.5px;
+  font-size: 9.5px;
   opacity: 0.6;
-  margin-left: 16px;
+  margin-left: 14px;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
 }
 
@@ -5988,7 +6070,7 @@ body.platform-macos #floating-search-wrapper {
 .mac-menu-divider {
   height: 1px;
   background: rgba(0, 0, 0, 0.1);
-  margin: 4px 6px;
+  margin: 3px 5px;
 }
 
 [data-theme="dark"] .mac-menu-divider {
@@ -6109,5 +6191,25 @@ html.platform-desktop #floating-settings-btn,
 body.platform-desktop #floating-settings-btn,
 body.admin-mode:not(.platform-iphone):not(.platform-android-phone):not(.platform-ipad):not(.platform-android-pad) #floating-settings-btn {
   display: none !important;
+}
+
+/* Android Phone Top Controls Position (+15px lowered) */
+html.platform-android-phone #floating-search-wrapper,
+body.platform-android-phone #floating-search-wrapper,
+html.platform-android-phone #slide-lock-container,
+body.platform-android-phone #slide-lock-container,
+html.platform-android-phone #floating-settings-btn,
+body.platform-android-phone #floating-settings-btn {
+  top: calc(clamp(6px, 1.8vw, 10px) + env(safe-area-inset-top, 0px)) !important;
+}
+
+/* Android Pad Top Controls Position (+15px lowered) */
+html.platform-android-pad #floating-search-wrapper,
+body.platform-android-pad #floating-search-wrapper,
+html.platform-android-pad #slide-lock-container,
+body.platform-android-pad #slide-lock-container,
+html.platform-android-pad #floating-settings-btn,
+body.platform-android-pad #floating-settings-btn {
+  top: calc(clamp(8px, 1.5vw, 14px) + env(safe-area-inset-top, 0px)) !important;
 }
 
