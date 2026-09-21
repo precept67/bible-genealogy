@@ -29,6 +29,10 @@ fn main() {
   let file_menu = Submenu::new("파일", Menu::new()
     .add_item(CustomMenuItem::new("open_settings".to_string(), "환경설정...").accelerator("CmdOrCtrl+,"))
     .add_native_item(MenuItem::Separator)
+    .add_item(CustomMenuItem::new("icloud_sync".to_string(), "☁️ iCloud 실시간 동기화").accelerator("CmdOrCtrl+Shift+S"))
+    .add_item(CustomMenuItem::new("icloud_export".to_string(), "iCloud로 전체 데이터 백업 / 내보내기"))
+    .add_item(CustomMenuItem::new("icloud_import".to_string(), "iCloud에서 최신 데이터 가져오기"))
+    .add_native_item(MenuItem::Separator)
     .add_item(CustomMenuItem::new("export_notes".to_string(), "연구 메모 백업"))
     .add_item(CustomMenuItem::new("import_notes".to_string(), "연구 메모 복원")));
 
@@ -87,6 +91,15 @@ fn main() {
         }
         "open_settings" => {
           let _ = event.window().emit("open-settings", ());
+        }
+        "icloud_sync" => {
+          let _ = event.window().emit("menu-icloud-sync", ());
+        }
+        "icloud_export" => {
+          let _ = event.window().emit("menu-icloud-export", ());
+        }
+        "icloud_import" => {
+          let _ = event.window().emit("menu-icloud-import", ());
         }
         "export_notes" => {
           let _ = event.window().emit("menu-export-notes", ());
