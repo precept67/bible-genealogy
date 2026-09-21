@@ -21432,9 +21432,8 @@ function setupFullscreenStateWatcher() {
     }
     const menubar = document.getElementById('desktop-mac-menubar');
     if (menubar && !menubar.classList.contains('is-floating')) {
-      const isMacFS = document.documentElement.classList.contains('is-fullscreen');
-      menubar.style.setProperty('top', '0px', 'important');
-      menubar.style.setProperty('padding-left', isMacFS ? '16px' : '80px', 'important');
+      menubar.style.removeProperty('top');
+      menubar.style.removeProperty('padding-left');
     }
     if (typeof updateTransform === 'function') {
       updateTransform();
@@ -21463,9 +21462,8 @@ function setupFullscreenStateWatcher() {
 
     const menubar = document.getElementById('desktop-mac-menubar');
     if (menubar && !menubar.classList.contains('is-floating')) {
-      const isMacFS = document.documentElement.classList.contains('is-fullscreen');
-      menubar.style.setProperty('top', '0px', 'important');
-      menubar.style.setProperty('padding-left', isMacFS ? '16px' : '80px', 'important');
+      menubar.style.removeProperty('top');
+      menubar.style.removeProperty('padding-left');
     }
     if (typeof updateTransform === 'function') {
       updateTransform();
