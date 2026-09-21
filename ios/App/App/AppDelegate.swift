@@ -42,11 +42,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         configureMacCatalystWindow()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
-            self?.configureMacCatalystWindow()
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-            self?.configureMacCatalystWindow()
+        for delay in [0.05, 0.1, 0.2, 0.3, 0.5, 1.0, 2.0] {
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
+                self?.configureMacCatalystWindow()
+            }
         }
         #endif
         return true
@@ -116,6 +115,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 if #available(iOS 14.0, *) {
                     windowScene.titlebar?.separatorStyle = .none
                 }
+            }
+        }
+
+        // Direct AppKit NSWindow transparency configuration to eliminate vibrancy blur shelf
+        if let nsAppClass = NSClassFromString("NSApplication"),
+           let nsApp = (nsAppClass as AnyObject).value(forKeyPath: "sharedApplication") as? NSObject,
+           let windows = nsApp.value(forKeyPath: "windows") as? [NSObject] {
+            for win in windows {
+                win.setValue(true, forKey: "titlebarAppearsTransparent")
+                win.setValue(1, forKey: "titleVisibility")
+                win.setValue(nil, forKey: "toolbar")
+                win.setValue([], forKey: "titlebarAccessoryViewControllers")
             }
         }
     }
