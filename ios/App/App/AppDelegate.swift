@@ -45,10 +45,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         configureMacCatalystWindow()
-        for delay in [0.05, 0.1, 0.2, 0.3, 0.5, 1.0, 2.0] {
+        for delay in [0.01, 0.05, 0.1, 0.2, 0.3, 0.5, 1.0, 2.0, 3.0] {
             DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
                 self?.configureMacCatalystWindow()
             }
+        }
+        
+        Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
+            self?.configureMacCatalystWindow()
         }
         #endif
         return true
@@ -167,13 +171,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private func suppressTitlebarHoverEffects(in view: NSObject) {
         let className = NSStringFromClass(type(of: view))
         
-        // Suppress visual effects, toolbar, and titlebar container completely
+        // Remove and suppress visual effects, toolbar, and titlebar container completely from the window
         if className.contains("Titlebar") || className.contains("VisualEffect") || className.contains("Decoration") || className.contains("Toolbar") {
             view.setValue(0.0, forKey: "alphaValue")
             view.setValue(true, forKey: "isHidden")
             if view.responds(to: NSSelectorFromString("setMaterial:")) {
                 view.setValue(0, forKey: "material")
             }
+            _ = view.perform(NSSelectorFromString("removeFromSuperview"))
+            return
         }
         
         // Traverse children
