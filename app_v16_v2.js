@@ -3334,7 +3334,7 @@ window.addEventListener('DOMContentLoaded', async () => {
           if (modal) modal.style.display = 'flex';
         });
         window.__TAURI__.event.listen('menu-about-app', () => {
-          alert("열린 족보이야기 (Bible Genealogy)\n버전: 1.1.3\n단축키: ⌘+Shift+E (편집 모드 전환)");
+          alert("열린 족보이야기 (Bible Genealogy)\n버전: 1.1.4\n단축키: ⌘+Shift+E (편집 모드 전환)");
         });
       } catch (_) {}
     }
@@ -21304,7 +21304,7 @@ function setupDesktopMacMenubar() {
     }
   });
   bindMenuAction('mac-menu-about-help', () => {
-    alert("열린 족보이야기 (Bible Genealogy)\n버전: 1.1.3\n단축키: ⌘+Shift+E (편집 모드 전환)");
+    alert("열린 족보이야기 (Bible Genealogy)\n버전: 1.1.4\n단축키: ⌘+Shift+E (편집 모드 전환)");
   });
 
   // Dropdown Open/Close Hover & Tap Management
@@ -21359,7 +21359,7 @@ function setupDesktopMacMenubar() {
   window.exportStudyNotesFile = async function() {
     try {
       const backupData = {
-        version: "1.1.3",
+        version: "1.1.4",
         appName: "열린 족보이야기",
         exportDate: new Date().toISOString(),
         userNotes: typeof userNotes !== 'undefined' ? userNotes : {},
