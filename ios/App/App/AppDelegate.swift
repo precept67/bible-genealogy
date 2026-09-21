@@ -34,7 +34,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             UIWindow.didBecomeKeyNotification,
             UIWindow.didBecomeVisibleNotification,
             UIScene.willConnectNotification,
-            UIScene.didActivateNotification
+            UIScene.didActivateNotification,
+            NSNotification.Name("NSWindowDidUpdateNotification"),
+            NSNotification.Name("NSWindowDidResizeNotification")
         ]
         for notif in sceneNotifications {
             NotificationCenter.default.addObserver(forName: notif, object: nil, queue: .main) { [weak self] _ in
@@ -109,6 +111,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     #if targetEnvironment(macCatalyst)
     private func configureMacCatalystWindow() {
+        // 0. Ensure AppKit framework is loaded into process
+        _ = dlopen("/System/Library/Frameworks/AppKit.framework/AppKit", RTLD_NOW)
+
         // 1. Direct UIKit WindowScene configuration
         self.window?.rootViewController?.title = ""
         for scene in UIApplication.shared.connectedScenes {
@@ -147,19 +152,36 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     }
                 }
                 
-                // Inspect window frame hierarchy to suppress empty toolbar vibrancy layers and bring content view forward
+                // Inspect window frame hierarchy to suppress empty toolbar vibrancy layers and titlebar hover shelf
                 if let contentView = win.value(forKey: "contentView") as? NSObject {
                     contentView.setValue(true, forKey: "wantsLayer")
-                    if let themeFrame = contentView.value(forKey: "superview") as? NSObject,
-                       let subviews = themeFrame.value(forKey: "subviews") as? [NSObject] {
-                        for subview in subviews {
-                            let className = NSStringFromClass(type(of: subview))
-                            if className.contains("Toolbar") || className.contains("VisualEffect") {
-                                subview.setValue(0.0, forKey: "alphaValue")
-                                subview.setValue(true, forKey: "isHidden")
-                            }
-                        }
+                    if let themeFrame = contentView.value(forKey: "superview") as? NSObject {
+                        suppressTitlebarHoverEffects(in: themeFrame)
                     }
+                }
+            }
+        }
+    }
+
+    private func suppressTitlebarHoverEffects(in view: NSObject) {
+        let className = NSStringFromClass(type(of: view))
+        
+        // Suppress visual effects and hover decorations
+        if className.contains("VisualEffect") || className.contains("Decoration") || className.contains("Toolbar") {
+            view.setValue(0.0, forKey: "alphaValue")
+            view.setValue(true, forKey: "isHidden")
+            if view.responds(to: NSSelectorFromString("setMaterial:")) {
+                view.setValue(0, forKey: "material")
+            }
+        }
+        
+        // Traverse children
+        if let subviews = view.value(forKey: "subviews") as? [NSObject] {
+            for subview in subviews {
+                let subClass = NSStringFromClass(type(of: subview))
+                // Do not hide the actual close/miniaturize/zoom widgets
+                if !subClass.contains("Widget") && !subClass.contains("Button") {
+                    suppressTitlebarHoverEffects(in: subview)
                 }
             }
         }
