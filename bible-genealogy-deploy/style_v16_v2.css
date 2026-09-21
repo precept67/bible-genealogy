@@ -5361,7 +5361,7 @@ body.platform-macos #main-titlebar {
 html.platform-macos #desktop-mac-menubar,
 body.platform-macos #desktop-mac-menubar {
   display: flex !important;
-  top: 38px !important;
+  top: 0px !important;
   padding: 0 16px !important;
   background: rgba(255, 255, 255, 0.85) !important;
   color: #111827 !important;
@@ -5407,10 +5407,9 @@ body.is-fullscreen.platform-macos #desktop-mac-menubar,
 [data-theme="dark"] #desktop-mac-menubar,
 html.platform-macos[data-theme="dark"] #desktop-mac-menubar,
 body.platform-macos[data-theme="dark"] #desktop-mac-menubar {
-  background: rgba(36, 36, 38, 0.85) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(30, 30, 30, 0.85) !important;
   color: #f3f4f6 !important;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
 }
 
 [data-theme="dark"] html.is-fullscreen #desktop-mac-menubar,
@@ -5427,8 +5426,8 @@ body.platform-macos[data-theme="dark"] #desktop-mac-menubar {
 
 html.platform-macos #viewer-container,
 body.platform-macos #viewer-container {
-  top: 76px !important;
-  height: calc(100% - 76px) !important;
+  top: 38px !important;
+  height: calc(100% - 38px) !important;
 }
 
 /* In fullscreen mode: Viewer is ALWAYS 100% full height from top: 0 */
@@ -5440,11 +5439,11 @@ body.is-fullscreen.platform-macos #viewer-container {
   height: 100% !important;
 }
 
-/* When menubar is floating in windowed mode: viewer starts at top: 38px (under titlebar) */
+/* When menubar is floating in windowed mode: viewer starts at top: 0px */
 html.is-menubar-floating.platform-macos #viewer-container,
 body.is-menubar-floating.platform-macos #viewer-container {
-  top: 38px !important;
-  height: calc(100% - 38px) !important;
+  top: 0px !important;
+  height: 100% !important;
 }
 
 /* When menubar is floating in fullscreen mode: viewer uses 100% full screen */

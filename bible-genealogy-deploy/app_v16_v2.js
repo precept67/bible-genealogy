@@ -21407,7 +21407,7 @@ function setupFullscreenStateWatcher() {
     }
     const menubar = document.getElementById('desktop-mac-menubar');
     if (menubar && !menubar.classList.contains('is-floating')) {
-      menubar.style.setProperty('top', isFS ? '0px' : '38px', 'important');
+      menubar.style.setProperty('top', '0px', 'important');
       menubar.style.setProperty('padding-left', '16px', 'important');
     }
     if (typeof updateTransform === 'function') {
@@ -21437,7 +21437,7 @@ function setupFullscreenStateWatcher() {
 
     const menubar = document.getElementById('desktop-mac-menubar');
     if (menubar && !menubar.classList.contains('is-floating')) {
-      menubar.style.setProperty('top', isStandardFS ? '0px' : '38px', 'important');
+      menubar.style.setProperty('top', '0px', 'important');
       menubar.style.setProperty('padding-left', '16px', 'important');
     }
     if (typeof updateTransform === 'function') {
@@ -21486,15 +21486,15 @@ function initSmartMenubar() {
       document.documentElement.classList.add('is-menubar-floating');
       document.body.classList.add('is-menubar-floating');
       menubar.classList.add('is-floating');
-      if (dockBtn) dockBtn.title = "상단 2행에 다시 고정하기 (Dock)";
+      if (dockBtn) dockBtn.title = "상단에 다시 고정하기 (Dock)";
 
       const winWidth = window.innerWidth;
       const menubarWidth = menubar.offsetWidth || 520;
       let left = typeof customX === 'number' ? customX : Math.max(16, (winWidth - menubarWidth) / 2);
-      let top = typeof customY === 'number' ? customY : 48;
+      let top = typeof customY === 'number' ? Math.min(customY, 8) : 6;
 
       left = Math.max(10, Math.min(winWidth - menubarWidth - 10, left));
-      top = Math.max(10, Math.min(window.innerHeight - 50, top));
+      top = Math.max(0, Math.min(window.innerHeight - 50, top));
 
       menubar.style.setProperty('left', left + 'px', 'important');
       menubar.style.setProperty('top', top + 'px', 'important');
@@ -21507,10 +21507,9 @@ function initSmartMenubar() {
       isMinimized = false;
       if (dockBtn) dockBtn.title = "자유 이동(플로팅) 모드로 전환";
 
-      const isFS = document.documentElement.classList.contains('is-fullscreen');
       menubar.style.setProperty('left', '0px', 'important');
       menubar.style.setProperty('right', '0px', 'important');
-      menubar.style.setProperty('top', isFS ? '0px' : '38px', 'important');
+      menubar.style.setProperty('top', '0px', 'important');
     }
     saveState();
   }
@@ -21534,7 +21533,8 @@ function initSmartMenubar() {
     if (saved) {
       const parsed = JSON.parse(saved);
       if (parsed.isFloating) {
-        setFloatingMode(true, parsed.x, parsed.y);
+        let py = typeof parsed.y === 'number' ? Math.min(parsed.y, 8) : 6;
+        setFloatingMode(true, parsed.x, py);
       }
       if (parsed.isMinimized) {
         setMinimizedMode(true);
