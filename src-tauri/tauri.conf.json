@@ -42,6 +42,9 @@
           "$APPDATA/*",
           "$APPDATA/**",
           "$HOME/**",
+          "$HOME/Library/Mobile Documents/**",
+          "$HOME/Library/Mobile Documents/com~apple~CloudDocs/**",
+          "$HOME/Library/Mobile Documents/com~apple~CloudDocs/BibleGenealogy/**",
           "$HOME/Library/Mobile Documents/iCloud~md~obsidian/Documents/**",
           "/Users/sanghyunkim/Library/Mobile Documents/iCloud~md~obsidian/Documents/**"
         ]
