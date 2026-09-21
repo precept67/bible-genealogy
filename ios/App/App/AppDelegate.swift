@@ -108,8 +108,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     #if targetEnvironment(macCatalyst)
     private func configureMacCatalystWindow() {
+        // 1. Direct UIKit WindowScene configuration
         for scene in UIApplication.shared.connectedScenes {
             if let windowScene = scene as? UIWindowScene {
+                windowScene.title = ""
                 windowScene.titlebar?.titleVisibility = .hidden
                 windowScene.titlebar?.toolbar = nil
                 if #available(iOS 14.0, *) {
@@ -118,15 +120,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
 
-        // Direct AppKit NSWindow configuration: elevate web view above toolbar and remove toolbar background
-        if let nsAppClass = NSClassFromString("NSApplication"),
-           let nsApp = (nsAppClass as AnyObject).value(forKeyPath: "sharedApplication") as? NSObject,
-           let windows = nsApp.value(forKeyPath: "windows") as? [NSObject] {
+        // 2. Direct AppKit NSWindow runtime manipulation
+        if let nsAppClass = NSClassFromString("NSApplication") as? NSObject.Type,
+           let sharedApp = nsAppClass.perform(NSSelectorFromString("sharedApplication"))?.takeUnretainedValue() as? NSObject,
+           let windows = sharedApp.value(forKey: "windows") as? [NSObject] {
             for win in windows {
+                win.setValue("", forKey: "title")
                 win.setValue(true, forKey: "titlebarAppearsTransparent")
-                win.setValue(1, forKey: "titleVisibility")
+                win.setValue(1, forKey: "titleVisibility") // NSWindowTitleHidden = 1
+                
+                // Remove toolbar completely
+                _ = win.perform(NSSelectorFromString("setToolbar:"), with: nil)
                 win.setValue(nil, forKey: "toolbar")
                 win.setValue([], forKey: "titlebarAccessoryViewControllers")
+                
+                // Set NSWindowStyleMaskFullSizeContentView (1 << 15 = 32768)
+                if let currentMask = win.value(forKey: "styleMask") as? UInt {
+                    let fullSizeMask: UInt = 1 << 15
+                    if (currentMask & fullSizeMask) == 0 {
+                        win.setValue(currentMask | fullSizeMask, forKey: "styleMask")
+                    }
+                }
                 
                 // Inspect window frame hierarchy to suppress empty toolbar vibrancy layers and bring content view forward
                 if let contentView = win.value(forKey: "contentView") as? NSObject {
@@ -135,8 +149,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                        let subviews = themeFrame.value(forKey: "subviews") as? [NSObject] {
                         for subview in subviews {
                             let className = NSStringFromClass(type(of: subview))
-                            if className.contains("Toolbar") || className.contains("VisualEffect") || className.contains("TitlebarContainer") {
+                            if className.contains("Toolbar") || className.contains("VisualEffect") {
                                 subview.setValue(0.0, forKey: "alphaValue")
+                                subview.setValue(true, forKey: "isHidden")
                             }
                         }
                     }
