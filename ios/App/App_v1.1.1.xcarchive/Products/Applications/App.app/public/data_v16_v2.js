@@ -1,0 +1,19904 @@
+/**
+ * Bible Genealogy Dataset (Revised Korean Version Standard - 개역개정 기준)
+ * Updated with user's perfectly aligned custom layout.
+ */
+const LAYOUT_VERSION = "15.0";
+
+const BIBLE_CHARACTERS = [
+  {
+    "id": "adam",
+    "name": "아담",
+    "engName": "Adam",
+    "gender": "M",
+    "generation": 0,
+    "column": 0,
+    "parents": [],
+    "spouses": [
+      "eve"
+    ],
+    "desc": "하나님이 흙으로 창조하신 인류의 첫 조상.",
+    "isMain": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The first ancestors of mankind created by God from dust."
+  },
+  {
+    "id": "eve",
+    "name": "하와",
+    "engName": "Eve",
+    "gender": "F",
+    "generation": 0,
+    "column": -1.6,
+    "parents": [],
+    "spouses": [
+      "adam"
+    ],
+    "desc": "아담의 갈빗대로 지음 받은 모든 산 자의 어머니.",
+    "isMain": true,
+    "teachers": [],
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The mother of all living people, created from Adam's rib."
+  },
+  {
+    "id": "seth",
+    "name": "셋",
+    "engName": "Seth",
+    "gender": "M",
+    "generation": 1,
+    "column": 0,
+    "parents": [
+      "adam",
+      "eve"
+    ],
+    "spouses": [],
+    "desc": "아벨 대신 주신 아들. 예배와 언약 계승의 시작.",
+    "isMain": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The son given in place of Abel. The beginning of worship and covenant succession."
+  },
+  {
+    "id": "cain",
+    "name": "가인",
+    "engName": "Cain",
+    "gender": "M",
+    "generation": 1.02,
+    "column": -3.342,
+    "parents": [
+      "adam",
+      "eve"
+    ],
+    "spouses": [],
+    "desc": "인류 최초의 살인자. 농경 문명의 시작.",
+    "isMain": false,
+    "teachers": [],
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Humanity's first murderer. The beginning of agricultural civilization."
+  },
+  {
+    "id": "abel",
+    "name": "아벨",
+    "engName": "Abel",
+    "gender": "M",
+    "generation": 1,
+    "column": -1.2,
+    "parents": [
+      "adam",
+      "eve"
+    ],
+    "spouses": [],
+    "desc": "가인에게 죽임 당한 의로운 목자.",
+    "isMain": false,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "A righteous shepherd who was killed by Cain."
+  },
+  {
+    "id": "enoch_cain",
+    "name": "에녹",
+    "engName": "Enoch",
+    "gender": "M",
+    "generation": 2,
+    "column": -3.342,
+    "parents": [
+      "cain"
+    ],
+    "spouses": [],
+    "desc": "가인이 성을 쌓고 아들의 이름을 딴 성.",
+    "isMain": false,
+    "teachers": [],
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Cain built the castle and named it after his son."
+  },
+  {
+    "id": "enosh",
+    "name": "에노스",
+    "engName": "Enosh",
+    "gender": "M",
+    "generation": 2,
+    "column": 0,
+    "parents": [
+      "seth"
+    ],
+    "spouses": [],
+    "desc": "셋의 아들. 이때부터 여호와의 이름을 부르기 시작함.",
+    "isMain": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Seth. From this time on, he began to call on the name of Jehovah."
+  },
+  {
+    "id": "irad",
+    "name": "이라드",
+    "engName": "Irad",
+    "gender": "M",
+    "generation": 3,
+    "column": -3.342,
+    "parents": [
+      "enoch_cain"
+    ],
+    "spouses": [],
+    "desc": "에녹의 아들. 가인 계열 성읍 문명 지도자.",
+    "isMain": false,
+    "teachers": [],
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Enoch. The leader of the Cain-affiliated city civilization."
+  },
+  {
+    "id": "kenan",
+    "name": "게난",
+    "engName": "Kenan",
+    "gender": "M",
+    "generation": 3,
+    "column": 0,
+    "parents": [
+      "enosh"
+    ],
+    "spouses": [],
+    "desc": "에노스의 아들. 경건한 조상들의 반열.",
+    "isMain": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Enos. The ranks of our pious ancestors."
+  },
+  {
+    "id": "mehujael",
+    "name": "므후야엘",
+    "engName": "Mehujael",
+    "gender": "M",
+    "generation": 4,
+    "column": -3.342,
+    "parents": [
+      "irad"
+    ],
+    "spouses": [],
+    "desc": "이라드의 아들.",
+    "isMain": false,
+    "teachers": [],
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Irad."
+  },
+  {
+    "id": "mahalalel",
+    "name": "마할랄렐",
+    "engName": "Mahalalel",
+    "gender": "M",
+    "generation": 4,
+    "column": 0,
+    "parents": [
+      "kenan"
+    ],
+    "spouses": [],
+    "desc": "게난의 아들. '하나님을 찬양하는 자'라는 뜻.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Kenan. Meaning ‘one who praises God’."
+  },
+  {
+    "id": "methushael",
+    "name": "므드사엘",
+    "engName": "Methushael",
+    "gender": "M",
+    "generation": 5,
+    "column": -3.342,
+    "parents": [
+      "mehujael"
+    ],
+    "spouses": [],
+    "desc": "므후야엘의 아들.",
+    "isMain": false,
+    "teachers": [],
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Mehujael."
+  },
+  {
+    "id": "jared",
+    "name": "야렛",
+    "engName": "Jared",
+    "gender": "M",
+    "generation": 5,
+    "column": 0,
+    "parents": [
+      "mahalalel"
+    ],
+    "spouses": [],
+    "desc": "마할랄렐의 아들.",
+    "isMain": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Mahalalel."
+  },
+  {
+    "id": "lamech_cain",
+    "name": "라멕",
+    "engName": "Lamech",
+    "gender": "M",
+    "generation": 6,
+    "column": -3.342,
+    "parents": [
+      "methushael"
+    ],
+    "spouses": [
+      "adah_cain",
+      "zillah_cain"
+    ],
+    "desc": "최초로 두 아내를 취한 자. 살인을 노래하는 검가 작가.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "He was the first to take two wives. A swordsman who sings of murder."
+  },
+  {
+    "id": "adah_cain",
+    "name": "아다",
+    "engName": "Adah",
+    "gender": "F",
+    "generation": 6,
+    "column": -4.642,
+    "parents": [],
+    "spouses": [
+      "lamech_cain"
+    ],
+    "desc": "라멕의 첫 번째 아내.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Lamech's first wife."
+  },
+  {
+    "id": "zillah_cain",
+    "name": "씰라",
+    "engName": "Zillah",
+    "gender": "F",
+    "generation": 6,
+    "column": -2.042,
+    "parents": [],
+    "spouses": [
+      "lamech_cain"
+    ],
+    "desc": "라멕의 두 번째 아내.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Lamech's second wife."
+  },
+  {
+    "id": "enoch",
+    "name": "에녹",
+    "engName": "Enoch",
+    "gender": "M",
+    "generation": 6,
+    "column": 0,
+    "parents": [
+      "jared"
+    ],
+    "spouses": [],
+    "desc": "300년간 하나님과 동행한 후 죽음을 보지 않고 승천함.",
+    "isMain": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "After walking with God for 300 years, he ascended to heaven without seeing death."
+  },
+  {
+    "id": "jabal",
+    "name": "야발",
+    "engName": "Jabal",
+    "gender": "M",
+    "generation": 7,
+    "column": -4.442,
+    "parents": [
+      "lamech_cain",
+      "adah_cain"
+    ],
+    "spouses": [],
+    "desc": "가축을 치는 장막 거주자의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Ancestor of tent dwellers who tended livestock."
+  },
+  {
+    "id": "jubal",
+    "name": "유발",
+    "engName": "Jubal",
+    "gender": "M",
+    "generation": 7,
+    "column": -3.742,
+    "parents": [
+      "lamech_cain",
+      "adah_cain"
+    ],
+    "spouses": [],
+    "desc": "수금과 퉁소를 잡는 모든 자의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The ancestor of all who play the harp and flute."
+  },
+  {
+    "id": "tubalcain",
+    "name": "두발가인",
+    "engName": "Tubal-cain",
+    "gender": "M",
+    "generation": 7,
+    "column": -2.942,
+    "parents": [
+      "lamech_cain",
+      "zillah_cain"
+    ],
+    "spouses": [],
+    "desc": "구리와 쇠로 여러 가지 기구를 만드는 자의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The ancestor of those who made various utensils out of copper and iron."
+  },
+  {
+    "id": "naamah",
+    "name": "나아마",
+    "engName": "Naamah",
+    "gender": "F",
+    "generation": 7,
+    "column": -2.242,
+    "parents": [
+      "lamech_cain",
+      "zillah_cain"
+    ],
+    "spouses": [],
+    "desc": "가인 계열의 딸. '아름답다'는 뜻.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Daughter of the Cain lineage. Meaning ‘beautiful’."
+  },
+  {
+    "id": "methuselah",
+    "name": "므두셀라",
+    "engName": "Methuselah",
+    "gender": "M",
+    "generation": 7,
+    "column": 0,
+    "parents": [
+      "enoch"
+    ],
+    "spouses": [],
+    "desc": "성경 인물 중 가장 장수한 인물 (969세 사망).",
+    "isMain": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The longest-lived person in the Bible (died at age 969)."
+  },
+  {
+    "id": "lamech",
+    "name": "라멕",
+    "engName": "Lamech",
+    "gender": "M",
+    "generation": 8,
+    "column": 0,
+    "parents": [
+      "methuselah"
+    ],
+    "spouses": [],
+    "desc": "므두셀라의 아들. 노아의 아버지.",
+    "isMain": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Methuselah. Noah's father."
+  },
+  {
+    "id": "noah",
+    "name": "노아",
+    "engName": "Noah",
+    "gender": "M",
+    "generation": 9,
+    "column": 0,
+    "parents": [
+      "lamech"
+    ],
+    "spouses": [
+      "noah_wife"
+    ],
+    "desc": "방주를 예비하여 온 세상의 대홍수 심판에서 인류의 명맥을 보존함.",
+    "isMain": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Preparing the ark to preserve the life of humanity from the global flood judgment."
+  },
+  {
+    "id": "japheth",
+    "name": "야벳",
+    "engName": "Japheth",
+    "gender": "M",
+    "generation": 10,
+    "column": -6.838,
+    "parents": [
+      "noah"
+    ],
+    "spouses": [
+      "japheth_wife"
+    ],
+    "desc": "창대하여 유럽과 아시아 여러 민족의 조상이 됨. 노아의 장자.",
+    "isMain": false,
+    "teachers": [],
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "He grew up and became the ancestor of many peoples in Europe and Asia. Noah's eldest son."
+  },
+  {
+    "id": "ham",
+    "name": "함",
+    "engName": "Ham",
+    "gender": "M",
+    "generation": 10,
+    "column": -2.112,
+    "parents": [
+      "noah"
+    ],
+    "spouses": [
+      "ham_wife"
+    ],
+    "desc": "가나안, 구스, 미스라임의 조상. 노아의 차남.",
+    "isMain": false,
+    "teachers": [],
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Ancestor of Canaan, Cush, and Mizraim. Noah's second son."
+  },
+  {
+    "id": "shem",
+    "name": "셈",
+    "engName": "Shem",
+    "gender": "M",
+    "generation": 10,
+    "column": 0,
+    "parents": [
+      "noah"
+    ],
+    "spouses": [
+      "shem_wife"
+    ],
+    "desc": "노아의 삼남. 아브라함과 다윗, 예수의 조상이 됨.",
+    "isMain": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Noah's third son. Became the ancestors of Abraham, David, and Jesus."
+  },
+  {
+    "id": "gomer",
+    "name": "고멜",
+    "engName": "Gomer",
+    "gender": "M",
+    "generation": 11.01,
+    "column": -8.218,
+    "parents": [
+      "japheth"
+    ],
+    "spouses": [],
+    "desc": "야벳의 맏아들.",
+    "isMain": false,
+    "teachers": [],
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Japheth's eldest son."
+  },
+  {
+    "id": "magog",
+    "name": "마곡",
+    "engName": "Magog",
+    "gender": "M",
+    "generation": 11,
+    "column": -7.537,
+    "parents": [
+      "japheth"
+    ],
+    "spouses": [],
+    "desc": "유라시아 북부 민족의 조상.",
+    "isMain": false,
+    "teachers": [],
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Ancestor of northern Eurasian peoples."
+  },
+  {
+    "id": "madai",
+    "name": "마대",
+    "engName": "Madai",
+    "gender": "M",
+    "generation": 11,
+    "column": -6.857,
+    "parents": [
+      "japheth"
+    ],
+    "spouses": [],
+    "desc": "메대 민족(페르시아 서부)의 조상.",
+    "isMain": false,
+    "teachers": [],
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Ancestor of the Mede people (western Persia)."
+  },
+  {
+    "id": "javan",
+    "name": "야완",
+    "engName": "Javan",
+    "gender": "M",
+    "generation": 11,
+    "column": -6.178,
+    "parents": [
+      "japheth"
+    ],
+    "spouses": [],
+    "desc": "그리스 및 이오니아 민족의 조상.",
+    "isMain": false,
+    "teachers": [],
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Ancestor of the Greek and Ionian peoples."
+  },
+  {
+    "id": "tubal",
+    "name": "두발",
+    "engName": "Tubal",
+    "gender": "M",
+    "generation": 11,
+    "column": -5.497,
+    "parents": [
+      "japheth"
+    ],
+    "spouses": [],
+    "desc": "야벳의 다섯째 아들. 소아시아 지역 종족의 조상.",
+    "isMain": false,
+    "teachers": [],
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Japheth's fifth son. Ancestor of a tribe in Asia Minor."
+  },
+  {
+    "id": "meshech",
+    "name": "메섹",
+    "engName": "Meshech",
+    "gender": "M",
+    "generation": 11,
+    "column": -4.818,
+    "parents": [
+      "japheth"
+    ],
+    "spouses": [],
+    "desc": "야벳의 여섯째 아들. 흑해 북부 종족의 조상.",
+    "isMain": false,
+    "teachers": [],
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Japheth's sixth son. Ancestor of the northern Black Sea tribes."
+  },
+  {
+    "id": "tiras",
+    "name": "디라스",
+    "engName": "Tiras",
+    "gender": "M",
+    "generation": 11,
+    "column": -4.138,
+    "parents": [
+      "japheth"
+    ],
+    "spouses": [],
+    "desc": "야벳의 일곱째 아들. 에게해 주변 및 트라키아 종족의 조상.",
+    "isMain": false,
+    "teachers": [],
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Seventh son of Japheth. Ancestor of the Aegean and Thracian peoples."
+  },
+  {
+    "id": "cush",
+    "name": "구스",
+    "engName": "Cush",
+    "gender": "M",
+    "generation": 11,
+    "column": -3.112,
+    "parents": [
+      "ham"
+    ],
+    "spouses": [],
+    "desc": "함의 첫째 아들. 에티오피아 및 아프리카계 조상.",
+    "isMain": false,
+    "teachers": [],
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Ham's first son. Ethiopian and African ancestry."
+  },
+  {
+    "id": "mizraim",
+    "name": "미스라임",
+    "engName": "Mizraim",
+    "gender": "M",
+    "generation": 11,
+    "column": -2.413,
+    "parents": [
+      "ham"
+    ],
+    "spouses": [],
+    "desc": "이집트 민족의 조상.",
+    "isMain": false,
+    "teachers": [],
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Ancestor of the Egyptian people."
+  },
+  {
+    "id": "put",
+    "name": "붓",
+    "engName": "Put",
+    "gender": "M",
+    "generation": 11,
+    "column": -1.712,
+    "parents": [
+      "ham"
+    ],
+    "spouses": [],
+    "desc": "리비아 지역 민족의 조상.",
+    "isMain": false,
+    "teachers": [],
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Ancestor of local Libyan people."
+  },
+  {
+    "id": "canaan",
+    "name": "가나안",
+    "engName": "Canaan",
+    "gender": "M",
+    "generation": 11,
+    "column": -1.012,
+    "parents": [
+      "ham"
+    ],
+    "spouses": [],
+    "desc": "가나안 족속의 조상. 노아로부터 저주를 받음.",
+    "isMain": false,
+    "teachers": [],
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Ancestor of the Canaanites. Cursed by Noah."
+  },
+  {
+    "id": "arpachshad",
+    "name": "아르박삿",
+    "engName": "Arpachshad",
+    "gender": "M",
+    "generation": 11,
+    "column": 0,
+    "parents": [
+      "shem"
+    ],
+    "spouses": [],
+    "desc": "대홍수 2년 후에 태어난 셈의 아들.",
+    "isMain": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Shem, born two years after the Flood."
+  },
+  {
+    "id": "ashkenaz",
+    "name": "아스그나스",
+    "engName": "Ashkenaz",
+    "gender": "M",
+    "generation": 12,
+    "column": -8.896,
+    "parents": [
+      "gomer"
+    ],
+    "spouses": [],
+    "desc": "고멜의 첫째 아들. 흑해 북쪽 아스케나즈 종족의 조상.",
+    "isMain": false,
+    "teachers": [],
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Gomer's first son. Ancestor of the Askenaz tribe north of the Black Sea."
+  },
+  {
+    "id": "riphath",
+    "name": "리밧",
+    "engName": "Riphath",
+    "gender": "M",
+    "generation": 12,
+    "column": -8.214,
+    "parents": [
+      "gomer"
+    ],
+    "spouses": [],
+    "desc": "고멜의 둘째 아들.",
+    "isMain": false,
+    "teachers": [],
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Gomer's second son."
+  },
+  {
+    "id": "togarmah",
+    "name": "도갈마",
+    "engName": "Togarmah",
+    "gender": "M",
+    "generation": 12,
+    "column": -7.534,
+    "parents": [
+      "gomer"
+    ],
+    "spouses": [],
+    "desc": "고멜의 셋째 아들. 아르메니아 및 소아시아 동부 종족의 조상.",
+    "isMain": false,
+    "teachers": [],
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Gomer's third son. Ancestor of the tribes of Armenia and eastern Asia Minor."
+  },
+  {
+    "id": "elishah",
+    "name": "엘리사",
+    "engName": "Elishah",
+    "gender": "M",
+    "generation": 12,
+    "column": -6.737,
+    "parents": [
+      "javan"
+    ],
+    "spouses": [],
+    "desc": "야완의 첫째 아들. 그리스 해안 지대 종족의 조상.",
+    "isMain": false,
+    "teachers": [],
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Javan's first son. Ancestor of the Greek coastal tribes."
+  },
+  {
+    "id": "tarshish",
+    "name": "달시스",
+    "engName": "Tarshish",
+    "gender": "M",
+    "generation": 12,
+    "column": -6.052,
+    "parents": [
+      "javan"
+    ],
+    "spouses": [],
+    "desc": "야완의 둘째 아들. 스페인 타르테소스 또는 지중해 서부 종족의 조상.",
+    "isMain": false,
+    "teachers": [],
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Javan's second son. Ancestor of the Spanish Tartessos or Western Mediterranean peoples."
+  },
+  {
+    "id": "kittim",
+    "name": "깃딤",
+    "engName": "Kittim",
+    "gender": "M",
+    "generation": 12,
+    "column": -5.366,
+    "parents": [
+      "javan"
+    ],
+    "spouses": [],
+    "desc": "야완의 셋째 아들. 키프로스섬 및 지중해 동부 종족의 조상.",
+    "isMain": false,
+    "teachers": [],
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Javan's third son. Ancestor of Cypriot and eastern Mediterranean tribes."
+  },
+  {
+    "id": "dodanim",
+    "name": "도다님",
+    "engName": "Dodanim",
+    "gender": "M",
+    "generation": 12,
+    "column": -4.679,
+    "parents": [
+      "javan"
+    ],
+    "spouses": [],
+    "desc": "야완의 넷째 아들. 로도스섬 주변 종족의 조상.",
+    "isMain": false,
+    "teachers": [],
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Javan's fourth son. Ancestor of the tribes around Rhodes Island."
+  },
+  {
+    "id": "nimrod",
+    "name": "니므롯",
+    "engName": "Nimrod",
+    "gender": "M",
+    "generation": 12,
+    "column": -3.112,
+    "parents": [
+      "cush"
+    ],
+    "spouses": [],
+    "desc": "세상의 첫 용사요, 여호와 앞의 특이한 사냥꾼. 바벨탑 주도자.",
+    "isMain": false,
+    "teachers": [],
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The world's first warrior, a unique hunter before Jehovah. Leader of the Tower of Babel."
+  },
+  {
+    "id": "shelah",
+    "name": "셀라",
+    "engName": "Shelah",
+    "gender": "M",
+    "generation": 12,
+    "column": 0,
+    "parents": [
+      "arpachshad"
+    ],
+    "spouses": [],
+    "desc": "아르박삿의 아들.",
+    "isMain": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Arphaxad."
+  },
+  {
+    "id": "eber",
+    "name": "에벨",
+    "engName": "Eber",
+    "gender": "M",
+    "generation": 13,
+    "column": 0,
+    "parents": [
+      "shelah"
+    ],
+    "spouses": [],
+    "desc": "히브리(Hebrew) 민족이라는 명칭의 유래가 된 조상.",
+    "isMain": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "An ancestor from whom the name Hebrew people originated."
+  },
+  {
+    "id": "peleg",
+    "name": "벨렉",
+    "engName": "Peleg",
+    "gender": "M",
+    "generation": 14,
+    "column": 0,
+    "parents": [
+      "eber"
+    ],
+    "spouses": [],
+    "desc": "그 시대에 바벨탑 사건으로 세상 민족들이 나뉘었음.",
+    "isMain": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "At that time, the nations of the world were divided by the Tower of Babel incident."
+  },
+  {
+    "id": "joktan",
+    "name": "욕단",
+    "engName": "Joktan",
+    "gender": "M",
+    "generation": 14,
+    "column": -4.679,
+    "parents": [
+      "eber"
+    ],
+    "spouses": [],
+    "desc": "벨렉의 형제. 아라비아 민족들의 조상이 됨.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Peleg's brother. Became the ancestor of the Arabian peoples."
+  },
+  {
+    "id": "almodad",
+    "name": "알모닷",
+    "engName": "Almodad",
+    "gender": "M",
+    "generation": 15,
+    "column": -8.392,
+    "parents": [
+      "joktan"
+    ],
+    "spouses": [],
+    "desc": "욕단의 첫째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The first son of Joktan."
+  },
+  {
+    "id": "sheleph",
+    "name": "셀렙",
+    "engName": "Sheleph",
+    "gender": "M",
+    "generation": 15,
+    "column": -7.717,
+    "parents": [
+      "joktan"
+    ],
+    "spouses": [],
+    "desc": "욕단의 둘째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Joktan's second son."
+  },
+  {
+    "id": "hazarmaveth",
+    "name": "하살마웹",
+    "engName": "Hazarmaveth",
+    "gender": "M",
+    "generation": 15,
+    "column": -7.042,
+    "parents": [
+      "joktan"
+    ],
+    "spouses": [],
+    "desc": "욕단의 셋째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Joktan's third son."
+  },
+  {
+    "id": "jerah",
+    "name": "예라",
+    "engName": "Jerah",
+    "gender": "M",
+    "generation": 15,
+    "column": -6.367,
+    "parents": [
+      "joktan"
+    ],
+    "spouses": [],
+    "desc": "욕단의 넷째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Fourth son of Joktan."
+  },
+  {
+    "id": "hadoram",
+    "name": "하도람",
+    "engName": "Hadoram",
+    "gender": "M",
+    "generation": 15,
+    "column": -5.692,
+    "parents": [
+      "joktan"
+    ],
+    "spouses": [],
+    "desc": "욕단의 다섯째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The fifth son of Joktan."
+  },
+  {
+    "id": "diklah",
+    "name": "디글라",
+    "engName": "Diklah",
+    "gender": "M",
+    "generation": 15,
+    "column": -5.017,
+    "parents": [
+      "joktan"
+    ],
+    "spouses": [],
+    "desc": "욕단의 여섯째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Joktan's sixth son."
+  },
+  {
+    "id": "obal",
+    "name": "오발",
+    "engName": "Obal",
+    "gender": "M",
+    "generation": 15,
+    "column": -4.342,
+    "parents": [
+      "joktan"
+    ],
+    "spouses": [],
+    "desc": "욕단의 일곱째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The seventh son of Joktan."
+  },
+  {
+    "id": "abimael",
+    "name": "아비마엘",
+    "engName": "Abimael",
+    "gender": "M",
+    "generation": 15,
+    "column": -3.667,
+    "parents": [
+      "joktan"
+    ],
+    "spouses": [],
+    "desc": "욕단의 여덟째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The eighth son of Joktan."
+  },
+  {
+    "id": "sheba_joktan",
+    "name": "스바",
+    "engName": "Sheba",
+    "gender": "M",
+    "generation": 15,
+    "column": -2.992,
+    "parents": [
+      "joktan"
+    ],
+    "spouses": [],
+    "desc": "욕단의 아홉째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The ninth son of Joktan."
+  },
+  {
+    "id": "ophir",
+    "name": "오빌",
+    "engName": "Ophir",
+    "gender": "M",
+    "generation": 15,
+    "column": -2.317,
+    "parents": [
+      "joktan"
+    ],
+    "spouses": [],
+    "desc": "욕단의 열째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Joktan's tenth son."
+  },
+  {
+    "id": "havilah_joktan",
+    "name": "하윌라",
+    "engName": "Havilah",
+    "gender": "M",
+    "generation": 15,
+    "column": -1.642,
+    "parents": [
+      "joktan"
+    ],
+    "spouses": [],
+    "desc": "욕단의 열한째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The eleventh son of Joktan."
+  },
+  {
+    "id": "jobab",
+    "name": "요밥",
+    "engName": "Jobab",
+    "gender": "M",
+    "generation": 15,
+    "column": -0.967,
+    "parents": [
+      "joktan"
+    ],
+    "spouses": [],
+    "desc": "욕단의 열두째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Joktan's twelfth son."
+  },
+  {
+    "id": "reu",
+    "name": "르우",
+    "engName": "Reu",
+    "gender": "M",
+    "generation": 15,
+    "column": 0,
+    "parents": [
+      "peleg"
+    ],
+    "spouses": [],
+    "desc": "벨렉의 아들.",
+    "isMain": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Peleg."
+  },
+  {
+    "id": "serug",
+    "name": "스룩",
+    "engName": "Serug",
+    "gender": "M",
+    "generation": 16,
+    "column": 0,
+    "parents": [
+      "reu"
+    ],
+    "spouses": [],
+    "desc": "르우의 아들. 우상 숭배가 본격화된 시대의 조상.",
+    "isMain": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Reu. An ancestor of a time when idolatry was in full swing."
+  },
+  {
+    "id": "nahor_ancestor",
+    "name": "나홀",
+    "engName": "Nahor",
+    "gender": "M",
+    "generation": 17,
+    "column": 0,
+    "parents": [
+      "serug"
+    ],
+    "spouses": [],
+    "desc": "스룩의 아들. 아브라함의 할아버지.",
+    "isMain": true,
+    "teachers": [],
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Serug. Abraham's grandfather."
+  },
+  {
+    "id": "terah",
+    "name": "데라",
+    "engName": "Terah",
+    "gender": "M",
+    "generation": 18,
+    "column": 0,
+    "parents": [
+      "nahor_ancestor"
+    ],
+    "spouses": [],
+    "desc": "갈대아 우르에서 바벨론 우상을 만들던 아버지. 하란에서 사망.",
+    "isMain": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "My father made Babylonian idols in Ur of the Chaldeans. Died in Haran."
+  },
+  {
+    "id": "abraham",
+    "name": "아브라함",
+    "engName": "Abraham",
+    "gender": "M",
+    "generation": 19,
+    "column": 0,
+    "parents": [
+      "terah"
+    ],
+    "spouses": [
+      "sarah",
+      "hagar",
+      "keturah"
+    ],
+    "desc": "믿음의 조상. 갈대아 우르를 떠나 가나안으로 향한 언약의 사람.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "ancestor of faith. A person of the covenant who left Ur of the Chaldeans and headed to Canaan."
+  },
+  {
+    "id": "sarah",
+    "name": "사라",
+    "engName": "Sarah",
+    "gender": "F",
+    "generation": 19,
+    "column": 1.5,
+    "parents": [],
+    "spouses": [
+      "abraham"
+    ],
+    "desc": "열국의 어머니. 90세에 하나님의 약속대로 이삭을 출산함.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Mother of nations. At the age of 90, she gave birth to Isaac as promised by God."
+  },
+  {
+    "id": "hagar",
+    "name": "하갈",
+    "engName": "Hagar",
+    "gender": "F",
+    "generation": 19,
+    "column": -8.4,
+    "parents": [],
+    "spouses": [
+      "abraham"
+    ],
+    "desc": "사라의 여종. 아브라함의 서자 이스마엘을 낳음.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Sarah's handmaid. Birth of Abraham's bastard son, Ishmael."
+  },
+  {
+    "id": "keturah",
+    "name": "그두라",
+    "engName": "Keturah",
+    "gender": "F",
+    "generation": 15.6,
+    "column": -6.8,
+    "parents": [],
+    "spouses": [
+      "abraham"
+    ],
+    "desc": "사라 사후 아브라함이 맞이한 후처. 미디안을 포함한 여섯 아들을 낳음.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Abraham's second wife after Sarah's death. Had six sons, including Midian."
+  },
+  {
+    "id": "nahor",
+    "name": "나홀(형제)",
+    "engName": "Nahor",
+    "gender": "M",
+    "generation": 18.05,
+    "column": 2.574,
+    "parents": [
+      "terah"
+    ],
+    "spouses": [
+      "milcah"
+    ],
+    "desc": "아브라함의 형제. 하란에 잔류함.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Abraham's brother. Remained in Haran."
+  },
+  {
+    "id": "milcah",
+    "name": "밀가",
+    "engName": "Milcah",
+    "gender": "F",
+    "generation": 18.05,
+    "column": 3.864,
+    "parents": [],
+    "spouses": [
+      "nahor"
+    ],
+    "desc": "나홀의 아내. 하란의 딸.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Nahor's wife. Daughter of Haran."
+  },
+  {
+    "id": "haran",
+    "name": "하란",
+    "engName": "Haran",
+    "gender": "M",
+    "generation": 18.07,
+    "column": 5.407,
+    "parents": [
+      "terah"
+    ],
+    "spouses": [],
+    "desc": "갈대아 우르에서 먼저 죽은 아브라함의 형제. 롯의 아버지.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Abraham's brother who died first in Ur of the Chaldees. Lot's father."
+  },
+  {
+    "id": "isaac",
+    "name": "이삭",
+    "engName": "Isaac",
+    "gender": "M",
+    "generation": 20,
+    "column": 0,
+    "parents": [
+      "abraham",
+      "sarah"
+    ],
+    "spouses": [
+      "rebekah"
+    ],
+    "desc": "약속의 독자. 모리아 산에서 번제물로 드려졌던 자.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Promised reader. The one who was offered as a burnt offering on Mount Moriah."
+  },
+  {
+    "id": "rebekah",
+    "name": "리브가",
+    "engName": "Rebekah",
+    "gender": "F",
+    "generation": 20,
+    "column": 1.5,
+    "parents": [],
+    "spouses": [
+      "isaac"
+    ],
+    "desc": "이삭의 아내. 브두엘의 딸.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Isaac's wife. Daughter of Bethuel."
+  },
+  {
+    "id": "ishmael",
+    "name": "이스마엘",
+    "engName": "Ishmael",
+    "gender": "M",
+    "generation": 19.4,
+    "column": -4.813,
+    "parents": [
+      "abraham",
+      "hagar"
+    ],
+    "spouses": [],
+    "desc": "아브라함의 장자였으나 육신을 따라 태어나 약속의 상속에서 제외됨.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Although he was Abraham's eldest son, he was born according to the flesh and was excluded from the inheritance of promise."
+  },
+  {
+    "id": "zimran",
+    "name": "시므란",
+    "engName": "Zimran",
+    "gender": "M",
+    "generation": 16.6,
+    "column": -7,
+    "parents": [
+      "abraham",
+      "keturah"
+    ],
+    "spouses": [],
+    "desc": "그두라의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Keturah."
+  },
+  {
+    "id": "jokshan",
+    "name": "욕산",
+    "engName": "Jokshan",
+    "gender": "M",
+    "generation": 16.6,
+    "column": -6.3,
+    "parents": [
+      "abraham",
+      "keturah"
+    ],
+    "spouses": [],
+    "desc": "그두라의 아들. 스바와 드단의 아버지.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Keturah. Father of Sheba and Dedan."
+  },
+  {
+    "id": "medan",
+    "name": "므단",
+    "engName": "Medan",
+    "gender": "M",
+    "generation": 16.6,
+    "column": -5.6,
+    "parents": [
+      "abraham",
+      "keturah"
+    ],
+    "spouses": [],
+    "desc": "그두라의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Keturah."
+  },
+  {
+    "id": "midian",
+    "name": "미디안",
+    "engName": "Midian",
+    "gender": "M",
+    "generation": 16.6,
+    "column": -4.9,
+    "parents": [
+      "abraham",
+      "keturah"
+    ],
+    "spouses": [],
+    "desc": "미디안 족속의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "An ancestor of the Midianites."
+  },
+  {
+    "id": "ishbak",
+    "name": "이스박",
+    "engName": "Ishbak",
+    "gender": "M",
+    "generation": 16.6,
+    "column": -4.2,
+    "parents": [
+      "abraham",
+      "keturah"
+    ],
+    "spouses": [],
+    "desc": "그두라의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Keturah."
+  },
+  {
+    "id": "shuah",
+    "name": "수아",
+    "engName": "Shuah",
+    "gender": "M",
+    "generation": 16.6,
+    "column": -3.5,
+    "parents": [
+      "abraham",
+      "keturah"
+    ],
+    "spouses": [],
+    "desc": "그두라의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Keturah."
+  },
+  {
+    "id": "lot",
+    "name": "롯",
+    "engName": "Lot",
+    "gender": "M",
+    "generation": 18.98,
+    "column": 5.805,
+    "parents": [
+      "haran"
+    ],
+    "spouses": [
+      "lot_wife"
+    ],
+    "desc": "아브라함의 조카. 소돔과 고모라 멸망 때 구출됨.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Abraham's nephew. Rescued from the destruction of Sodom and Gomorrah."
+  },
+  {
+    "id": "lot_wife",
+    "name": "롯의 아내",
+    "engName": "Lot's Wife",
+    "gender": "F",
+    "generation": 18.99,
+    "column": 6.73,
+    "parents": [],
+    "spouses": [
+      "lot"
+    ],
+    "desc": "뒤를 돌아보아 소금 기둥이 됨.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "When I look back, I become a pillar of salt."
+  },
+  {
+    "id": "milcah_daughter",
+    "name": "밀가",
+    "engName": "Milcah",
+    "gender": "F",
+    "generation": 18.98,
+    "column": 4.787,
+    "parents": [
+      "haran"
+    ],
+    "spouses": [],
+    "desc": "하란의 딸. 나홀의 아내가 됨.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Daughter of Haran. Became Nahor's wife."
+  },
+  {
+    "id": "bethuel",
+    "name": "브두엘",
+    "engName": "Bethuel",
+    "gender": "M",
+    "generation": 18.85,
+    "column": 3.219,
+    "parents": [
+      "nahor",
+      "milcah"
+    ],
+    "spouses": [],
+    "desc": "나홀 and 밀가의 아들. 리브가와 라반의 아버지.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Nahor and Milcah. Father of Rebekah and Laban."
+  },
+  {
+    "id": "jacob",
+    "name": "야곱",
+    "engName": "Jacob",
+    "gender": "M",
+    "generation": 21,
+    "column": 0.022,
+    "parents": [
+      "isaac",
+      "rebekah"
+    ],
+    "spouses": [
+      "leah",
+      "rachel",
+      "bilhah",
+      "zilpah"
+    ],
+    "desc": "이스라엘이라 이름을 바꾼 언약의 후손. 12지파의 아버지.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "A descendant of the covenant whose name was changed to Israel. Father of the 12 tribes."
+  },
+  {
+    "id": "leah",
+    "name": "레아",
+    "engName": "Leah",
+    "gender": "F",
+    "generation": 21,
+    "column": -1.429,
+    "parents": [],
+    "spouses": [
+      "jacob"
+    ],
+    "desc": "야곱의 아내. 라반의 딸.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Jacob's wife. Laban's daughter."
+  },
+  {
+    "id": "rachel",
+    "name": "라헬",
+    "engName": "Rachel",
+    "gender": "F",
+    "generation": 21,
+    "column": 66.383,
+    "parents": [],
+    "spouses": [
+      "jacob"
+    ],
+    "desc": "야곱의 아내. 라반의 딸.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Jacob's wife. Laban's daughter."
+  },
+  {
+    "id": "bilhah",
+    "name": "빌하",
+    "engName": "Bilhah",
+    "gender": "F",
+    "generation": 21,
+    "column": 80.72,
+    "parents": [],
+    "spouses": [
+      "jacob"
+    ],
+    "desc": "라헬의 몸종이자 야곱의 첩. 단과 납탈리를 낳음.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Rachel's servant and Jacob's concubine. Begot Dan and Naphtali."
+  },
+  {
+    "id": "zilpah",
+    "name": "실바",
+    "engName": "Zilpah",
+    "gender": "F",
+    "generation": 21,
+    "column": 36.441,
+    "parents": [],
+    "spouses": [
+      "jacob"
+    ],
+    "desc": "레아의 몸종이자 야곱의 첩. 갓과 아셀을 낳음.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Leah's servant and Jacob's concubine. gave birth to Gad and Asher."
+  },
+  {
+    "id": "esau",
+    "name": "에돔(에서)",
+    "engName": "Esau",
+    "gender": "M",
+    "generation": 19,
+    "column": -16.602,
+    "parents": [
+      "isaac",
+      "rebekah"
+    ],
+    "spouses": [
+      "adah_esau",
+      "basemath_esau",
+      "oholibamah",
+      "Mahalath-wife"
+    ],
+    "desc": "이삭의 장자. 팥죽 한 그릇에 장자권을 팔고 에돔 민족의 조상이 됨.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Isaac's eldest son. He sold his birthright for a bowl of red bean porridge and became the ancestor of the Edomites."
+  },
+  {
+    "id": "adah_esau",
+    "name": "아다",
+    "engName": "Adah",
+    "gender": "F",
+    "generation": 19,
+    "column": -17.809,
+    "parents": [],
+    "spouses": [
+      "esau"
+    ],
+    "desc": "에서의 아내. 엘론의 딸.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Esau's wife. Elon's daughter."
+  },
+  {
+    "id": "basemath_esau",
+    "name": "바스맛",
+    "engName": "Basemath",
+    "gender": "F",
+    "generation": 19,
+    "column": -13.209,
+    "parents": [],
+    "spouses": [
+      "esau"
+    ],
+    "desc": "에서의 아내. 이스마엘의 딸.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Esau's wife. Daughter of Ishmael."
+  },
+  {
+    "id": "oholibamah",
+    "name": "오홀리바마",
+    "engName": "Oholibamah",
+    "gender": "F",
+    "generation": 19,
+    "column": -11.588,
+    "parents": [],
+    "spouses": [
+      "esau"
+    ],
+    "desc": "에서의 아내. 아나의 딸.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Esau's wife. Ana's daughter."
+  },
+  {
+    "id": "laban",
+    "name": "라반",
+    "engName": "Laban",
+    "gender": "M",
+    "generation": 19.75,
+    "column": 2.719,
+    "parents": [
+      "bethuel"
+    ],
+    "spouses": [],
+    "desc": "리브가의 오라버니이자 레아와 라헬의 아버지. 야곱의 외삼촌.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Rebekah's older brother and the father of Leah and Rachel. Jacob's maternal uncle."
+  },
+  {
+    "id": "rebekah_daughter",
+    "name": "리브가",
+    "engName": "Rebekah",
+    "gender": "F",
+    "generation": 19.75,
+    "column": 3.718,
+    "parents": [
+      "bethuel"
+    ],
+    "spouses": [],
+    "desc": "브두엘의 딸. 이삭의 아내가 됨.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Daughter of Bethuel. Becomes Isaac's wife."
+  },
+  {
+    "id": "moab",
+    "name": "모압",
+    "engName": "Moab",
+    "gender": "M",
+    "generation": 19.88,
+    "column": 5.405,
+    "parents": [
+      "lot"
+    ],
+    "spouses": [],
+    "desc": "롯의 큰딸에게서 태어난 모압 족속의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "An ancestor of the Moabites born from Lot's eldest daughter."
+  },
+  {
+    "id": "benammi",
+    "name": "벤암미",
+    "engName": "Ben-Ammi",
+    "gender": "M",
+    "generation": 19.88,
+    "column": 6.205,
+    "parents": [
+      "lot"
+    ],
+    "spouses": [],
+    "desc": "롯의 작은딸에게서 태어난 암몬 족속의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "An ancestor of the Ammonites born from Lot's younger daughter."
+  },
+  {
+    "id": "sheba_keturah",
+    "name": "스바",
+    "engName": "Sheba",
+    "gender": "M",
+    "generation": 17.6,
+    "column": -6.8,
+    "parents": [
+      "jokshan"
+    ],
+    "spouses": [],
+    "desc": "욕산의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Jokshan."
+  },
+  {
+    "id": "dedan_keturah",
+    "name": "드단",
+    "engName": "Dedan",
+    "gender": "M",
+    "generation": 17.6,
+    "column": -6.1,
+    "parents": [
+      "jokshan"
+    ],
+    "spouses": [],
+    "desc": "욕산의 아들. 아브라함의 손자.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Jokshan. Abraham's grandson."
+  },
+  {
+    "id": "ephah",
+    "name": "에바",
+    "engName": "Ephah",
+    "gender": "M",
+    "generation": 17.6,
+    "column": -5.3,
+    "parents": [
+      "midian"
+    ],
+    "spouses": [],
+    "desc": "미디안의 첫째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Midian's first son."
+  },
+  {
+    "id": "epher_midian",
+    "name": "에벨",
+    "engName": "Epher",
+    "gender": "M",
+    "generation": 17.6,
+    "column": -4.611,
+    "parents": [
+      "midian"
+    ],
+    "spouses": [],
+    "desc": "미디안의 둘째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Midian's second son."
+  },
+  {
+    "id": "hanoch_midian",
+    "name": "하녹",
+    "engName": "Hanoch",
+    "gender": "M",
+    "generation": 17.6,
+    "column": -3.923,
+    "parents": [
+      "midian"
+    ],
+    "spouses": [],
+    "desc": "미디안의 셋째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Third son of Midian."
+  },
+  {
+    "id": "abida",
+    "name": "아비다",
+    "engName": "Abida",
+    "gender": "M",
+    "generation": 17.6,
+    "column": -3.234,
+    "parents": [
+      "midian"
+    ],
+    "spouses": [],
+    "desc": "미디안의 넷째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Fourth son of Midian."
+  },
+  {
+    "id": "eldaah",
+    "name": "엘다아",
+    "engName": "Eldaah",
+    "gender": "M",
+    "generation": 17.6,
+    "column": -2.546,
+    "parents": [
+      "midian"
+    ],
+    "spouses": [],
+    "desc": "미디안의 다섯째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Midian's fifth son."
+  },
+  {
+    "id": "asshurim",
+    "name": "앗수르 족속",
+    "engName": "Asshurim",
+    "gender": "M",
+    "generation": 18.5,
+    "column": -6.8,
+    "parents": [
+      "dedan_keturah"
+    ],
+    "spouses": [],
+    "desc": "드단의 아들. 앗수르 족속의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Dedan. Ancestor of the Assyrian people."
+  },
+  {
+    "id": "letushim",
+    "name": "르두시 족속",
+    "engName": "Letushim",
+    "gender": "M",
+    "generation": 18.5,
+    "column": -6.096,
+    "parents": [
+      "dedan_keturah"
+    ],
+    "spouses": [],
+    "desc": "드단의 아들. 르두시 족속의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Dedan. An ancestor of the Ledusi tribe."
+  },
+  {
+    "id": "leummim",
+    "name": "르웅미 족속",
+    "engName": "Leummim",
+    "gender": "M",
+    "generation": 18.5,
+    "column": -5.4,
+    "parents": [
+      "dedan_keturah"
+    ],
+    "spouses": [],
+    "desc": "드단의 아들. 르웅미 족속의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Dedan. An ancestor of the Leungmi tribe."
+  },
+  {
+    "id": "mahalath",
+    "name": "마할랏",
+    "engName": "Mahalath",
+    "gender": "F",
+    "generation": 20.2,
+    "column": -9.15,
+    "parents": [
+      "ishmael"
+    ],
+    "spouses": [],
+    "desc": "이스마엘의 딸이자 느바욧의 누이. 에서의 아내.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Daughter of Ishmael and sister of Nebaioth. Esau's wife."
+  },
+  {
+    "id": "nebaioth",
+    "name": "느바욧",
+    "engName": "Nebaioth",
+    "gender": "M",
+    "generation": 20.2,
+    "column": -8.454,
+    "parents": [
+      "ishmael"
+    ],
+    "spouses": [],
+    "desc": "이스마엘의 첫째 아들. 유목민 느바욧 부족의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Ishmael's first son. Ancestor of the nomadic Nebayoth tribe."
+  },
+  {
+    "id": "kedar",
+    "name": "게달",
+    "engName": "Kedar",
+    "gender": "M",
+    "generation": 20.2,
+    "column": -7.792,
+    "parents": [
+      "ishmael"
+    ],
+    "spouses": [],
+    "desc": "이스마엘의 둘째 아들. 유목 성향의 강력한 게달 부족의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Ishmael's second son. The ancestor of the powerful nomadic Kedar tribe."
+  },
+  {
+    "id": "adbeel",
+    "name": "아드벱",
+    "engName": "Adbeel",
+    "gender": "M",
+    "generation": 20.2,
+    "column": -7.129,
+    "parents": [
+      "ishmael"
+    ],
+    "spouses": [],
+    "desc": "이스마엘의 셋째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Ishmael's third son."
+  },
+  {
+    "id": "mibsam",
+    "name": "밉삼",
+    "engName": "Mibsam",
+    "gender": "M",
+    "generation": 20.2,
+    "column": -6.467,
+    "parents": [
+      "ishmael"
+    ],
+    "spouses": [],
+    "desc": "이스마엘의 넷째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Ishmael's fourth son."
+  },
+  {
+    "id": "mishma",
+    "name": "미스마",
+    "engName": "Mishma",
+    "gender": "M",
+    "generation": 20.2,
+    "column": -5.804,
+    "parents": [
+      "ishmael"
+    ],
+    "spouses": [],
+    "desc": "이스마엘의 다섯째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Fifth son of Ishmael."
+  },
+  {
+    "id": "dumah",
+    "name": "두마",
+    "engName": "Dumah",
+    "gender": "M",
+    "generation": 20.2,
+    "column": -5.142,
+    "parents": [
+      "ishmael"
+    ],
+    "spouses": [],
+    "desc": "이스마엘의 여섯째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Ishmael's sixth son."
+  },
+  {
+    "id": "massa",
+    "name": "맛사",
+    "engName": "Massa",
+    "gender": "M",
+    "generation": 20.2,
+    "column": -4.479,
+    "parents": [
+      "ishmael"
+    ],
+    "spouses": [],
+    "desc": "이스마엘의 일곱째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Seventh son of Ishmael."
+  },
+  {
+    "id": "hadad",
+    "name": "하닷",
+    "engName": "Hadad",
+    "gender": "M",
+    "generation": 20.2,
+    "column": -3.817,
+    "parents": [
+      "ishmael"
+    ],
+    "spouses": [],
+    "desc": "이스마엘의 여덟째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Ishmael's eighth son."
+  },
+  {
+    "id": "tema",
+    "name": "데마",
+    "engName": "Tema",
+    "gender": "M",
+    "generation": 20.2,
+    "column": -3.154,
+    "parents": [
+      "ishmael"
+    ],
+    "spouses": [],
+    "desc": "이스마엘의 아홉째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Ishmael's ninth son."
+  },
+  {
+    "id": "jetur",
+    "name": "여둘",
+    "engName": "Jetur",
+    "gender": "M",
+    "generation": 20.2,
+    "column": -2.492,
+    "parents": [
+      "ishmael"
+    ],
+    "spouses": [],
+    "desc": "이스마엘의 열째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Tenth son of Ishmael."
+  },
+  {
+    "id": "naphish",
+    "name": "나비스",
+    "engName": "Naphish",
+    "gender": "M",
+    "generation": 20.2,
+    "column": -1.829,
+    "parents": [
+      "ishmael"
+    ],
+    "spouses": [],
+    "desc": "이스마엘의 열한째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Eleventh son of Ishmael."
+  },
+  {
+    "id": "kedemah",
+    "name": "게드마",
+    "engName": "Kedemah",
+    "gender": "M",
+    "generation": 20.2,
+    "column": -1.167,
+    "parents": [
+      "ishmael"
+    ],
+    "spouses": [],
+    "desc": "이스마엘의 열두째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Ishmael's twelfth son."
+  },
+  {
+    "id": "reuben",
+    "name": "르우벤",
+    "engName": "Reuben",
+    "gender": "M",
+    "generation": 22,
+    "column": -39.583,
+    "parents": [
+      "jacob",
+      "leah"
+    ],
+    "spouses": [],
+    "desc": "야곱의 장자. 서모 빌하와의 죄로 장자권을 상실함.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Jacob's eldest son. He lost his birthright due to the sin of his mother Bilhawa."
+  },
+  {
+    "id": "hanoch_reuben",
+    "name": "하녹",
+    "engName": "Hanoch",
+    "gender": "M",
+    "generation": 23,
+    "column": -40.522,
+    "parents": [
+      "reuben"
+    ],
+    "spouses": [],
+    "desc": "르우벤의 첫째 아들. 하녹 종족의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Reuben's first son. The ancestor of the Hanok race."
+  },
+  {
+    "id": "pallu_reuben",
+    "name": "발루",
+    "engName": "Pallu",
+    "gender": "M",
+    "generation": 23,
+    "column": -39.859,
+    "parents": [
+      "reuben"
+    ],
+    "spouses": [],
+    "desc": "르우벤의 둘째 아들. 발루 종족의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Reuben's second son. An ancestor of the Balu race."
+  },
+  {
+    "id": "hezron_reuben",
+    "name": "헤스론",
+    "engName": "Hezron",
+    "gender": "M",
+    "generation": 23,
+    "column": -39.197,
+    "parents": [
+      "reuben"
+    ],
+    "spouses": [],
+    "desc": "르우벤의 셋째 아들. 헤스론 종족의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Reuben's third son. The ancestor of the Hezron race."
+  },
+  {
+    "id": "carmi_reuben",
+    "name": "갈미",
+    "engName": "Carmi",
+    "gender": "M",
+    "generation": 23,
+    "column": -38.533,
+    "parents": [
+      "reuben"
+    ],
+    "spouses": [],
+    "desc": "르우벤의 넷째 아들. 갈미 종족의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Reuben's fourth son. An ancestor of the Galmi tribe."
+  },
+  {
+    "id": "hanochites",
+    "name": "하녹종족",
+    "engName": "Hanochites",
+    "gender": "M",
+    "generation": 24,
+    "column": -40.522,
+    "parents": [
+      "hanoch_reuben"
+    ],
+    "spouses": [],
+    "desc": "르우벤의 아들 하녹에게서 나온 종족.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "A race descended from Hanoch, the son of Reuben."
+  },
+  {
+    "id": "palluites",
+    "name": "발루종족",
+    "engName": "Palluites",
+    "gender": "M",
+    "generation": 24,
+    "column": -39.859,
+    "parents": [
+      "pallu_reuben"
+    ],
+    "spouses": [],
+    "desc": "르우벤의 아들 발루에게서 나온 종족.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "A race descended from Reuben's son Balu."
+  },
+  {
+    "id": "hezronites",
+    "name": "헤스론종족",
+    "engName": "Hezronites",
+    "gender": "M",
+    "generation": 24,
+    "column": -39.197,
+    "parents": [
+      "hezron_reuben"
+    ],
+    "spouses": [],
+    "desc": "르우벤의 아들 헤스론에게서 나온 종족.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "A race descended from Hezron, the son of Reuben."
+  },
+  {
+    "id": "carmites",
+    "name": "갈미종족",
+    "engName": "Carmites",
+    "gender": "M",
+    "generation": 24,
+    "column": -38.533,
+    "parents": [
+      "carmi_reuben"
+    ],
+    "spouses": [],
+    "desc": "르우벤의 아들 갈미에게서 나온 종족.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "A race descended from Reuben's son Carmi."
+  },
+  {
+    "id": "eliab_reuben",
+    "name": "엘리압",
+    "engName": "Eliab",
+    "gender": "M",
+    "generation": 25,
+    "column": -39.859,
+    "parents": [
+      "palluites"
+    ],
+    "spouses": [],
+    "desc": "발루의 아들이자 다단과 아비람의 아버지.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Balu and father of Dathan and Abiram."
+  },
+  {
+    "id": "nemuel_reuben",
+    "name": "느무엘",
+    "engName": "Nemuel",
+    "gender": "M",
+    "generation": 26,
+    "column": -40.522,
+    "parents": [
+      "eliab_reuben"
+    ],
+    "spouses": [],
+    "desc": "엘리압의 아들. 레위의 느무엘과 다른 인물.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Eliab. A different person from Levi's Nemuel."
+  },
+  {
+    "id": "dathan_reuben",
+    "name": "다단",
+    "engName": "Dathan",
+    "gender": "M",
+    "generation": 26,
+    "column": -39.859,
+    "parents": [
+      "eliab_reuben"
+    ],
+    "spouses": [],
+    "desc": "모세와 아론에게 반역하여 땅이 갈라져 죽임 당함.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "He rebelled against Moses and Aaron and was killed when the earth split open."
+  },
+  {
+    "id": "abiram_reuben",
+    "name": "아비람",
+    "engName": "Abiram",
+    "gender": "M",
+    "generation": 26,
+    "column": -39.197,
+    "parents": [
+      "eliab_reuben"
+    ],
+    "spouses": [],
+    "desc": "다단과 함께 반역에 참여했다가 심판을 받아 죽임 당함.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "He participated in a rebellion with Dadan, but was judged and killed."
+  },
+  {
+    "id": "simeon",
+    "name": "시므온",
+    "engName": "Simeon",
+    "gender": "M",
+    "generation": 22,
+    "column": -35.846,
+    "parents": [
+      "jacob",
+      "leah"
+    ],
+    "spouses": [],
+    "desc": "야곱의 둘째 아들. 레위와 함께 세겜 학살을 주도함.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Jacob's second son. He led the massacre of Shechem with Levi."
+  },
+  {
+    "id": "jemuel_simeon",
+    "name": "여무엘",
+    "engName": "Jemuel",
+    "gender": "M",
+    "generation": 23,
+    "column": -34.152,
+    "parents": [
+      "simeon"
+    ],
+    "spouses": [],
+    "desc": "시므온의 첫째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Simeon's first son."
+  },
+  {
+    "id": "jamin_simeon",
+    "name": "야민",
+    "engName": "Jamin",
+    "gender": "M",
+    "generation": 23,
+    "column": -34.816,
+    "parents": [
+      "simeon"
+    ],
+    "spouses": [],
+    "desc": "시므온의 둘째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Simeon's second son."
+  },
+  {
+    "id": "ohad_simeon",
+    "name": "오핫",
+    "engName": "Ohad",
+    "gender": "M",
+    "generation": 23,
+    "column": -35.478,
+    "parents": [
+      "simeon"
+    ],
+    "spouses": [],
+    "desc": "시므온의 셋째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Simeon's third son."
+  },
+  {
+    "id": "jachin_simeon",
+    "name": "야긴",
+    "engName": "Jachin",
+    "gender": "M",
+    "generation": 23,
+    "column": -36.139,
+    "parents": [
+      "simeon"
+    ],
+    "spouses": [],
+    "desc": "시므온의 넷째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Simeon's fourth son."
+  },
+  {
+    "id": "zohar_simeon",
+    "name": "스할",
+    "engName": "Zohar",
+    "gender": "M",
+    "generation": 23,
+    "column": -36.804,
+    "parents": [
+      "simeon"
+    ],
+    "spouses": [],
+    "desc": "시므온의 다섯째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Simeon's fifth son."
+  },
+  {
+    "id": "shaul_simeon",
+    "name": "사울",
+    "engName": "Shaul",
+    "gender": "M",
+    "generation": 23,
+    "column": -37.464,
+    "parents": [
+      "simeon"
+    ],
+    "spouses": [],
+    "desc": "시므온의 여섯째 아들. 가나안 여인의 소생.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Simeon's sixth son. The revival of the Canaanite woman."
+  },
+  {
+    "id": "shallum_simeon",
+    "name": "살룸",
+    "engName": "Shallum",
+    "gender": "M",
+    "generation": 24,
+    "column": -37.464,
+    "parents": [
+      "shaul_simeon"
+    ],
+    "spouses": [],
+    "desc": "사울의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Saul."
+  },
+  {
+    "id": "mibsam_simeon",
+    "name": "밉삼",
+    "engName": "Mibsam",
+    "gender": "M",
+    "generation": 25,
+    "column": -37.464,
+    "parents": [
+      "shallum_simeon"
+    ],
+    "spouses": [],
+    "desc": "살룸의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Shallum."
+  },
+  {
+    "id": "mishma_simeon",
+    "name": "미스마",
+    "engName": "Mishma",
+    "gender": "M",
+    "generation": 26,
+    "column": -37.464,
+    "parents": [
+      "mibsam_simeon"
+    ],
+    "spouses": [],
+    "desc": "미스마의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Misma."
+  },
+  {
+    "id": "hammuel_simeon",
+    "name": "함무엘",
+    "engName": "Hammuel",
+    "gender": "M",
+    "generation": 27,
+    "column": -37.464,
+    "parents": [
+      "mishma_simeon"
+    ],
+    "spouses": [],
+    "desc": "미스마의 아들. 삭굴의 아버지.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Misma. Sakgul’s father."
+  },
+  {
+    "id": "zaccur_simeon",
+    "name": "삭굴",
+    "engName": "Zaccur",
+    "gender": "M",
+    "generation": 28,
+    "column": -37.464,
+    "parents": [
+      "hammuel_simeon"
+    ],
+    "spouses": [],
+    "desc": "함무엘의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Hammuel."
+  },
+  {
+    "id": "shimei_simeon",
+    "name": "시므이",
+    "engName": "Shimei",
+    "gender": "M",
+    "generation": 29,
+    "column": -37.464,
+    "parents": [
+      "zaccur_simeon"
+    ],
+    "spouses": [],
+    "desc": "삭굴의 아들. 아들 16명과 딸 6명을 둠.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Zakkul. Had 16 sons and 6 daughters."
+  },
+  {
+    "id": "desc_shimei",
+    "name": "아들 16, 딸 6",
+    "engName": "16 Sons & 6 Dtrs",
+    "gender": "M",
+    "generation": 30,
+    "column": -37.464,
+    "parents": [
+      "shimei_simeon"
+    ],
+    "spouses": [],
+    "desc": "시므이의 많은 자녀들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Shimei's many children."
+  },
+  {
+    "id": "levi",
+    "name": "레위",
+    "engName": "Levi",
+    "gender": "M",
+    "generation": 22,
+    "column": -22.64,
+    "parents": [
+      "jacob",
+      "leah"
+    ],
+    "spouses": [],
+    "desc": "야곱의 셋째 아들. 제사장 지파의 조상이 됨.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Jacob's third son. Became the ancestor of the priestly tribe."
+  },
+  {
+    "id": "gershon_levi",
+    "name": "게르손",
+    "engName": "Gershon",
+    "gender": "M",
+    "generation": 23,
+    "column": -30.377,
+    "parents": [
+      "levi"
+    ],
+    "spouses": [],
+    "desc": "레위의 첫째 아들. 게르손 자손의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Levi's first son. The ancestor of the Gershonites."
+  },
+  {
+    "id": "libni_gershon",
+    "name": "립니",
+    "engName": "Libni",
+    "gender": "M",
+    "generation": 24,
+    "column": -32.053,
+    "parents": [
+      "gershon_levi"
+    ],
+    "spouses": [],
+    "desc": "게르손의 첫째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Gershon's first son."
+  },
+  {
+    "id": "shimei_gershon",
+    "name": "시므이(게르손)",
+    "engName": "Shimei",
+    "gender": "M",
+    "generation": 24,
+    "column": -28.54,
+    "parents": [
+      "gershon_levi"
+    ],
+    "spouses": [],
+    "desc": "게르손의 둘째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Gershon's second son."
+  },
+  {
+    "id": "yahath_libni",
+    "name": "야하스",
+    "engName": "Jahath",
+    "gender": "M",
+    "generation": 25,
+    "column": -35.034,
+    "parents": [
+      "libni_gershon"
+    ],
+    "spouses": [],
+    "desc": "립니의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ripni."
+  },
+  {
+    "id": "segub_libni",
+    "name": "세갑",
+    "engName": "Segub",
+    "gender": "M",
+    "generation": 25,
+    "column": -34.372,
+    "parents": [
+      "libni_gershon"
+    ],
+    "spouses": [],
+    "desc": "립니의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ripni."
+  },
+  {
+    "id": "ohel_libni",
+    "name": "오헬",
+    "engName": "Ohel",
+    "gender": "M",
+    "generation": 25,
+    "column": -33.709,
+    "parents": [
+      "libni_gershon"
+    ],
+    "spouses": [],
+    "desc": "립니의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ripni."
+  },
+  {
+    "id": "shelomith_libni",
+    "name": "솔로밋",
+    "engName": "Shelomith",
+    "gender": "M",
+    "generation": 25,
+    "column": -33.047,
+    "parents": [
+      "libni_gershon"
+    ],
+    "spouses": [],
+    "desc": "립니의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ripni."
+  },
+  {
+    "id": "haziel_libni",
+    "name": "라시엘",
+    "engName": "Haziel",
+    "gender": "M",
+    "generation": 25,
+    "column": -32.384,
+    "parents": [
+      "libni_gershon"
+    ],
+    "spouses": [],
+    "desc": "립니의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ripni."
+  },
+  {
+    "id": "haran_libni",
+    "name": "하란",
+    "engName": "Haran",
+    "gender": "M",
+    "generation": 25,
+    "column": -31.722,
+    "parents": [
+      "libni_gershon"
+    ],
+    "spouses": [],
+    "desc": "립니의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ripni."
+  },
+  {
+    "id": "jahath_libni2",
+    "name": "야핫",
+    "engName": "Jahath",
+    "gender": "M",
+    "generation": 25,
+    "column": -31.059,
+    "parents": [
+      "libni_gershon"
+    ],
+    "spouses": [],
+    "desc": "립니의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ripni."
+  },
+  {
+    "id": "zina_libni",
+    "name": "시나",
+    "engName": "Zina",
+    "gender": "M",
+    "generation": 25,
+    "column": -30.397,
+    "parents": [
+      "libni_gershon"
+    ],
+    "spouses": [],
+    "desc": "립니의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ripni."
+  },
+  {
+    "id": "jeush_libni",
+    "name": "여우시",
+    "engName": "Jeush",
+    "gender": "M",
+    "generation": 25,
+    "column": -29.734,
+    "parents": [
+      "libni_gershon"
+    ],
+    "spouses": [],
+    "desc": "립니의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ripni."
+  },
+  {
+    "id": "beriah_libni",
+    "name": "브리아",
+    "engName": "Beriah",
+    "gender": "M",
+    "generation": 25,
+    "column": -29.072,
+    "parents": [
+      "libni_gershon"
+    ],
+    "spouses": [],
+    "desc": "립니의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ripni."
+  },
+  {
+    "id": "merari_levi",
+    "name": "므라리",
+    "engName": "Merari",
+    "gender": "M",
+    "generation": 23,
+    "column": -13.494,
+    "parents": [
+      "levi"
+    ],
+    "spouses": [],
+    "desc": "레위의 셋째 아들. 므라리 자손의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Levi's third son. The ancestor of the Merari descendants."
+  },
+  {
+    "id": "mahli_merari",
+    "name": "마흘리",
+    "engName": "Mahli",
+    "gender": "M",
+    "generation": 24,
+    "column": -14.425,
+    "parents": [
+      "merari_levi"
+    ],
+    "spouses": [],
+    "desc": "므라리의 첫째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The first son of Merari."
+  },
+  {
+    "id": "mushi_merari",
+    "name": "무시",
+    "engName": "Mushi",
+    "gender": "M",
+    "generation": 24,
+    "column": -12.763,
+    "parents": [
+      "merari_levi"
+    ],
+    "spouses": [],
+    "desc": "므라리의 둘째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Merari's second son."
+  },
+  {
+    "id": "eleazar_mahli",
+    "name": "엘르아살",
+    "engName": "Eleazar",
+    "gender": "M",
+    "generation": 25,
+    "column": -14.756,
+    "parents": [
+      "mahli_merari"
+    ],
+    "spouses": [],
+    "desc": "마흘리의 첫째 아들. 아들이 없이 딸만 두고 죽음.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Mahli's first son. He died leaving behind only a daughter and no son."
+  },
+  {
+    "id": "kish_mahli",
+    "name": "기스",
+    "engName": "Kish",
+    "gender": "M",
+    "generation": 25,
+    "column": -14.094,
+    "parents": [
+      "mahli_merari"
+    ],
+    "spouses": [],
+    "desc": "마흘리의 둘째 아들. 여라므엘의 아버지.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Mahli's second son. Jerahmeel's father."
+  },
+  {
+    "id": "jerahmeel_kish",
+    "name": "여라므엘",
+    "engName": "Jerahmeel",
+    "gender": "M",
+    "generation": 26,
+    "column": -14.094,
+    "parents": [
+      "kish_mahli"
+    ],
+    "spouses": [],
+    "desc": "기스의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Gith."
+  },
+  {
+    "id": "mahli_mushi",
+    "name": "마흘리",
+    "engName": "Mahli",
+    "gender": "M",
+    "generation": 25,
+    "column": -13.425,
+    "parents": [
+      "mushi_merari"
+    ],
+    "spouses": [],
+    "desc": "무시의 첫째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Mushi's first son."
+  },
+  {
+    "id": "eder_mushi",
+    "name": "에델",
+    "engName": "Eder",
+    "gender": "M",
+    "generation": 25,
+    "column": -12.763,
+    "parents": [
+      "mushi_merari"
+    ],
+    "spouses": [],
+    "desc": "무시의 둘째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Mushi's second son."
+  },
+  {
+    "id": "jeremoth_mushi",
+    "name": "여레못",
+    "engName": "Jeremoth",
+    "gender": "M",
+    "generation": 25,
+    "column": -12.1,
+    "parents": [
+      "mushi_merari"
+    ],
+    "spouses": [],
+    "desc": "무시의 셋째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Mushi's third son."
+  },
+  {
+    "id": "judah",
+    "name": "유다",
+    "engName": "Judah",
+    "gender": "M",
+    "generation": 22,
+    "column": 0.022,
+    "parents": [
+      "jacob",
+      "leah"
+    ],
+    "spouses": [
+      "tamar",
+      "Shua_daughter"
+    ],
+    "desc": "넷째 아들. 형제들의 중보자이자 다윗과 예수 그리스도의 왕권 지파.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Fourth son. Mediator of the brothers and royal tribe of David and Jesus Christ."
+  },
+  {
+    "id": "tamar",
+    "name": "다말",
+    "engName": "Tamar",
+    "gender": "F",
+    "generation": 22,
+    "column": -1.429,
+    "parents": [],
+    "spouses": [
+      "judah"
+    ],
+    "desc": "유다의 며느리였으나 대를 잇기 위해 시아버지 유다에게서 쌍둥이를 낳음.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "She was Judah's daughter-in-law, but to continue the line, she gave birth to twins from her father-in-law Judah."
+  },
+  {
+    "id": "dan",
+    "name": "단",
+    "engName": "Dan",
+    "gender": "M",
+    "generation": 22.09,
+    "column": 78.052,
+    "parents": [
+      "jacob",
+      "bilhah"
+    ],
+    "spouses": [],
+    "desc": "단 지파의 조상. 훗날 우상 숭배의 중심지가 됨.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Ancestor of the tribe of Dan. It later became a center of idolatry."
+  },
+  {
+    "id": "naphtali",
+    "name": "납달리",
+    "engName": "Naphtali",
+    "gender": "M",
+    "generation": 22.08,
+    "column": 81.201,
+    "parents": [
+      "jacob",
+      "bilhah"
+    ],
+    "spouses": [],
+    "desc": "납달리 지파의 조상. 아름다운 소리를 발하는 자.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Ancestor of the tribe of Naphtali. One who emits beautiful sounds."
+  },
+  {
+    "id": "jahzeel",
+    "name": "야스엘",
+    "engName": "Jahzeel",
+    "gender": "M",
+    "generation": 23.06,
+    "column": 80.118,
+    "parents": [
+      "naphtali"
+    ],
+    "spouses": [],
+    "desc": "납달리의 첫째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Naphtali's first son."
+  },
+  {
+    "id": "guni",
+    "name": "구니",
+    "engName": "Guni",
+    "gender": "M",
+    "generation": 23.06,
+    "column": 80.801,
+    "parents": [
+      "naphtali"
+    ],
+    "spouses": [],
+    "desc": "납달리의 둘째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Naphtali's second son."
+  },
+  {
+    "id": "jezer",
+    "name": "예셀",
+    "engName": "Jezer",
+    "gender": "M",
+    "generation": 23.06,
+    "column": 81.476,
+    "parents": [
+      "naphtali"
+    ],
+    "spouses": [],
+    "desc": "납달리의 셋째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Naphtali's third son."
+  },
+  {
+    "id": "shillem",
+    "name": "실렘",
+    "engName": "Shillem",
+    "gender": "M",
+    "generation": 23.06,
+    "column": 82.147,
+    "parents": [
+      "naphtali"
+    ],
+    "spouses": [],
+    "desc": "납달리의 넷째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "납달리의 넷째 아들."
+  },
+  {
+    "id": "gad",
+    "name": "갓",
+    "engName": "Gad",
+    "gender": "M",
+    "generation": 22,
+    "column": 28.297,
+    "parents": [
+      "jacob",
+      "zilpah"
+    ],
+    "spouses": [],
+    "desc": "갓 지파의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "An ancestor of the tribe of Gad."
+  },
+  {
+    "id": "ziphion_gad",
+    "name": "시본",
+    "engName": "Ziphion",
+    "gender": "M",
+    "generation": 23,
+    "column": 26.2,
+    "parents": [
+      "gad"
+    ],
+    "spouses": [],
+    "desc": "갓의 첫째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The first son of Gad."
+  },
+  {
+    "id": "haggi_gad",
+    "name": "학기",
+    "engName": "Haggi",
+    "gender": "M",
+    "generation": 23,
+    "column": 26.9,
+    "parents": [
+      "gad"
+    ],
+    "spouses": [],
+    "desc": "갓의 둘째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Gad's second son."
+  },
+  {
+    "id": "shuni_gad",
+    "name": "수니",
+    "engName": "Shuni",
+    "gender": "M",
+    "generation": 23,
+    "column": 27.6,
+    "parents": [
+      "gad"
+    ],
+    "spouses": [],
+    "desc": "갓의 셋째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Gad's third son."
+  },
+  {
+    "id": "ezbon_gad",
+    "name": "에스본",
+    "engName": "Ezbon",
+    "gender": "M",
+    "generation": 23,
+    "column": 28.3,
+    "parents": [
+      "gad"
+    ],
+    "spouses": [],
+    "desc": "갓의 넷째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The fourth son of Gad."
+  },
+  {
+    "id": "eri_gad",
+    "name": "에리",
+    "engName": "Eri",
+    "gender": "M",
+    "generation": 23,
+    "column": 29,
+    "parents": [
+      "gad"
+    ],
+    "spouses": [],
+    "desc": "갓의 다섯째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The fifth son of Gad."
+  },
+  {
+    "id": "arodi_gad",
+    "name": "아로디",
+    "engName": "Arodi",
+    "gender": "M",
+    "generation": 23,
+    "column": 29.7,
+    "parents": [
+      "gad"
+    ],
+    "spouses": [],
+    "desc": "갓의 여섯째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The sixth son of Gad."
+  },
+  {
+    "id": "areli_gad",
+    "name": "아렐리",
+    "engName": "Areli",
+    "gender": "M",
+    "generation": 23,
+    "column": 30.4,
+    "parents": [
+      "gad"
+    ],
+    "spouses": [],
+    "desc": "갓의 일곱째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The seventh son of Gad."
+  },
+  {
+    "id": "asher",
+    "name": "아셀",
+    "engName": "Aser",
+    "gender": "M",
+    "generation": 22,
+    "column": 32.797,
+    "parents": [
+      "jacob",
+      "zilpah"
+    ],
+    "spouses": [],
+    "desc": "아셀 지파의 조상. 기름진 음식을 낼 자.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Ancestor of the tribe of Asher. 기름진 음식을 낼 자."
+  },
+  {
+    "id": "imnah_asher",
+    "name": "임나",
+    "engName": "Imnah",
+    "gender": "M",
+    "generation": 23,
+    "column": 31.504,
+    "parents": [
+      "asher"
+    ],
+    "spouses": [],
+    "desc": "아셀의 첫째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Asher's first son."
+  },
+  {
+    "id": "ishvah_asher",
+    "name": "이스와",
+    "engName": "Ishvah",
+    "gender": "M",
+    "generation": 23,
+    "column": 33.104,
+    "parents": [
+      "asher"
+    ],
+    "spouses": [],
+    "desc": "아셀의 둘째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Asher's second son."
+  },
+  {
+    "id": "ishvi_asher",
+    "name": "이스위",
+    "engName": "Ishvi",
+    "gender": "M",
+    "generation": 23,
+    "column": 32.292,
+    "parents": [
+      "asher"
+    ],
+    "spouses": [],
+    "desc": "아셀의 셋째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Asher's third son."
+  },
+  {
+    "id": "beriah_asher",
+    "name": "브리아",
+    "engName": "Beriah",
+    "gender": "M",
+    "generation": 23,
+    "column": 33.95,
+    "parents": [
+      "asher"
+    ],
+    "spouses": [],
+    "desc": "아셀의 넷째 아들. 헤벨과 말기엘의 아버지.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Asher's fourth son. 헤벨과 말기엘의 아버지."
+  },
+  {
+    "id": "serah_asher",
+    "name": "세라",
+    "engName": "Serah",
+    "gender": "F",
+    "generation": 23,
+    "column": 34.85,
+    "parents": [
+      "asher"
+    ],
+    "spouses": [],
+    "desc": "아셀의 딸.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Asher's daughter."
+  },
+  {
+    "id": "heber_beriah",
+    "name": "헤벨",
+    "engName": "Heber",
+    "gender": "M",
+    "generation": 24,
+    "column": 30.8,
+    "parents": [
+      "beriah_asher"
+    ],
+    "spouses": [],
+    "desc": "브리아의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Bria."
+  },
+  {
+    "id": "malchiel_beriah",
+    "name": "말기엘",
+    "engName": "Malchiel",
+    "gender": "M",
+    "generation": 24,
+    "column": 36.7,
+    "parents": [
+      "beriah_asher"
+    ],
+    "spouses": [],
+    "desc": "브리아의 아들. 비르사잇의 아버지.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Bria. 비르사잇의 아버지."
+  },
+  {
+    "id": "japhlet_heber",
+    "name": "야블렛",
+    "engName": "Japhlet",
+    "gender": "M",
+    "generation": 25,
+    "column": 29.5,
+    "parents": [
+      "heber_beriah"
+    ],
+    "spouses": [],
+    "desc": "헤벨의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Heber."
+  },
+  {
+    "id": "shomer_heber",
+    "name": "소멜",
+    "engName": "Shomer",
+    "gender": "M",
+    "generation": 25,
+    "column": 31.9,
+    "parents": [
+      "heber_beriah"
+    ],
+    "spouses": [],
+    "desc": "헤벨의 아들 (세멜).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "헤벨의 아들 (세멜)."
+  },
+  {
+    "id": "hotham_heber",
+    "name": "호담",
+    "engName": "Hotham",
+    "gender": "M",
+    "generation": 25,
+    "column": 34.2,
+    "parents": [
+      "heber_beriah"
+    ],
+    "spouses": [],
+    "desc": "헤벨의 아들 (헬렘).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "헤벨의 아들 (헬렘)."
+  },
+  {
+    "id": "shua_heber",
+    "name": "수아",
+    "engName": "Shua",
+    "gender": "F",
+    "generation": 25,
+    "column": 35,
+    "parents": [
+      "heber_beriah"
+    ],
+    "spouses": [],
+    "desc": "헤벨의 딸.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Hebel's daughter."
+  },
+  {
+    "id": "birzaith_malchiel",
+    "name": "비르사잇",
+    "engName": "Birzaith",
+    "gender": "M",
+    "generation": 25,
+    "column": 36.7,
+    "parents": [
+      "malchiel_beriah"
+    ],
+    "spouses": [],
+    "desc": "말기엘의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Malkiel."
+  },
+  {
+    "id": "pasach_japhlet",
+    "name": "바삭",
+    "engName": "Pasach",
+    "gender": "M",
+    "generation": 26,
+    "column": 28.8,
+    "parents": [
+      "japhlet_heber"
+    ],
+    "spouses": [],
+    "desc": "야블렛의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Japheth."
+  },
+  {
+    "id": "bimhal_japhlet",
+    "name": "빔할",
+    "engName": "Bimhal",
+    "gender": "M",
+    "generation": 26,
+    "column": 29.5,
+    "parents": [
+      "japhlet_heber"
+    ],
+    "spouses": [],
+    "desc": "야블렛의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Japheth."
+  },
+  {
+    "id": "ashvath_japhlet",
+    "name": "아스왓",
+    "engName": "Ashvath",
+    "gender": "M",
+    "generation": 26,
+    "column": 30.2,
+    "parents": [
+      "japhlet_heber"
+    ],
+    "spouses": [],
+    "desc": "야블렛의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Japheth."
+  },
+  {
+    "id": "ahi_shomer",
+    "name": "아히",
+    "engName": "Ahi",
+    "gender": "M",
+    "generation": 26,
+    "column": 31,
+    "parents": [
+      "shomer_heber"
+    ],
+    "spouses": [],
+    "desc": "소멜의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Somer."
+  },
+  {
+    "id": "rohgah_shomer",
+    "name": "로가",
+    "engName": "Rohgah",
+    "gender": "M",
+    "generation": 26,
+    "column": 31.7,
+    "parents": [
+      "shomer_heber"
+    ],
+    "spouses": [],
+    "desc": "소멜의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Somer."
+  },
+  {
+    "id": "hubbah_shomer",
+    "name": "호바",
+    "engName": "Hubbah",
+    "gender": "M",
+    "generation": 26,
+    "column": 32.4,
+    "parents": [
+      "shomer_heber"
+    ],
+    "spouses": [],
+    "desc": "소멜의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Somer."
+  },
+  {
+    "id": "aram_shomer",
+    "name": "아람",
+    "engName": "Aram",
+    "gender": "M",
+    "generation": 26,
+    "column": 33.1,
+    "parents": [
+      "shomer_heber"
+    ],
+    "spouses": [],
+    "desc": "소멜의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Somer."
+  },
+  {
+    "id": "zophah_hotham",
+    "name": "소바",
+    "engName": "Zophah",
+    "gender": "M",
+    "generation": 26,
+    "column": 33.9,
+    "parents": [
+      "hotham_heber"
+    ],
+    "spouses": [],
+    "desc": "호담의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Hodam's son."
+  },
+  {
+    "id": "imna_hotham",
+    "name": "임나",
+    "engName": "Imna",
+    "gender": "M",
+    "generation": 26,
+    "column": 34.6,
+    "parents": [
+      "hotham_heber"
+    ],
+    "spouses": [],
+    "desc": "호담의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Hodam's son."
+  },
+  {
+    "id": "shelesh_hotham",
+    "name": "셀레스",
+    "engName": "Shelesh",
+    "gender": "M",
+    "generation": 26,
+    "column": 35.3,
+    "parents": [
+      "hotham_heber"
+    ],
+    "spouses": [],
+    "desc": "호담의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Hodam's son."
+  },
+  {
+    "id": "amal_hotham",
+    "name": "아말",
+    "engName": "Amal",
+    "gender": "M",
+    "generation": 26,
+    "column": 36,
+    "parents": [
+      "hotham_heber"
+    ],
+    "spouses": [],
+    "desc": "호담의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Hodam's son."
+  },
+  {
+    "id": "suah_zophah",
+    "name": "수아",
+    "engName": "Suah",
+    "gender": "M",
+    "generation": 27,
+    "column": 30.5,
+    "parents": [
+      "zophah_hotham"
+    ],
+    "spouses": [],
+    "desc": "소바의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Soba."
+  },
+  {
+    "id": "harnepher_zophah",
+    "name": "하르네벨",
+    "engName": "Harnepher",
+    "gender": "M",
+    "generation": 27,
+    "column": 31.2,
+    "parents": [
+      "zophah_hotham"
+    ],
+    "spouses": [],
+    "desc": "소바의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Soba."
+  },
+  {
+    "id": "shual_zophah",
+    "name": "수알",
+    "engName": "Shual",
+    "gender": "M",
+    "generation": 27,
+    "column": 31.9,
+    "parents": [
+      "zophah_hotham"
+    ],
+    "spouses": [],
+    "desc": "소바의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Soba."
+  },
+  {
+    "id": "beri_zophah",
+    "name": "베리",
+    "engName": "Beri",
+    "gender": "M",
+    "generation": 27,
+    "column": 32.6,
+    "parents": [
+      "zophah_hotham"
+    ],
+    "spouses": [],
+    "desc": "소바의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Soba."
+  },
+  {
+    "id": "imrah_zophah",
+    "name": "임라",
+    "engName": "Imrah",
+    "gender": "M",
+    "generation": 27,
+    "column": 33.3,
+    "parents": [
+      "zophah_hotham"
+    ],
+    "spouses": [],
+    "desc": "소바의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Soba."
+  },
+  {
+    "id": "bezer_zophah",
+    "name": "베셀",
+    "engName": "Bezer",
+    "gender": "M",
+    "generation": 27,
+    "column": 34,
+    "parents": [
+      "zophah_hotham"
+    ],
+    "spouses": [],
+    "desc": "소바의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Soba."
+  },
+  {
+    "id": "hod_zophah",
+    "name": "홋",
+    "engName": "Hod",
+    "gender": "M",
+    "generation": 27,
+    "column": 34.7,
+    "parents": [
+      "zophah_hotham"
+    ],
+    "spouses": [],
+    "desc": "소바의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Soba."
+  },
+  {
+    "id": "shamma_zophah",
+    "name": "사마",
+    "engName": "Shamma",
+    "gender": "M",
+    "generation": 27,
+    "column": 35.4,
+    "parents": [
+      "zophah_hotham"
+    ],
+    "spouses": [],
+    "desc": "소바의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Soba."
+  },
+  {
+    "id": "shilshah_zophah",
+    "name": "실사",
+    "engName": "Shilshah",
+    "gender": "M",
+    "generation": 27,
+    "column": 36.1,
+    "parents": [
+      "zophah_hotham"
+    ],
+    "spouses": [],
+    "desc": "소바의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Soba."
+  },
+  {
+    "id": "ithran_zophah",
+    "name": "이드란",
+    "engName": "Ithran",
+    "gender": "M",
+    "generation": 27,
+    "column": 36.8,
+    "parents": [
+      "zophah_hotham"
+    ],
+    "spouses": [],
+    "desc": "소바의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Soba."
+  },
+  {
+    "id": "beera_zophah",
+    "name": "브에라",
+    "engName": "Beera",
+    "gender": "M",
+    "generation": 27,
+    "column": 37.5,
+    "parents": [
+      "zophah_hotham"
+    ],
+    "spouses": [],
+    "desc": "소바의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Soba."
+  },
+  {
+    "id": "issachar",
+    "name": "잇사갈",
+    "engName": "Issachar",
+    "gender": "M",
+    "generation": 21.96,
+    "column": 21.258,
+    "parents": [
+      "jacob",
+      "leah"
+    ],
+    "spouses": [],
+    "desc": "잇사갈 지파의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "An ancestor of the tribe of Issachar."
+  },
+  {
+    "id": "tola_issachar",
+    "name": "돌라",
+    "engName": "Tola",
+    "gender": "M",
+    "generation": 22.96,
+    "column": 20.273,
+    "parents": [
+      "issachar"
+    ],
+    "spouses": [],
+    "desc": "잇사갈의 첫째 아들. 돌라 종족의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Issachar's first son. An ancestor of the Dola race."
+  },
+  {
+    "id": "puah_issachar",
+    "name": "부와",
+    "engName": "Puah",
+    "gender": "M",
+    "generation": 22.96,
+    "column": 20.936,
+    "parents": [
+      "issachar"
+    ],
+    "spouses": [],
+    "desc": "잇사갈의 둘째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Issachar's second son."
+  },
+  {
+    "id": "jashub_issachar",
+    "name": "욥",
+    "engName": "Jashub",
+    "gender": "M",
+    "generation": 22.96,
+    "column": 21.598,
+    "parents": [
+      "issachar"
+    ],
+    "spouses": [],
+    "desc": "잇사갈의 셋째 아들 (야숩).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Issachar's third son (Jashub)."
+  },
+  {
+    "id": "shimron_issachar",
+    "name": "시므론",
+    "engName": "Shimron",
+    "gender": "M",
+    "generation": 22.96,
+    "column": 22.261,
+    "parents": [
+      "issachar"
+    ],
+    "spouses": [],
+    "desc": "잇사갈의 넷째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Fourth son of Issachar."
+  },
+  {
+    "id": "uzzi_tola",
+    "name": "웃시",
+    "engName": "Uzzi",
+    "gender": "M",
+    "generation": 23.96,
+    "column": 18.613,
+    "parents": [
+      "tola_issachar"
+    ],
+    "spouses": [],
+    "desc": "돌라의 첫째 아들. 용사.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Dola's first son. brave."
+  },
+  {
+    "id": "rephaiah_tola",
+    "name": "르바야",
+    "engName": "Rephaiah",
+    "gender": "M",
+    "generation": 23.96,
+    "column": 19.28,
+    "parents": [
+      "tola_issachar"
+    ],
+    "spouses": [],
+    "desc": "돌라의 둘째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Dola's second son."
+  },
+  {
+    "id": "jeriel_tola",
+    "name": "여리엘",
+    "engName": "Jeriel",
+    "gender": "M",
+    "generation": 23.96,
+    "column": 19.942,
+    "parents": [
+      "tola_issachar"
+    ],
+    "spouses": [],
+    "desc": "돌라의 셋째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Tola's third son."
+  },
+  {
+    "id": "jahmai_tola",
+    "name": "야매",
+    "engName": "Jahmai",
+    "gender": "M",
+    "generation": 23.96,
+    "column": 20.605,
+    "parents": [
+      "tola_issachar"
+    ],
+    "spouses": [],
+    "desc": "돌라의 넷째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The fourth son of Dola."
+  },
+  {
+    "id": "ibsam_tola",
+    "name": "입삼",
+    "engName": "Ibsam",
+    "gender": "M",
+    "generation": 23.96,
+    "column": 21.267,
+    "parents": [
+      "tola_issachar"
+    ],
+    "spouses": [],
+    "desc": "돌라의 다섯째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The fifth son of Dola."
+  },
+  {
+    "id": "shemuel_tola",
+    "name": "스므엘",
+    "engName": "Shemuel",
+    "gender": "M",
+    "generation": 23.96,
+    "column": 21.929,
+    "parents": [
+      "tola_issachar"
+    ],
+    "spouses": [],
+    "desc": "돌라의 여섯째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The sixth son of Dola."
+  },
+  {
+    "id": "izrahiah_uzzi",
+    "name": "이스라히야",
+    "engName": "Izrahiah",
+    "gender": "M",
+    "generation": 24.96,
+    "column": 18.613,
+    "parents": [
+      "uzzi_tola"
+    ],
+    "spouses": [],
+    "desc": "웃시의 아들이자 우두머리.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The son of Uzzi and the leader."
+  },
+  {
+    "id": "michael_izrahiah",
+    "name": "미가엘",
+    "engName": "Michael",
+    "gender": "M",
+    "generation": 26.01,
+    "column": 18.456,
+    "parents": [
+      "izrahiah_uzzi"
+    ],
+    "spouses": [],
+    "desc": "이스라히야의 첫째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Israhiya's first son."
+  },
+  {
+    "id": "obadiah_izrahiah",
+    "name": "오바댜",
+    "engName": "Obadiah",
+    "gender": "M",
+    "generation": 26.01,
+    "column": 19.119,
+    "parents": [
+      "izrahiah_uzzi"
+    ],
+    "spouses": [],
+    "desc": "이스라히야의 둘째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Israhiya's second son."
+  },
+  {
+    "id": "joel_izrahiah",
+    "name": "요엘",
+    "engName": "Joel",
+    "gender": "M",
+    "generation": 26.01,
+    "column": 19.781,
+    "parents": [
+      "izrahiah_uzzi"
+    ],
+    "spouses": [],
+    "desc": "이스라히야의 셋째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Israhiya's third son."
+  },
+  {
+    "id": "isshiah_izrahiah",
+    "name": "잇시야",
+    "engName": "Isshiah",
+    "gender": "M",
+    "generation": 26.01,
+    "column": 20.444,
+    "parents": [
+      "izrahiah_uzzi"
+    ],
+    "spouses": [],
+    "desc": "이스라히야의 넷째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Israhiah's fourth son."
+  },
+  {
+    "id": "zebulun",
+    "name": "스불론",
+    "engName": "Zebulun",
+    "gender": "M",
+    "generation": 22,
+    "column": 23.782,
+    "parents": [
+      "jacob",
+      "leah"
+    ],
+    "spouses": [],
+    "desc": "스불론 지파의 조상. 해변에 거주하며 배를 대는 자.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Ancestor of the tribe of Zebulun. A person who lives on the beach and owns a boat."
+  },
+  {
+    "id": "sered_zebulun",
+    "name": "세렛",
+    "engName": "Sered",
+    "gender": "M",
+    "generation": 22.96,
+    "column": 23.122,
+    "parents": [
+      "zebulun"
+    ],
+    "spouses": [],
+    "desc": "스불론의 첫째 아들. 세렛 종족의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Zebulun's first son. The ancestor of the Sered race."
+  },
+  {
+    "id": "elon_zebulun",
+    "name": "엘론",
+    "engName": "Elon",
+    "gender": "M",
+    "generation": 22.96,
+    "column": 23.785,
+    "parents": [
+      "zebulun"
+    ],
+    "spouses": [],
+    "desc": "스불론의 둘째 아들. 엘론 종족의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Zebulun's second son. Ancestor of the Elon race."
+  },
+  {
+    "id": "jahleel_zebulun",
+    "name": "얄르엘",
+    "engName": "Jahleel",
+    "gender": "M",
+    "generation": 22.96,
+    "column": 24.447,
+    "parents": [
+      "zebulun"
+    ],
+    "spouses": [],
+    "desc": "스불론의 셋째 아들. 얄르엘 종족의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Zebulun's third son. The ancestor of the Yalleel race."
+  },
+  {
+    "id": "dinah",
+    "name": "디나",
+    "engName": "Dinah",
+    "gender": "F",
+    "generation": 22,
+    "column": 25.368,
+    "parents": [
+      "jacob",
+      "leah"
+    ],
+    "spouses": [],
+    "desc": "야곱의 유일한 딸. 세겜 추장 사건으로 시므온 and 레위가 분노함.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Jacob's only daughter. Simeon and Levi become angry due to the incident with Chief Shechem."
+  },
+  {
+    "id": "joseph",
+    "name": "요셉",
+    "engName": "Joseph",
+    "gender": "M",
+    "generation": 22.01,
+    "column": 47.443,
+    "parents": [
+      "jacob",
+      "rachel"
+    ],
+    "spouses": [
+      "asenath"
+    ],
+    "desc": "꿈의 사람. 형제들에 의해 이집트에 팔렸으나 국무총리가 되어 가문을 구함.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The person of your dreams. He was sold to Egypt by his brothers, but saved his family by becoming prime minister."
+  },
+  {
+    "id": "asenath",
+    "name": "아스낫",
+    "engName": "Asenath",
+    "gender": "F",
+    "generation": 22.01,
+    "column": 45.284,
+    "parents": [],
+    "spouses": [
+      "joseph"
+    ],
+    "desc": "이집트 온의 제사장 보디베라의 딸이자 요셉의 아내.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Daughter of Potiphera, priest of On, Egypt, and wife of Joseph."
+  },
+  {
+    "id": "benjamin",
+    "name": "베냐민",
+    "engName": "Benjamin",
+    "gender": "M",
+    "generation": 22.03,
+    "column": 65.243,
+    "parents": [
+      "jacob",
+      "rachel"
+    ],
+    "spouses": [],
+    "desc": "야곱의 막내 아들. 오른손의 아들이라는 뜻.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Jacob's youngest son. It means son of the right hand."
+  },
+  {
+    "id": "bela",
+    "name": "벨라",
+    "engName": "Bela",
+    "gender": "M",
+    "generation": 23.03,
+    "column": 56.102,
+    "parents": [
+      "benjamin"
+    ],
+    "spouses": [],
+    "desc": "베냐민의 맏아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Benjamin's eldest son."
+  },
+  {
+    "id": "becher",
+    "name": "베겔",
+    "engName": "Becher",
+    "gender": "M",
+    "generation": 23.03,
+    "column": 65.248,
+    "parents": [
+      "benjamin"
+    ],
+    "spouses": [],
+    "desc": "베냐민의 둘째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Benjamin's second son."
+  },
+  {
+    "id": "ashbel",
+    "name": "아스벨",
+    "engName": "Ashbel",
+    "gender": "M",
+    "generation": 23.03,
+    "column": 71.281,
+    "parents": [
+      "benjamin"
+    ],
+    "spouses": [],
+    "desc": "베냐민의 셋째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Benjamin's third son."
+  },
+  {
+    "id": "gera_benjamin",
+    "name": "게라",
+    "engName": "Gera",
+    "gender": "M",
+    "generation": 23.03,
+    "column": 72.09,
+    "parents": [
+      "benjamin"
+    ],
+    "spouses": [],
+    "desc": "베냐민의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Benjamin."
+  },
+  {
+    "id": "naaman_benjamin",
+    "name": "나아만",
+    "engName": "Naaman",
+    "gender": "M",
+    "generation": 23.03,
+    "column": 72.78,
+    "parents": [
+      "benjamin"
+    ],
+    "spouses": [],
+    "desc": "베냐민의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Benjamin."
+  },
+  {
+    "id": "ehi",
+    "name": "에히",
+    "engName": "Ehi",
+    "gender": "M",
+    "generation": 23.03,
+    "column": 74.152,
+    "parents": [
+      "benjamin"
+    ],
+    "spouses": [],
+    "desc": "베냐민의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Benjamin."
+  },
+  {
+    "id": "rosh",
+    "name": "로스",
+    "engName": "Rosh",
+    "gender": "M",
+    "generation": 23.03,
+    "column": 73.477,
+    "parents": [
+      "benjamin"
+    ],
+    "spouses": [],
+    "desc": "베냐민의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Benjamin."
+  },
+  {
+    "id": "muppim",
+    "name": "뭅빔",
+    "engName": "Muppim",
+    "gender": "M",
+    "generation": 23.03,
+    "column": 74.819,
+    "parents": [
+      "benjamin"
+    ],
+    "spouses": [],
+    "desc": "베냐민의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Benjamin."
+  },
+  {
+    "id": "huppim",
+    "name": "훕빔",
+    "engName": "Huppim",
+    "gender": "M",
+    "generation": 23.03,
+    "column": 75.482,
+    "parents": [
+      "benjamin"
+    ],
+    "spouses": [],
+    "desc": "베냐민의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Benjamin."
+  },
+  {
+    "id": "ard",
+    "name": "아릇",
+    "engName": "Ard",
+    "gender": "M",
+    "generation": 23.03,
+    "column": 76.16,
+    "parents": [
+      "benjamin"
+    ],
+    "spouses": [],
+    "desc": "베냐민의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Benjamin."
+  },
+  {
+    "id": "addar",
+    "name": "잇달",
+    "engName": "Addar",
+    "gender": "M",
+    "generation": 24.03,
+    "column": 52.764,
+    "parents": [
+      "bela"
+    ],
+    "spouses": [],
+    "desc": "벨라의 아들 (대상 8:3).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Bela (1 Chronicles 8:3)."
+  },
+  {
+    "id": "gera_bela1",
+    "name": "게라",
+    "engName": "Gera",
+    "gender": "M",
+    "generation": 24.03,
+    "column": 53.44,
+    "parents": [
+      "bela"
+    ],
+    "spouses": [],
+    "desc": "벨라의 아들 (대상 8:3).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Bela (1 Chronicles 8:3)."
+  },
+  {
+    "id": "abihud",
+    "name": "아비훗",
+    "engName": "Abihud",
+    "gender": "M",
+    "generation": 24.03,
+    "column": 54.115,
+    "parents": [
+      "bela"
+    ],
+    "spouses": [],
+    "desc": "벨라의 아들 (대상 8:3).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Bela (1 Chronicles 8:3)."
+  },
+  {
+    "id": "abihua",
+    "name": "아비수아",
+    "engName": "Abihua",
+    "gender": "M",
+    "generation": 24.03,
+    "column": 54.789,
+    "parents": [
+      "bela"
+    ],
+    "spouses": [],
+    "desc": "벨라의 아들 (대상 8:4).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Bela (1 Chronicles 8:4)."
+  },
+  {
+    "id": "naaman_bela",
+    "name": "나아만",
+    "engName": "Naaman",
+    "gender": "M",
+    "generation": 24.03,
+    "column": 55.465,
+    "parents": [
+      "bela"
+    ],
+    "spouses": [],
+    "desc": "벨라의 아들 (대상 8:4).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Bela (1 Chronicles 8:4)."
+  },
+  {
+    "id": "ahoah",
+    "name": "아호아",
+    "engName": "Ahoah",
+    "gender": "M",
+    "generation": 24.03,
+    "column": 56.139,
+    "parents": [
+      "bela"
+    ],
+    "spouses": [],
+    "desc": "벨라의 아들 (대상 8:4).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Bela (1 Chronicles 8:4)."
+  },
+  {
+    "id": "gera_bela2",
+    "name": "게라",
+    "engName": "Gera",
+    "gender": "M",
+    "generation": 24.03,
+    "column": 56.815,
+    "parents": [
+      "bela"
+    ],
+    "spouses": [],
+    "desc": "벨라의 아들 (대상 8:5).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Bela (1 Chronicles 8:5)."
+  },
+  {
+    "id": "shephuphan",
+    "name": "스부반",
+    "engName": "Shephuphan",
+    "gender": "M",
+    "generation": 24.03,
+    "column": 57.49,
+    "parents": [
+      "bela"
+    ],
+    "spouses": [],
+    "desc": "벨라의 아들 (대상 8:5).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Bela (1 Chronicles 8:5)."
+  },
+  {
+    "id": "huram",
+    "name": "후밤",
+    "engName": "Huram",
+    "gender": "M",
+    "generation": 24.03,
+    "column": 58.164,
+    "parents": [
+      "bela"
+    ],
+    "spouses": [],
+    "desc": "벨라의 아들 (대상 8:5).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Bela (1 Chronicles 8:5)."
+  },
+  {
+    "id": "ezbon",
+    "name": "에스본",
+    "engName": "Ezbon",
+    "gender": "M",
+    "generation": 24.03,
+    "column": 58.84,
+    "parents": [
+      "bela"
+    ],
+    "spouses": [],
+    "desc": "벨라의 아들 (대상 7:7).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Bela (1 Chronicles 7:7)."
+  },
+  {
+    "id": "uzzi",
+    "name": "우시",
+    "engName": "Uzzi",
+    "gender": "M",
+    "generation": 24.03,
+    "column": 59.514,
+    "parents": [
+      "bela"
+    ],
+    "spouses": [],
+    "desc": "벨라의 아들 (대상 7:7).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Bela (1 Chronicles 7:7)."
+  },
+  {
+    "id": "uzziel_bela",
+    "name": "웃시엘",
+    "engName": "Uzziel",
+    "gender": "M",
+    "generation": 24.03,
+    "column": 60.19,
+    "parents": [
+      "bela"
+    ],
+    "spouses": [],
+    "desc": "벨라의 아들 (대상 7:7).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Bela (1 Chronicles 7:7)."
+  },
+  {
+    "id": "jerimoth_bela",
+    "name": "여리못",
+    "engName": "Jerimoth",
+    "gender": "M",
+    "generation": 24.03,
+    "column": 60.865,
+    "parents": [
+      "bela"
+    ],
+    "spouses": [],
+    "desc": "벨라의 아들 (대상 7:7).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Bela (1 Chronicles 7:7)."
+  },
+  {
+    "id": "iri",
+    "name": "이리",
+    "engName": "Iri",
+    "gender": "M",
+    "generation": 24.03,
+    "column": 61.539,
+    "parents": [
+      "bela"
+    ],
+    "spouses": [],
+    "desc": "벨라의 아들 (대상 7:7).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Bela (1 Chronicles 7:7)."
+  },
+  {
+    "id": "zemirah",
+    "name": "스미라",
+    "engName": "Zemirah",
+    "gender": "M",
+    "generation": 24.03,
+    "column": 62.548,
+    "parents": [
+      "becher"
+    ],
+    "spouses": [],
+    "desc": "베겔의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Begel."
+  },
+  {
+    "id": "joash_becher",
+    "name": "요아스",
+    "engName": "Joash",
+    "gender": "M",
+    "generation": 24.03,
+    "column": 63.222,
+    "parents": [
+      "becher"
+    ],
+    "spouses": [],
+    "desc": "베겔의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Begel."
+  },
+  {
+    "id": "eliezer",
+    "name": "엘리에셀",
+    "engName": "Eliezer",
+    "gender": "M",
+    "generation": 24.03,
+    "column": 63.898,
+    "parents": [
+      "becher"
+    ],
+    "spouses": [],
+    "desc": "베겔의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Begel."
+  },
+  {
+    "id": "elioenai",
+    "name": "엘료에내",
+    "engName": "Elioenai",
+    "gender": "M",
+    "generation": 24.03,
+    "column": 64.572,
+    "parents": [
+      "becher"
+    ],
+    "spouses": [],
+    "desc": "베겔의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Begel."
+  },
+  {
+    "id": "omri_becher",
+    "name": "오므리",
+    "engName": "Omri",
+    "gender": "M",
+    "generation": 24.03,
+    "column": 65.247,
+    "parents": [
+      "becher"
+    ],
+    "spouses": [],
+    "desc": "베겔의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Begel."
+  },
+  {
+    "id": "jerimoth_becher",
+    "name": "여레못",
+    "engName": "Jerimoth",
+    "gender": "M",
+    "generation": 24.03,
+    "column": 65.922,
+    "parents": [
+      "becher"
+    ],
+    "spouses": [],
+    "desc": "베겔의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Begel."
+  },
+  {
+    "id": "abijah_becher",
+    "name": "아비야",
+    "engName": "Abijah",
+    "gender": "M",
+    "generation": 24.03,
+    "column": 66.597,
+    "parents": [
+      "becher"
+    ],
+    "spouses": [],
+    "desc": "베겔의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Begel."
+  },
+  {
+    "id": "anathoth",
+    "name": "아나돗",
+    "engName": "Anathoth",
+    "gender": "M",
+    "generation": 24.03,
+    "column": 67.272,
+    "parents": [
+      "becher"
+    ],
+    "spouses": [],
+    "desc": "베겔의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Begel."
+  },
+  {
+    "id": "alemeth",
+    "name": "알레멧",
+    "engName": "Alemeth",
+    "gender": "M",
+    "generation": 24.03,
+    "column": 67.947,
+    "parents": [
+      "becher"
+    ],
+    "spouses": [],
+    "desc": "베겔의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Begel."
+  },
+  {
+    "id": "bilhan_benjamin",
+    "name": "빌한",
+    "engName": "Bilhan",
+    "gender": "M",
+    "generation": 24.03,
+    "column": 71.281,
+    "parents": [
+      "ashbel"
+    ],
+    "spouses": [],
+    "desc": "아스벨(여디아엘)의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Asbel (Jediel)."
+  },
+  {
+    "id": "jeush_bilhan",
+    "name": "여우스",
+    "engName": "Jeush",
+    "gender": "M",
+    "generation": 25.03,
+    "column": 68.981,
+    "parents": [
+      "bilhan_benjamin"
+    ],
+    "spouses": [],
+    "desc": "빌한의 첫째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Bilhan's first son."
+  },
+  {
+    "id": "benjamin_bilhan",
+    "name": "베냐민",
+    "engName": "Benjamin",
+    "gender": "M",
+    "generation": 25.03,
+    "column": 69.681,
+    "parents": [
+      "bilhan_benjamin"
+    ],
+    "spouses": [],
+    "desc": "빌한의 둘째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Bilhan's second son."
+  },
+  {
+    "id": "ehud_bilhan",
+    "name": "에훗",
+    "engName": "Ehud",
+    "gender": "M",
+    "generation": 25.03,
+    "column": 70.381,
+    "parents": [
+      "bilhan_benjamin"
+    ],
+    "spouses": [],
+    "desc": "빌한의 셋째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Bilhan's third son."
+  },
+  {
+    "id": "chenaanah",
+    "name": "그나아나",
+    "engName": "Chenaanah",
+    "gender": "M",
+    "generation": 25.03,
+    "column": 71.081,
+    "parents": [
+      "bilhan_benjamin"
+    ],
+    "spouses": [],
+    "desc": "빌한의 넷째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Bilhan's fourth son."
+  },
+  {
+    "id": "zethan",
+    "name": "세단",
+    "engName": "Zethan",
+    "gender": "M",
+    "generation": 25.03,
+    "column": 71.781,
+    "parents": [
+      "bilhan_benjamin"
+    ],
+    "spouses": [],
+    "desc": "빌한의 다섯째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Bilhan's fifth son."
+  },
+  {
+    "id": "tharshish",
+    "name": "다시스",
+    "engName": "Tharshish",
+    "gender": "M",
+    "generation": 25.03,
+    "column": 72.481,
+    "parents": [
+      "bilhan_benjamin"
+    ],
+    "spouses": [],
+    "desc": "빌한의 여섯째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Bilhan's sixth son."
+  },
+  {
+    "id": "ahishahar",
+    "name": "아히사할",
+    "engName": "Ahishahar",
+    "gender": "M",
+    "generation": 25.03,
+    "column": 73.181,
+    "parents": [
+      "bilhan_benjamin"
+    ],
+    "spouses": [],
+    "desc": "빌한의 일곱째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Bilhan's seventh son."
+  },
+  {
+    "id": "naaman_ehud",
+    "name": "나아만",
+    "engName": "Naaman",
+    "gender": "M",
+    "generation": 26.03,
+    "column": 69.681,
+    "parents": [
+      "ehud_bilhan"
+    ],
+    "spouses": [],
+    "desc": "에훗의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ehud."
+  },
+  {
+    "id": "ahijah_ehud",
+    "name": "아히야",
+    "engName": "Ahijah",
+    "gender": "M",
+    "generation": 26.03,
+    "column": 70.381,
+    "parents": [
+      "ehud_bilhan"
+    ],
+    "spouses": [],
+    "desc": "에훗의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ehud."
+  },
+  {
+    "id": "gera_ehud",
+    "name": "게라",
+    "engName": "Gera",
+    "gender": "M",
+    "generation": 26.03,
+    "column": 71.081,
+    "parents": [
+      "ehud_bilhan"
+    ],
+    "spouses": [],
+    "desc": "에훗의 아들. 포로로 잡혀간 집안의 지도자.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ehud. The leader of a family taken prisoner."
+  },
+  {
+    "id": "uzza_gera",
+    "name": "웃사",
+    "engName": "Uzza",
+    "gender": "M",
+    "generation": 27.03,
+    "column": 70.714,
+    "parents": [
+      "gera_ehud"
+    ],
+    "spouses": [],
+    "desc": "게라의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Gera."
+  },
+  {
+    "id": "ahihud_gera",
+    "name": "아히훗",
+    "engName": "Ahihud",
+    "gender": "M",
+    "generation": 27.03,
+    "column": 71.414,
+    "parents": [
+      "gera_ehud"
+    ],
+    "spouses": [],
+    "desc": "게라의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Gera."
+  },
+  {
+    "id": "leah_daughter",
+    "name": "레아",
+    "engName": "Leah",
+    "gender": "F",
+    "generation": 20.65,
+    "column": 2.319,
+    "parents": [
+      "laban"
+    ],
+    "spouses": [],
+    "desc": "라반의 첫째 딸. 야곱의 아내가 됨.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Laban's first daughter. Becomes Jacob's wife."
+  },
+  {
+    "id": "rachel_daughter",
+    "name": "라헬",
+    "engName": "Rachel",
+    "gender": "F",
+    "generation": 20.65,
+    "column": 3.119,
+    "parents": [
+      "laban"
+    ],
+    "spouses": [],
+    "desc": "라반의 둘째 딸. 야곱의 아내가 됨.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Laban's second daughter. Becomes Jacob's wife."
+  },
+  {
+    "id": "eliphaz",
+    "name": "엘리바스",
+    "engName": "Eliphaz",
+    "gender": "M",
+    "generation": 19.95,
+    "column": -17.206,
+    "parents": [
+      "esau",
+      "adah_esau"
+    ],
+    "spouses": [
+      "timna"
+    ],
+    "desc": "에서의 첫째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Esau's first son."
+  },
+  {
+    "id": "reuel",
+    "name": "르우엘",
+    "engName": "Reuel",
+    "gender": "M",
+    "generation": 19.95,
+    "column": -13.902,
+    "parents": [
+      "esau",
+      "basemath_esau"
+    ],
+    "spouses": [],
+    "desc": "에서의 둘째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Esau's second son."
+  },
+  {
+    "id": "jeush",
+    "name": "여우스",
+    "engName": "Jeush",
+    "gender": "M",
+    "generation": 19.95,
+    "column": -12.624,
+    "parents": [
+      "esau",
+      "oholibamah"
+    ],
+    "spouses": [],
+    "desc": "에서의 셋째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Esau's third son."
+  },
+  {
+    "id": "jalam",
+    "name": "야알람",
+    "engName": "Jalam",
+    "gender": "M",
+    "generation": 19.95,
+    "column": -11.946,
+    "parents": [
+      "esau",
+      "oholibamah"
+    ],
+    "spouses": [],
+    "desc": "에서의 넷째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Esau's fourth son."
+  },
+  {
+    "id": "korah_edom",
+    "name": "고라",
+    "engName": "Korah",
+    "gender": "M",
+    "generation": 19.95,
+    "column": -11.269,
+    "parents": [
+      "esau",
+      "oholibamah"
+    ],
+    "spouses": [],
+    "desc": "에서의 다섯째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Esau's fifth son."
+  },
+  {
+    "id": "timna",
+    "name": "딤나",
+    "engName": "Timna",
+    "gender": "F",
+    "generation": 19.95,
+    "column": -18.431,
+    "parents": [],
+    "spouses": [
+      "eliphaz"
+    ],
+    "desc": "엘리바스의 첩.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Eliphaz's concubine."
+  },
+  {
+    "id": "kohath",
+    "name": "고핫",
+    "engName": "Kohath",
+    "gender": "M",
+    "generation": 23,
+    "column": -20.944,
+    "parents": [
+      "levi"
+    ],
+    "spouses": [],
+    "desc": "레위의 둘째 아들. 모세와 아론의 할아버지.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Levi's second son. Grandfather of Moses and Aaron."
+  },
+  {
+    "id": "perez",
+    "name": "베레스",
+    "engName": "Perez",
+    "gender": "M",
+    "generation": 23.1,
+    "column": 0.022,
+    "parents": [
+      "judah",
+      "tamar"
+    ],
+    "spouses": [],
+    "desc": "유다와 다말의 아들. 터치고 나왔다는 의미의 이름.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Judah and Tamar. A name that means “touched and came out.”"
+  },
+  {
+    "id": "zerah",
+    "name": "세라",
+    "engName": "Zerah",
+    "gender": "M",
+    "generation": 23,
+    "column": -10.599,
+    "parents": [
+      "judah",
+      "tamar"
+    ],
+    "spouses": [],
+    "desc": "베레스의 쌍둥이 형제. 홍색 실을 손에 맸던 자.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Perez's twin brother. The one who had a scarlet thread tied on his hand."
+  },
+  {
+    "id": "zimri_zerah",
+    "name": "시므리",
+    "engName": "Zimri",
+    "gender": "M",
+    "generation": 24,
+    "column": -11.638,
+    "parents": [
+      "zerah"
+    ],
+    "spouses": [],
+    "desc": "세라의 아들(대상 2:6).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Zerah (1 Chronicles 2:6)."
+  },
+  {
+    "id": "ethan_zerah",
+    "name": "에단",
+    "engName": "Ethan",
+    "gender": "M",
+    "generation": 24,
+    "column": -10.937,
+    "parents": [
+      "zerah"
+    ],
+    "spouses": [],
+    "desc": "세라의 아들(대상 2:6). 지혜로운 자.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Zerah (1 Chronicles 2:6). A wise man."
+  },
+  {
+    "id": "heman_zerah",
+    "name": "헤만",
+    "engName": "Heman",
+    "gender": "M",
+    "generation": 24,
+    "column": -10.238,
+    "parents": [
+      "zerah"
+    ],
+    "spouses": [],
+    "desc": "세라의 아들(대상 2:6). 지혜로운 자.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Zerah (1 Chronicles 2:6). A wise man."
+  },
+  {
+    "id": "calcol_zerah",
+    "name": "갈골",
+    "engName": "Calcol",
+    "gender": "M",
+    "generation": 24,
+    "column": -9.539,
+    "parents": [
+      "zerah"
+    ],
+    "spouses": [],
+    "desc": "세라의 아들(대상 2:6). 지혜로운 자.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Zerah (1 Chronicles 2:6). A wise man."
+  },
+  {
+    "id": "dara_zerah",
+    "name": "다라",
+    "engName": "Dara",
+    "gender": "M",
+    "generation": 24,
+    "column": -8.838,
+    "parents": [
+      "zerah"
+    ],
+    "spouses": [],
+    "desc": "세라의 아들(대상 2:6). 지혜로운 자.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Zerah (1 Chronicles 2:6). A wise man."
+  },
+  {
+    "id": "azariah_ethan",
+    "name": "아사랴",
+    "engName": "Azariah",
+    "gender": "M",
+    "generation": 25,
+    "column": -10.937,
+    "parents": [
+      "ethan_zerah"
+    ],
+    "spouses": [],
+    "desc": "에단의 아들(대상 2:8).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ethan (1 Chronicles 2:8)."
+  },
+  {
+    "id": "manasseh",
+    "name": "므낫세",
+    "engName": "Manasseh",
+    "gender": "M",
+    "generation": 23.01,
+    "column": 42.523,
+    "parents": [
+      "joseph",
+      "asenath"
+    ],
+    "spouses": [
+      "man_wife",
+      "man_concubine"
+    ],
+    "desc": "요셉의 장남. 하나님이 내 고난을 잊게 하셨다는 뜻.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Joseph's eldest son. It means that God made me forget my suffering."
+  },
+  {
+    "id": "ephraim",
+    "name": "에브라임",
+    "engName": "Ephraim",
+    "gender": "M",
+    "generation": 23.06,
+    "column": 50.189,
+    "parents": [
+      "joseph",
+      "asenath"
+    ],
+    "spouses": [],
+    "desc": "요셉의 차남. 야곱에게 장자의 축복을 우선 받음.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Joseph's second son. Received first-born blessing from Jacob."
+  },
+  {
+    "id": "teman",
+    "name": "데만",
+    "engName": "Teman",
+    "gender": "M",
+    "generation": 20.95,
+    "column": -18.275,
+    "parents": [
+      "eliphaz"
+    ],
+    "spouses": [],
+    "desc": "엘리바스의 첫째 아들. 에돔의 족장.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Eliphaz's first son. Chief of Edom."
+  },
+  {
+    "id": "omar",
+    "name": "오말",
+    "engName": "Omar",
+    "gender": "M",
+    "generation": 20.95,
+    "column": -17.597,
+    "parents": [
+      "eliphaz"
+    ],
+    "spouses": [],
+    "desc": "엘리바스의 둘째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Eliphaz's second son."
+  },
+  {
+    "id": "zepho",
+    "name": "스보",
+    "engName": "Zepho",
+    "gender": "M",
+    "generation": 20.95,
+    "column": -16.92,
+    "parents": [
+      "eliphaz"
+    ],
+    "spouses": [],
+    "desc": "엘리바스의 셋째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Eliphaz's third son."
+  },
+  {
+    "id": "gatam",
+    "name": "가담",
+    "engName": "Gatam",
+    "gender": "M",
+    "generation": 20.95,
+    "column": -16.242,
+    "parents": [
+      "eliphaz"
+    ],
+    "spouses": [],
+    "desc": "엘리바스의 넷째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Eliphaz's fourth son."
+  },
+  {
+    "id": "kenaz",
+    "name": "그나스",
+    "engName": "Kenaz",
+    "gender": "M",
+    "generation": 20.95,
+    "column": -15.565,
+    "parents": [
+      "eliphaz"
+    ],
+    "spouses": [],
+    "desc": "엘리바스의 다섯째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Eliphaz's fifth son."
+  },
+  {
+    "id": "amalek",
+    "name": "아말렉",
+    "engName": "Amalek",
+    "gender": "M",
+    "generation": 20.95,
+    "column": -18.952,
+    "parents": [
+      "eliphaz",
+      "timna"
+    ],
+    "spouses": [],
+    "desc": "아말렉 족속의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Ancestor of the Amalekites."
+  },
+  {
+    "id": "nahath",
+    "name": "나핫",
+    "engName": "Nahath",
+    "gender": "M",
+    "generation": 20.95,
+    "column": -14.152,
+    "parents": [
+      "reuel"
+    ],
+    "spouses": [],
+    "desc": "르우엘의 첫째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Reuel's first son."
+  },
+  {
+    "id": "zerah_edom",
+    "name": "세라",
+    "engName": "Zerah",
+    "gender": "M",
+    "generation": 20.95,
+    "column": -14.829,
+    "parents": [
+      "reuel"
+    ],
+    "spouses": [],
+    "desc": "르우엘의 둘째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Reuel's second son."
+  },
+  {
+    "id": "shammah",
+    "name": "삼마",
+    "engName": "Shammah",
+    "gender": "M",
+    "generation": 20.95,
+    "column": -13.475,
+    "parents": [
+      "reuel"
+    ],
+    "spouses": [],
+    "desc": "르우엘의 셋째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Reuel's third son."
+  },
+  {
+    "id": "mizzah",
+    "name": "미사",
+    "engName": "Mizzah",
+    "gender": "M",
+    "generation": 20.95,
+    "column": -12.797,
+    "parents": [
+      "reuel"
+    ],
+    "spouses": [],
+    "desc": "르우엘의 넷째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Reuel's fourth son."
+  },
+  {
+    "id": "amram",
+    "name": "아므람",
+    "engName": "Amram",
+    "gender": "M",
+    "generation": 24,
+    "column": -25.874,
+    "parents": [
+      "kohath"
+    ],
+    "spouses": [
+      "jochebed"
+    ],
+    "desc": "고핫의 아들이자 모세, 아론의 아버지.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Kohath and father of Moses and Aaron."
+  },
+  {
+    "id": "jochebed",
+    "name": "요게벳",
+    "engName": "Jochebed",
+    "gender": "F",
+    "generation": 24,
+    "column": -26.824,
+    "parents": [],
+    "spouses": [
+      "amram"
+    ],
+    "desc": "모세의 어머니. 갈상자에 모세를 담아 나일강에 띄운 여인.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Moses' mother. A woman who put Moses in a brown box and floated him on the Nile River."
+  },
+  {
+    "id": "izhar",
+    "name": "이스할",
+    "engName": "Izhar",
+    "gender": "M",
+    "generation": 24,
+    "column": -22.442,
+    "parents": [
+      "kohath"
+    ],
+    "spouses": [],
+    "desc": "고핫의 아들. 아므람의 형제.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Kohath. Amram's brother."
+  },
+  {
+    "id": "hebron_kohath",
+    "name": "헤브론",
+    "engName": "Hebron",
+    "gender": "M",
+    "generation": 24,
+    "column": -16.449,
+    "parents": [
+      "kohath"
+    ],
+    "spouses": [],
+    "desc": "고핫의 셋째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Kohath's third son."
+  },
+  {
+    "id": "uzziel_kohath",
+    "name": "웃시엘",
+    "engName": "Uzziel",
+    "gender": "M",
+    "generation": 24,
+    "column": -19.441,
+    "parents": [
+      "kohath"
+    ],
+    "spouses": [],
+    "desc": "고핫의 넷째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Fourth son of Kohath."
+  },
+  {
+    "id": "hezron",
+    "name": "헤스론",
+    "engName": "Hezron",
+    "gender": "M",
+    "generation": 24,
+    "column": 0.021,
+    "parents": [
+      "perez"
+    ],
+    "spouses": [
+      "machir_daughter",
+      "abiah_hezron"
+    ],
+    "desc": "베레스의 아들.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Perez."
+  },
+  {
+    "id": "machir_daughter",
+    "name": "마길의 딸",
+    "engName": "Daughter of Machir",
+    "gender": "F",
+    "generation": 24,
+    "column": 1.782,
+    "parents": [],
+    "spouses": [
+      "hezron"
+    ],
+    "desc": "길레앗의 아버지 마길의 딸.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Daughter of Machir, father of Gilead."
+  },
+  {
+    "id": "segub_hezron",
+    "name": "스굽",
+    "engName": "Segub",
+    "gender": "M",
+    "generation": 25,
+    "column": 17.463,
+    "parents": [
+      "hezron",
+      "machir_daughter"
+    ],
+    "spouses": [],
+    "desc": "헤스론과 마길의 딸의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The son of Hezron and the daughter of Machir."
+  },
+  {
+    "id": "jair_segub",
+    "name": "야일",
+    "engName": "Jair",
+    "gender": "M",
+    "generation": 26,
+    "column": 17.459,
+    "parents": [
+      "segub_hezron"
+    ],
+    "spouses": [],
+    "desc": "스굽의 아들. 길레앗 땅에서 스물세 성읍을 가졌던 자.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Segub. He who owned twenty-three cities in the land of Gilead."
+  },
+  {
+    "id": "abiah_hezron",
+    "name": "아비야",
+    "engName": "Abiah",
+    "gender": "F",
+    "generation": 24,
+    "column": -8.025,
+    "parents": [],
+    "spouses": [
+      "hezron"
+    ],
+    "desc": "헤스론의 아내. 아스훌의 어머니(대상 2:24).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Hezron's wife. Ashhur's mother (1 Chronicles 2:24)."
+  },
+  {
+    "id": "ashhur_hezron",
+    "name": "아스훌",
+    "engName": "Ashhur",
+    "gender": "M",
+    "generation": 25,
+    "column": -8.154,
+    "parents": [
+      "hezron",
+      "abiah_hezron"
+    ],
+    "spouses": [
+      "helah_ashhur",
+      "naarah_ashhur"
+    ],
+    "desc": "헤스론과 아비야의 아들. 드고아의 조상(대상 2:24).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Hezron and Abijah. Ancestor of Tekoa (1 Chronicles 2:24)."
+  },
+  {
+    "id": "jerahmeel_hezron",
+    "name": "여라무엘",
+    "engName": "Jerahmeel",
+    "gender": "M",
+    "generation": 25,
+    "column": -2.766,
+    "parents": [
+      "hezron"
+    ],
+    "spouses": [
+      "atarah_jerahmeel"
+    ],
+    "desc": "헤스론의 맏아들(대상 2:9, 2:25).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Hezron's firstborn son (1 Chronicles 2:9, 2:25)."
+  },
+  {
+    "id": "atarah_jerahmeel",
+    "name": "아다라",
+    "engName": "Atarah",
+    "gender": "F",
+    "generation": 25,
+    "column": -4.813,
+    "parents": [],
+    "spouses": [
+      "jerahmeel_hezron"
+    ],
+    "desc": "여라무엘의 다른 아내. 오남의 어머니(대상 2:26).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Jeramuel's other wife. Mother of Onam (1 Chronicles 2:26)."
+  },
+  {
+    "id": "ram_jerahmeel",
+    "name": "람",
+    "engName": "Ram",
+    "gender": "M",
+    "generation": 26,
+    "column": -3.495,
+    "parents": [
+      "jerahmeel_hezron"
+    ],
+    "spouses": [],
+    "desc": "여라무엘의 장자(대상 2:25). 헤스론의 아들 람과 동명이인.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The eldest son of Jeramuel (1 Chronicles 2:25). Same name as Ram, son of Hezron."
+  },
+  {
+    "id": "bunah_jerahmeel",
+    "name": "브나",
+    "engName": "Bunah",
+    "gender": "M",
+    "generation": 26,
+    "column": -2.829,
+    "parents": [
+      "jerahmeel_hezron"
+    ],
+    "spouses": [],
+    "desc": "여라무엘의 아들(대상 2:25).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Jeramuel (1 Chronicles 2:25)."
+  },
+  {
+    "id": "oren_jerahmeel",
+    "name": "오렌",
+    "engName": "Oren",
+    "gender": "M",
+    "generation": 26,
+    "column": -2.154,
+    "parents": [
+      "jerahmeel_hezron"
+    ],
+    "spouses": [],
+    "desc": "여라무엘의 아들(대상 2:25).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Jeramuel (1 Chronicles 2:25)."
+  },
+  {
+    "id": "ozem_jerahmeel",
+    "name": "오셈",
+    "engName": "Ozem",
+    "gender": "M",
+    "generation": 26,
+    "column": -1.484,
+    "parents": [
+      "jerahmeel_hezron"
+    ],
+    "spouses": [],
+    "desc": "여라무엘의 아들(대상 2:25). 이새의 아들 오셈과 동명이인.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Jeramuel (1 Chronicles 2:25). Same name as Osem, son of Jesse."
+  },
+  {
+    "id": "ahijah_jerahmeel",
+    "name": "아히야",
+    "engName": "Ahijah",
+    "gender": "M",
+    "generation": 26,
+    "column": -0.812,
+    "parents": [
+      "jerahmeel_hezron"
+    ],
+    "spouses": [],
+    "desc": "여라무엘의 아들(대상 2:25).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Jeramuel (1 Chronicles 2:25)."
+  },
+  {
+    "id": "onam_jerahmeel",
+    "name": "오남",
+    "engName": "Onam",
+    "gender": "M",
+    "generation": 26,
+    "column": -4.366,
+    "parents": [
+      "jerahmeel_hezron",
+      "atarah_jerahmeel"
+    ],
+    "spouses": [],
+    "desc": "여라무엘과 그의 아내 아다라의 아들(대상 2:26).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Jeramuel and his wife Adara (1 Chronicles 2:26)."
+  },
+  {
+    "id": "maaz_ram",
+    "name": "마아스",
+    "engName": "Maaz",
+    "gender": "M",
+    "generation": 27,
+    "column": -3.574,
+    "parents": [
+      "ram_jerahmeel"
+    ],
+    "spouses": [],
+    "desc": "여라무엘의 아들 람의 아들(대상 2:27).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ram, son of Jeramuel (1 Chronicles 2:27)."
+  },
+  {
+    "id": "jamin_ram",
+    "name": "야민",
+    "engName": "Jamin",
+    "gender": "M",
+    "generation": 27,
+    "column": -2.903,
+    "parents": [
+      "ram_jerahmeel"
+    ],
+    "spouses": [],
+    "desc": "여라무엘의 아들 람의 아들(대상 2:27). 시므온의 아들 야민과 동명이인.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ram, son of Jeramuel (1 Chronicles 2:27). Same name as Jamin, Simeon's son."
+  },
+  {
+    "id": "eker_ram",
+    "name": "에겔",
+    "engName": "Eker",
+    "gender": "M",
+    "generation": 27,
+    "column": -2.234,
+    "parents": [
+      "ram_jerahmeel"
+    ],
+    "spouses": [],
+    "desc": "여라무엘의 아들 람의 아들(대상 2:27).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ram, son of Jeramuel (1 Chronicles 2:27)."
+  },
+  {
+    "id": "shammai_onam",
+    "name": "삼매",
+    "engName": "Shammai",
+    "gender": "M",
+    "generation": 27,
+    "column": -9.238,
+    "parents": [
+      "onam_jerahmeel"
+    ],
+    "spouses": [],
+    "desc": "오남의 아들(대상 2:28).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Onam (1 Chronicles 2:28)."
+  },
+  {
+    "id": "jada_onam",
+    "name": "야다",
+    "engName": "Jada",
+    "gender": "M",
+    "generation": 27,
+    "column": -7.558,
+    "parents": [
+      "onam_jerahmeel"
+    ],
+    "spouses": [],
+    "desc": "오남의 아들(대상 2:28).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Onam (1 Chronicles 2:28)."
+  },
+  {
+    "id": "nadab_shammai",
+    "name": "나답",
+    "engName": "Nadab",
+    "gender": "M",
+    "generation": 28,
+    "column": -9.238,
+    "parents": [
+      "shammai_onam"
+    ],
+    "spouses": [],
+    "desc": "삼매의 아들(대상 2:28).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Sammai (1 Chronicles 2:28)."
+  },
+  {
+    "id": "jeder_jada",
+    "name": "예델",
+    "engName": "Jeder",
+    "gender": "M",
+    "generation": 28,
+    "column": -8.167,
+    "parents": [
+      "jada_onam"
+    ],
+    "spouses": [],
+    "desc": "야다의 아들(대상 2:32). 아들이 없이 죽음.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Jada (1 Chronicles 2:32). Died without a son."
+  },
+  {
+    "id": "jonathan_jada",
+    "name": "요나단",
+    "engName": "Jonathan",
+    "gender": "M",
+    "generation": 28,
+    "column": -6.967,
+    "parents": [
+      "jada_onam"
+    ],
+    "spouses": [],
+    "desc": "야다의 아들(대상 2:32).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Jada (1 Chronicles 2:32)."
+  },
+  {
+    "id": "seled_nadab",
+    "name": "셀렛",
+    "engName": "Seled",
+    "gender": "M",
+    "generation": 29,
+    "column": -9.938,
+    "parents": [
+      "nadab_shammai"
+    ],
+    "spouses": [],
+    "desc": "나답의 아들(대상 2:30). 아들이 없이 죽음.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Nadab (1 Chronicles 2:30). Died without a son."
+  },
+  {
+    "id": "appaim_nadab",
+    "name": "압바임",
+    "engName": "Appaim",
+    "gender": "M",
+    "generation": 29,
+    "column": -9.238,
+    "parents": [
+      "nadab_shammai"
+    ],
+    "spouses": [],
+    "desc": "나답의 아들(대상 2:30).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Nadab (1 Chronicles 2:30)."
+  },
+  {
+    "id": "peleth_jonathan",
+    "name": "베렛",
+    "engName": "Peleth",
+    "gender": "M",
+    "generation": 29,
+    "column": -7.292,
+    "parents": [
+      "jonathan_jada"
+    ],
+    "spouses": [],
+    "desc": "요나단의 아들(대상 2:33).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Jonathan (1 Chronicles 2:33)."
+  },
+  {
+    "id": "zaza_jonathan",
+    "name": "사사",
+    "engName": "Zaza",
+    "gender": "M",
+    "generation": 29,
+    "column": -6.521,
+    "parents": [
+      "jonathan_jada"
+    ],
+    "spouses": [],
+    "desc": "요나단의 아들(대상 2:33).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Jonathan (1 Chronicles 2:33)."
+  },
+  {
+    "id": "ishi_appaim",
+    "name": "이시",
+    "engName": "Ishi",
+    "gender": "M",
+    "generation": 30,
+    "column": -9.238,
+    "parents": [
+      "appaim_nadab"
+    ],
+    "spouses": [],
+    "desc": "압바임의 아들(대상 2:31).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Apphaim (1 Chronicles 2:31)."
+  },
+  {
+    "id": "sheshan_ishi",
+    "name": "세산",
+    "engName": "Sheshan",
+    "gender": "M",
+    "generation": 30.87,
+    "column": -9.238,
+    "parents": [
+      "ishi_appaim"
+    ],
+    "spouses": [],
+    "desc": "이시의 아들(대상 2:31). 아들이 없고 딸들만 둠.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Isi (1 Chronicles 2:31). No sons, only daughters."
+  },
+  {
+    "id": "jarha_egyptian",
+    "name": "야르하",
+    "engName": "Jarha",
+    "gender": "F",
+    "generation": 32,
+    "column": -9.237,
+    "parents": [
+      "sheshan_ishi"
+    ],
+    "spouses": [
+      "ahlai_sheshan"
+    ],
+    "desc": "세산의 딸(대상 2:34).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Daughter of Sheshan (1 Chronicles 2:34)."
+  },
+  {
+    "id": "ahlai_sheshan",
+    "name": "알래",
+    "engName": "Ahlai",
+    "gender": "M",
+    "generation": 32,
+    "column": -10.374,
+    "parents": [],
+    "spouses": [
+      "jarha_egyptian"
+    ],
+    "desc": "세산의 애굽 종(대상 2:34). 주인의 딸 야르하와 결혼함.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Egyptian servant of Sheshan (1 Chronicles 2:34). Marries his owner's daughter, Yarha."
+  },
+  {
+    "id": "attai_jarha",
+    "name": "앗대",
+    "engName": "Attai",
+    "gender": "M",
+    "generation": 33.03,
+    "column": -9.802,
+    "parents": [
+      "jarha_egyptian",
+      "ahlai_sheshan"
+    ],
+    "spouses": [],
+    "desc": "야르하와 알래의 아들(대상 2:35).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Yarha and Allah (1 Chronicles 2:35)."
+  },
+  {
+    "id": "nathan_attai",
+    "name": "나단",
+    "engName": "Nathan",
+    "gender": "M",
+    "generation": 34.03,
+    "column": -9.802,
+    "parents": [
+      "attai_jarha"
+    ],
+    "spouses": [],
+    "desc": "앗대의 아들(대상 2:36).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Attai (1 Chronicles 2:36)."
+  },
+  {
+    "id": "zabad_nathan",
+    "name": "사밧",
+    "engName": "Zabad",
+    "gender": "M",
+    "generation": 35.03,
+    "column": -9.802,
+    "parents": [
+      "nathan_attai"
+    ],
+    "spouses": [],
+    "desc": "나단의 아들(대상 2:37).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Nathan (1 Chronicles 2:37)."
+  },
+  {
+    "id": "ephlal_zabad",
+    "name": "에블랄",
+    "engName": "Ephlal",
+    "gender": "M",
+    "generation": 36.03,
+    "column": -9.798,
+    "parents": [
+      "zabad_nathan"
+    ],
+    "spouses": [],
+    "desc": "사밧의 아들(대상 2:37).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Shaphat (1 Chronicles 2:37)."
+  },
+  {
+    "id": "obed_ephlal",
+    "name": "오벳",
+    "engName": "Obed",
+    "gender": "M",
+    "generation": 37.03,
+    "column": -9.798,
+    "parents": [
+      "ephlal_zabad"
+    ],
+    "spouses": [],
+    "desc": "에블랄의 아들(대상 2:38).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Evlal (1 Chronicles 2:38)."
+  },
+  {
+    "id": "jehu_obed",
+    "name": "예후",
+    "engName": "Jehu",
+    "gender": "M",
+    "generation": 38.03,
+    "column": -9.798,
+    "parents": [
+      "obed_ephlal"
+    ],
+    "spouses": [],
+    "desc": "오벳의 아들(대상 2:38). 북이스라엘 왕 예후와 동명이인.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Obed (1 Chronicles 2:38). Same name as Jehu, King of Northern Israel."
+  },
+  {
+    "id": "azariah_jehu",
+    "name": "아사랴",
+    "engName": "Azariah",
+    "gender": "M",
+    "generation": 39.03,
+    "column": -9.798,
+    "parents": [
+      "jehu_obed"
+    ],
+    "spouses": [],
+    "desc": "예후의 아들(대상 2:38).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Jehu (1 Chronicles 2:38)."
+  },
+  {
+    "id": "helez_azariah",
+    "name": "헬레스",
+    "engName": "Helez",
+    "gender": "M",
+    "generation": 40.03,
+    "column": -9.798,
+    "parents": [
+      "azariah_jehu"
+    ],
+    "spouses": [],
+    "desc": "아사랴의 아들(대상 2:39).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Azariah (1 Chronicles 2:39)."
+  },
+  {
+    "id": "eleasah_helez",
+    "name": "엘르아사",
+    "engName": "Eleasah",
+    "gender": "M",
+    "generation": 41.03,
+    "column": -9.798,
+    "parents": [
+      "helez_azariah"
+    ],
+    "spouses": [],
+    "desc": "헬레스의 아들(대상 2:39).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Heles (1 Chronicles 2:39)."
+  },
+  {
+    "id": "sisamai_eleasah",
+    "name": "시스매",
+    "engName": "Sisamai",
+    "gender": "M",
+    "generation": 42.03,
+    "column": -9.798,
+    "parents": [
+      "eleasah_helez"
+    ],
+    "spouses": [],
+    "desc": "엘르아사의 아들(대상 2:40).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Eleasah (1 Chronicles 2:40)."
+  },
+  {
+    "id": "shallum_sisamai",
+    "name": "살룸",
+    "engName": "Shallum",
+    "gender": "M",
+    "generation": 43.03,
+    "column": -9.798,
+    "parents": [
+      "sisamai_eleasah"
+    ],
+    "spouses": [],
+    "desc": "시스매의 아들(대상 2:40). 북이스라엘 왕 살룸과 동명이인.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Sismai (1 Chronicles 2:40). Same name as Shallum, King of Northern Israel."
+  },
+  {
+    "id": "jekamiah_shallum",
+    "name": "여가먀",
+    "engName": "Jekamiah",
+    "gender": "M",
+    "generation": 44.03,
+    "column": -9.798,
+    "parents": [
+      "shallum_sisamai"
+    ],
+    "spouses": [],
+    "desc": "살룸의 아들(대상 2:41).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Shallum (1 Chronicles 2:41)."
+  },
+  {
+    "id": "elishama_jekamiah",
+    "name": "엘리사마",
+    "engName": "Elishama",
+    "gender": "M",
+    "generation": 45.03,
+    "column": -9.798,
+    "parents": [
+      "jekamiah_shallum"
+    ],
+    "spouses": [],
+    "desc": "여가먀의 아들(대상 2:41). 다윗의 아들 엘리사마와 동명이인.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Jekamiah (1 Chronicles 2:41). Same name as David's son Elishama."
+  },
+  {
+    "id": "helah_ashhur",
+    "name": "헬라",
+    "engName": "Helah",
+    "gender": "F",
+    "generation": 25,
+    "column": -9.971,
+    "parents": [],
+    "spouses": [
+      "ashhur_hezron"
+    ],
+    "desc": "드고아의 아버지 아스훌의 아내(대상 4:5).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The wife of Ashhur, the father of Tekoa (1 Chronicles 4:5)."
+  },
+  {
+    "id": "naarah_ashhur",
+    "name": "나아라",
+    "engName": "Naarah",
+    "gender": "F",
+    "generation": 25,
+    "column": -5.875,
+    "parents": [],
+    "spouses": [
+      "ashhur_hezron"
+    ],
+    "desc": "드고아의 아버지 아스훌의 아내(대상 4:5).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The wife of Ashhur, the father of Tekoa (1 Chronicles 4:5)."
+  },
+  {
+    "id": "zereth_ashhur",
+    "name": "세렛",
+    "engName": "Zereth",
+    "gender": "M",
+    "generation": 26,
+    "column": -10.259,
+    "parents": [
+      "ashhur_hezron",
+      "helah_ashhur"
+    ],
+    "spouses": [],
+    "desc": "아스훌과 헬라의 아들(대상 4:7).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ashhur and Hela (1 Chronicles 4:7)."
+  },
+  {
+    "id": "izohar_ashhur",
+    "name": "이소할",
+    "engName": "Izohar",
+    "gender": "M",
+    "generation": 26,
+    "column": -9.571,
+    "parents": [
+      "ashhur_hezron",
+      "helah_ashhur"
+    ],
+    "spouses": [],
+    "desc": "아스훌과 헬라의 아들(대상 4:7).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ashhur and Hela (1 Chronicles 4:7)."
+  },
+  {
+    "id": "ethnan_ashhur",
+    "name": "에드난",
+    "engName": "Ethnan",
+    "gender": "M",
+    "generation": 26,
+    "column": -8.892,
+    "parents": [
+      "ashhur_hezron",
+      "helah_ashhur"
+    ],
+    "spouses": [],
+    "desc": "아스훌과 헬라의 아들(대상 4:7).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ashhur and Hela (1 Chronicles 4:7)."
+  },
+  {
+    "id": "tekoa_ashhur",
+    "name": "드고아",
+    "engName": "Tekoa",
+    "gender": "M",
+    "generation": 26,
+    "column": -8.154,
+    "parents": [
+      "ashhur_hezron"
+    ],
+    "spouses": [],
+    "desc": "헤스론과 아비야의 아들 아스훌의 아들. 드고아의 조상(대상 2:24).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ashhur, son of Hezron and Abijah. Ancestor of Tekoa (1 Chronicles 2:24)."
+  },
+  {
+    "id": "ahuzzam_ashhur",
+    "name": "아훗삼",
+    "engName": "Ahuzzam",
+    "gender": "M",
+    "generation": 26,
+    "column": -7.413,
+    "parents": [
+      "ashhur_hezron",
+      "naarah_ashhur"
+    ],
+    "spouses": [],
+    "desc": "아스훌과 나아라의 아들(대상 4:6).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ashhur and Naara (1 Chronicles 4:6)."
+  },
+  {
+    "id": "hepher_ashhur",
+    "name": "헤벨",
+    "engName": "Hepher",
+    "gender": "M",
+    "generation": 26,
+    "column": -6.725,
+    "parents": [
+      "ashhur_hezron",
+      "naarah_ashhur"
+    ],
+    "spouses": [],
+    "desc": "아스훌과 나아라의 아들(대상 4:6). 헤벨 종족의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ashhur and Naara (1 Chronicles 4:6). Ancestor of the Hebel race."
+  },
+  {
+    "id": "temeni_ashhur",
+    "name": "데므니",
+    "engName": "Temeni",
+    "gender": "M",
+    "generation": 26,
+    "column": -6.034,
+    "parents": [
+      "ashhur_hezron",
+      "naarah_ashhur"
+    ],
+    "spouses": [],
+    "desc": "아스훌과 나아라의 아들(대상 4:6).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ashhur and Naara (1 Chronicles 4:6)."
+  },
+  {
+    "id": "haahashtari_ashhur",
+    "name": "하아하스다리",
+    "engName": "Haahashtari",
+    "gender": "M",
+    "generation": 26,
+    "column": -5.342,
+    "parents": [
+      "ashhur_hezron",
+      "naarah_ashhur"
+    ],
+    "spouses": [],
+    "desc": "아스훌과 나아라의 아들(대상 4:6).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ashhur and Naara (1 Chronicles 4:6)."
+  },
+  {
+    "id": "chelubai",
+    "name": "글루배",
+    "engName": "Chelubai",
+    "gender": "M",
+    "generation": 25,
+    "column": 3.168,
+    "parents": [
+      "hezron"
+    ],
+    "spouses": [
+      "azubah_caleb",
+      "jerioth",
+      "ephrath",
+      "ephah_concubine",
+      "maachah_concubine",
+      "unknown_wife_caleb"
+    ],
+    "desc": "헤스론의 아들. 갈렙이라고도 불림.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Hezron. Also called Caleb."
+  },
+  {
+    "id": "azubah_caleb",
+    "name": "아수바",
+    "engName": "Azubah",
+    "gender": "F",
+    "generation": 25,
+    "column": 1.866,
+    "parents": [],
+    "spouses": [
+      "chelubai"
+    ],
+    "desc": "갈렙의 아내.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Caleb's wife."
+  },
+  {
+    "id": "jerioth",
+    "name": "여리옷",
+    "engName": "Jerioth",
+    "gender": "F",
+    "generation": 25,
+    "column": 4.76,
+    "parents": [],
+    "spouses": [
+      "chelubai"
+    ],
+    "desc": "갈렙의 아내.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Caleb's wife."
+  },
+  {
+    "id": "ephrath",
+    "name": "에브라다",
+    "engName": "Ephrath",
+    "gender": "F",
+    "generation": 25,
+    "column": 6.873,
+    "parents": [],
+    "spouses": [
+      "chelubai"
+    ],
+    "desc": "갈렙의 아내. 아수바 사망 후 결혼.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Caleb's wife. Married after Asuba's death."
+  },
+  {
+    "id": "ephah_concubine",
+    "name": "에바",
+    "engName": "Ephah",
+    "gender": "F",
+    "generation": 25,
+    "column": 8.964,
+    "parents": [],
+    "spouses": [
+      "chelubai"
+    ],
+    "desc": "갈렙의 첩.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Caleb's concubine."
+  },
+  {
+    "id": "maachah_concubine",
+    "name": "마아가",
+    "engName": "Maachah",
+    "gender": "F",
+    "generation": 25,
+    "column": 15.217,
+    "parents": [],
+    "spouses": [
+      "chelubai"
+    ],
+    "desc": "갈렙의 첩.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Caleb's concubine."
+  },
+  {
+    "id": "unknown_wife_caleb",
+    "name": "미상(아내)",
+    "engName": "Unknown Wife",
+    "gender": "F",
+    "generation": 25,
+    "column": 16.758,
+    "parents": [],
+    "spouses": [
+      "chelubai"
+    ],
+    "desc": "갈렙의 아내 (악사의 어머니).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Caleb's wife (mother of Achsha)."
+  },
+  {
+    "id": "jesher_caleb",
+    "name": "예셀",
+    "engName": "Jesher",
+    "gender": "M",
+    "generation": 26,
+    "column": 1.76,
+    "parents": [
+      "chelubai",
+      "azubah_caleb"
+    ],
+    "spouses": [],
+    "desc": "갈렙과 아수바의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Caleb and Azubba."
+  },
+  {
+    "id": "shobab_caleb",
+    "name": "소밥",
+    "engName": "Shobab",
+    "gender": "M",
+    "generation": 26,
+    "column": 2.515,
+    "parents": [
+      "chelubai",
+      "azubah_caleb"
+    ],
+    "spouses": [],
+    "desc": "갈렙과 아수바의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Caleb and Azubba."
+  },
+  {
+    "id": "ardon_caleb",
+    "name": "아르돈",
+    "engName": "Ardon",
+    "gender": "M",
+    "generation": 26,
+    "column": 3.376,
+    "parents": [
+      "chelubai",
+      "azubah_caleb"
+    ],
+    "spouses": [],
+    "desc": "갈렙과 아수바의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Caleb and Azubba."
+  },
+  {
+    "id": "hur_caleb",
+    "name": "훌",
+    "engName": "Hur",
+    "gender": "M",
+    "generation": 26,
+    "column": 6.864,
+    "parents": [
+      "chelubai",
+      "ephrath"
+    ],
+    "spouses": [],
+    "desc": "갈렙과 에브라다의 맏아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The eldest son of Caleb and Ephrathah."
+  },
+  {
+    "id": "uri_caleb",
+    "name": "우리",
+    "engName": "Uri",
+    "gender": "M",
+    "generation": 27,
+    "column": 3.834,
+    "parents": [
+      "hur_caleb"
+    ],
+    "spouses": [],
+    "desc": "훌의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Hur."
+  },
+  {
+    "id": "bezalel_uri",
+    "name": "브살렐",
+    "engName": "Bezalel",
+    "gender": "M",
+    "generation": 28,
+    "column": 3.834,
+    "parents": [
+      "uri_caleb"
+    ],
+    "spouses": [],
+    "desc": "성막을 제작한 정교한 장인.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "A sophisticated craftsman who created the tabernacle."
+  },
+  {
+    "id": "shobal_caleb",
+    "name": "소발",
+    "engName": "Shobal",
+    "gender": "M",
+    "generation": 27,
+    "column": 6.593,
+    "parents": [
+      "hur_caleb"
+    ],
+    "spouses": [],
+    "desc": "기럇여아림의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Ancestor of Kiriathjearim."
+  },
+  {
+    "id": "reaiah_shobal",
+    "name": "르아야",
+    "engName": "Reaiah",
+    "gender": "M",
+    "generation": 28,
+    "column": 4.543,
+    "parents": [
+      "shobal_caleb"
+    ],
+    "spouses": [],
+    "desc": "소발의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Zophar."
+  },
+  {
+    "id": "jahath_reaiah",
+    "name": "야하트",
+    "engName": "Jahath",
+    "gender": "M",
+    "generation": 29,
+    "column": 4.543,
+    "parents": [
+      "reaiah_shobal"
+    ],
+    "spouses": [],
+    "desc": "르아야의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Reiah."
+  },
+  {
+    "id": "ahumai_jahath",
+    "name": "아후매",
+    "engName": "Ahumai",
+    "gender": "M",
+    "generation": 30,
+    "column": 4.124,
+    "parents": [
+      "jahath_reaiah"
+    ],
+    "spouses": [],
+    "desc": "야하트의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Yahat."
+  },
+  {
+    "id": "lahad_jahath",
+    "name": "라핫",
+    "engName": "Lahad",
+    "gender": "M",
+    "generation": 30,
+    "column": 4.941,
+    "parents": [
+      "jahath_reaiah"
+    ],
+    "spouses": [],
+    "desc": "야하트의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Yahat."
+  },
+  {
+    "id": "zorathites",
+    "name": "소라자손",
+    "engName": "Zorathites",
+    "gender": "M",
+    "generation": 31,
+    "column": 4.126,
+    "parents": [
+      "ahumai_jahath",
+      "lahad_jahath"
+    ],
+    "spouses": [],
+    "desc": "소라 땅에 정착한 자손들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Descendants who settled in the land of Sora."
+  },
+  {
+    "id": "kirjath_jearim_shobal",
+    "name": "기럇여아림",
+    "engName": "Kirjath-jearim",
+    "gender": "M",
+    "generation": 28,
+    "column": 6.255,
+    "parents": [
+      "shobal_caleb"
+    ],
+    "spouses": [],
+    "desc": "기럇여아림의 주민들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Residents of Kiriathjearim."
+  },
+  {
+    "id": "ithrites",
+    "name": "이델 자손",
+    "engName": "Ithrites",
+    "gender": "M",
+    "generation": 29,
+    "column": 5.263,
+    "parents": [
+      "kirjath_jearim_shobal"
+    ],
+    "spouses": [],
+    "desc": "기럇여아림의 한 가문.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "A family of Kirjathjearim."
+  },
+  {
+    "id": "puthites",
+    "name": "붓 자손",
+    "engName": "Puthites",
+    "gender": "M",
+    "generation": 29,
+    "column": 5.923,
+    "parents": [
+      "kirjath_jearim_shobal"
+    ],
+    "spouses": [],
+    "desc": "기럇여아림의 한 가문.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "A family of Kirjathjearim."
+  },
+  {
+    "id": "shumathites",
+    "name": "수맛 자손",
+    "engName": "Shumathites",
+    "gender": "M",
+    "generation": 29,
+    "column": 6.588,
+    "parents": [
+      "kirjath_jearim_shobal"
+    ],
+    "spouses": [],
+    "desc": "기럇여아림의 한 가문.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "A family of Kirjathjearim."
+  },
+  {
+    "id": "mishraites",
+    "name": "미스라 자손",
+    "engName": "Mishraites",
+    "gender": "M",
+    "generation": 29,
+    "column": 7.248,
+    "parents": [
+      "kirjath_jearim_shobal"
+    ],
+    "spouses": [],
+    "desc": "기럇여아림의 한 가문.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "A family of Kirjathjearim."
+  },
+  {
+    "id": "haroeh_shobal",
+    "name": "하로에",
+    "engName": "Haroeh",
+    "gender": "M",
+    "generation": 28,
+    "column": 6.918,
+    "parents": [
+      "shobal_caleb"
+    ],
+    "spouses": [],
+    "desc": "소발의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Zophar."
+  },
+  {
+    "id": "manaheth_shobal",
+    "name": "무느훗",
+    "engName": "Manaheth",
+    "gender": "M",
+    "generation": 28,
+    "column": 7.581,
+    "parents": [
+      "shobal_caleb"
+    ],
+    "spouses": [],
+    "desc": "소발의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Zophar."
+  },
+  {
+    "id": "salma_caleb",
+    "name": "살마",
+    "engName": "Salma",
+    "gender": "M",
+    "generation": 27,
+    "column": 9.244,
+    "parents": [
+      "hur_caleb"
+    ],
+    "spouses": [],
+    "desc": "베들레헴의 조상. 역대상 2:51, 역대상 2:54\n'아버지(Father)'의 뜻: 고대 히브리 족보에서 특정 지명의 '아버지'라고 표현하는 것은 그 사람이 그 성읍(도시)을 건설했거나, 그 지역을 개척하여 다스린 우두머리(조상)라는 뜻입니다. 현대인의 성경이나 공동번역 등의 번역본에서는 이해를 돕기 위해 \"베들레헴의 창설자인 살마\"로 번역하고 있습니다.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Ancestor of Bethlehem. 1 Chronicles 2:51, 1 Chronicles 2:54\nMeaning of 'Father': In ancient Hebrew genealogy, the expression 'father' of a specific place name means that the person built the town (city) or was the head (ancestor) who pioneered and ruled the area. In translations such as the Modern Bible and joint translations, it is translated as “Salma, the founder of Bethlehem” to facilitate understanding."
+  },
+  {
+    "id": "bethlehem_salma",
+    "name": "베들레헴",
+    "engName": "Bethlehem",
+    "gender": "M",
+    "generation": 28,
+    "column": 8.265,
+    "parents": [
+      "salma_caleb"
+    ],
+    "spouses": [],
+    "desc": "베들레헴 가문.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Bethlehem family."
+  },
+  {
+    "id": "netophathites_salma",
+    "name": "느도바 자손",
+    "engName": "Netophathites",
+    "gender": "M",
+    "generation": 28,
+    "column": 8.93,
+    "parents": [
+      "salma_caleb"
+    ],
+    "spouses": [],
+    "desc": "느도바 사람들의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Ancestor of the Netophathites."
+  },
+  {
+    "id": "ataroth_salma",
+    "name": "아다롯벳요압",
+    "engName": "Ataroth",
+    "gender": "M",
+    "generation": 28,
+    "column": 9.59,
+    "parents": [
+      "salma_caleb"
+    ],
+    "spouses": [],
+    "desc": "요압 가문과 관련된 성읍.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "A town related to the Joab family."
+  },
+  {
+    "id": "manahethites_salma",
+    "name": "마하낫",
+    "engName": "Manahethites",
+    "gender": "M",
+    "generation": 28,
+    "column": 10.255,
+    "parents": [
+      "salma_caleb"
+    ],
+    "spouses": [],
+    "desc": "마하낫 가문.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Mahanath family."
+  },
+  {
+    "id": "hareph_caleb",
+    "name": "하립",
+    "engName": "Hareph",
+    "gender": "M",
+    "generation": 27,
+    "column": 10.923,
+    "parents": [
+      "hur_caleb"
+    ],
+    "spouses": [],
+    "desc": "벳가델의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "An ancestor of Beth Gader."
+  },
+  {
+    "id": "bethgader_hareph",
+    "name": "벳가델",
+    "engName": "Bethgader",
+    "gender": "M",
+    "generation": 28,
+    "column": 10.923,
+    "parents": [
+      "hareph_caleb"
+    ],
+    "spouses": [],
+    "desc": "벳가델 가문.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "House of Beth Gadel."
+  },
+  {
+    "id": "haran_ephah",
+    "name": "하란",
+    "engName": "Haran",
+    "gender": "M",
+    "generation": 26,
+    "column": 11.001,
+    "parents": [
+      "chelubai",
+      "ephah_concubine"
+    ],
+    "spouses": [],
+    "desc": "갈렙과 에바의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Caleb and Eva."
+  },
+  {
+    "id": "moza_ephah",
+    "name": "모사",
+    "engName": "Moza",
+    "gender": "M",
+    "generation": 26,
+    "column": 11.701,
+    "parents": [
+      "chelubai",
+      "ephah_concubine"
+    ],
+    "spouses": [],
+    "desc": "갈렙과 에바의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Caleb and Eva."
+  },
+  {
+    "id": "gazez_ephah",
+    "name": "가세스",
+    "engName": "Gazez",
+    "gender": "M",
+    "generation": 26,
+    "column": 12.414,
+    "parents": [
+      "chelubai",
+      "ephah_concubine"
+    ],
+    "spouses": [],
+    "desc": "갈렙과 에바의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Caleb and Eva."
+  },
+  {
+    "id": "gazez_haran",
+    "name": "가세스",
+    "engName": "Gazez",
+    "gender": "M",
+    "generation": 27,
+    "column": 11.918,
+    "parents": [
+      "haran_ephah"
+    ],
+    "spouses": [],
+    "desc": "하란의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Haran."
+  },
+  {
+    "id": "sheber_maachah",
+    "name": "세벨",
+    "engName": "Sheber",
+    "gender": "M",
+    "generation": 26,
+    "column": 13.155,
+    "parents": [
+      "chelubai",
+      "maachah_concubine"
+    ],
+    "spouses": [],
+    "desc": "갈렙과 마아가의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Caleb and Maacah."
+  },
+  {
+    "id": "tirhanah_maachah",
+    "name": "디르하나",
+    "engName": "Tirhanah",
+    "gender": "M",
+    "generation": 26,
+    "column": 13.865,
+    "parents": [
+      "chelubai",
+      "maachah_concubine"
+    ],
+    "spouses": [],
+    "desc": "갈렙과 마아가의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Caleb and Maacah."
+  },
+  {
+    "id": "shaaph_maachah",
+    "name": "사압",
+    "engName": "Shaaph",
+    "gender": "M",
+    "generation": 26,
+    "column": 14.563,
+    "parents": [
+      "chelubai",
+      "maachah_concubine"
+    ],
+    "spouses": [],
+    "desc": "갈렙과 마아가의 아들 (맛만나 조상).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Caleb and Maacah (ancestor of Matmanna)."
+  },
+  {
+    "id": "sheva_maachah",
+    "name": "스와",
+    "engName": "Sheva",
+    "gender": "M",
+    "generation": 26,
+    "column": 15.574,
+    "parents": [
+      "chelubai",
+      "maachah_concubine"
+    ],
+    "spouses": [],
+    "desc": "갈렙과 마아가의 아들 (막베나/기브아 조상).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Caleb and Maacah (Macbenah/Gibeah ancestor)."
+  },
+  {
+    "id": "madmannah_shaaph",
+    "name": "맛만나",
+    "engName": "Madmannah",
+    "gender": "M",
+    "generation": 27,
+    "column": 14.563,
+    "parents": [
+      "shaaph_maachah"
+    ],
+    "spouses": [],
+    "desc": "사압의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Saab."
+  },
+  {
+    "id": "machbenah_sheva",
+    "name": "막베나",
+    "engName": "Machbenah",
+    "gender": "M",
+    "generation": 27,
+    "column": 15.26,
+    "parents": [
+      "sheva_maachah"
+    ],
+    "spouses": [],
+    "desc": "스와의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Su's son."
+  },
+  {
+    "id": "gibea_sheva",
+    "name": "기브아",
+    "engName": "Gibeah",
+    "gender": "M",
+    "generation": 27,
+    "column": 15.924,
+    "parents": [
+      "sheva_maachah"
+    ],
+    "spouses": [],
+    "desc": "스와의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Su's son."
+  },
+  {
+    "id": "achsah_daughter",
+    "name": "악사",
+    "engName": "Achsah",
+    "gender": "F",
+    "generation": 26,
+    "column": 16.318,
+    "parents": [
+      "chelubai",
+      "unknown_wife_caleb"
+    ],
+    "spouses": [],
+    "desc": "갈렙의 딸. 온니엘과 결혼함.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Caleb's daughter. Married Onniel."
+  },
+  {
+    "id": "aaron",
+    "name": "아론",
+    "engName": "Aaron",
+    "gender": "M",
+    "generation": 25,
+    "column": -26.712,
+    "parents": [
+      "amram",
+      "jochebed"
+    ],
+    "spouses": [
+      "elisheba"
+    ],
+    "desc": "이스라엘 초대 대제사장. 모세의 대언자요 형.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Israel's first high priest. Moses' prophet and older brother."
+  },
+  {
+    "id": "elisheba",
+    "name": "엘리세바",
+    "engName": "Elisheba",
+    "gender": "F",
+    "generation": 25,
+    "column": -27.492,
+    "parents": [],
+    "spouses": [
+      "aaron"
+    ],
+    "desc": "아론의 아내. 아민아답의 딸.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Aaron's wife. Daughter of Amin-Adab."
+  },
+  {
+    "id": "moses",
+    "name": "모세",
+    "engName": "Moses",
+    "gender": "M",
+    "generation": 25,
+    "column": -25.052,
+    "parents": [
+      "amram",
+      "jochebed"
+    ],
+    "spouses": [
+      "zipporah",
+      "cush-moses"
+    ],
+    "desc": "출애굽의 영도자요 율법 수여자. 시내산 언약의 중보자.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Leader of the Exodus and law giver. Mediator of the covenant at Mount Sinai."
+  },
+  {
+    "id": "zipporah",
+    "name": "십보라",
+    "engName": "Zipporah",
+    "gender": "F",
+    "generation": 25,
+    "column": -24.179,
+    "parents": [],
+    "spouses": [
+      "moses"
+    ],
+    "desc": "미디안 제사장 이드로의 딸이자 모세의 아내.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Daughter of Jethro, a Midianite priest, and wife of Moses."
+  },
+  {
+    "id": "miriam",
+    "name": "미리암",
+    "engName": "Miriam",
+    "gender": "F",
+    "generation": 25,
+    "column": -28.197,
+    "parents": [
+      "amram",
+      "jochebed"
+    ],
+    "spouses": [],
+    "desc": "여선지자. 모세와 아론의 누이.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Prophetess. Sister of Moses and Aaron."
+  },
+  {
+    "id": "shelomith_izhar",
+    "name": "슬로못",
+    "engName": "Shelomoth",
+    "gender": "M",
+    "generation": 25,
+    "column": -23.458,
+    "parents": [
+      "izhar"
+    ],
+    "spouses": [],
+    "desc": "이스할의 첫째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Izhar's first son."
+  },
+  {
+    "id": "korah",
+    "name": "고라",
+    "engName": "Korah",
+    "gender": "M",
+    "generation": 25,
+    "column": -22.79,
+    "parents": [
+      "izhar"
+    ],
+    "spouses": [],
+    "desc": "모세와 아론에게 반역하다 땅이 갈라져 삼킴을 당함.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "He rebelled against Moses and Aaron and was swallowed by the earth."
+  },
+  {
+    "id": "nepheg_izhar",
+    "name": "네벡",
+    "engName": "Nepheg",
+    "gender": "M",
+    "generation": 25,
+    "column": -22.12,
+    "parents": [
+      "izhar"
+    ],
+    "spouses": [],
+    "desc": "이스할의 셋째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Izhar's third son."
+  },
+  {
+    "id": "zichri_izhar",
+    "name": "시그리",
+    "engName": "Zichri",
+    "gender": "M",
+    "generation": 25,
+    "column": -21.447,
+    "parents": [
+      "izhar"
+    ],
+    "spouses": [],
+    "desc": "이스할의 넷째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Izhar's fourth son."
+  },
+  {
+    "id": "jeriah_hebron",
+    "name": "여리야",
+    "engName": "Jeriah",
+    "gender": "M",
+    "generation": 25,
+    "column": -17.443,
+    "parents": [
+      "hebron_kohath"
+    ],
+    "spouses": [],
+    "desc": "헤브론의 첫째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Hebron's first son."
+  },
+  {
+    "id": "amariah_hebron",
+    "name": "아마랴",
+    "engName": "Amariah",
+    "gender": "M",
+    "generation": 25,
+    "column": -16.78,
+    "parents": [
+      "hebron_kohath"
+    ],
+    "spouses": [],
+    "desc": "헤브론의 둘째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Hebron's second son."
+  },
+  {
+    "id": "jahaziel_hebron",
+    "name": "야하시엘",
+    "engName": "Jahaziel",
+    "gender": "M",
+    "generation": 25,
+    "column": -16.118,
+    "parents": [
+      "hebron_kohath"
+    ],
+    "spouses": [],
+    "desc": "헤브론의 셋째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Hebron's third son."
+  },
+  {
+    "id": "jekameam_hebron",
+    "name": "여카므암",
+    "engName": "Jekameam",
+    "gender": "M",
+    "generation": 25,
+    "column": -15.455,
+    "parents": [
+      "hebron_kohath"
+    ],
+    "spouses": [],
+    "desc": "헤브론의 넷째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Fourth son of Hebron."
+  },
+  {
+    "id": "micah_uzziel",
+    "name": "미가",
+    "engName": "Micah",
+    "gender": "M",
+    "generation": 25,
+    "column": -20.783,
+    "parents": [
+      "uzziel_kohath"
+    ],
+    "spouses": [],
+    "desc": "웃시엘의 첫째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Uzziel's first son."
+  },
+  {
+    "id": "isshiah_uzziel",
+    "name": "잇시야",
+    "engName": "Isshiah",
+    "gender": "M",
+    "generation": 25,
+    "column": -20.11,
+    "parents": [
+      "uzziel_kohath"
+    ],
+    "spouses": [],
+    "desc": "웃시엘의 둘째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Uzziel's second son."
+  },
+  {
+    "id": "mishael_uzziel",
+    "name": "미사엘",
+    "engName": "Mishael",
+    "gender": "M",
+    "generation": 25,
+    "column": -19.441,
+    "parents": [
+      "uzziel_kohath"
+    ],
+    "spouses": [],
+    "desc": "웃시엘의 셋째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Third son of Uzziel."
+  },
+  {
+    "id": "elzaphan_uzziel",
+    "name": "엘리사반",
+    "engName": "Elzaphan",
+    "gender": "M",
+    "generation": 25,
+    "column": -18.779,
+    "parents": [
+      "uzziel_kohath"
+    ],
+    "spouses": [],
+    "desc": "웃시엘의 넷째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Fourth son of Uzziel."
+  },
+  {
+    "id": "sithri_uzziel",
+    "name": "시드리",
+    "engName": "Sithri",
+    "gender": "M",
+    "generation": 25,
+    "column": -18.116,
+    "parents": [
+      "uzziel_kohath"
+    ],
+    "spouses": [],
+    "desc": "웃시엘의 다섯째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Fifth son of Uzziel."
+  },
+  {
+    "id": "assir_korah",
+    "name": "아실",
+    "engName": "Assir",
+    "gender": "M",
+    "generation": 26,
+    "column": -23.241,
+    "parents": [
+      "korah"
+    ],
+    "spouses": [],
+    "desc": "고라의 첫째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Korah's first son."
+  },
+  {
+    "id": "elkanah_korah",
+    "name": "엘가나",
+    "engName": "Elkanah",
+    "gender": "M",
+    "generation": 26,
+    "column": -22.563,
+    "parents": [
+      "korah"
+    ],
+    "spouses": [],
+    "desc": "고라의 둘째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Korah's second son."
+  },
+  {
+    "id": "abiasaph_korah",
+    "name": "아비아삽",
+    "engName": "Abiasaph",
+    "gender": "M",
+    "generation": 26,
+    "column": -21.887,
+    "parents": [
+      "korah"
+    ],
+    "spouses": [],
+    "desc": "고라의 셋째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Korah's third son."
+  },
+  {
+    "id": "ram",
+    "name": "람",
+    "engName": "Ram",
+    "gender": "M",
+    "generation": 25,
+    "column": 0.018,
+    "parents": [
+      "hezron"
+    ],
+    "spouses": [],
+    "desc": "헤스론의 아들.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Hezron."
+  },
+  {
+    "id": "nadab",
+    "name": "나답",
+    "engName": "Nadab",
+    "gender": "M",
+    "generation": 26,
+    "column": -28.486,
+    "parents": [
+      "aaron",
+      "elisheba"
+    ],
+    "spouses": [],
+    "desc": "아론의 장남. 여호와께서 명하지 않은 다른 불을 드리다 심판 받아 사망.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Aaron's eldest son. He was judged and died for offering fire other than what Jehovah had commanded."
+  },
+  {
+    "id": "abihu",
+    "name": "아비후",
+    "engName": "Abihu",
+    "gender": "M",
+    "generation": 26,
+    "column": -27.794,
+    "parents": [
+      "aaron",
+      "elisheba"
+    ],
+    "spouses": [],
+    "desc": "아론의 차남. 형 나답과 함께 다른 불을 드려 사망.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Aaron's second son. He died by offering another fire with his brother Nadab."
+  },
+  {
+    "id": "eleazar_priest",
+    "name": "엘르아살",
+    "engName": "Eleazar",
+    "gender": "M",
+    "generation": 26,
+    "column": -27.103,
+    "parents": [
+      "aaron",
+      "elisheba"
+    ],
+    "spouses": [],
+    "desc": "아론의 삼남. 아론 사후 2대 대제사장이 됨.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Aaron's third son. Became the second high priest after Aaron's death."
+  },
+  {
+    "id": "ithamar",
+    "name": "이다말",
+    "engName": "Ithamar",
+    "gender": "M",
+    "generation": 26,
+    "column": -26.411,
+    "parents": [
+      "aaron",
+      "elisheba"
+    ],
+    "spouses": [],
+    "desc": "아론의 막내 아들. 성막 물품을 계수하고 관리함.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Aaron's youngest son. Counting and managing the tabernacle items."
+  },
+  {
+    "id": "gershom",
+    "name": "게르솜",
+    "engName": "Gershom",
+    "gender": "M",
+    "generation": 26,
+    "column": -25.013,
+    "parents": [
+      "moses",
+      "zipporah"
+    ],
+    "spouses": [],
+    "desc": "모세의 첫째 아들. '내가 이방에서 객이 되었다'는 뜻.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Moses' first son. It means ‘I have become a guest in a foreign room.’"
+  },
+  {
+    "id": "salmon",
+    "name": "살몬",
+    "engName": "Salmon",
+    "gender": "M",
+    "generation": 26,
+    "column": 0.018,
+    "parents": [
+      "nahshon"
+    ],
+    "spouses": [
+      "rahab"
+    ],
+    "desc": "가나안 정복의 지도자 중 하나. 여리고 기생 라합과 결혼함.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "One of the leaders of the conquest of Canaan. Married to Jericho gisaeng Rahab."
+  },
+  {
+    "id": "eliezer_moses",
+    "name": "엘리에셀",
+    "engName": "Eliezer",
+    "gender": "M",
+    "generation": 26,
+    "column": -24.313,
+    "parents": [
+      "moses",
+      "zipporah"
+    ],
+    "spouses": [],
+    "desc": "모세의 둘째 아들. '하나님이 나를 도우사 바로의 칼에서 구하셨다'는 뜻.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Moses' second son. It means ‘God helped me and saved me from Pharaoh’s sword.’"
+  },
+  {
+    "id": "shebuel_gershom",
+    "name": "스바엘",
+    "engName": "Shebuel",
+    "gender": "M",
+    "generation": 27,
+    "column": -25.014,
+    "parents": [
+      "gershom"
+    ],
+    "spouses": [],
+    "desc": "게르솜의 아들. 성전 곳간을 맡은 자 (스므엘).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Gershom. The one in charge of the temple treasury (Shemeel)."
+  },
+  {
+    "id": "rehabiah_shebuel",
+    "name": "르하뱌",
+    "engName": "Rehabiah",
+    "gender": "M",
+    "generation": 28,
+    "column": -25.014,
+    "parents": [
+      "shebuel_gershom"
+    ],
+    "spouses": [],
+    "desc": "스바엘의 아들. 엘리에셀의 아들 르하뱌와 다른 인물.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Shebael. Rehabiah, son of Eliezer, and others."
+  },
+  {
+    "id": "jeshaiah_rehabiah",
+    "name": "여샤야",
+    "engName": "Jeshaiah",
+    "gender": "M",
+    "generation": 29,
+    "column": -25.014,
+    "parents": [
+      "rehabiah_shebuel"
+    ],
+    "spouses": [],
+    "desc": "르하뱌의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Rehabiah."
+  },
+  {
+    "id": "joram_jeshaiah",
+    "name": "요람",
+    "engName": "Joram",
+    "gender": "M",
+    "generation": 30,
+    "column": -25.014,
+    "parents": [
+      "jeshaiah_rehabiah"
+    ],
+    "spouses": [],
+    "desc": "여샤야의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Jeshaiah."
+  },
+  {
+    "id": "zichri_joram",
+    "name": "시그리",
+    "engName": "Zichri",
+    "gender": "M",
+    "generation": 31,
+    "column": -25.014,
+    "parents": [
+      "joram_jeshaiah"
+    ],
+    "spouses": [],
+    "desc": "요람의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Cradle."
+  },
+  {
+    "id": "shelomith_zichri",
+    "name": "슬로못",
+    "engName": "Shelomoth",
+    "gender": "M",
+    "generation": 32,
+    "column": -25.014,
+    "parents": [
+      "zichri_joram"
+    ],
+    "spouses": [],
+    "desc": "시그리의 아들. 다윗 왕 때 성물 곳간을 관장함.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Sigri. In charge of the treasury of holy relics during the reign of King David."
+  },
+  {
+    "id": "phinehas_priest",
+    "name": "비느하스",
+    "engName": "Phinehas",
+    "gender": "M",
+    "generation": 27,
+    "column": -27.099,
+    "parents": [
+      "eleazar_priest"
+    ],
+    "spouses": [],
+    "desc": "3대 대제사장. 여호와의 질투심으로 음행 사건을 심판하여 평화의 언약을 받음.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The 3rd high priest. Through Jehovah's jealousy, he judged the case of fornication and received the covenant of peace."
+  },
+  {
+    "id": "abishua_priest",
+    "name": "아비수아",
+    "engName": "Abishua",
+    "gender": "M",
+    "generation": 28,
+    "column": -27.099,
+    "parents": [
+      "phinehas_priest"
+    ],
+    "spouses": [],
+    "desc": "4대 대제사장.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The 4th high priest."
+  },
+  {
+    "id": "bukki_priest",
+    "name": "북기",
+    "engName": "Bukki",
+    "gender": "M",
+    "generation": 29,
+    "column": -27.099,
+    "parents": [
+      "abishua_priest"
+    ],
+    "spouses": [],
+    "desc": "5대 대제사장.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The 5th high priest."
+  },
+  {
+    "id": "uzzi_priest",
+    "name": "웃시",
+    "engName": "Uzzi",
+    "gender": "M",
+    "generation": 30,
+    "column": -27.099,
+    "parents": [
+      "bukki_priest"
+    ],
+    "spouses": [],
+    "desc": "6대 대제사장.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The 6th high priest."
+  },
+  {
+    "id": "zerahiah_priest",
+    "name": "스라히야",
+    "engName": "Zerahiah",
+    "gender": "M",
+    "generation": 31,
+    "column": -27.099,
+    "parents": [
+      "uzzi_priest"
+    ],
+    "spouses": [],
+    "desc": "7대 대제사장.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "7th high priest."
+  },
+  {
+    "id": "meraioth_priest",
+    "name": "므라욧",
+    "engName": "Meraioth",
+    "gender": "M",
+    "generation": 32,
+    "column": -27.099,
+    "parents": [
+      "zerahiah_priest"
+    ],
+    "spouses": [],
+    "desc": "8대 대제사장.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "8th high priest."
+  },
+  {
+    "id": "amariah_priest1",
+    "name": "아마랴",
+    "engName": "Amariah",
+    "gender": "M",
+    "generation": 33,
+    "column": -27.099,
+    "parents": [
+      "meraioth_priest"
+    ],
+    "spouses": [],
+    "desc": "9대 대제사장.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "9th high priest."
+  },
+  {
+    "id": "ahitub_priest1",
+    "name": "아히둡",
+    "engName": "Ahitub",
+    "gender": "M",
+    "generation": 34,
+    "column": -27.099,
+    "parents": [
+      "amariah_priest1"
+    ],
+    "spouses": [],
+    "desc": "10대 대제사장.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "10th high priest."
+  },
+  {
+    "id": "zadok_priest1",
+    "name": "사독",
+    "engName": "Zadok",
+    "gender": "M",
+    "generation": 35,
+    "column": -27.099,
+    "parents": [
+      "ahitub_priest1"
+    ],
+    "spouses": [],
+    "desc": "다윗 and 솔로몬 시대의 충성스러운 대제사장. 사독 계열의 시조.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "A loyal high priest during the time of David and Solomon. The founder of the Zadok lineage."
+  },
+  {
+    "id": "ahimaaz_priest",
+    "name": "아히마아스",
+    "engName": "Ahimaaz",
+    "gender": "M",
+    "generation": 36,
+    "column": -27.099,
+    "parents": [
+      "zadok_priest1"
+    ],
+    "spouses": [],
+    "desc": "사독의 아들. 다윗의 전령.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Zadok. David's messenger."
+  },
+  {
+    "id": "azariah_priest1",
+    "name": "아사랴",
+    "engName": "Azariah",
+    "gender": "M",
+    "generation": 37,
+    "column": -27.099,
+    "parents": [
+      "ahimaaz_priest"
+    ],
+    "spouses": [],
+    "desc": "솔로몬 성전의 대제사장.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "High priest of Solomon's temple."
+  },
+  {
+    "id": "johanan_priest",
+    "name": "요하난",
+    "engName": "Johanan",
+    "gender": "M",
+    "generation": 38,
+    "column": -27.099,
+    "parents": [
+      "azariah_priest1"
+    ],
+    "spouses": [],
+    "desc": "대제사장.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "High priest."
+  },
+  {
+    "id": "azariah_priest2",
+    "name": "아사랴(중기)",
+    "engName": "Azariah",
+    "gender": "M",
+    "generation": 39,
+    "column": -27.099,
+    "parents": [
+      "johanan_priest"
+    ],
+    "spouses": [],
+    "desc": "솔로몬 성전에서 제사장 직분을 행한 자.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "A person who served as a priest in Solomon's temple."
+  },
+  {
+    "id": "amariah_priest2",
+    "name": "아마랴(중기)",
+    "engName": "Amariah",
+    "gender": "M",
+    "generation": 40,
+    "column": -27.099,
+    "parents": [
+      "azariah_priest2"
+    ],
+    "spouses": [],
+    "desc": "대제사장.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "High priest."
+  },
+  {
+    "id": "ahitub_priest2",
+    "name": "아히둡(중기)",
+    "engName": "Ahitub",
+    "gender": "M",
+    "generation": 41,
+    "column": -27.099,
+    "parents": [
+      "amariah_priest2"
+    ],
+    "spouses": [],
+    "desc": "대제사장.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "High priest."
+  },
+  {
+    "id": "zadok_priest2",
+    "name": "사독(중기)",
+    "engName": "Zadok",
+    "gender": "M",
+    "generation": 42,
+    "column": -27.099,
+    "parents": [
+      "ahitub_priest2"
+    ],
+    "spouses": [],
+    "desc": "대제사장.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "High priest."
+  },
+  {
+    "id": "shallum_priest",
+    "name": "살룸",
+    "engName": "Shallum",
+    "gender": "M",
+    "generation": 43,
+    "column": -27.099,
+    "parents": [
+      "zadok_priest2"
+    ],
+    "spouses": [],
+    "desc": "대제사장 (살룸/므슐람).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "High Priest (Shallum/Mshullam)."
+  },
+  {
+    "id": "hilkiah_priest",
+    "name": "힐기야",
+    "engName": "Hilkiah",
+    "gender": "M",
+    "generation": 44,
+    "column": -27.099,
+    "parents": [
+      "shallum_priest"
+    ],
+    "spouses": [],
+    "desc": "요시야 왕 시절 성전 정화 중 율법책을 발견한 대제사장.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "A high priest who discovered the Book of the Law during the purification of the temple during the reign of King Josiah."
+  },
+  {
+    "id": "azariah_priest3",
+    "name": "아사랴(말기)",
+    "engName": "Azariah",
+    "gender": "M",
+    "generation": 45,
+    "column": -27.099,
+    "parents": [
+      "hilkiah_priest"
+    ],
+    "spouses": [],
+    "desc": "대제사장.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "High priest."
+  },
+  {
+    "id": "seraiah_priest",
+    "name": "스라야",
+    "engName": "Seraiah",
+    "gender": "M",
+    "generation": 46,
+    "column": -27.099,
+    "parents": [
+      "azariah_priest3"
+    ],
+    "spouses": [],
+    "desc": "예루살렘 함락 시 느부갓네살에 의해 죽임 당한 마지막 대제사장.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The last high priest killed by Nebuchadnezzar during the fall of Jerusalem."
+  },
+  {
+    "id": "jehozadak_priest",
+    "name": "여호사닥",
+    "engName": "Jehozadak",
+    "gender": "M",
+    "generation": 47,
+    "column": -27.099,
+    "parents": [
+      "seraiah_priest"
+    ],
+    "spouses": [],
+    "desc": "바벨론 포로로 잡혀간 대제사장. 학개의 동역자 여호수아의 아버지.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "High priest taken captive in Babylon. The father of Haggai's co-worker Joshua."
+  },
+  {
+    "id": "amminadab",
+    "name": "암미나답",
+    "engName": "Amminadab",
+    "gender": "M",
+    "generation": 26,
+    "column": 0.018,
+    "parents": [
+      "ram"
+    ],
+    "spouses": [],
+    "desc": "광야 행진 시 유다 지파 지도자 아론의 장인.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The father-in-law of Aaron, leader of the tribe of Judah, during the wilderness march."
+  },
+  {
+    "id": "nahshon",
+    "name": "나손",
+    "engName": "Nahshon",
+    "gender": "M",
+    "generation": 27,
+    "column": 0.018,
+    "parents": [
+      "amminadab"
+    ],
+    "spouses": [],
+    "desc": "유다 지파의 방백. 광야 여정에서 첫째로 헌물을 드림.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "A prince of the tribe of Judah. The first offering to be made during the wilderness journey."
+  },
+  {
+    "id": "salmon",
+    "name": "살몬",
+    "engName": "Salmon",
+    "gender": "M",
+    "generation": 28,
+    "column": 0.018,
+    "parents": [
+      "nahshon"
+    ],
+    "spouses": [
+      "rahab"
+    ],
+    "desc": "가나안 정복의 지도자 중 하나. 여리고 기생 라합과 결혼함.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "One of the leaders of the conquest of Canaan. Married to Jericho gisaeng Rahab."
+  },
+  {
+    "id": "rahab",
+    "name": "라합",
+    "engName": "Rahab",
+    "gender": "F",
+    "generation": 28,
+    "column": -1.062,
+    "parents": [],
+    "spouses": [
+      "salmon"
+    ],
+    "desc": "여리고 기생. 이스라엘 정탐꾼을 숨겨주어 구원을 얻고 예수 조상이 됨.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Jericho gisaeng. He was saved by hiding the Israeli spies and became an ancestor of Jesus."
+  },
+  {
+    "id": "boaz",
+    "name": "보아스",
+    "engName": "Boaz",
+    "gender": "M",
+    "generation": 29,
+    "column": 0.018,
+    "parents": [
+      "salmon",
+      "rahab"
+    ],
+    "spouses": [
+      "ruth"
+    ],
+    "desc": "유력한 자. 이방 여인 룻의 기업 무를 자(Goel)가 됨.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "A powerful person. Became the redeemer (Goel) of the inheritance of Ruth, a foreign woman."
+  },
+  {
+    "id": "ruth",
+    "name": "룻",
+    "engName": "Ruth",
+    "gender": "F",
+    "generation": 29,
+    "column": 1.067,
+    "parents": [],
+    "spouses": [
+      "boaz",
+      "mahion"
+    ],
+    "desc": "모압 여인. 나오미를 따라 이스라엘로 와 다윗 왕의 증조모가 됨.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Moabite woman. She followed Naomi to Israel and became King David's great-grandmother."
+  },
+  {
+    "id": "obed",
+    "name": "오벳",
+    "engName": "Obed",
+    "gender": "M",
+    "generation": 30,
+    "column": 0.018,
+    "parents": [
+      "boaz",
+      "ruth"
+    ],
+    "spouses": [],
+    "desc": "보아스와 룻의 아들. 다윗의 할아버지.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Boaz and Ruth. David's grandfather."
+  },
+  {
+    "id": "kish",
+    "name": "기스",
+    "engName": "Kish",
+    "gender": "M",
+    "generation": 27.95,
+    "column": 66.321,
+    "parents": [
+      "abiel",
+      "maacah-abiel"
+    ],
+    "spouses": [],
+    "desc": "베냐민 사람 아비엘의 아들. 초대 왕 사울의 아버지.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Abiel, a Benjaminite. Father of the first king Saul."
+  },
+  {
+    "id": "jesse",
+    "name": "이새",
+    "engName": "Jesse",
+    "gender": "M",
+    "generation": 31,
+    "column": 0.018,
+    "parents": [
+      "obed"
+    ],
+    "spouses": [],
+    "desc": "베들레헴 주민. 다윗을 비롯한 여덟 아들의 아버지.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Bethlehem residents. Father of eight sons, including David."
+  },
+  {
+    "id": "saul",
+    "name": "사울 왕",
+    "engName": "Saul",
+    "gender": "M",
+    "generation": 28.95,
+    "column": 66.319,
+    "parents": [
+      "kish"
+    ],
+    "spouses": [
+      "ahinoam_saul",
+      "rizpah"
+    ],
+    "desc": "이스라엘의 초대 왕. 교만함으로 여호와께 버림받음.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [
+      "prophet_samuel"
+    ],
+    "engDesc": "The first king of Israel. Abandoned by the Lord through pride."
+  },
+  {
+    "id": "eliab_jesse",
+    "name": "엘리압",
+    "engName": "Eliab",
+    "gender": "M",
+    "generation": 32,
+    "column": -8.146,
+    "parents": [
+      "jesse"
+    ],
+    "spouses": [],
+    "desc": "이새의 장남. 용모가 뛰어남.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Jesse's eldest son. Excellent appearance."
+  },
+  {
+    "id": "abinadab_jesse",
+    "name": "아비나답",
+    "engName": "Abinadab",
+    "gender": "M",
+    "generation": 32,
+    "column": -7.229,
+    "parents": [
+      "jesse"
+    ],
+    "spouses": [],
+    "desc": "이새의 차남.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Jesse's second son."
+  },
+  {
+    "id": "shimea_jesse",
+    "name": "시므아",
+    "engName": "Shimea",
+    "gender": "M",
+    "generation": 32,
+    "column": -6.338,
+    "parents": [
+      "jesse"
+    ],
+    "spouses": [],
+    "desc": "이새의 셋째 아들 (삼마).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Jesse's third son (Shammah)."
+  },
+  {
+    "id": "nethaneel_jesse",
+    "name": "느다넬",
+    "engName": "Nethanel",
+    "gender": "M",
+    "generation": 32,
+    "column": -5.458,
+    "parents": [
+      "jesse"
+    ],
+    "spouses": [],
+    "desc": "이새의 넷째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The fourth son of Jesse."
+  },
+  {
+    "id": "raddai_jesse",
+    "name": "랏대",
+    "engName": "Raddai",
+    "gender": "M",
+    "generation": 32,
+    "column": -4.583,
+    "parents": [
+      "jesse"
+    ],
+    "spouses": [],
+    "desc": "이새의 다섯째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The fifth son of Jesse."
+  },
+  {
+    "id": "ozem_jesse",
+    "name": "오셈",
+    "engName": "Ozem",
+    "gender": "M",
+    "generation": 32,
+    "column": -3.716,
+    "parents": [
+      "jesse"
+    ],
+    "spouses": [],
+    "desc": "이새의 여섯째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The sixth son of Jesse."
+  },
+  {
+    "id": "david",
+    "name": "다윗 왕",
+    "engName": "David",
+    "gender": "M",
+    "generation": 32,
+    "column": 0.014,
+    "parents": [
+      "jesse"
+    ],
+    "spouses": [
+      "bathsheba",
+      "michal",
+      "abigail_david",
+      "maachah_david",
+      "ahinoam_david",
+      "haggith_david",
+      "abital_david",
+      "eglah_david",
+      "other_wives_david"
+    ],
+    "desc": "이스라엘 제2대 성왕. 하나님 마음에 합한 자. 메시아 언약 수여자.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [
+      "prophet_samuel",
+      "prophet_nathan",
+      "prophet_gad"
+    ],
+    "engDesc": "The second holy king of Israel. A person after God’s own heart. Messianic Covenant Giver."
+  },
+  {
+    "id": "zeruiah",
+    "name": "스루야",
+    "engName": "Zeruiah",
+    "gender": "F",
+    "generation": 32,
+    "column": 11.476,
+    "parents": [
+      "jesse"
+    ],
+    "spouses": [],
+    "desc": "다윗의 누이. 요압, 아비새, 아사헬 삼형제의 어머니.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "David's sister. Mother of the three brothers Joab, Abishai, and Asahel."
+  },
+  {
+    "id": "abigail_jesse",
+    "name": "아비갈",
+    "engName": "Abigail",
+    "gender": "F",
+    "generation": 32,
+    "column": 10.716,
+    "parents": [
+      "jesse"
+    ],
+    "spouses": [],
+    "desc": "다윗의 누이.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "David's sister."
+  },
+  {
+    "id": "abihail_eliab",
+    "name": "아비하일",
+    "engName": "Abihail",
+    "gender": "F",
+    "generation": 33,
+    "column": -8.454,
+    "parents": [
+      "eliab_jesse"
+    ],
+    "spouses": [],
+    "desc": "엘리압의 딸. 르호보암 왕의 아내가 됨.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Daughter of Eliab. Becomes the wife of King Rehoboam."
+  },
+  {
+    "id": "bathsheba",
+    "name": "밧세바",
+    "engName": "Bathsheba",
+    "gender": "F",
+    "generation": 32,
+    "column": 1.114,
+    "parents": [],
+    "spouses": [
+      "david"
+    ],
+    "desc": "우리야의 아내였으나 다윗과의 비극 후 솔로몬을 낳아 왕위를 계승시킴.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "She was the wife of Uriah, but after the tragedy with David, she gave birth to Solomon and succeeded to the throne."
+  },
+  {
+    "id": "michal",
+    "name": "미갈",
+    "engName": "Michal",
+    "gender": "F",
+    "generation": 32,
+    "column": -1.105,
+    "parents": [],
+    "spouses": [
+      "david"
+    ],
+    "desc": "다윗 왕의 아내. 사울 왕의 딸.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "King David's wife. King Saul's daughter."
+  },
+  {
+    "id": "ahinoam_david",
+    "name": "아히노암",
+    "engName": "Ahinoam",
+    "gender": "F",
+    "generation": 32,
+    "column": 2.1,
+    "parents": [],
+    "spouses": [
+      "david"
+    ],
+    "desc": "이스르엘 여인. 다윗의 아내.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Jezreel woman. David's wife."
+  },
+  {
+    "id": "abigail_david",
+    "name": "아비가일",
+    "engName": "Abigail",
+    "gender": "F",
+    "generation": 32,
+    "column": 3.113,
+    "parents": [],
+    "spouses": [
+      "david"
+    ],
+    "desc": "갈멜 여인. 나발의 아내였으나 다윗의 아내가 됨.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Carmelite woman. Was Nabal's wife but became David's wife."
+  },
+  {
+    "id": "maachah_david",
+    "name": "마아가",
+    "engName": "Maacah",
+    "gender": "F",
+    "generation": 32,
+    "column": 4.15,
+    "parents": [],
+    "spouses": [
+      "david"
+    ],
+    "desc": "그술 왕 달매의 딸. 다윗의 아내.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Daughter of Talmai, king of Geshur. David's wife."
+  },
+  {
+    "id": "haggith_david",
+    "name": "학깃",
+    "engName": "Haggith",
+    "gender": "F",
+    "generation": 32,
+    "column": 5.342,
+    "parents": [],
+    "spouses": [
+      "david"
+    ],
+    "desc": "다윗의 아내. 아도니야의 어머니.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "David's wife. Adonijah's mother."
+  },
+  {
+    "id": "abital_david",
+    "name": "아비달",
+    "engName": "Abital",
+    "gender": "F",
+    "generation": 32,
+    "column": 6.558,
+    "parents": [],
+    "spouses": [
+      "david"
+    ],
+    "desc": "다윗의 아내. 스바댜의 어머니.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "David's wife. Zebadiah's mother."
+  },
+  {
+    "id": "eglah_david",
+    "name": "에글라",
+    "engName": "Eglah",
+    "gender": "F",
+    "generation": 32,
+    "column": 7.984,
+    "parents": [],
+    "spouses": [
+      "david"
+    ],
+    "desc": "다윗의 아내. 이드르암의 어머니.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "David's wife. Idriam's mother."
+  },
+  {
+    "id": "other_wives_david",
+    "name": "다른 아내들",
+    "engName": "Other Wives",
+    "gender": "F",
+    "generation": 32,
+    "column": 9.859,
+    "parents": [],
+    "spouses": [
+      "david"
+    ],
+    "desc": "다윗의 다른 아내들과 첩들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "David's other wives and concubines."
+  },
+  {
+    "id": "jonathan",
+    "name": "요나단",
+    "engName": "Jonathan",
+    "gender": "M",
+    "generation": 29.95,
+    "column": 61.897,
+    "parents": [
+      "saul",
+      "ahinoam_saul"
+    ],
+    "spouses": [],
+    "desc": "사울의 아들. 다윗의 가장 진실한 친구이자 조력자.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Saul. David's truest friend and helper."
+  },
+  {
+    "id": "ishbosheth",
+    "name": "이스보셋 왕",
+    "engName": "Ish-bosheth",
+    "gender": "M",
+    "generation": 29.95,
+    "column": 63.922,
+    "parents": [
+      "saul",
+      "ahinoam_saul"
+    ],
+    "spouses": [],
+    "desc": "사울 사후 마하나임에서 2년간 북이스라엘을 통치한 왕.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "A king who ruled northern Israel for two years from Mahanaim after Saul's death."
+  },
+  {
+    "id": "michal_daughter",
+    "name": "미갈(사울딸)",
+    "engName": "Michal",
+    "gender": "F",
+    "generation": 29.95,
+    "column": 66.829,
+    "parents": [
+      "saul",
+      "ahinoam_saul"
+    ],
+    "spouses": [],
+    "desc": "사울 왕의 딸. 다윗 왕의 첫 번째 아내가 됨.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "King Saul's daughter. Becomes King David's first wife."
+  },
+  {
+    "id": "shimea_bathsheba",
+    "name": "시므아",
+    "engName": "Shimea",
+    "gender": "M",
+    "generation": 33,
+    "column": -7.696,
+    "parents": [
+      "david",
+      "bathsheba"
+    ],
+    "spouses": [],
+    "desc": "다윗과 밧세바의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "nudgeX": 0,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of David and Bathsheba."
+  },
+  {
+    "id": "shobab_bathsheba",
+    "name": "소밥",
+    "engName": "Shobab",
+    "gender": "M",
+    "generation": 33,
+    "column": -6.971,
+    "parents": [
+      "david",
+      "bathsheba"
+    ],
+    "spouses": [],
+    "desc": "다윗과 밧세바의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "nudgeX": 0,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of David and Bathsheba."
+  },
+  {
+    "id": "amnon_david",
+    "name": "암논",
+    "engName": "Amnon",
+    "gender": "M",
+    "generation": 33,
+    "column": 2.021,
+    "parents": [
+      "david",
+      "ahinoam_david"
+    ],
+    "spouses": [],
+    "desc": "다윗의 장남. 다말을 범한 후 압살롬에게 살해됨.",
+    "isMain": false,
+    "isManual": true,
+    "nudgeX": 0,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "David's eldest son. After violating Tamar, he was killed by Absalom."
+  },
+  {
+    "id": "daniel_david",
+    "name": "다니엘",
+    "engName": "Daniel",
+    "gender": "M",
+    "generation": 33,
+    "column": 2.838,
+    "parents": [
+      "david",
+      "abigail_david"
+    ],
+    "spouses": [],
+    "desc": "다윗의 차남 (길랍).",
+    "isMain": false,
+    "isManual": true,
+    "nudgeX": 0,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "David's second son (Ghilab)."
+  },
+  {
+    "id": "absalom_david",
+    "name": "압살롬",
+    "engName": "Absalom",
+    "gender": "M",
+    "generation": 33,
+    "column": 3.654,
+    "parents": [
+      "david",
+      "maachah_david"
+    ],
+    "spouses": [],
+    "desc": "다윗의 삼남. 반역을 꾀했으나 요압에게 죽임 당함.",
+    "isMain": false,
+    "isManual": true,
+    "nudgeX": 0,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "David's third son. He attempted to rebel, but was killed by Joab."
+  },
+  {
+    "id": "tamar_david",
+    "name": "다말",
+    "engName": "Tamar",
+    "gender": "F",
+    "generation": 33,
+    "column": 4.471,
+    "parents": [
+      "david",
+      "maachah_david"
+    ],
+    "spouses": [],
+    "desc": "압살롬의 누이. 암논에게 욕을 당함.",
+    "isMain": false,
+    "isManual": true,
+    "nudgeX": 0,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Absalom's sister. Reviled by Amnon."
+  },
+  {
+    "id": "maachah_absalom",
+    "name": "마아가",
+    "engName": "Maacah",
+    "gender": "F",
+    "generation": 34,
+    "column": 3.654,
+    "parents": [
+      "absalom_david"
+    ],
+    "spouses": [],
+    "desc": "압살롬의 딸. 르호보암의 아내이자 아비야의 어머니.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Absalom's daughter. Rehoboam's wife and Abijah's mother."
+  },
+  {
+    "id": "adonijah_david",
+    "name": "아도니야",
+    "engName": "Adonijah",
+    "gender": "M",
+    "generation": 33.01,
+    "column": 5.575,
+    "parents": [
+      "david",
+      "haggith_david"
+    ],
+    "spouses": [],
+    "desc": "다윗의 넷째 아들. 왕위를 스스로 노렸으나 솔로몬에게 처형당함.",
+    "isMain": false,
+    "isManual": true,
+    "nudgeX": 0,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "David's fourth son. He attempted to take the throne himself, but was executed by Solomon."
+  },
+  {
+    "id": "shephatiah_david",
+    "name": "스바댜",
+    "engName": "Shephatiah",
+    "gender": "M",
+    "generation": 33,
+    "column": 6.383,
+    "parents": [
+      "david",
+      "abital_david"
+    ],
+    "spouses": [],
+    "desc": "다윗의 다섯째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "nudgeX": 0,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "David's fifth son."
+  },
+  {
+    "id": "ithream_david",
+    "name": "이드르암",
+    "engName": "Ithream",
+    "gender": "M",
+    "generation": 33,
+    "column": 7.192,
+    "parents": [
+      "david",
+      "eglah_david"
+    ],
+    "spouses": [],
+    "desc": "다윗의 여섯째 아들.",
+    "isMain": false,
+    "isManual": true,
+    "nudgeX": 0,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "David's sixth son."
+  },
+  {
+    "id": "ibhar_david",
+    "name": "입할",
+    "engName": "Ibhar",
+    "gender": "M",
+    "generation": 33,
+    "column": 8.067,
+    "parents": [
+      "david",
+      "other_wives_david"
+    ],
+    "spouses": [],
+    "desc": "다윗의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "nudgeX": 0,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of David."
+  },
+  {
+    "id": "elishua_david",
+    "name": "엘리수아",
+    "engName": "Elishua",
+    "gender": "M",
+    "generation": 33,
+    "column": 8.75,
+    "parents": [
+      "david",
+      "other_wives_david"
+    ],
+    "spouses": [],
+    "desc": "다윗의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "nudgeX": 0,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of David."
+  },
+  {
+    "id": "eliphelet_david1",
+    "name": "엘리벨렛(전기)",
+    "engName": "Eliphelet",
+    "gender": "M",
+    "generation": 33,
+    "column": 9.429,
+    "parents": [
+      "david",
+      "other_wives_david"
+    ],
+    "spouses": [],
+    "desc": "다윗의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "nudgeX": 0,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of David."
+  },
+  {
+    "id": "nogah_david",
+    "name": "노가",
+    "engName": "Nogah",
+    "gender": "M",
+    "generation": 33.01,
+    "column": 10.112,
+    "parents": [
+      "david",
+      "other_wives_david"
+    ],
+    "spouses": [],
+    "desc": "다윗의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "nudgeX": 0,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of David."
+  },
+  {
+    "id": "nepheg_david",
+    "name": "네벡",
+    "engName": "Nepheg",
+    "gender": "M",
+    "generation": 33,
+    "column": 10.8,
+    "parents": [
+      "david",
+      "other_wives_david"
+    ],
+    "spouses": [],
+    "desc": "다윗의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "nudgeX": 0,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of David."
+  },
+  {
+    "id": "japhia_david",
+    "name": "야비야",
+    "engName": "Japhia",
+    "gender": "M",
+    "generation": 33,
+    "column": 11.475,
+    "parents": [
+      "david",
+      "other_wives_david"
+    ],
+    "spouses": [],
+    "desc": "다윗의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "nudgeX": 0,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of David."
+  },
+  {
+    "id": "elishama_david",
+    "name": "엘리사마",
+    "engName": "Elishama",
+    "gender": "M",
+    "generation": 33,
+    "column": 12.154,
+    "parents": [
+      "david",
+      "other_wives_david"
+    ],
+    "spouses": [],
+    "desc": "다윗의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "nudgeX": 0,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of David."
+  },
+  {
+    "id": "eliada_david",
+    "name": "엘리아다",
+    "engName": "Eliada",
+    "gender": "M",
+    "generation": 33,
+    "column": 12.829,
+    "parents": [
+      "david",
+      "other_wives_david"
+    ],
+    "spouses": [],
+    "desc": "다윗의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "nudgeX": 0,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of David."
+  },
+  {
+    "id": "eliphelet_david2",
+    "name": "엘리벨렛(후기)",
+    "engName": "Eliphelet",
+    "gender": "M",
+    "generation": 33,
+    "column": 13.5,
+    "parents": [
+      "david",
+      "other_wives_david"
+    ],
+    "spouses": [],
+    "desc": "다윗의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "nudgeX": 0,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of David."
+  },
+  {
+    "id": "solomon",
+    "name": "솔로몬 왕",
+    "engName": "Solomon",
+    "gender": "M",
+    "generation": 33,
+    "column": 0,
+    "parents": [
+      "david",
+      "bathsheba"
+    ],
+    "spouses": [
+      "naamah_ammon"
+    ],
+    "desc": "지혜의 왕. 예루살렘 성전을 건축함. 말년에 우상 숭배의 죄를 범함.",
+    "isMain": true,
+    "isManual": true,
+    "nudgeX": 0,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [
+      "prophet_ahijah"
+    ],
+    "engDesc": "King of Wisdom. Building the Temple in Jerusalem. In his later years, he committed the sin of idolatry."
+  },
+  {
+    "id": "naamah_ammon",
+    "name": "나아마",
+    "engName": "Naamah",
+    "gender": "F",
+    "generation": 33,
+    "column": 1.18,
+    "parents": [],
+    "spouses": [
+      "solomon"
+    ],
+    "desc": "암몬 여인. 르호보암 왕의 어머니.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Ammonite woman. Mother of King Rehoboam."
+  },
+  {
+    "id": "nathan",
+    "name": "나단",
+    "engName": "Nathan",
+    "gender": "M",
+    "generation": 33,
+    "column": -6.129,
+    "parents": [
+      "david",
+      "bathsheba"
+    ],
+    "spouses": [],
+    "desc": "다윗과 밧세바의 아들. 누가복음 3장에 수록된 예수의 모계 조상.",
+    "isMain": false,
+    "isManual": true,
+    "nudgeX": 0,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "isProphet": false,
+    "engDesc": "Son of David and Bathsheba. Jesus' maternal ancestors listed in Luke 3."
+  },
+  {
+    "id": "mephibosheth",
+    "name": "므비보셋",
+    "engName": "Mephibosheth",
+    "gender": "M",
+    "generation": 30.95,
+    "column": 62.522,
+    "parents": [
+      "jonathan"
+    ],
+    "spouses": [],
+    "desc": "요나단의 아들. 두 발을 다 절며 다윗 왕의 상에서 먹음.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Jonathan. Limp in both feet, he ate at King David's table."
+  },
+  {
+    "id": "rehoboam",
+    "name": "르호보암 왕",
+    "engName": "Rehoboam",
+    "gender": "M",
+    "generation": 34,
+    "column": 0.014,
+    "parents": [
+      "solomon",
+      "naamah_ammon"
+    ],
+    "spouses": [
+      "maacah",
+      "mahalath_rehoboam"
+    ],
+    "desc": "솔로몬의 아들. 어리석은 통치로 나라가 이스라엘과 유다로 분열됨.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Solomon. Due to foolish rule, the country was divided into Israel and Judah."
+  },
+  {
+    "id": "maacah",
+    "name": "마아가",
+    "engName": "Maacah",
+    "gender": "F",
+    "generation": 34,
+    "column": 1.173,
+    "parents": [],
+    "spouses": [
+      "rehoboam"
+    ],
+    "desc": "압살롬의 손녀이자 르호보암의 아내. 아비야의 어머니.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Granddaughter of Absalom and wife of Rehoboam. Abijah's mother."
+  },
+  {
+    "id": "mahalath_rehoboam",
+    "name": "마할랏",
+    "engName": "Mahalath",
+    "gender": "F",
+    "generation": 34,
+    "column": -0.9,
+    "parents": [],
+    "spouses": [
+      "rehoboam"
+    ],
+    "desc": "여리못과 아비하일의 딸(대하 11:18). 르호보암 왕의 아내.",
+    "isMain": false,
+    "teachers": [],
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Daughter of Jerimoth and Abihail (2 Chronicles 11:18). Wife of King Rehoboam."
+  },
+  {
+    "id": "taphath",
+    "name": "다밧",
+    "engName": "Taphath",
+    "gender": "F",
+    "generation": 34,
+    "column": -1.658,
+    "parents": [
+      "solomon"
+    ],
+    "spouses": [],
+    "desc": "솔로몬 왕의 딸. 아비나답의 아들(벤아비나답)의 아내가 됨(왕상 4:11).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Daughter of King Solomon. Became the wife of Abinadab's son (Ben-Abinadab) (1 Kings 4:11)."
+  },
+  {
+    "id": "basemath",
+    "name": "바스맛",
+    "engName": "Basemath",
+    "gender": "F",
+    "generation": 34,
+    "column": -2.361,
+    "parents": [
+      "solomon"
+    ],
+    "spouses": [],
+    "desc": "솔로몬 왕의 딸. 아히마아스의 아내가 됨(왕상 4:15).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Daughter of King Solomon. Became the wife of Ahimaaz (1 Kings 4:15)."
+  },
+  {
+    "id": "abijah",
+    "name": "아비야 왕",
+    "engName": "Abijah",
+    "gender": "M",
+    "generation": 35,
+    "column": 0.014,
+    "parents": [
+      "rehoboam",
+      "maacah"
+    ],
+    "spouses": [],
+    "desc": "르호보암의 아들. 북이스라엘 여로보암과의 전쟁에서 여호와를 의지해 승리함.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Rehoboam. Won the battle with Jeroboam of Northern Israel by relying on Jehovah."
+  },
+  {
+    "id": "jeush_rehoboam",
+    "name": "여우스",
+    "engName": "Jeush",
+    "gender": "M",
+    "generation": 35,
+    "column": -2.204,
+    "parents": [
+      "rehoboam",
+      "mahalath_rehoboam"
+    ],
+    "spouses": [],
+    "desc": "르호보암과 마할랏의 아들(대하 11:19).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Rehoboam and Mahalath (2 Chronicles 11:19)."
+  },
+  {
+    "id": "shemariah_rehoboam",
+    "name": "스마랴",
+    "engName": "Shemariah",
+    "gender": "M",
+    "generation": 35,
+    "column": -1.504,
+    "parents": [
+      "rehoboam",
+      "mahalath_rehoboam"
+    ],
+    "spouses": [],
+    "desc": "르호보암과 마할랏의 아들(대하 11:19).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Rehoboam and Mahalath (2 Chronicles 11:19)."
+  },
+  {
+    "id": "zaham_rehoboam",
+    "name": "사함",
+    "engName": "Zaham",
+    "gender": "M",
+    "generation": 35,
+    "column": -0.804,
+    "parents": [
+      "rehoboam",
+      "mahalath_rehoboam"
+    ],
+    "spouses": [],
+    "desc": "르호보암과 마할랏의 아들(대하 11:19).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Rehoboam and Mahalath (2 Chronicles 11:19)."
+  },
+  {
+    "id": "attai_rehoboam",
+    "name": "앗대",
+    "engName": "Attai",
+    "gender": "M",
+    "generation": 35,
+    "column": 1.596,
+    "parents": [
+      "rehoboam",
+      "maacah"
+    ],
+    "spouses": [],
+    "desc": "르호보암과 마아가의 아들(대하 11:20).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Rehoboam and Maacah (2 Chronicles 11:20)."
+  },
+  {
+    "id": "ziza_rehoboam",
+    "name": "사사",
+    "engName": "Ziza",
+    "gender": "M",
+    "generation": 35,
+    "column": 2.296,
+    "parents": [
+      "rehoboam",
+      "maacah"
+    ],
+    "spouses": [],
+    "desc": "르호보암과 마아가의 아들(대하 11:20).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Rehoboam and Maacah (2 Chronicles 11:20)."
+  },
+  {
+    "id": "shelomith_rehoboam",
+    "name": "슬로밋",
+    "engName": "Shelomith",
+    "gender": "M",
+    "generation": 35,
+    "column": 2.996,
+    "parents": [
+      "rehoboam",
+      "maacah"
+    ],
+    "spouses": [],
+    "desc": "르호보암과 마아가의 아들(대하 11:20).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Rehoboam and Maacah (2 Chronicles 11:20)."
+  },
+  {
+    "id": "asa",
+    "name": "아사 왕",
+    "engName": "Asa",
+    "gender": "M",
+    "generation": 36,
+    "column": 0.014,
+    "parents": [
+      "abijah"
+    ],
+    "spouses": [
+      "azubah_asa"
+    ],
+    "desc": "유다의 선한 왕. 종교 개혁을 단행하고 태후 마아가의 위를 폐함.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [
+      "prophet_azariah",
+      "prophet_hanani"
+    ],
+    "engDesc": "The good king of Judah. He carried out religious reforms and abolished Queen Mother Maaga."
+  },
+  {
+    "id": "azubah_asa",
+    "name": "아수바",
+    "engName": "Azubah",
+    "gender": "F",
+    "generation": 36,
+    "column": 1.171,
+    "parents": [],
+    "spouses": [
+      "asa"
+    ],
+    "desc": "아사 왕의 아내. 여호사밧 왕의 어머니.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "King Asa's wife. Mother of King Jehoshaphat."
+  },
+  {
+    "id": "jehoshaphat",
+    "name": "여호사밧 왕",
+    "engName": "Jehoshaphat",
+    "gender": "M",
+    "generation": 37,
+    "column": 0.014,
+    "parents": [
+      "asa",
+      "azubah_asa"
+    ],
+    "spouses": [],
+    "desc": "종교 및 사법 개혁을 단행한 경건한 왕. 북이스라엘 아합 가문과 사돈을 맺음.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [
+      "prophet_jehu",
+      "prophet_jahaziel",
+      "prophet_eliezer"
+    ],
+    "engDesc": "A pious king who implemented religious and judicial reforms. Becomes in-laws with the Ahab family of Northern Israel."
+  },
+  {
+    "id": "jehoram",
+    "name": "여호람 왕",
+    "engName": "Jehoram",
+    "gender": "M",
+    "generation": 38,
+    "column": 0.014,
+    "parents": [
+      "jehoshaphat"
+    ],
+    "spouses": [
+      "athaliah"
+    ],
+    "desc": "여호사밧의 아들. 아합의 딸 아달랴와 결혼해 유다에 우상 숭배를 들여옴.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Jehoshaphat. He married Ahab's daughter Athaliah and introduced idolatry to Judah."
+  },
+  {
+    "id": "athaliah",
+    "name": "아달랴",
+    "engName": "Athaliah",
+    "gender": "F",
+    "generation": 38,
+    "column": 1.196,
+    "parents": [],
+    "spouses": [
+      "jehoram"
+    ],
+    "desc": "아합 and 이세벨의 딸. 남편 사후 왕실 씨를 말리고 왕위를 찬탈했던 여인.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Daughter of Ahab and Jezebel. A woman who stopped the royal family and usurped the throne after her husband's death."
+  },
+  {
+    "id": "azariah1_jehoshaphat",
+    "name": "아사랴",
+    "engName": "Azariah",
+    "gender": "M",
+    "generation": 38,
+    "column": 2.096,
+    "parents": [
+      "jehoshaphat"
+    ],
+    "spouses": [],
+    "desc": "여호사밧 왕의 아들(대하 21:2).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of King Jehoshaphat (2 Chronicles 21:2)."
+  },
+  {
+    "id": "jehiel_jehoshaphat",
+    "name": "여히엘",
+    "engName": "Jehiel",
+    "gender": "M",
+    "generation": 38,
+    "column": 3.496,
+    "parents": [
+      "jehoshaphat"
+    ],
+    "spouses": [],
+    "desc": "여호사밧 왕의 아들(대하 21:2).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of King Jehoshaphat (2 Chronicles 21:2)."
+  },
+  {
+    "id": "zechariah_jehoshaphat",
+    "name": "스가랴",
+    "engName": "Zechariah",
+    "gender": "M",
+    "generation": 38,
+    "column": 2.796,
+    "parents": [
+      "jehoshaphat"
+    ],
+    "spouses": [],
+    "desc": "여호사밧 왕의 아들(대하 21:2).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of King Jehoshaphat (2 Chronicles 21:2)."
+  },
+  {
+    "id": "azariah2_jehoshaphat",
+    "name": "아사랴",
+    "engName": "Azariah",
+    "gender": "M",
+    "generation": 38,
+    "column": 4.196,
+    "parents": [
+      "jehoshaphat"
+    ],
+    "spouses": [],
+    "desc": "여호사밧 왕의 아들(대하 21:2). 아사랴의 동명이인 형제.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of King Jehoshaphat (2 Chronicles 21:2). Azariah's brother with the same name."
+  },
+  {
+    "id": "michael_jehoshaphat",
+    "name": "미가엘",
+    "engName": "Michael",
+    "gender": "M",
+    "generation": 38,
+    "column": 4.896,
+    "parents": [
+      "jehoshaphat"
+    ],
+    "spouses": [],
+    "desc": "여호사밧 왕의 아들(대하 21:2).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of King Jehoshaphat (2 Chronicles 21:2)."
+  },
+  {
+    "id": "shephatiah_jehoshaphat",
+    "name": "스바냐",
+    "engName": "Shephatiah",
+    "gender": "M",
+    "generation": 38,
+    "column": 5.596,
+    "parents": [
+      "jehoshaphat"
+    ],
+    "spouses": [],
+    "desc": "여호사밧 왕의 아들(대하 21:2). 성경에는 스바댜로 기록됨.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of King Jehoshaphat (2 Chronicles 21:2). Recorded as Zebadiah in the Bible."
+  },
+  {
+    "id": "ahaziah",
+    "name": "아하시야 왕",
+    "engName": "Ahaziah",
+    "gender": "M",
+    "generation": 39,
+    "column": 0.014,
+    "parents": [
+      "jehoram",
+      "athaliah"
+    ],
+    "spouses": [
+      "zibiah"
+    ],
+    "desc": "북이스라엘 예후의 혁명 때 예후에게 살해당한 유다 왕.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The king of Judah who was killed by Jehu during Jehu's revolution in northern Israel."
+  },
+  {
+    "id": "zibiah",
+    "name": "시비야",
+    "engName": "Zibiah",
+    "gender": "F",
+    "generation": 39,
+    "column": 1.2,
+    "parents": [],
+    "spouses": [
+      "ahaziah"
+    ],
+    "desc": "브엘세바 출신. 요아스 왕의 어머니.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "From Beersheba. Mother of King Joash."
+  },
+  {
+    "id": "jehosheba",
+    "name": "여호세바",
+    "engName": "Jehosheba",
+    "gender": "F",
+    "generation": 39,
+    "column": -0.804,
+    "parents": [],
+    "spouses": [
+      "jehoiada"
+    ],
+    "desc": "여호람 왕의 딸이자 아하시야의 누이. 제사장 여호야다의 아내. 요아스를 숨겨 키움(왕하 11:2).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Daughter of King Jehoram and sister of Ahaziah. Wife of Jehoiada the priest. Hidden and raised Joash (2 Kings 11:2)."
+  },
+  {
+    "id": "jehoiada",
+    "name": "여호야다",
+    "engName": "Jehoiada",
+    "gender": "M",
+    "generation": 39,
+    "column": -1.704,
+    "parents": [
+      "jehoram",
+      "athaliah"
+    ],
+    "spouses": [
+      "jehosheba"
+    ],
+    "desc": "남유다의 대제사장. 여호세바의 남편. 아달랴를 축출하고 요아스를 왕위로 옹립함.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "High priest of southern Judah. Jehosheba's husband. Athaliah was ousted and Joash was installed as king."
+  },
+  {
+    "id": "joash",
+    "name": "요아스 왕",
+    "engName": "Joash",
+    "gender": "M",
+    "generation": 39.912,
+    "column": 0.014,
+    "parents": [
+      "ahaziah",
+      "zibiah"
+    ],
+    "spouses": [
+      "jehoaddan"
+    ],
+    "desc": "고모 여호세바가 아달랴의 살육에서 성전에 숨겨 키운 유일한 왕손.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The only royal descendant whom his aunt Jehosheba raised by hiding him in the temple from the slaughter of Athaliah."
+  },
+  {
+    "id": "jehoaddan",
+    "name": "여호앗단",
+    "engName": "Jehoaddan",
+    "gender": "F",
+    "generation": 39.91,
+    "column": 1.196,
+    "parents": [],
+    "spouses": [
+      "joash"
+    ],
+    "desc": "예루살렘 출신 요아스의 아내. 아마샤의 어머니.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Wife of Joash from Jerusalem. Amaziah's mother."
+  },
+  {
+    "id": "amaziah",
+    "name": "아마샤 왕",
+    "engName": "Amaziah",
+    "gender": "M",
+    "generation": 40.824,
+    "column": 0.014,
+    "parents": [
+      "joash",
+      "jehoaddan"
+    ],
+    "spouses": [
+      "jecholiah"
+    ],
+    "desc": "에돔 전쟁에서 승리했으나 에돔 우상을 가져와 음란히 섬김.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Although he won the war against Edom, he brought back Edom’s idols and served them indecently."
+  },
+  {
+    "id": "jecholiah",
+    "name": "여골리야",
+    "engName": "Jecholiah",
+    "gender": "F",
+    "generation": 40.82,
+    "column": 1.195,
+    "parents": [],
+    "spouses": [
+      "amaziah"
+    ],
+    "desc": "아마샤 왕의 아내. 웃시야 왕의 어머니.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Wife of King Amaziah. Mother of King Uzziah."
+  },
+  {
+    "id": "uzziah",
+    "name": "웃시야 왕",
+    "engName": "Uzziah",
+    "gender": "M",
+    "generation": 41.736,
+    "column": 0.014,
+    "parents": [
+      "amaziah",
+      "jecholiah"
+    ],
+    "spouses": [
+      "jerusha"
+    ],
+    "desc": "아사랴라고도 함. 나라를 부강케 했으나 교만하여 제사하려다 문둥병에 걸림.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Also called Azariah. Although he made the country prosperous, he became arrogant and fell ill with leprosy while attempting to make a sacrifice."
+  },
+  {
+    "id": "jerusha",
+    "name": "여루사",
+    "engName": "Jerusha",
+    "gender": "F",
+    "generation": 41.74,
+    "column": 1.193,
+    "parents": [],
+    "spouses": [
+      "uzziah"
+    ],
+    "desc": "사독의 딸이자 웃시야 왕의 아내.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Daughter of Zadok and wife of King Uzziah."
+  },
+  {
+    "id": "jotham",
+    "name": "요담 왕",
+    "engName": "Jotham",
+    "gender": "M",
+    "generation": 42.648,
+    "column": 0.014,
+    "parents": [
+      "uzziah",
+      "jerusha"
+    ],
+    "spouses": [],
+    "desc": "웃시야의 아들. 성전 윗문을 건축하고 정직히 행함.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Uzziah. Built the upper gate of the temple and acted honestly."
+  },
+  {
+    "id": "ahaz",
+    "name": "아하스 왕",
+    "engName": "Ahaz",
+    "gender": "M",
+    "generation": 43.56,
+    "column": 0.014,
+    "parents": [
+      "jotham"
+    ],
+    "spouses": [
+      "abijah_queen"
+    ],
+    "desc": "유다 최악의 우상 숭배 왕. 아들을 불 가운데로 지나가게 함.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The worst idolatrous king of Judah. He made his son pass through the fire."
+  },
+  {
+    "id": "abijah_queen",
+    "name": "아비야",
+    "engName": "Abijah",
+    "gender": "F",
+    "generation": 43.56,
+    "column": 1.196,
+    "parents": [],
+    "spouses": [
+      "ahaz"
+    ],
+    "desc": "스가랴의 딸. 히스기야 왕의 어머니.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Zechariah's daughter. Mother of King Hezekiah."
+  },
+  {
+    "id": "hezekiah",
+    "name": "히스기야 왕",
+    "engName": "Hezekiah",
+    "gender": "M",
+    "generation": 44.472,
+    "column": 0.014,
+    "parents": [
+      "ahaz",
+      "abijah_queen"
+    ],
+    "spouses": [
+      "hephzibah"
+    ],
+    "desc": "위대한 신앙 개혁가. 앗수르 군대 18만 5천을 물리치고 수명 15년 연장 응답 받음.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Great religious reformer. Defeated 185,000 Assyrian troops and received a 15-year extension of life."
+  },
+  {
+    "id": "hephzibah",
+    "name": "헵시바",
+    "engName": "Hephzibah",
+    "gender": "F",
+    "generation": 44.47,
+    "column": 1.188,
+    "parents": [],
+    "spouses": [
+      "hezekiah"
+    ],
+    "desc": "히스기야 왕의 아내. 므낫세 왕의 어머니.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "King Hezekiah's wife. Mother of King Manasseh."
+  },
+  {
+    "id": "manasseh_king",
+    "name": "므낫세 왕",
+    "engName": "Manasseh",
+    "gender": "M",
+    "generation": 45.384,
+    "column": 0.022,
+    "parents": [
+      "hezekiah",
+      "hephzibah"
+    ],
+    "spouses": [
+      "meshullemeth"
+    ],
+    "desc": "유다 중 가장 오래 통치(55년)했으나 가증한 우상을 섬겨 멸망을 자초함. 훗날 포로 중 회개함.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "He reigned the longest among Judah (55 years), but served abominable idols and brought about destruction. He later repented while in captivity."
+  },
+  {
+    "id": "meshullemeth",
+    "name": "므술레멧",
+    "engName": "Meshullemeth",
+    "gender": "F",
+    "generation": 45.39,
+    "column": 1.181,
+    "parents": [],
+    "spouses": [
+      "manasseh_king"
+    ],
+    "desc": "하루스의 딸. 아몬 왕의 어머니.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Daughter of Harus. King Amon's mother."
+  },
+  {
+    "id": "amon",
+    "name": "아몬 왕",
+    "engName": "Amon",
+    "gender": "M",
+    "generation": 46.296,
+    "column": 0.014,
+    "parents": [
+      "manasseh_king",
+      "meshullemeth"
+    ],
+    "spouses": [
+      "jedidah"
+    ],
+    "desc": "므낫세의 아들. 아비의 행위를 본받아 악을 행하다 부하들에게 시해당함.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Manasseh. He imitates his father's actions and commits evil, but is killed by his subordinates."
+  },
+  {
+    "id": "jedidah",
+    "name": "여디다",
+    "engName": "Jedidah",
+    "gender": "F",
+    "generation": 46.29,
+    "column": 1.193,
+    "parents": [],
+    "spouses": [
+      "amon"
+    ],
+    "desc": "아다야의 딸. 요시야 왕의 어머니.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Daughter of Adaya. King Josiah's mother."
+  },
+  {
+    "id": "josiah",
+    "name": "요시야 왕",
+    "engName": "Josiah",
+    "gender": "M",
+    "generation": 47.22,
+    "column": 0.014,
+    "parents": [
+      "amon",
+      "jedidah"
+    ],
+    "spouses": [
+      "hamutal",
+      "zebidah"
+    ],
+    "desc": "유다의 마지막 등불. 성전 수리 중 율법책을 발견하여 신앙 개혁을 단행함.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [
+      "prophet_huldah",
+      "prophet_zephaniah",
+      "prophet_jeremiah"
+    ],
+    "engDesc": "Judah's last lamp. While repairing the temple, he discovered the Book of the Law and reformed his faith."
+  },
+  {
+    "id": "hamutal",
+    "name": "하무달",
+    "engName": "Hamutal",
+    "gender": "F",
+    "generation": 47.22,
+    "column": -1.079,
+    "parents": [],
+    "spouses": [
+      "josiah"
+    ],
+    "desc": "요시야의 아내. 여호아하스와 시드기야의 어머니.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Josiah's wife. Mother of Jehoahaz and Zedekiah."
+  },
+  {
+    "id": "zebidah",
+    "name": "스비다",
+    "engName": "Zebidah",
+    "gender": "F",
+    "generation": 47.22,
+    "column": 1.214,
+    "parents": [],
+    "spouses": [
+      "josiah"
+    ],
+    "desc": "요시야의 아내. 여호야김의 어머니.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Josiah's wife. Jehoiakim's mother."
+  },
+  {
+    "id": "jehoahaz",
+    "name": "여호아하스 왕",
+    "engName": "Jehoahaz",
+    "gender": "M",
+    "generation": 48.12,
+    "column": 0.017,
+    "parents": [
+      "josiah",
+      "hamutal"
+    ],
+    "spouses": [],
+    "desc": "요시야의 아들. 3달간 통치 후 이집트로 끌려가 사망.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [
+      "prophet_jeremiah"
+    ],
+    "engDesc": "Son of Josiah. After reigning for three months, he was taken to Egypt and died."
+  },
+  {
+    "id": "jehoiakim",
+    "name": "여호야김 왕",
+    "engName": "Jehoiakim",
+    "gender": "M",
+    "generation": 49.03,
+    "column": 0.014,
+    "parents": [
+      "josiah",
+      "zebidah"
+    ],
+    "spouses": [
+      "nehushta"
+    ],
+    "desc": "본명은 엘리아김. 바벨론의 침공으로 쇠사슬에 묶여 끌려감.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [
+      "prophet_jeremiah"
+    ],
+    "engDesc": "His real name is Eliakim. He was taken away in chains during the Babylonian invasion."
+  },
+  {
+    "id": "nehushta",
+    "name": "느후스다",
+    "engName": "Nehushta",
+    "gender": "F",
+    "generation": 49.03,
+    "column": 1.214,
+    "parents": [],
+    "spouses": [
+      "jehoiakim"
+    ],
+    "desc": "여호야김의 아내. 여고냐(여호야긴)의 어머니.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Jehoiakim's wife. Mother of Jeconiah (Jehoiachin)."
+  },
+  {
+    "id": "zedekiah",
+    "name": "시드기야 왕",
+    "engName": "Zedekiah",
+    "gender": "M",
+    "generation": 50.856,
+    "column": 0.023,
+    "parents": [
+      "josiah",
+      "hamutal"
+    ],
+    "spouses": [],
+    "desc": "유다 마지막 왕. 바벨론 군대에 두 눈이 뽑힌 채 포로로 잡혀감.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [
+      "prophet_jeremiah"
+    ],
+    "engDesc": "The last king of Judah. He was taken prisoner by the Babylonian army with his eyes gouged out."
+  },
+  {
+    "id": "jeconiah",
+    "name": "여고냐(여호야긴)",
+    "engName": "Jeconiah",
+    "gender": "M",
+    "generation": 49.944,
+    "column": 0.014,
+    "parents": [
+      "jehoiakim",
+      "nehushta"
+    ],
+    "spouses": [],
+    "desc": "바벨론에 끌려가 감옥에서 37년 후 석방되어 왕의 대접을 받음. 포로기 계승자.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [
+      "prophet_jeremiah"
+    ],
+    "engDesc": "After being taken to Babylon and imprisoned for 37 years, he was released and treated well by the king. Heir to the captivity."
+  },
+  {
+    "id": "shealtiel",
+    "name": "스알디엘",
+    "engName": "Shealtiel",
+    "gender": "M",
+    "generation": 51.768,
+    "column": 0.019,
+    "parents": [
+      "jeconiah"
+    ],
+    "spouses": [],
+    "desc": "여고냐의 아들. 포로 생활 중 메시아 계보 계승.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Jeconiah. Succession of the Messianic lineage during captivity."
+  },
+  {
+    "id": "zerubbabel",
+    "name": "스룹바벨",
+    "engName": "Zerubbabel",
+    "gender": "M",
+    "generation": 52.68,
+    "column": 0.017,
+    "parents": [
+      "shealtiel"
+    ],
+    "spouses": [],
+    "desc": "바벨론 포로에서 귀환한 총독. 예루살렘 제2성전을 재건함.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Governor who returned from Babylonian captivity. Rebuilt the Second Temple in Jerusalem."
+  },
+  {
+    "id": "abiud",
+    "name": "아비훗",
+    "engName": "Abiud",
+    "gender": "M",
+    "generation": 53.592,
+    "column": 0.014,
+    "parents": [
+      "zerubbabel"
+    ],
+    "spouses": [],
+    "desc": "스룹바벨의 아들.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Zerubbabel."
+  },
+  {
+    "id": "eliakim",
+    "name": "엘리아김",
+    "engName": "Eliakim",
+    "gender": "M",
+    "generation": 54.504,
+    "column": 0.014,
+    "parents": [
+      "abiud"
+    ],
+    "spouses": [],
+    "desc": "아비훗의 아들.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Abihud."
+  },
+  {
+    "id": "azor",
+    "name": "아소르",
+    "engName": "Azor",
+    "gender": "M",
+    "generation": 55.416,
+    "column": 0.014,
+    "parents": [
+      "eliakim"
+    ],
+    "spouses": [],
+    "desc": "엘리아김의 아들.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Eliakim."
+  },
+  {
+    "id": "zadok_gen56",
+    "name": "사독",
+    "engName": "Zadok",
+    "gender": "M",
+    "generation": 56.328,
+    "column": 0.017,
+    "parents": [
+      "azor"
+    ],
+    "spouses": [],
+    "desc": "아소르의 아들.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Azor."
+  },
+  {
+    "id": "achim",
+    "name": "아킴",
+    "engName": "Achim",
+    "gender": "M",
+    "generation": 57.24,
+    "column": 0.014,
+    "parents": [
+      "zadok_gen56"
+    ],
+    "spouses": [],
+    "desc": "사독의 아들.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Zadok."
+  },
+  {
+    "id": "eliud",
+    "name": "엘리웃",
+    "engName": "Eliud",
+    "gender": "M",
+    "generation": 58.152,
+    "column": 0.014,
+    "parents": [
+      "achim"
+    ],
+    "spouses": [],
+    "desc": "아킴의 아들.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Achim's son."
+  },
+  {
+    "id": "eleazar",
+    "name": "엘르아살",
+    "engName": "Eleazar",
+    "gender": "M",
+    "generation": 59.064,
+    "column": 0.013,
+    "parents": [
+      "eliud"
+    ],
+    "spouses": [],
+    "desc": "엘리웃의 아들.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Eliud."
+  },
+  {
+    "id": "matthan",
+    "name": "맛단",
+    "engName": "Matthan",
+    "gender": "M",
+    "generation": 59.976,
+    "column": 0.014,
+    "parents": [
+      "eleazar"
+    ],
+    "spouses": [],
+    "desc": "요셉의 할아버지. 야곱의 아들.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Joseph's grandfather. Jacob's son."
+  },
+  {
+    "id": "jacob_joseph",
+    "name": "야곱",
+    "engName": "Jacob",
+    "gender": "M",
+    "generation": 60.888,
+    "column": 0.017,
+    "parents": [
+      "matthan"
+    ],
+    "spouses": [],
+    "desc": "맛단의 아들. 마리아의 남편 요셉의 아버지.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Matthan. Mary's husband Joseph's father."
+  },
+  {
+    "id": "heli",
+    "name": "헬리",
+    "engName": "Heli",
+    "gender": "M",
+    "generation": 61.08,
+    "column": -6.133,
+    "parents": [
+      "matthat_luke2"
+    ],
+    "spouses": [],
+    "desc": "마리아의 친아버지. 누가복음 예수 족보의 마지막 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Maria's biological father. The last ancestor in the genealogy of Jesus in the Gospel of Luke."
+  },
+  {
+    "id": "joseph_mary",
+    "name": "요셉",
+    "engName": "Joseph",
+    "gender": "M",
+    "generation": 61.8,
+    "column": 0.018,
+    "parents": [
+      "jacob_joseph"
+    ],
+    "spouses": [
+      "mary"
+    ],
+    "desc": "목수. 마리아의 남편이자 예수님의 법적 아버지.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Carpenter. Husband of Mary and legal father of Jesus."
+  },
+  {
+    "id": "mary",
+    "name": "마리아",
+    "engName": "Mary",
+    "gender": "F",
+    "generation": 61.8,
+    "column": -6.133,
+    "parents": [
+      "heli"
+    ],
+    "spouses": [
+      "joseph_mary"
+    ],
+    "desc": "동정녀 성령으로 예수를 잉태하여 순종함으로 하나님의 뜻을 이룬 복된 여인.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "A blessed woman who conceived Jesus through the virgin Holy Spirit and fulfilled God’s will through obedience."
+  },
+  {
+    "id": "jesus",
+    "name": "예수 그리스도",
+    "engName": "Jesus Christ",
+    "gender": "M",
+    "generation": 62.8,
+    "column": -3.055,
+    "parents": [
+      "joseph_mary",
+      "mary"
+    ],
+    "spouses": [],
+    "desc": "구주, 그리스도, 살아계신 하나님의 아들. 율법의 마침이자 성경의 주인공.",
+    "isMain": true,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Savior, Christ, Son of the living God. The end of the law and the main character of the Bible."
+  },
+  {
+    "id": "mattatha",
+    "name": "맛다다",
+    "engName": "Mattatha",
+    "gender": "M",
+    "generation": 33.72,
+    "column": -6.133,
+    "parents": [
+      "nathan"
+    ],
+    "spouses": [],
+    "desc": "나단의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Nathan's son."
+  },
+  {
+    "id": "menna",
+    "name": "멘나",
+    "engName": "Menna",
+    "gender": "M",
+    "generation": 34.44,
+    "column": -6.133,
+    "parents": [
+      "mattatha"
+    ],
+    "spouses": [],
+    "desc": "누가복음 3장에 기록된 예수의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "An ancestor of Jesus recorded in Luke chapter 3."
+  },
+  {
+    "id": "melea",
+    "name": "멜레아",
+    "engName": "Melea",
+    "gender": "M",
+    "generation": 35.16,
+    "column": -6.133,
+    "parents": [
+      "menna"
+    ],
+    "spouses": [],
+    "desc": "누가복음 3장에 기록된 예수의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "An ancestor of Jesus recorded in Luke chapter 3."
+  },
+  {
+    "id": "eliakim_luke",
+    "name": "엘리아김",
+    "engName": "Eliakim",
+    "gender": "M",
+    "generation": 35.88,
+    "column": -6.133,
+    "parents": [
+      "melea"
+    ],
+    "spouses": [],
+    "desc": "누가복음 3장에 기록된 예수의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "An ancestor of Jesus recorded in Luke chapter 3."
+  },
+  {
+    "id": "jonam",
+    "name": "요남",
+    "engName": "Jonam",
+    "gender": "M",
+    "generation": 36.6,
+    "column": -6.133,
+    "parents": [
+      "eliakim_luke"
+    ],
+    "spouses": [],
+    "desc": "누가복음 3장에 기록된 예수의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "An ancestor of Jesus recorded in Luke chapter 3."
+  },
+  {
+    "id": "joseph_luke1",
+    "name": "요셉",
+    "engName": "Joseph",
+    "gender": "M",
+    "generation": 37.32,
+    "column": -6.133,
+    "parents": [
+      "jonam"
+    ],
+    "spouses": [],
+    "desc": "누가복음 3장에 기록된 예수의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "An ancestor of Jesus recorded in Luke chapter 3."
+  },
+  {
+    "id": "judah_luke1",
+    "name": "유다",
+    "engName": "Judah",
+    "gender": "M",
+    "generation": 38.04,
+    "column": -6.133,
+    "parents": [
+      "joseph_luke1"
+    ],
+    "spouses": [],
+    "desc": "누가복음 3장에 기록된 예수의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "An ancestor of Jesus recorded in Luke chapter 3."
+  },
+  {
+    "id": "simeon_luke",
+    "name": "시므온",
+    "engName": "Simeon",
+    "gender": "M",
+    "generation": 38.76,
+    "column": -6.133,
+    "parents": [
+      "judah_luke1"
+    ],
+    "spouses": [],
+    "desc": "누가복음 3장에 기록된 예수의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "An ancestor of Jesus recorded in Luke chapter 3."
+  },
+  {
+    "id": "levi_luke1",
+    "name": "레위",
+    "engName": "Levi",
+    "gender": "M",
+    "generation": 39.48,
+    "column": -6.133,
+    "parents": [
+      "simeon_luke"
+    ],
+    "spouses": [],
+    "desc": "누가복음 3장에 기록된 예수의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "An ancestor of Jesus recorded in Luke chapter 3."
+  },
+  {
+    "id": "matthat_luke1",
+    "name": "맛닷",
+    "engName": "Matthat",
+    "gender": "M",
+    "generation": 40.2,
+    "column": -6.133,
+    "parents": [
+      "levi_luke1"
+    ],
+    "spouses": [],
+    "desc": "누가복음 3장에 기록된 예수의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "An ancestor of Jesus recorded in Luke chapter 3."
+  },
+  {
+    "id": "jorim",
+    "name": "요림",
+    "engName": "Jorim",
+    "gender": "M",
+    "generation": 40.92,
+    "column": -6.133,
+    "parents": [
+      "matthat_luke1"
+    ],
+    "spouses": [],
+    "desc": "누가복음 3장에 기록된 예수의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "An ancestor of Jesus recorded in Luke chapter 3."
+  },
+  {
+    "id": "eliezer_luke",
+    "name": "엘리에셀",
+    "engName": "Eliezer",
+    "gender": "M",
+    "generation": 41.64,
+    "column": -6.133,
+    "parents": [
+      "jorim"
+    ],
+    "spouses": [],
+    "desc": "누가복음 3장에 기록된 예수의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "An ancestor of Jesus recorded in Luke chapter 3."
+  },
+  {
+    "id": "joshua_luke",
+    "name": "예수",
+    "engName": "Jesus",
+    "gender": "M",
+    "generation": 42.36,
+    "column": -6.133,
+    "parents": [
+      "eliezer_luke"
+    ],
+    "spouses": [],
+    "desc": "누가복음 3장에 기록된 예수의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "An ancestor of Jesus recorded in Luke chapter 3."
+  },
+  {
+    "id": "er_luke",
+    "name": "에르",
+    "engName": "Er",
+    "gender": "M",
+    "generation": 43.08,
+    "column": -6.133,
+    "parents": [
+      "joshua_luke"
+    ],
+    "spouses": [],
+    "desc": "누가복음 3장에 기록된 예수의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "An ancestor of Jesus recorded in Luke chapter 3."
+  },
+  {
+    "id": "elmadam",
+    "name": "엘마담",
+    "engName": "Elmadam",
+    "gender": "M",
+    "generation": 43.8,
+    "column": -6.133,
+    "parents": [
+      "er_luke"
+    ],
+    "spouses": [],
+    "desc": "누가복음 3장에 기록된 예수의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "An ancestor of Jesus recorded in Luke chapter 3."
+  },
+  {
+    "id": "cosam",
+    "name": "코삼",
+    "engName": "Cosam",
+    "gender": "M",
+    "generation": 44.52,
+    "column": -6.133,
+    "parents": [
+      "elmadam"
+    ],
+    "spouses": [],
+    "desc": "누가복음 3장에 기록된 예수의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "An ancestor of Jesus recorded in Luke chapter 3."
+  },
+  {
+    "id": "addi",
+    "name": "아디",
+    "engName": "Addi",
+    "gender": "M",
+    "generation": 45.24,
+    "column": -6.133,
+    "parents": [
+      "cosam"
+    ],
+    "spouses": [],
+    "desc": "누가복음 3장에 기록된 예수의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "An ancestor of Jesus recorded in Luke chapter 3."
+  },
+  {
+    "id": "melchi_luke1",
+    "name": "멜기",
+    "engName": "Melchi",
+    "gender": "M",
+    "generation": 45.96,
+    "column": -6.133,
+    "parents": [
+      "addi"
+    ],
+    "spouses": [],
+    "desc": "누가복음 3장에 기록된 예수의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "An ancestor of Jesus recorded in Luke chapter 3."
+  },
+  {
+    "id": "neri",
+    "name": "네리",
+    "engName": "Neri",
+    "gender": "M",
+    "generation": 46.68,
+    "column": -6.133,
+    "parents": [
+      "melchi_luke1"
+    ],
+    "spouses": [],
+    "desc": "스알디엘의 눅 계열 친부.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Shealdiel's biological father of the Luke family."
+  },
+  {
+    "id": "shealtiel_luke",
+    "name": "스알디엘",
+    "engName": "Shealtiel",
+    "gender": "M",
+    "generation": 47.4,
+    "column": -6.134,
+    "parents": [
+      "neri"
+    ],
+    "spouses": [],
+    "desc": "네리의 아들. 스룹바벨의 아버지 (눅 계열).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Neri's son. Zerubbabel's father (Luke lineage)."
+  },
+  {
+    "id": "zerubbabel_luke",
+    "name": "스룹바벨",
+    "engName": "Zerubbabel",
+    "gender": "M",
+    "generation": 48.12,
+    "column": -6.134,
+    "parents": [
+      "shealtiel_luke"
+    ],
+    "spouses": [],
+    "desc": "스알디엘의 아들 (눅 계열).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Shealtiel (Luke line)."
+  },
+  {
+    "id": "rhesa",
+    "name": "레사",
+    "engName": "Rhesa",
+    "gender": "M",
+    "generation": 48.84,
+    "column": -6.137,
+    "parents": [
+      "zerubbabel_luke"
+    ],
+    "spouses": [],
+    "desc": "스룹바벨의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Zerubbabel."
+  },
+  {
+    "id": "joanan",
+    "name": "요아난",
+    "engName": "Joanan",
+    "gender": "M",
+    "generation": 49.56,
+    "column": -6.133,
+    "parents": [
+      "rhesa"
+    ],
+    "spouses": [],
+    "desc": "누가복음 3장에 기록된 예수의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "An ancestor of Jesus recorded in Luke chapter 3."
+  },
+  {
+    "id": "joda",
+    "name": "요다",
+    "engName": "Joda",
+    "gender": "M",
+    "generation": 50.28,
+    "column": -6.133,
+    "parents": [
+      "joanan"
+    ],
+    "spouses": [],
+    "desc": "누가복음 3장에 기록된 예수의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "An ancestor of Jesus recorded in Luke chapter 3."
+  },
+  {
+    "id": "josech",
+    "name": "요섹",
+    "engName": "Josech",
+    "gender": "M",
+    "generation": 51,
+    "column": -6.133,
+    "parents": [
+      "joda"
+    ],
+    "spouses": [],
+    "desc": "누가복음 3장에 기록된 예수의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "An ancestor of Jesus recorded in Luke chapter 3."
+  },
+  {
+    "id": "semein",
+    "name": "서머인",
+    "engName": "Semein",
+    "gender": "M",
+    "generation": 51.72,
+    "column": -6.133,
+    "parents": [
+      "josech"
+    ],
+    "spouses": [],
+    "desc": "누가복음 3장에 기록된 예수의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "An ancestor of Jesus recorded in Luke chapter 3."
+  },
+  {
+    "id": "mattathias_luke1",
+    "name": "맛다디아",
+    "engName": "Mattathias",
+    "gender": "M",
+    "generation": 52.44,
+    "column": -6.133,
+    "parents": [
+      "semein"
+    ],
+    "spouses": [],
+    "desc": "누가복음 3장에 기록된 예수의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "An ancestor of Jesus recorded in Luke chapter 3."
+  },
+  {
+    "id": "maath",
+    "name": "마앗",
+    "engName": "Maath",
+    "gender": "M",
+    "generation": 53.16,
+    "column": -6.133,
+    "parents": [
+      "mattathias_luke1"
+    ],
+    "spouses": [],
+    "desc": "누가복음 3장에 기록된 예수의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "An ancestor of Jesus recorded in Luke chapter 3."
+  },
+  {
+    "id": "naggai",
+    "name": "낙개",
+    "engName": "Naggai",
+    "gender": "M",
+    "generation": 53.88,
+    "column": -6.133,
+    "parents": [
+      "maath"
+    ],
+    "spouses": [],
+    "desc": "누가복음 3장에 기록된 예수의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "An ancestor of Jesus recorded in Luke chapter 3."
+  },
+  {
+    "id": "esli",
+    "name": "에슬리",
+    "engName": "Esli",
+    "gender": "M",
+    "generation": 54.6,
+    "column": -6.133,
+    "parents": [
+      "naggai"
+    ],
+    "spouses": [],
+    "desc": "누가복음 3장에 기록된 예수의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "An ancestor of Jesus recorded in Luke chapter 3."
+  },
+  {
+    "id": "nahum",
+    "name": "나훔",
+    "engName": "Nahum",
+    "gender": "M",
+    "generation": 55.32,
+    "column": -6.133,
+    "parents": [
+      "esli"
+    ],
+    "spouses": [],
+    "desc": "누가복음 3장에 기록된 예수의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "An ancestor of Jesus recorded in Luke chapter 3."
+  },
+  {
+    "id": "amos",
+    "name": "아모스",
+    "engName": "Amos",
+    "gender": "M",
+    "generation": 56.04,
+    "column": -6.133,
+    "parents": [
+      "nahum"
+    ],
+    "spouses": [],
+    "desc": "누가복음 3장에 기록된 예수의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "An ancestor of Jesus recorded in Luke chapter 3."
+  },
+  {
+    "id": "mattathias_luke2",
+    "name": "맛다디아",
+    "engName": "Mattathias",
+    "gender": "M",
+    "generation": 56.76,
+    "column": -6.133,
+    "parents": [
+      "amos"
+    ],
+    "spouses": [],
+    "desc": "누가복음 3장에 기록된 예수의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "An ancestor of Jesus recorded in Luke chapter 3."
+  },
+  {
+    "id": "joseph_luke2",
+    "name": "요셉",
+    "engName": "Joseph",
+    "gender": "M",
+    "generation": 57.48,
+    "column": -6.133,
+    "parents": [
+      "mattathias_luke2"
+    ],
+    "spouses": [],
+    "desc": "누가복음 3장에 기록된 예수의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "An ancestor of Jesus recorded in Luke chapter 3."
+  },
+  {
+    "id": "jannai",
+    "name": "얀나",
+    "engName": "Jannai",
+    "gender": "M",
+    "generation": 58.2,
+    "column": -6.133,
+    "parents": [
+      "joseph_luke2"
+    ],
+    "spouses": [],
+    "desc": "누가복음 3장에 기록된 예수의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "An ancestor of Jesus recorded in Luke chapter 3."
+  },
+  {
+    "id": "melchi_luke2",
+    "name": "멜기",
+    "engName": "Melchi",
+    "gender": "M",
+    "generation": 58.92,
+    "column": -6.133,
+    "parents": [
+      "jannai"
+    ],
+    "spouses": [],
+    "desc": "누가복음 3장에 기록된 예수의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "An ancestor of Jesus recorded in Luke chapter 3."
+  },
+  {
+    "id": "levi_luke2",
+    "name": "레위",
+    "engName": "Levi",
+    "gender": "M",
+    "generation": 59.64,
+    "column": -6.133,
+    "parents": [
+      "melchi_luke2"
+    ],
+    "spouses": [],
+    "desc": "누가복음 3장에 기록된 예수의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "An ancestor of Jesus recorded in Luke chapter 3."
+  },
+  {
+    "id": "matthat_luke2",
+    "name": "맛닷",
+    "engName": "Matthat",
+    "gender": "M",
+    "generation": 60.36,
+    "column": -6.133,
+    "parents": [
+      "levi_luke2"
+    ],
+    "spouses": [],
+    "desc": "헬리의 아버지. 누가복음 3장에 기록된 예수의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Heli's father. An ancestor of Jesus recorded in Luke chapter 3."
+  },
+  {
+    "id": "shuthelah_eph",
+    "name": "수델라",
+    "engName": "Shuthelah",
+    "gender": "M",
+    "generation": 24.06,
+    "column": 48.86,
+    "parents": [
+      "ephraim"
+    ],
+    "spouses": [],
+    "desc": "에브라임의 첫째 아들. 에브라임의 주요 가계.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Ephraim's first son. Ephraim's main lineage."
+  },
+  {
+    "id": "ezer_eph",
+    "name": "에셀",
+    "engName": "Ezer",
+    "gender": "M",
+    "generation": 24.06,
+    "column": 49.56,
+    "parents": [
+      "ephraim"
+    ],
+    "spouses": [],
+    "desc": "에브라임의 아들. 가드 원주민에게 가축을 빼앗으려다 죽임을 당함.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ephraim. Killed while trying to steal livestock from Gath natives."
+  },
+  {
+    "id": "elead_eph",
+    "name": "엘르앗",
+    "engName": "Elead",
+    "gender": "M",
+    "generation": 24.06,
+    "column": 50.36,
+    "parents": [
+      "ephraim"
+    ],
+    "spouses": [],
+    "desc": "에브라임의 아들. 가드 원주민에게 가축을 빼앗으려다 죽임을 당함.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ephraim. Killed while trying to steal livestock from Gath natives."
+  },
+  {
+    "id": "beriah_eph",
+    "name": "브라아",
+    "engName": "Beriah",
+    "gender": "M",
+    "generation": 24.06,
+    "column": 51.127,
+    "parents": [
+      "ephraim"
+    ],
+    "spouses": [],
+    "desc": "에브라임의 아들. 그의 집안이 재앙(악)에 빠졌을 때 낳았다는 뜻.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ephraim. It means that he was born when his family fell into disaster (evil)."
+  },
+  {
+    "id": "sheerah_eph",
+    "name": "세에라",
+    "engName": "Sheerah",
+    "gender": "F",
+    "generation": 24.06,
+    "column": 51.827,
+    "parents": [
+      "ephraim"
+    ],
+    "spouses": [],
+    "desc": "에브라임의 딸. 우, 아래 벧호론과 우센세에라를 건설함.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Daughter of Ephraim. Right, lower Beth Horon and Usenseera were built."
+  },
+  {
+    "id": "bered_eph",
+    "name": "베렛",
+    "engName": "Bered",
+    "gender": "M",
+    "generation": 25.06,
+    "column": 48.86,
+    "parents": [
+      "shuthelah_eph"
+    ],
+    "spouses": [],
+    "desc": "수델라의 아들. 에브라임의 직계 후손.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Sudela. A direct descendant of Ephraim."
+  },
+  {
+    "id": "rephah_eph",
+    "name": "레바",
+    "engName": "Rephah",
+    "gender": "M",
+    "generation": 25.06,
+    "column": 50.564,
+    "parents": [
+      "beriah_eph"
+    ],
+    "spouses": [],
+    "desc": "브라아의 아들. 여호수아의 직계 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Braah. Joshua's direct ancestor."
+  },
+  {
+    "id": "resheph_eph",
+    "name": "레셉",
+    "engName": "Resheph",
+    "gender": "M",
+    "generation": 25.06,
+    "column": 51.564,
+    "parents": [
+      "beriah_eph"
+    ],
+    "spouses": [],
+    "desc": "브라아의 아들. 여호수아의 직계 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Braah. Joshua's direct ancestor."
+  },
+  {
+    "id": "tahath1_eph",
+    "name": "다핫",
+    "engName": "Tahath",
+    "gender": "M",
+    "generation": 26.06,
+    "column": 48.86,
+    "parents": [
+      "bered_eph"
+    ],
+    "spouses": [],
+    "desc": "베렛의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Bered."
+  },
+  {
+    "id": "telah_eph",
+    "name": "델라",
+    "engName": "Telah",
+    "gender": "M",
+    "generation": 26.06,
+    "column": 51.564,
+    "parents": [
+      "resheph_eph"
+    ],
+    "spouses": [],
+    "desc": "레셉의 아들. 여호수아의 직계 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Resheph. Joshua's direct ancestor."
+  },
+  {
+    "id": "deborah_eph",
+    "name": "드보라",
+    "engName": "Deborah",
+    "gender": "F",
+    "generation": 27.24,
+    "column": 50.311,
+    "parents": [],
+    "spouses": [],
+    "desc": "4대 사사. 여선지자. 에브라임 산지 라맛과 벧엘 사이 거주하며 40년간 다스림.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The 4th judge. Prophetess. He lived between Ramat and Bethel in the hill country of Ephraim and ruled for 40 years."
+  },
+  {
+    "id": "eleadah_eph",
+    "name": "엘르아다",
+    "engName": "Eleadah",
+    "gender": "M",
+    "generation": 27.06,
+    "column": 48.86,
+    "parents": [
+      "tahath1_eph"
+    ],
+    "spouses": [],
+    "desc": "다핫의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Tahath."
+  },
+  {
+    "id": "tahan_eph",
+    "name": "다한",
+    "engName": "Tahan",
+    "gender": "M",
+    "generation": 27.06,
+    "column": 51.564,
+    "parents": [
+      "telah_eph"
+    ],
+    "spouses": [],
+    "desc": "델라의 아들. 여호수아의 직계 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Della's son. Joshua's direct ancestor."
+  },
+  {
+    "id": "tahath2_eph",
+    "name": "다핫",
+    "engName": "Tahath",
+    "gender": "M",
+    "generation": 28.06,
+    "column": 48.86,
+    "parents": [
+      "eleadah_eph"
+    ],
+    "spouses": [],
+    "desc": "엘르아다의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Eleada."
+  },
+  {
+    "id": "ladan_eph",
+    "name": "라단",
+    "engName": "Ladan",
+    "gender": "M",
+    "generation": 28.06,
+    "column": 51.564,
+    "parents": [
+      "tahan_eph"
+    ],
+    "spouses": [],
+    "desc": "다한의 아들. 여호수아의 조부의 조부.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Dahan's son. Joshua's grandfather's grandfather."
+  },
+  {
+    "id": "abdon_eph",
+    "name": "압돈",
+    "engName": "Abdon",
+    "gender": "M",
+    "generation": 28.66,
+    "column": 50.317,
+    "parents": [],
+    "spouses": [],
+    "desc": "11대 사사. 에브라임 산지 비라돈 출신. 8년간 다스림.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "11th judge. From Pirathon, hill country of Ephraim. Ruled for 8 years."
+  },
+  {
+    "id": "zabad_eph",
+    "name": "사밧",
+    "engName": "Zabad",
+    "gender": "M",
+    "generation": 29.06,
+    "column": 48.86,
+    "parents": [
+      "tahath2_eph"
+    ],
+    "spouses": [],
+    "desc": "다핫의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Tahath."
+  },
+  {
+    "id": "ammihud_eph",
+    "name": "암미훗",
+    "engName": "Ammihud",
+    "gender": "M",
+    "generation": 29.06,
+    "column": 51.564,
+    "parents": [
+      "ladan_eph"
+    ],
+    "spouses": [],
+    "desc": "라단의 아들. 여호수아의 증조부.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Lathan. Joshua's great-grandfather."
+  },
+  {
+    "id": "shuthelah2_eph",
+    "name": "수델라",
+    "engName": "Shuthelah",
+    "gender": "M",
+    "generation": 30.06,
+    "column": 48.86,
+    "parents": [
+      "zabad_eph"
+    ],
+    "spouses": [],
+    "desc": "사밧의 아들. 수델라 가계의 완성.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Shaphat. Completion of the Sudela family line."
+  },
+  {
+    "id": "elishama_eph",
+    "name": "엘리사마",
+    "engName": "Elishama",
+    "gender": "M",
+    "generation": 30.06,
+    "column": 51.564,
+    "parents": [
+      "ammihud_eph"
+    ],
+    "spouses": [],
+    "desc": "암미훗의 아들. 에브라임 지파의 우두머리이자 여호수아의 조부.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ammihud. The head of the tribe of Ephraim and grandfather of Joshua."
+  },
+  {
+    "id": "nun_eph",
+    "name": "눈",
+    "engName": "Nun",
+    "gender": "M",
+    "generation": 31.06,
+    "column": 51.564,
+    "parents": [
+      "elishama_eph"
+    ],
+    "spouses": [],
+    "desc": "엘리사마의 아들. 에브라임 지파 지휘관이자 여호수아의 친부.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Elishama. Commander of the tribe of Ephraim and Joshua's biological father."
+  },
+  {
+    "id": "joshua_eph",
+    "name": "여호수아",
+    "engName": "Joshua",
+    "gender": "M",
+    "generation": 32.06,
+    "column": 51.564,
+    "parents": [
+      "nun_eph"
+    ],
+    "spouses": [],
+    "desc": "눈의 아들(본명 호세아). 모세의 수계자이자 가나안 정복전쟁을 이끈 위대한 지도자.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Nun (real name Hosea). Moses' successor and a great leader who led the war to conquer Canaan."
+  },
+  {
+    "id": "man_wife",
+    "name": "아내",
+    "engName": "Wife",
+    "gender": "F",
+    "generation": 23.01,
+    "column": 41.361,
+    "parents": [],
+    "spouses": [
+      "manasseh"
+    ],
+    "desc": "므낫세의 아내.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Manasseh's wife."
+  },
+  {
+    "id": "man_concubine",
+    "name": "아람여인",
+    "engName": "Concubine",
+    "gender": "F",
+    "generation": 23.01,
+    "column": 45.367,
+    "parents": [],
+    "spouses": [
+      "manasseh"
+    ],
+    "desc": "므낫세의 아람 첩.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Manasseh's Aramean concubine."
+  },
+  {
+    "id": "asriel_man",
+    "name": "아스리엘",
+    "engName": "Asriel",
+    "gender": "M",
+    "generation": 24.01,
+    "column": 41.606,
+    "parents": [
+      "manasseh",
+      "man_wife"
+    ],
+    "spouses": [],
+    "desc": "므낫세와 그의 아내의 아들. 아스리엘 종족의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Manasseh and his wife. The ancestor of the Asriel race."
+  },
+  {
+    "id": "zelophehad1_man",
+    "name": "슬로브핫",
+    "engName": "Zelophehad",
+    "gender": "M",
+    "generation": 24.02,
+    "column": 42.29,
+    "parents": [
+      "manasseh",
+      "man_wife"
+    ],
+    "spouses": [],
+    "desc": "므낫세의 둘째 아들. 딸들만 낳음(대상 7:15).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Manasseh's second son. Only had daughters (1 Chronicles 7:15)."
+  },
+  {
+    "id": "machir_man",
+    "name": "마길",
+    "engName": "Machir",
+    "gender": "M",
+    "generation": 24.01,
+    "column": 46.823,
+    "parents": [
+      "manasseh",
+      "man_concubine"
+    ],
+    "spouses": [
+      "maacah_man"
+    ],
+    "desc": "므낫세와 아람 첩의 아들. 길르앗의 아버지.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Manasseh and Aramean concubine. Gilead's father."
+  },
+  {
+    "id": "maacah_man",
+    "name": "마아가",
+    "engName": "Maacah",
+    "gender": "F",
+    "generation": 24.01,
+    "column": 45.776,
+    "parents": [],
+    "spouses": [
+      "machir_man"
+    ],
+    "desc": "마길의 아내.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Magir's wife."
+  },
+  {
+    "id": "gilead_man",
+    "name": "길르앗",
+    "engName": "Gilead",
+    "gender": "M",
+    "generation": 25.01,
+    "column": 42.623,
+    "parents": [
+      "machir_man",
+      "maacah_man"
+    ],
+    "spouses": [
+      "gilead_wife",
+      "gilead_conc"
+    ],
+    "desc": "마길과 마아가의 아들. 길르앗 종족의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Machir and Maacah. Ancestor of the Gilead race."
+  },
+  {
+    "id": "gilead_conc",
+    "name": "기생",
+    "engName": "Concubine",
+    "gender": "F",
+    "generation": 25.01,
+    "column": 38.65,
+    "parents": [],
+    "spouses": [
+      "gilead_man"
+    ],
+    "desc": "길르앗의 첩(기생).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Gilead's concubine (parasite)."
+  },
+  {
+    "id": "gilead_wife",
+    "name": "부인",
+    "engName": "Wife",
+    "gender": "F",
+    "generation": 25.01,
+    "column": 44.166,
+    "parents": [],
+    "spouses": [
+      "gilead_man"
+    ],
+    "desc": "길르앗의 아내.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Gilead's wife."
+  },
+  {
+    "id": "hammoleketh_man",
+    "name": "함몰레겟",
+    "engName": "Hammoleketh",
+    "gender": "F",
+    "generation": 25.01,
+    "column": 44.923,
+    "parents": [
+      "machir_man",
+      "maacah_man"
+    ],
+    "spouses": [],
+    "desc": "마길의 딸. 길르앗의 누이. '여왕'이라는 뜻.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Daughter of Magir. Gilead's sister. Meaning ‘queen’."
+  },
+  {
+    "id": "peresh_man",
+    "name": "베레스",
+    "engName": "Peresh",
+    "gender": "M",
+    "generation": 25.01,
+    "column": 46.223,
+    "parents": [
+      "machir_man",
+      "maacah_man"
+    ],
+    "spouses": [],
+    "desc": "마길과 마아가의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Machir and Maacah."
+  },
+  {
+    "id": "sheresh_man",
+    "name": "세레스",
+    "engName": "Sheresh",
+    "gender": "M",
+    "generation": 25.01,
+    "column": 47.223,
+    "parents": [
+      "machir_man",
+      "maacah_man"
+    ],
+    "spouses": [],
+    "desc": "마길과 마아가의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Machir and Maacah."
+  },
+  {
+    "id": "jephthah_man",
+    "name": "입다",
+    "engName": "Jephthah",
+    "gender": "M",
+    "generation": 26.01,
+    "column": 38.623,
+    "parents": [
+      "gilead_man",
+      "gilead_conc"
+    ],
+    "spouses": [],
+    "desc": "8대 사사. 길르앗의 아들. 큰 용사였으나 기생의 몸에서 태어나 쫓겨났다가 사사가 됨.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "8th judge. Son of Gilead. He was a great warrior, but was born as a gisaeng and was kicked out, then became a judge."
+  },
+  {
+    "id": "iezer_man",
+    "name": "이에셀",
+    "engName": "Iezer",
+    "gender": "M",
+    "generation": 26.01,
+    "column": 39.323,
+    "parents": [
+      "gilead_man"
+    ],
+    "spouses": [],
+    "desc": "길르앗의 아들. 아비에셀 종족의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Gilead. Ancestor of the Abiezer race."
+  },
+  {
+    "id": "helek_man",
+    "name": "헬렉",
+    "engName": "Helek",
+    "gender": "M",
+    "generation": 26.01,
+    "column": 40.023,
+    "parents": [
+      "gilead_man"
+    ],
+    "spouses": [],
+    "desc": "길르앗의 아들. 헬렉 종족의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Gilead. Ancestor of the Hellek race."
+  },
+  {
+    "id": "asriel2_man",
+    "name": "아스리엘",
+    "engName": "Asriel",
+    "gender": "M",
+    "generation": 26.01,
+    "column": 40.723,
+    "parents": [
+      "gilead_man"
+    ],
+    "spouses": [],
+    "desc": "길르앗의 아들. 아스리엘 종족의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Gilead. The ancestor of the Asriel race."
+  },
+  {
+    "id": "shechem_man",
+    "name": "세겜",
+    "engName": "Shechem",
+    "gender": "M",
+    "generation": 26.01,
+    "column": 41.423,
+    "parents": [
+      "gilead_man"
+    ],
+    "spouses": [],
+    "desc": "길르앗의 아들. 세겜 종족의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Gilead. The ancestor of the Shechem tribe."
+  },
+  {
+    "id": "shemida_man",
+    "name": "스미다",
+    "engName": "Shemida",
+    "gender": "M",
+    "generation": 26.01,
+    "column": 42.123,
+    "parents": [
+      "gilead_man"
+    ],
+    "spouses": [],
+    "desc": "길르앗의 아들. 스미다 종족의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Gilead. The ancestor of the Sumida race."
+  },
+  {
+    "id": "hepher_man",
+    "name": "헤벨",
+    "engName": "Hepher",
+    "gender": "M",
+    "generation": 26.01,
+    "column": 42.823,
+    "parents": [
+      "gilead_man"
+    ],
+    "spouses": [],
+    "desc": "길르앗의 아들. 헤벨 종족의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Gilead. Ancestor of the Hebel race."
+  },
+  {
+    "id": "ishhod_man",
+    "name": "이스홋",
+    "engName": "Ishhod",
+    "gender": "M",
+    "generation": 26.01,
+    "column": 44.523,
+    "parents": [
+      "hammoleketh_man"
+    ],
+    "spouses": [],
+    "desc": "함몰레겟의 아들. '영광의 사람'이라는 뜻.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Hammolegath. Meaning ‘man of glory’."
+  },
+  {
+    "id": "joash_man",
+    "name": "요아스",
+    "engName": "Joash",
+    "gender": "M",
+    "generation": 26.01,
+    "column": 45.223,
+    "parents": [
+      "hammoleketh_man"
+    ],
+    "spouses": [],
+    "desc": "함몰레겟의 아들. 아비에셀 사람 요아스. 기드온의 아버지.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Hammolegath. Joash the Abiezerite. Gideon's father."
+  },
+  {
+    "id": "mahlah_man",
+    "name": "말라",
+    "engName": "Mahlah",
+    "gender": "F",
+    "generation": 26.01,
+    "column": 45.923,
+    "parents": [
+      "hammoleketh_man"
+    ],
+    "spouses": [],
+    "desc": "함몰레겟의 딸.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Daughter of Hammoleget."
+  },
+  {
+    "id": "ulam_man",
+    "name": "울람",
+    "engName": "Ulam",
+    "gender": "M",
+    "generation": 26.01,
+    "column": 47.223,
+    "parents": [
+      "sheresh_man"
+    ],
+    "spouses": [],
+    "desc": "세레스의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ceres."
+  },
+  {
+    "id": "rakem_man",
+    "name": "라겜",
+    "engName": "Rakem",
+    "gender": "M",
+    "generation": 26.01,
+    "column": 47.923,
+    "parents": [
+      "sheresh_man"
+    ],
+    "spouses": [],
+    "desc": "세레스의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ceres."
+  },
+  {
+    "id": "jair_man",
+    "name": "야일",
+    "engName": "Jair",
+    "gender": "M",
+    "generation": 28.03,
+    "column": 39.862,
+    "parents": [],
+    "spouses": [],
+    "desc": "길르앗 사람 야일. 22년간 이스라엘을 다스린 사사.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Jair the Gileadite. A judge who ruled Israel for 22 years."
+  },
+  {
+    "id": "ahian_man",
+    "name": "아히안",
+    "engName": "Ahian",
+    "gender": "M",
+    "generation": 27.01,
+    "column": 40.023,
+    "parents": [
+      "shemida_man"
+    ],
+    "spouses": [],
+    "desc": "스미다의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Sumida's son."
+  },
+  {
+    "id": "shechem2_man",
+    "name": "세겜",
+    "engName": "Shechem",
+    "gender": "M",
+    "generation": 27.01,
+    "column": 40.723,
+    "parents": [
+      "shemida_man"
+    ],
+    "spouses": [],
+    "desc": "스미다의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Sumida's son."
+  },
+  {
+    "id": "likhi_man",
+    "name": "릭히",
+    "engName": "Likhi",
+    "gender": "M",
+    "generation": 27.01,
+    "column": 41.423,
+    "parents": [
+      "shemida_man"
+    ],
+    "spouses": [],
+    "desc": "스미다의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Sumida's son."
+  },
+  {
+    "id": "aniam_man",
+    "name": "아니암",
+    "engName": "Aniam",
+    "gender": "M",
+    "generation": 27.01,
+    "column": 42.123,
+    "parents": [
+      "shemida_man"
+    ],
+    "spouses": [],
+    "desc": "스미다의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Sumida's son."
+  },
+  {
+    "id": "zelophehad2_man",
+    "name": "슬로브핫",
+    "engName": "Zelophehad",
+    "gender": "M",
+    "generation": 27.01,
+    "column": 42.823,
+    "parents": [
+      "hepher_man"
+    ],
+    "spouses": [],
+    "desc": "헤벨의 아들. 아들이 없이 딸들만 낳고 광야에서 죽음.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Heber. He died in the wilderness after giving birth to only daughters and no sons."
+  },
+  {
+    "id": "gideon_man",
+    "name": "기드온",
+    "engName": "Gideon",
+    "gender": "M",
+    "generation": 27.01,
+    "column": 45.223,
+    "parents": [
+      "joash_man"
+    ],
+    "spouses": [
+      "gideon_wife",
+      "gideon_conc"
+    ],
+    "desc": "5대 사사(여룹바알). 미디안과의 전쟁을 승리로 이끈 위대한 사사.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The 5th judge (Jerubbaal). A great judge who led the war against Midian to victory."
+  },
+  {
+    "id": "gideon_conc",
+    "name": "첩",
+    "engName": "Concubine",
+    "gender": "F",
+    "generation": 27.01,
+    "column": 46.314,
+    "parents": [],
+    "spouses": [
+      "gideon_man"
+    ],
+    "desc": "기드온의 세겜 첩.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Gideon's concubine Shechem."
+  },
+  {
+    "id": "bedan_man",
+    "name": "브단",
+    "engName": "Bedan",
+    "gender": "M",
+    "generation": 27.01,
+    "column": 47.223,
+    "parents": [
+      "ulam_man"
+    ],
+    "spouses": [],
+    "desc": "울람의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ulam."
+  },
+  {
+    "id": "mahlah_d",
+    "name": "말라",
+    "engName": "Mahlah",
+    "gender": "M",
+    "generation": 28.01,
+    "column": 41.423,
+    "parents": [
+      "zelophehad2_man"
+    ],
+    "spouses": [],
+    "desc": "슬로브핫의 첫째 딸. 여성의 상속권을 요구하여 하나님의 규례를 세움.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Zelophehad's first daughter. Established God's regulations by demanding women's inheritance rights."
+  },
+  {
+    "id": "noah_d",
+    "name": "노아",
+    "engName": "Noah",
+    "gender": "M",
+    "generation": 28.01,
+    "column": 42.123,
+    "parents": [
+      "zelophehad2_man"
+    ],
+    "spouses": [],
+    "desc": "슬로브핫의 둘째 딸.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Zelophehad's second daughter."
+  },
+  {
+    "id": "hoglah_d",
+    "name": "호글라",
+    "engName": "Hoglah",
+    "gender": "M",
+    "generation": 28.01,
+    "column": 42.823,
+    "parents": [
+      "zelophehad2_man"
+    ],
+    "spouses": [],
+    "desc": "슬로브핫의 셋째 딸.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Zelophehad's third daughter."
+  },
+  {
+    "id": "milcah_d",
+    "name": "밀가",
+    "engName": "Milcah",
+    "gender": "M",
+    "generation": 28.01,
+    "column": 43.523,
+    "parents": [
+      "zelophehad2_man"
+    ],
+    "spouses": [],
+    "desc": "슬로브핫의 넷째 딸.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Zelophehad's fourth daughter."
+  },
+  {
+    "id": "tirzah_d",
+    "name": "디르사",
+    "engName": "Tirzah",
+    "gender": "M",
+    "generation": 28.01,
+    "column": 44.223,
+    "parents": [
+      "zelophehad2_man"
+    ],
+    "spouses": [],
+    "desc": "슬로브핫의 다섯째 딸.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Zelophehad's fifth daughter."
+  },
+  {
+    "id": "jether_man",
+    "name": "여델",
+    "engName": "Jether",
+    "gender": "M",
+    "generation": 28.01,
+    "column": 45.023,
+    "parents": [
+      "gideon_man",
+      "gideon_wife"
+    ],
+    "spouses": [],
+    "desc": "기드온의 장남. 어려서 적장을 죽이지 못하고 두려워함.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Gideon's eldest son. When he was young, he was unable to kill the enemy commander and was afraid."
+  },
+  {
+    "id": "jotham_man",
+    "name": "요담",
+    "engName": "Jotham",
+    "gender": "M",
+    "generation": 28.01,
+    "column": 45.723,
+    "parents": [
+      "gideon_man",
+      "gideon_wife"
+    ],
+    "spouses": [],
+    "desc": "기드온의 막내 아들. 아비멜렉의 학살에서 유일하게 생존하여 그리심 산에서 요담의 우화를 선포함.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Gideon's youngest son. The only survivor of Abimelech's massacre, he proclaims the fable of Jotham on Mount Gerizim."
+  },
+  {
+    "id": "abimelech_man",
+    "name": "아비멜렉",
+    "engName": "Abimelech",
+    "gender": "M",
+    "generation": 28.01,
+    "column": 46.523,
+    "parents": [
+      "gideon_man",
+      "gideon_conc"
+    ],
+    "spouses": [],
+    "desc": "기드온의 첩의 아들. 형제 70명을 학살하고 스스로 왕이 된 자.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Gideon's concubine. A man who slaughtered 70 of his brothers and became king himself."
+  },
+  {
+    "id": "nebat",
+    "name": "느밧",
+    "engName": "Nebat",
+    "gender": "M",
+    "generation": 33,
+    "column": -4.996,
+    "parents": [],
+    "spouses": [
+      "zeruah_nebat"
+    ],
+    "desc": "여로보암 1세의 아버지.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Father of Jeroboam I."
+  },
+  {
+    "id": "zeruah_nebat",
+    "name": "스루아",
+    "engName": "Zeruah",
+    "gender": "F",
+    "generation": 33,
+    "column": -3.996,
+    "parents": [],
+    "spouses": [
+      "nebat"
+    ],
+    "desc": "느밧의 아내. 과부.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Nebat's wife. widow."
+  },
+  {
+    "id": "jeroboam1",
+    "name": "여로보암 1세",
+    "engName": "Jeroboam I",
+    "gender": "M",
+    "generation": 33.989,
+    "column": -4.996,
+    "parents": [
+      "nebat",
+      "zeruah_nebat"
+    ],
+    "spouses": [],
+    "desc": "북이스라엘의 초대 왕. 금송아지 우상을 만듦.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [
+      "prophet_ahijah_1"
+    ],
+    "engDesc": "The first king of Northern Israel. Making an idol of a golden calf."
+  },
+  {
+    "id": "nadab_jeroboam",
+    "name": "나답",
+    "engName": "Nadab",
+    "gender": "M",
+    "generation": 34.978,
+    "column": -4.996,
+    "parents": [
+      "jeroboam1"
+    ],
+    "spouses": [],
+    "desc": "북이스라엘 2대 왕.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The second king of Northern Israel."
+  },
+  {
+    "id": "abijah_jeroboam",
+    "name": "아비야",
+    "engName": "Abijah",
+    "gender": "M",
+    "generation": 34.47,
+    "column": -4.296,
+    "parents": [
+      "jeroboam1"
+    ],
+    "spouses": [],
+    "desc": "여로보암의 아들. 병들어 사망.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Jeroboam. got sick and died."
+  },
+  {
+    "id": "baasha",
+    "name": "바아사",
+    "engName": "Baasha",
+    "gender": "M",
+    "generation": 35.967,
+    "column": -4.996,
+    "parents": [
+      "nadab_jeroboam"
+    ],
+    "spouses": [],
+    "desc": "북이스라엘 3대 왕. 나답을 죽이고 왕이 됨.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [
+      "prophet_jehu"
+    ],
+    "engDesc": "The 3rd king of Northern Israel. Kills Nadab and becomes king."
+  },
+  {
+    "id": "elah_baasha",
+    "name": "엘라",
+    "engName": "Elah",
+    "gender": "M",
+    "generation": 36.956,
+    "column": -4.996,
+    "parents": [
+      "baasha"
+    ],
+    "spouses": [],
+    "desc": "북이스라엘 4대 왕. 시므리에게 피살됨.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The 4th king of Northern Israel. Killed by Zimri."
+  },
+  {
+    "id": "zimri",
+    "name": "시므리",
+    "engName": "Zimri",
+    "gender": "M",
+    "generation": 37.944,
+    "column": -4.996,
+    "parents": [
+      "elah_baasha"
+    ],
+    "spouses": [],
+    "desc": "북이스라엘 5대 왕. 7일간 통치 후 자결.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The 5th king of Northern Israel. After ruling for 7 days, he committed suicide."
+  },
+  {
+    "id": "omri",
+    "name": "오므리",
+    "engName": "Omri",
+    "gender": "M",
+    "generation": 38.933,
+    "column": -4.996,
+    "parents": [
+      "zimri"
+    ],
+    "spouses": [],
+    "desc": "북이스라엘 6대 왕. 사마리아를 수도로 정함.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The 6th king of Northern Israel. Samaria was chosen as the capital."
+  },
+  {
+    "id": "ahab",
+    "name": "아합",
+    "engName": "Ahab",
+    "gender": "M",
+    "generation": 39.922,
+    "column": -4.996,
+    "parents": [
+      "omri"
+    ],
+    "spouses": [
+      "jezebel"
+    ],
+    "desc": "북이스라엘 7대 왕. 바알 우상 숭배의 극치를 달림.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [
+      "prophet_elijah"
+    ],
+    "engDesc": "The 7th king of Northern Israel. The height of Baal idolatry."
+  },
+  {
+    "id": "jezebel",
+    "name": "이세벨",
+    "engName": "Jezebel",
+    "gender": "F",
+    "generation": 39.92,
+    "column": -3.996,
+    "parents": [],
+    "spouses": [
+      "ahab"
+    ],
+    "desc": "아합의 아내. 시돈 왕 엣바알의 딸. 바알 숭배자.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [
+      "prophet_elijah"
+    ],
+    "engDesc": "Ahab's wife. Daughter of Ethbaal, king of Sidon. Baal worshiper."
+  },
+  {
+    "id": "ahaziah_ahab",
+    "name": "아하시야",
+    "engName": "Ahaziah",
+    "gender": "M",
+    "generation": 40.89,
+    "column": -5.226,
+    "parents": [
+      "ahab",
+      "jezebel"
+    ],
+    "spouses": [],
+    "desc": "북이스라엘 8대 왕.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The 8th king of Northern Israel."
+  },
+  {
+    "id": "jehoram_ahab",
+    "name": "여호람(요람)",
+    "engName": "Jehoram",
+    "gender": "M",
+    "generation": 40.89,
+    "column": -4.516,
+    "parents": [
+      "ahab",
+      "jezebel"
+    ],
+    "spouses": [],
+    "desc": "북이스라엘 9대 왕. 예후에게 죽임 당함.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [
+      "prophet_elisha"
+    ],
+    "engDesc": "The 9th king of Northern Israel. Killed by Jehu."
+  },
+  {
+    "id": "jehu",
+    "name": "예후",
+    "engName": "Jehu",
+    "gender": "M",
+    "generation": 41.9,
+    "column": -4.996,
+    "parents": [
+      "jehoram_ahab"
+    ],
+    "spouses": [],
+    "desc": "북이스라엘 10대 왕. 아합 가문을 심판함.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [
+      "prophet_elisha"
+    ],
+    "engDesc": "The 10th king of Northern Israel. Judgment of Ahab’s family."
+  },
+  {
+    "id": "jehoahaz_jehu",
+    "name": "여호아하스",
+    "engName": "Jehoahaz",
+    "gender": "M",
+    "generation": 42.889,
+    "column": -4.996,
+    "parents": [
+      "jehu"
+    ],
+    "spouses": [],
+    "desc": "북이스라엘 11대 왕.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [
+      "prophet_elisha"
+    ],
+    "engDesc": "The 11th king of Northern Israel."
+  },
+  {
+    "id": "jehoash_jehoahaz",
+    "name": "요아스",
+    "engName": "Joash",
+    "gender": "M",
+    "generation": 43.878,
+    "column": -4.996,
+    "parents": [
+      "jehoahaz_jehu"
+    ],
+    "spouses": [],
+    "desc": "북이스라엘 12대 왕.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [
+      "prophet_elisha"
+    ],
+    "engDesc": "The 12th king of Northern Israel."
+  },
+  {
+    "id": "jeroboam2",
+    "name": "여로보암 2세",
+    "engName": "Jeroboam II",
+    "gender": "M",
+    "generation": 44.867,
+    "column": -4.996,
+    "parents": [
+      "jehoash_jehoahaz"
+    ],
+    "spouses": [],
+    "desc": "북이스라엘 13대 왕. 번영기를 이끔.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [
+      "prophet_jonah",
+      "prophet_hosea",
+      "prophet_amos"
+    ],
+    "engDesc": "The 13th king of Northern Israel. A period of prosperity."
+  },
+  {
+    "id": "zechariah_jeroboam2",
+    "name": "스가랴",
+    "engName": "Zechariah",
+    "gender": "M",
+    "generation": 45.856,
+    "column": -4.996,
+    "parents": [
+      "jeroboam2"
+    ],
+    "spouses": [],
+    "desc": "북이스라엘 14대 왕. 살룸에게 피살됨.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The 14th king of Northern Israel. Killed by Shallum."
+  },
+  {
+    "id": "shallum",
+    "name": "살룸",
+    "engName": "Shallum",
+    "gender": "M",
+    "generation": 46.844,
+    "column": -4.996,
+    "parents": [
+      "zechariah_jeroboam2"
+    ],
+    "spouses": [],
+    "desc": "북이스라엘 15대 왕. 1개월간 통치.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The 15th king of Northern Israel. Reigned for 1 month."
+  },
+  {
+    "id": "menahem",
+    "name": "므나헴",
+    "engName": "Menahem",
+    "gender": "M",
+    "generation": 47.833,
+    "column": -4.996,
+    "parents": [
+      "shallum"
+    ],
+    "spouses": [],
+    "desc": "북이스라엘 16대 왕.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The 16th king of Northern Israel."
+  },
+  {
+    "id": "pekahiah",
+    "name": "브가히야",
+    "engName": "Pekahiah",
+    "gender": "M",
+    "generation": 48.822,
+    "column": -4.996,
+    "parents": [
+      "menahem"
+    ],
+    "spouses": [],
+    "desc": "북이스라엘 17대 왕.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The 17th king of Northern Israel."
+  },
+  {
+    "id": "pekah",
+    "name": "베가",
+    "engName": "Pekah",
+    "gender": "M",
+    "generation": 49.811,
+    "column": -4.996,
+    "parents": [
+      "pekahiah"
+    ],
+    "spouses": [],
+    "desc": "북이스라엘 18대 왕.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The 18th king of Northern Israel."
+  },
+  {
+    "id": "hoshea",
+    "name": "호세아(왕)",
+    "engName": "Hoshea",
+    "gender": "M",
+    "generation": 50.8,
+    "column": -4.996,
+    "parents": [
+      "pekah"
+    ],
+    "spouses": [],
+    "desc": "북이스라엘의 마지막 19대 왕.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The last 19th king of Northern Israel."
+  },
+  {
+    "id": "chelub_suhah",
+    "name": "글룹",
+    "engName": "Chelub",
+    "gender": "M",
+    "generation": 27.27,
+    "column": 13.258,
+    "parents": [],
+    "spouses": [],
+    "desc": "수하의 형. 대상 4:11.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Suha’s older brother. 1 Chronicles 4:11."
+  },
+  {
+    "id": "mehir_chelub",
+    "name": "므힐",
+    "engName": "Mehir",
+    "gender": "M",
+    "generation": 28.26,
+    "column": 13.259,
+    "parents": [
+      "chelub_suhah"
+    ],
+    "spouses": [],
+    "desc": "글룹의 아들. 에스돈의 아버지.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Gloop. Esdon's father."
+  },
+  {
+    "id": "eshton_mehir",
+    "name": "에스돈",
+    "engName": "Eshton",
+    "gender": "M",
+    "generation": 29.26,
+    "column": 13.259,
+    "parents": [
+      "mehir_chelub"
+    ],
+    "spouses": [],
+    "desc": "므힐의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Mhil."
+  },
+  {
+    "id": "dehinnah_eshton",
+    "name": "디힌나",
+    "engName": "Dehinnah",
+    "gender": "M",
+    "generation": 30.26,
+    "column": 13.259,
+    "parents": [
+      "eshton_mehir"
+    ],
+    "spouses": [],
+    "desc": "에스돈의 아들. 레가 사람의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Esdon. The ancestor of the Rega people."
+  },
+  {
+    "id": "bethrapha_dehinnah",
+    "name": "베드라바",
+    "engName": "Beth-rapha",
+    "gender": "M",
+    "generation": 31.27,
+    "column": 13.259,
+    "parents": [
+      "dehinnah_eshton"
+    ],
+    "spouses": [],
+    "desc": "디힌나의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Dihinnah."
+  },
+  {
+    "id": "paseah_dehinnah",
+    "name": "바세아",
+    "engName": "Paseah",
+    "gender": "M",
+    "generation": 31.27,
+    "column": 13.959,
+    "parents": [
+      "dehinnah_eshton"
+    ],
+    "spouses": [],
+    "desc": "디힌나의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Dihinnah."
+  },
+  {
+    "id": "irnahash_dehinnah",
+    "name": "이르나하스",
+    "engName": "Ir-nahash",
+    "gender": "M",
+    "generation": 31.27,
+    "column": 12.559,
+    "parents": [
+      "dehinnah_eshton"
+    ],
+    "spouses": [],
+    "desc": "디힌나의 아들. 이르나하스 성읍의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Dihinnah. The ancestor of the city of Irnahas."
+  },
+  {
+    "id": "jephunneh",
+    "name": "여분네",
+    "engName": "Jephunneh",
+    "gender": "M",
+    "generation": 28.22,
+    "column": 16.925,
+    "parents": [],
+    "spouses": [],
+    "desc": "갈렙과 그나스의 아버지.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Father of Caleb and Kenaz."
+  },
+  {
+    "id": "caleb_jephunneh",
+    "name": "갈렙",
+    "engName": "Caleb",
+    "gender": "M",
+    "generation": 29.22,
+    "column": 15.891,
+    "parents": [
+      "jephunneh"
+    ],
+    "spouses": [],
+    "desc": "여분네의 아들. 가나안 정탐꾼. 글루배라하는 갈렙과 동명이인",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Jeopunne’s son. Canaanite spies. Glubae is a person with the same name as Caleb."
+  },
+  {
+    "id": "kenaz_jephunneh",
+    "name": "그나스",
+    "engName": "Kenaz",
+    "gender": "M",
+    "generation": 29.23,
+    "column": 17.841,
+    "parents": [
+      "jephunneh"
+    ],
+    "spouses": [],
+    "desc": "여분네의 아들. 옷니엘과 스라야의 아버지.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Jeopunne’s son. Father of Othniel and Seraiah."
+  },
+  {
+    "id": "iru_caleb",
+    "name": "이루",
+    "engName": "Iru",
+    "gender": "M",
+    "generation": 30.22,
+    "column": 14.591,
+    "parents": [
+      "caleb_jephunneh"
+    ],
+    "spouses": [],
+    "desc": "갈렙의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Caleb."
+  },
+  {
+    "id": "elah_caleb",
+    "name": "엘라",
+    "engName": "Elah",
+    "gender": "M",
+    "generation": 30.22,
+    "column": 15.291,
+    "parents": [
+      "caleb_jephunneh"
+    ],
+    "spouses": [],
+    "desc": "갈렙의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Caleb."
+  },
+  {
+    "id": "naam_caleb",
+    "name": "나암",
+    "engName": "Naam",
+    "gender": "M",
+    "generation": 30.22,
+    "column": 15.991,
+    "parents": [
+      "caleb_jephunneh"
+    ],
+    "spouses": [],
+    "desc": "갈렙의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Caleb."
+  },
+  {
+    "id": "achsah_caleb",
+    "name": "악사",
+    "engName": "Achsah",
+    "gender": "F",
+    "generation": 30.22,
+    "column": 16.691,
+    "parents": [
+      "caleb_jephunneh"
+    ],
+    "spouses": [],
+    "desc": "갈렙의 딸.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Caleb's daughter."
+  },
+  {
+    "id": "kenaz_elah",
+    "name": "그나스",
+    "engName": "Kenaz",
+    "gender": "M",
+    "generation": 31.22,
+    "column": 15.291,
+    "parents": [
+      "elah_caleb"
+    ],
+    "spouses": [],
+    "desc": "엘라의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Ella's son."
+  },
+  {
+    "id": "othniel_kenaz",
+    "name": "옷니엘",
+    "engName": "Othniel",
+    "gender": "M",
+    "generation": 30.23,
+    "column": 17.445,
+    "parents": [
+      "kenaz_jephunneh"
+    ],
+    "spouses": [],
+    "desc": "이스라엘의 초대 사사. 그나스의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The first judge of Israel. Son of Kenaz."
+  },
+  {
+    "id": "seraiah_kenaz",
+    "name": "스라야",
+    "engName": "Seraiah",
+    "gender": "M",
+    "generation": 30.23,
+    "column": 18.285,
+    "parents": [
+      "kenaz_jephunneh"
+    ],
+    "spouses": [],
+    "desc": "그나스의 아들. 요압의 아버지.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Kenaz. Joab's father."
+  },
+  {
+    "id": "hathath_othniel",
+    "name": "하닷",
+    "engName": "Hathath",
+    "gender": "M",
+    "generation": 31.24,
+    "column": 17.064,
+    "parents": [
+      "othniel_kenaz"
+    ],
+    "spouses": [],
+    "desc": "옷니엘의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Othniel."
+  },
+  {
+    "id": "meonothai_othniel",
+    "name": "므오노대",
+    "engName": "Meonothai",
+    "gender": "M",
+    "generation": 31.23,
+    "column": 17.834,
+    "parents": [
+      "othniel_kenaz"
+    ],
+    "spouses": [],
+    "desc": "옷니엘의 아들. 오브라의 아버지.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Othniel. Obra's father."
+  },
+  {
+    "id": "ophrah_meonothai",
+    "name": "오브라",
+    "engName": "Ophrah",
+    "gender": "M",
+    "generation": 32.23,
+    "column": 17.834,
+    "parents": [
+      "meonothai_othniel"
+    ],
+    "spouses": [],
+    "desc": "므오노대의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Meonodae."
+  },
+  {
+    "id": "joab_seraiah",
+    "name": "요압",
+    "engName": "Joab",
+    "gender": "M",
+    "generation": 31.23,
+    "column": 18.584,
+    "parents": [
+      "seraiah_kenaz"
+    ],
+    "spouses": [],
+    "desc": "스라야의 아들. 게하라심(장인들 골짜기)의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Seraiah. Ancestor of Geharazim (Valley of Craftsmen)."
+  },
+  {
+    "id": "jehalelyel",
+    "name": "여할렐렐",
+    "engName": "Jehalelyel",
+    "gender": "M",
+    "generation": 34.04,
+    "column": 16.757,
+    "parents": [],
+    "spouses": [],
+    "desc": "유다 지손. 대상 4:16.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Judah Zison. 1 Chronicles 4:16."
+  },
+  {
+    "id": "ziph_jehalelyel",
+    "name": "십",
+    "engName": "Ziph",
+    "gender": "M",
+    "generation": 35.04,
+    "column": 15.257,
+    "parents": [
+      "jehalelyel"
+    ],
+    "spouses": [],
+    "desc": "여할렐렐의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Jehallelel."
+  },
+  {
+    "id": "ziphah_jehalelyel",
+    "name": "시바",
+    "engName": "Ziphah",
+    "gender": "M",
+    "generation": 35.04,
+    "column": 16.257,
+    "parents": [
+      "jehalelyel"
+    ],
+    "spouses": [],
+    "desc": "여할렐렐의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Jehallelel."
+  },
+  {
+    "id": "tiria_jehalelyel",
+    "name": "디리야",
+    "engName": "Tiria",
+    "gender": "M",
+    "generation": 35.04,
+    "column": 17.257,
+    "parents": [
+      "jehalelyel"
+    ],
+    "spouses": [],
+    "desc": "여할렐렐의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Jehallelel."
+  },
+  {
+    "id": "asarel_jehalelyel",
+    "name": "아사헬",
+    "engName": "Asahel",
+    "gender": "M",
+    "generation": 35.04,
+    "column": 18.257,
+    "parents": [
+      "jehalelyel"
+    ],
+    "spouses": [],
+    "desc": "여할렐렐의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Jehallelel."
+  },
+  {
+    "id": "ezrah_juda",
+    "name": "에스라",
+    "engName": "Ezrah",
+    "gender": "M",
+    "generation": 36.18,
+    "column": 16.839,
+    "parents": [],
+    "spouses": [],
+    "desc": "유다 자손. 대상 4:17.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Descendants of Judah. 1 Chronicles 4:17."
+  },
+  {
+    "id": "jether_ezrah",
+    "name": "예델",
+    "engName": "Jether",
+    "gender": "M",
+    "generation": 37.18,
+    "column": 14.805,
+    "parents": [
+      "ezrah_juda"
+    ],
+    "spouses": [],
+    "desc": "에스라의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ezra."
+  },
+  {
+    "id": "mered_ezrah",
+    "name": "메렛",
+    "engName": "Mered",
+    "gender": "M",
+    "generation": 37.18,
+    "column": 16.839,
+    "parents": [
+      "ezrah_juda"
+    ],
+    "spouses": [
+      "bithiah_mered",
+      "jehudijah_mered"
+    ],
+    "desc": "에스라의 아들. 두 아내를 맞이함.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ezra. Takes two wives."
+  },
+  {
+    "id": "epher_ezrah",
+    "name": "에벨",
+    "engName": "Eber",
+    "gender": "M",
+    "generation": 37.18,
+    "column": 18.791,
+    "parents": [
+      "ezrah_juda"
+    ],
+    "spouses": [],
+    "desc": "에스라의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ezra."
+  },
+  {
+    "id": "jalon_ezrah",
+    "name": "얄론",
+    "engName": "Jalon",
+    "gender": "M",
+    "generation": 37.18,
+    "column": 19.539,
+    "parents": [
+      "ezrah_juda"
+    ],
+    "spouses": [],
+    "desc": "에스라의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ezra."
+  },
+  {
+    "id": "bithiah_mered",
+    "name": "비다아",
+    "engName": "Bithiah",
+    "gender": "F",
+    "generation": 37.18,
+    "column": 15.539,
+    "parents": [],
+    "spouses": [
+      "mered_ezrah"
+    ],
+    "desc": "바로의 딸. 메렛의 아내.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Pharaoh's daughter. Meret's wife."
+  },
+  {
+    "id": "jehudijah_mered",
+    "name": "여후디야",
+    "engName": "Jehudijah",
+    "gender": "F",
+    "generation": 37.18,
+    "column": 18.039,
+    "parents": [],
+    "spouses": [
+      "mered_ezrah"
+    ],
+    "desc": "유다 여인. 메렛의 아내.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Judah woman. Meret's wife."
+  },
+  {
+    "id": "miriam_mered",
+    "name": "미리암",
+    "engName": "Miriam",
+    "gender": "F",
+    "generation": 38.18,
+    "column": 15.039,
+    "parents": [
+      "mered_ezrah",
+      "bithiah_mered"
+    ],
+    "spouses": [],
+    "desc": "메렛과 비다아의 딸.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Daughter of Meret and Bidaa."
+  },
+  {
+    "id": "shammai_mered",
+    "name": "삼매",
+    "engName": "Shammai",
+    "gender": "M",
+    "generation": 38.18,
+    "column": 15.76,
+    "parents": [
+      "mered_ezrah",
+      "bithiah_mered"
+    ],
+    "spouses": [],
+    "desc": "메렛과 비다아의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Mereth and Bidaa."
+  },
+  {
+    "id": "ishbah_mered",
+    "name": "이스바",
+    "engName": "Ishbah",
+    "gender": "M",
+    "generation": 38.18,
+    "column": 16.479,
+    "parents": [
+      "mered_ezrah",
+      "bithiah_mered"
+    ],
+    "spouses": [],
+    "desc": "메렛과 비다아의 아들. 에스도모아의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Mereth and Bidaah. Esdomoa's ancestor."
+  },
+  {
+    "id": "jered_mered",
+    "name": "예렛",
+    "engName": "Jered",
+    "gender": "M",
+    "generation": 38.18,
+    "column": 17.2,
+    "parents": [
+      "mered_ezrah",
+      "jehudijah_mered"
+    ],
+    "spouses": [],
+    "desc": "메렛과 여후디야의 아들. 그돌의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Mered and Jehudiah. The ancestor of Gedol."
+  },
+  {
+    "id": "heber_mered",
+    "name": "헤벨",
+    "engName": "Heber",
+    "gender": "M",
+    "generation": 38.18,
+    "column": 17.92,
+    "parents": [
+      "mered_ezrah",
+      "jehudijah_mered"
+    ],
+    "spouses": [],
+    "desc": "메렛과 여후디야의 아들. 소고의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Mered and Jehudiah. Sogo's ancestor."
+  },
+  {
+    "id": "jekuthiel_mered",
+    "name": "여구디엘",
+    "engName": "Jekuthiel",
+    "gender": "M",
+    "generation": 38.18,
+    "column": 18.639,
+    "parents": [
+      "mered_ezrah",
+      "jehudijah_mered"
+    ],
+    "spouses": [],
+    "desc": "메렛과 여후디야의 아들. 사노아의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Mered and Jehudiah. Sanoa's ancestor."
+  },
+  {
+    "id": "parent_hodiah_wife",
+    "name": "??",
+    "engName": "Parent",
+    "gender": "M",
+    "generation": 36.1,
+    "column": 22.687,
+    "parents": [],
+    "spouses": [],
+    "desc": "비다아와 나함의 부모.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Parents of Bidaa and Naham."
+  },
+  {
+    "id": "sister_nahum",
+    "name": "비다아(나함누이)",
+    "engName": "Bithiah",
+    "gender": "F",
+    "generation": 37.1,
+    "column": 22.187,
+    "parents": [
+      "parent_hodiah_wife"
+    ],
+    "spouses": [
+      "hodiah"
+    ],
+    "desc": "나함의 누이. 호디야의 아내.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Naham's sister. Hodiah's wife."
+  },
+  {
+    "id": "naham",
+    "name": "나함",
+    "engName": "Naham",
+    "gender": "M",
+    "generation": 37.1,
+    "column": 23.387,
+    "parents": [
+      "parent_hodiah_wife"
+    ],
+    "spouses": [],
+    "desc": "호디야 아내의 남동생(또는 형제).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Hodiah's wife's younger brother (or brother)."
+  },
+  {
+    "id": "hodiah",
+    "name": "호디야",
+    "engName": "Hodiah",
+    "gender": "M",
+    "generation": 37.1,
+    "column": 21.187,
+    "parents": [],
+    "spouses": [
+      "sister_nahum"
+    ],
+    "desc": "대상 4:19.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "1 Chronicles 4:19."
+  },
+  {
+    "id": "sons_hodiah",
+    "name": "아들들",
+    "engName": "Sons",
+    "gender": "M",
+    "generation": 38.1,
+    "column": 21.687,
+    "parents": [
+      "hodiah",
+      "sister_nahum"
+    ],
+    "spouses": [],
+    "desc": "호디야와 그의 아내의 아들들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Hodiah and his wife's sons."
+  },
+  {
+    "id": "keilah_hodiah",
+    "name": "그일라",
+    "engName": "Keilah",
+    "gender": "M",
+    "generation": 39.1,
+    "column": 21.187,
+    "parents": [
+      "sons_hodiah"
+    ],
+    "spouses": [],
+    "desc": "호디야의 아들. 그일라 사람의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Hodiah. The ancestor of the Keilites."
+  },
+  {
+    "id": "eshtemoa_hodiah",
+    "name": "에스드모아",
+    "engName": "Eshtemoa",
+    "gender": "M",
+    "generation": 39.1,
+    "column": 22.187,
+    "parents": [
+      "sons_hodiah"
+    ],
+    "spouses": [],
+    "desc": "호디야의 아들. 마아가 사람 에스드모아의 조상.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Hodiah. An ancestor of Estemoah of Maacah."
+  },
+  {
+    "id": "shimon",
+    "name": "시몬",
+    "engName": "Shimon",
+    "gender": "M",
+    "generation": 40.09,
+    "column": 16.653,
+    "parents": [],
+    "spouses": [],
+    "desc": "유다 자손. 대상 4:20.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Descendants of Judah. 1 Chronicles 4:20."
+  },
+  {
+    "id": "amnon_shimon",
+    "name": "암논(시몬아들)",
+    "engName": "Amnon",
+    "gender": "M",
+    "generation": 41.09,
+    "column": 15.153,
+    "parents": [
+      "shimon"
+    ],
+    "spouses": [],
+    "desc": "시몬의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Simon's son."
+  },
+  {
+    "id": "rinnah_shimon",
+    "name": "린나",
+    "engName": "Rinnah",
+    "gender": "M",
+    "generation": 41.09,
+    "column": 16.153,
+    "parents": [
+      "shimon"
+    ],
+    "spouses": [],
+    "desc": "시몬의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Simon's son."
+  },
+  {
+    "id": "benhanan_shimon",
+    "name": "벤하난",
+    "engName": "Ben-hanan",
+    "gender": "M",
+    "generation": 41.09,
+    "column": 17.153,
+    "parents": [
+      "shimon"
+    ],
+    "spouses": [],
+    "desc": "시몬의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Simon's son."
+  },
+  {
+    "id": "tilon_shimon",
+    "name": "딜론",
+    "engName": "Tilon",
+    "gender": "M",
+    "generation": 41.09,
+    "column": 18.153,
+    "parents": [
+      "shimon"
+    ],
+    "spouses": [],
+    "desc": "시몬의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Simon's son."
+  },
+  {
+    "id": "ishi_1chr4",
+    "name": "이시",
+    "engName": "Ishi",
+    "gender": "M",
+    "generation": 42.28,
+    "column": 16.676,
+    "parents": [],
+    "spouses": [],
+    "desc": "유다 자손. 대상 4:20.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Descendants of Judah. 1 Chronicles 4:20."
+  },
+  {
+    "id": "zoheth_ishi",
+    "name": "소헷",
+    "engName": "Zoheth",
+    "gender": "M",
+    "generation": 43.28,
+    "column": 16.176,
+    "parents": [
+      "ishi_1chr4"
+    ],
+    "spouses": [],
+    "desc": "이시의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Ishi's son."
+  },
+  {
+    "id": "benzoheth_ishi",
+    "name": "벤소헷",
+    "engName": "Ben-zoheth",
+    "gender": "M",
+    "generation": 43.28,
+    "column": 17.176,
+    "parents": [
+      "ishi_1chr4"
+    ],
+    "spouses": [],
+    "desc": "이시의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Ishi's son."
+  },
+  {
+    "id": "jehoiarib_div",
+    "name": "여호야립",
+    "engName": "Jehoiarib",
+    "gender": "M",
+    "generation": 32.84,
+    "column": -31.382,
+    "parents": [],
+    "spouses": [],
+    "desc": "1반열 제사장. 대상 24:7.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "1st class priests. 1 Chronicles 24:7."
+  },
+  {
+    "id": "jedaiah_div",
+    "name": "여다야",
+    "engName": "Jedaiah",
+    "gender": "M",
+    "generation": 33.84,
+    "column": -31.382,
+    "parents": [
+      "jehoiarib_div"
+    ],
+    "spouses": [],
+    "desc": "2반열 제사장.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "2nd class of priests."
+  },
+  {
+    "id": "harim_div",
+    "name": "하림",
+    "engName": "Harim",
+    "gender": "M",
+    "generation": 34.84,
+    "column": -31.382,
+    "parents": [
+      "jedaiah_div"
+    ],
+    "spouses": [],
+    "desc": "3반열 제사장.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "3rd division of priests."
+  },
+  {
+    "id": "seorim_div",
+    "name": "스오림",
+    "engName": "Seorim",
+    "gender": "M",
+    "generation": 35.84,
+    "column": -31.382,
+    "parents": [
+      "harim_div"
+    ],
+    "spouses": [],
+    "desc": "4반열 제사장.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "4th division of priests."
+  },
+  {
+    "id": "malchijah_div",
+    "name": "말기야",
+    "engName": "Malchijah",
+    "gender": "M",
+    "generation": 36.84,
+    "column": -31.382,
+    "parents": [
+      "seorim_div"
+    ],
+    "spouses": [],
+    "desc": "5반열 제사장.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "5 divisions of priests."
+  },
+  {
+    "id": "mijamin_div",
+    "name": "미야민",
+    "engName": "Mijamin",
+    "gender": "M",
+    "generation": 37.84,
+    "column": -31.382,
+    "parents": [
+      "malchijah_div"
+    ],
+    "spouses": [],
+    "desc": "6반열 제사장.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "6th division of priests."
+  },
+  {
+    "id": "hakkoz_div",
+    "name": "학고스",
+    "engName": "Hakkoz",
+    "gender": "M",
+    "generation": 38.84,
+    "column": -31.382,
+    "parents": [
+      "mijamin_div"
+    ],
+    "spouses": [],
+    "desc": "7반열 제사장.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "7th division of priests."
+  },
+  {
+    "id": "abijah_div",
+    "name": "아비야(반열)",
+    "engName": "Abijah",
+    "gender": "M",
+    "generation": 39.84,
+    "column": -31.382,
+    "parents": [
+      "hakkoz_div"
+    ],
+    "spouses": [],
+    "desc": "8반열 제사장. 신약 사가랴의 반열.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "8 divisions of priests. The class of Zechariah in the New Testament."
+  },
+  {
+    "id": "jeshua_div",
+    "name": "예수아(반열)",
+    "engName": "Jeshua",
+    "gender": "M",
+    "generation": 40.84,
+    "column": -31.382,
+    "parents": [
+      "abijah_div"
+    ],
+    "spouses": [],
+    "desc": "9반열 제사장.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "9 divisions of priests."
+  },
+  {
+    "id": "shecaniah_div",
+    "name": "스가냐",
+    "engName": "Shecaniah",
+    "gender": "M",
+    "generation": 41.84,
+    "column": -31.382,
+    "parents": [
+      "jeshua_div"
+    ],
+    "spouses": [],
+    "desc": "10반열 제사장.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "10 divisions of priests."
+  },
+  {
+    "id": "eliashib_div",
+    "name": "엘리아십",
+    "engName": "Eliashib",
+    "gender": "M",
+    "generation": 42.84,
+    "column": -31.382,
+    "parents": [
+      "shecaniah_div"
+    ],
+    "spouses": [],
+    "desc": "11반열 제사장.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "11 divisions of priests."
+  },
+  {
+    "id": "jakim_div",
+    "name": "야킴",
+    "engName": "Jakim",
+    "gender": "M",
+    "generation": 43.84,
+    "column": -31.382,
+    "parents": [
+      "eliashib_div"
+    ],
+    "spouses": [],
+    "desc": "12반열 제사장.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "12 divisions of priests."
+  },
+  {
+    "id": "huppah_div",
+    "name": "훕바",
+    "engName": "Huppah",
+    "gender": "M",
+    "generation": 44.84,
+    "column": -31.382,
+    "parents": [
+      "jakim_div"
+    ],
+    "spouses": [],
+    "desc": "13반열 제사장.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "13 divisions of priests."
+  },
+  {
+    "id": "jeshebeab_div",
+    "name": "예세브압",
+    "engName": "Jeshebeab",
+    "gender": "M",
+    "generation": 45.84,
+    "column": -31.382,
+    "parents": [
+      "huppah_div"
+    ],
+    "spouses": [],
+    "desc": "14반열 제사장.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "14 divisions of priests."
+  },
+  {
+    "id": "bilgah_div",
+    "name": "빌가",
+    "engName": "Bilgah",
+    "gender": "M",
+    "generation": 46.84,
+    "column": -31.382,
+    "parents": [
+      "jeshebeab_div"
+    ],
+    "spouses": [],
+    "desc": "15반열 제사장.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "15 divisions of priests."
+  },
+  {
+    "id": "immer_div",
+    "name": "임멜",
+    "engName": "Immer",
+    "gender": "M",
+    "generation": 47.84,
+    "column": -31.382,
+    "parents": [
+      "bilgah_div"
+    ],
+    "spouses": [],
+    "desc": "16반열 제사장.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "16 divisions of priests."
+  },
+  {
+    "id": "hezir_div",
+    "name": "헤실",
+    "engName": "Hezir",
+    "gender": "M",
+    "generation": 48.84,
+    "column": -31.382,
+    "parents": [
+      "immer_div"
+    ],
+    "spouses": [],
+    "desc": "17반열 제사장.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "17 divisions of priests."
+  },
+  {
+    "id": "happizzez_div",
+    "name": "합비세스",
+    "engName": "Happizzez",
+    "gender": "M",
+    "generation": 49.84,
+    "column": -31.382,
+    "parents": [
+      "hezir_div"
+    ],
+    "spouses": [],
+    "desc": "18반열 제사장.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "18 divisions of priests."
+  },
+  {
+    "id": "pethahiah_div",
+    "name": "브다히야",
+    "engName": "Pethahiah",
+    "gender": "M",
+    "generation": 50.84,
+    "column": -31.382,
+    "parents": [
+      "happizzez_div"
+    ],
+    "spouses": [],
+    "desc": "19반열 제사장.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "19 divisions of priests."
+  },
+  {
+    "id": "jehezkel_div",
+    "name": "여헤스겔",
+    "engName": "Jehezkel",
+    "gender": "M",
+    "generation": 51.84,
+    "column": -31.382,
+    "parents": [
+      "pethahiah_div"
+    ],
+    "spouses": [],
+    "desc": "20반열 제사장.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "20 divisions of priests."
+  },
+  {
+    "id": "jachin_div",
+    "name": "야긴",
+    "engName": "Jachin",
+    "gender": "M",
+    "generation": 52.84,
+    "column": -31.382,
+    "parents": [
+      "jehezkel_div"
+    ],
+    "spouses": [],
+    "desc": "21반열 제사장.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "21 divisions of priests."
+  },
+  {
+    "id": "gamul_div",
+    "name": "가물",
+    "engName": "Gamul",
+    "gender": "M",
+    "generation": 53.84,
+    "column": -31.382,
+    "parents": [
+      "jachin_div"
+    ],
+    "spouses": [],
+    "desc": "22반열 제사장.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "22 divisions of priests."
+  },
+  {
+    "id": "delaiah_div",
+    "name": "들라야",
+    "engName": "Delaiah",
+    "gender": "M",
+    "generation": 54.84,
+    "column": -31.382,
+    "parents": [
+      "gamul_div"
+    ],
+    "spouses": [],
+    "desc": "23반열 제사장.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "23 divisions of priests."
+  },
+  {
+    "id": "maaziah_div",
+    "name": "마아시야",
+    "engName": "Maaziah",
+    "gender": "M",
+    "generation": 55.84,
+    "column": -31.382,
+    "parents": [
+      "delaiah_div"
+    ],
+    "spouses": [],
+    "desc": "24반열 제사장.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "24 divisions of priests."
+  },
+  {
+    "id": "zechariah_priest_div",
+    "name": "사가랴",
+    "engName": "Zechariah",
+    "gender": "M",
+    "generation": 46.14,
+    "column": -30.355,
+    "parents": [
+      "abijah_div"
+    ],
+    "spouses": [
+      "elizabeth_priest_div"
+    ],
+    "desc": "아비야 반열의 제사장. 세례 요한의 아버지.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "A priest of the Abijah class. Father of John the Baptist."
+  },
+  {
+    "id": "elizabeth_priest_div",
+    "name": "엘리사벳",
+    "engName": "Elizabeth",
+    "gender": "F",
+    "generation": 46.14,
+    "column": -29.155,
+    "parents": [],
+    "spouses": [
+      "zechariah_priest_div"
+    ],
+    "desc": "아론의 자손. 사가랴의 아내.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Aaron's descendants. Zechariah's wife."
+  },
+  {
+    "id": "john_baptist",
+    "name": "세례 요한",
+    "engName": "John the Baptist",
+    "gender": "M",
+    "generation": 47.14,
+    "column": -30.355,
+    "parents": [
+      "zechariah_priest_div",
+      "elizabeth_priest_div"
+    ],
+    "spouses": [],
+    "desc": "사가랴와 엘리사벳의 아들. 주의 길을 예비한 자.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Zechariah and Elizabeth. One who prepares the way for the Lord."
+  },
+  {
+    "id": "abinadab_ark",
+    "name": "아비나답",
+    "engName": "Abinadab",
+    "gender": "M",
+    "generation": 30.41,
+    "column": -32.384,
+    "parents": [],
+    "spouses": [],
+    "desc": "기럇여아림 사람. 법궤를 보관함.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "People from Kirjathjearim. Stores the Ark of the Covenant."
+  },
+  {
+    "id": "eleazar_abinadab",
+    "name": "엘리아살",
+    "engName": "Eleazar",
+    "gender": "M",
+    "generation": 31.41,
+    "column": -33.081,
+    "parents": [
+      "abinadab_ark"
+    ],
+    "spouses": [],
+    "desc": "아비나답의 아들. 법궤를 지키도록 구별됨.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Abinadab. Separated to guard the Ark of the Covenant."
+  },
+  {
+    "id": "uzzah_abinadab",
+    "name": "웃사",
+    "engName": "Uzzah",
+    "gender": "M",
+    "generation": 31.41,
+    "column": -32.389,
+    "parents": [
+      "abinadab_ark"
+    ],
+    "spouses": [],
+    "desc": "아비나답의 아들. 법궤를 만져서 사하심.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Abinadab. Forgiveness by touching the Ark of the Covenant."
+  },
+  {
+    "id": "ahio_abinadab",
+    "name": "아효",
+    "engName": "Ahio",
+    "gender": "M",
+    "generation": 31.41,
+    "column": -31.702,
+    "parents": [
+      "abinadab_ark"
+    ],
+    "spouses": [],
+    "desc": "아비나답의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Abinadab."
+  },
+  {
+    "id": "eli_priest",
+    "name": "엘리",
+    "engName": "Eli",
+    "gender": "M",
+    "generation": 27.92,
+    "column": -30.87,
+    "parents": [],
+    "spouses": [],
+    "desc": "실로의 제사장 겸 사사.\n관련 본문: 사무엘상 1-4장\n\n1. 엘리의 신앙과 역할\n    이스라엘의 대제사장: 실로 성소에서 여호와를 섬김(사무엘상 1:9).\n    이스라엘의 사사(40년간 통치, 사무엘상 4:18).\n    한나의 기도를 축복하여 사무엘이 태어나는 계기 제공(사무엘상 1:17).\n\n2. 엘리의 문제점\n*자녀 교육 실패\n  아들들(홉니와 비느하스)이 제사장 직분을 남용하고 악행을 저지름(사무엘상 2:12-17).\n  성소에서 제사를 멸시하고, 고기를 강제로 빼앗음(사무엘상 2:15-17).\n  회막에서 여인들과 동침하는 등 타락(사무엘상 2:22).\n  엘리는 이를 약하게 꾸짖었지만 강력한 조치를 취하지 않음(사무엘상 2:23-25).\n* 영적 둔감함\n  하나님께서 한나의 기도를 오해하고, 술 취했다고 잘못 판단(사무엘상 1:13-14).\n  하나님의 경고를 듣고도 적극적인 회개나 개혁을 하지 않음(사무엘상 2:27-36).\n* 하나님의 심판\n  하나님의 사람(선지자)이 경고: 엘리 가문이 영원히 제사장직을 감당하지 못할 것(삼상 2:30-34).\n  사무엘을 통해 다시 경고받음: 홉니와 비느하스가 같은 날 죽을 것(삼상 3:11-14).\n\n3. 엘리의 죽음과 가문의 몰락\n  * 블레셋과의 전투에서 언약궤를 함부로 사용하려다 패배(삼상 4:1-11).\n  * 홉니와 비느하스 사망, 언약궤가 빼앗김(삼상 4:11).\n  * 소식을 듣고 충격을 받아 의자에서 넘어져 목이 부러져 죽음(98세, 삼상 4:18).\n  * 비느하스의 아내가 \"이가봇\"(여호와의 영광이 떠났다)이라는 이름을 아들에게 지으며 엘리 가문의 몰락을 선언(삼상 4:21-22).\n\n4. 엘리의 평가와 교훈\n* 긍정적인 면\n    한나를 축복하여 사무엘이 태어나는 계기 제공(사무엘상 1:17).\n    사무엘을 양육하며 하나님께 헌신하게 함(사무엘상 3:1-9).\n* 부정적인 면\n    자녀 교육 실패 → 홉니와 비느하스의 타락 방치.\n    영적 무기력 → 하나님의 경고를 받고도 적극적인 회개 없이 수동적인 태도 유지.\n    무책임한 지도력 → 제사장으로서 이스라엘의 신앙을 제대로 지도하지 못함.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "A priest and judge at Shiloh.\nRelated text: 1 Samuel 1-4\n\n1. Eli’s faith and role\n    High Priest of Israel: Served Jehovah in the sanctuary of Shiloh (1 Samuel 1:9).\n    Judge of Israel (reigned 40 years, 1 Samuel 4:18).\n    Blessed Hannah's prayer and provided the opportunity for Samuel to be born (1 Samuel 1:17).\n\n2. Ellie’s problem\n*Failure to educate children\n  The sons (Hophni and Phinehas) abused their priestly duties and committed evil deeds (1 Samuel 2:12-17).\n  They despised the sacrifices at the sanctuary and forcibly took away the meat (1 Samuel 2:15-17).\n  Corruption, such as sleeping with women in the Tent of Meeting (1 Samuel 2:22).\n  Eli mildly rebuked this, but did not take strong action (1 Samuel 2:23-25).\n* Spiritual dullness\n  God misunderstood Hannah's prayer and mistakenly judged her to be drunk (1 Samuel 1:13-14).\n  Even after hearing God’s warning, they do not actively repent or reform (1 Samuel 2:27-36).\n* God's judgment\n  A man of God (prophet) warned: Eli's family would never be able to serve as priests (1 Samuel 2:30-34).\n  Again warned through Samuel: Hophni and Phinehas will die on the same day (1 Samuel 3:11-14).\n\n3. Eli’s death and the fall of the family\n  * In the battle with the Philistines, he tried to misuse the Ark of the Covenant and was defeated (1 Samuel 4:1-11).\n  * Hophni and Phinehas die, and the Ark of the Covenant is taken (1 Samuel 4:11).\n  * When he heard the news, he was so shocked that he fell from his chair, broke his neck, and died (age 98, 1 Samuel 4:18).\n  * Phinehas' wife names her son \"Ichabod\" (the glory of the Lord has departed) and announces the downfall of the Eli family (1 Samuel 4:21-22).\n\n4. Eli’s evaluation and lessons\n* Positive side\n    He blessed Hannah and provided the opportunity for Samuel to be born (1 Samuel 1:17).\n    Raising Samuel and dedicating him to God (1 Samuel 3:1-9).\n* Negative side\n    Failure to educate children → Neglect of Hophni and Phinehas’ corruption.\n    Spiritual lethargy → Maintaining a passive attitude without active repentance even after receiving God’s warning.\n    Irresponsible leadership → Failure to properly guide Israel’s faith as a priest."
+  },
+  {
+    "id": "hophni_eli",
+    "name": "홉니",
+    "engName": "Hophni",
+    "gender": "M",
+    "generation": 28.82,
+    "column": -31.32,
+    "parents": [
+      "eli_priest"
+    ],
+    "spouses": [],
+    "desc": "엘리의 아들. 악행을 저지름.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Eli. Committing evil deeds."
+  },
+  {
+    "id": "phinehas_eli",
+    "name": "비느하스",
+    "engName": "Phinehas",
+    "gender": "M",
+    "generation": 28.82,
+    "column": -30.395,
+    "parents": [
+      "eli_priest"
+    ],
+    "spouses": [
+      "wife_phinehas_eli"
+    ],
+    "desc": "엘리의 아들. 전쟁에서 사망.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Eli. Died in war."
+  },
+  {
+    "id": "wife_phinehas_eli",
+    "name": "부인",
+    "engName": "Wife",
+    "gender": "F",
+    "generation": 28.82,
+    "column": -29.495,
+    "parents": [],
+    "spouses": [
+      "phinehas_eli"
+    ],
+    "desc": "비느하스의 아내.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Phinehas' wife."
+  },
+  {
+    "id": "ichabod_phinehas",
+    "name": "이가봇",
+    "engName": "Ichabod",
+    "gender": "M",
+    "generation": 29.82,
+    "column": -30.295,
+    "parents": [
+      "phinehas_eli",
+      "wife_phinehas_eli"
+    ],
+    "spouses": [],
+    "desc": "비느하스의 아들. '영광이 떠났다'는 뜻.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Phinehas. It means ‘the glory has departed’."
+  },
+  {
+    "id": "ahitub_phinehas",
+    "name": "아히둡",
+    "engName": "Ahitub",
+    "gender": "M",
+    "generation": 29.82,
+    "column": -29.595,
+    "parents": [
+      "phinehas_eli",
+      "wife_phinehas_eli"
+    ],
+    "spouses": [],
+    "desc": "비느하스의 아들. 사독과 아히야의 아버지.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Phinehas. Father of Zadok and Ahijah."
+  },
+  {
+    "id": "zadok_ahitub_eli",
+    "name": "사독",
+    "engName": "Zadok",
+    "gender": "M",
+    "generation": 30.82,
+    "column": -30.324,
+    "parents": [
+      "ahitub_phinehas"
+    ],
+    "spouses": [],
+    "desc": "아히둡의 아들. 다윗 왕 때의 대제사장.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ahitub. High priest during the reign of King David."
+  },
+  {
+    "id": "ahijah_ahitub_eli",
+    "name": "아히야",
+    "engName": "Ahijah",
+    "gender": "M",
+    "generation": 30.82,
+    "column": -29.595,
+    "parents": [
+      "ahitub_phinehas"
+    ],
+    "spouses": [],
+    "desc": "아히둡의 아들. 아비아달의 아버지.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ahitub. Abiathar's father."
+  },
+  {
+    "id": "ahimaaz_zadok_eli",
+    "name": "아히마아스",
+    "engName": "Ahimaaz",
+    "gender": "M",
+    "generation": 31.82,
+    "column": -30.324,
+    "parents": [
+      "zadok_ahitub_eli"
+    ],
+    "spouses": [],
+    "desc": "사독의 아들. 전령. 삼하 15:27",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Zadok. messenger. 2 Samuel 15:27"
+  },
+  {
+    "id": "abiathar_ahijah_eli",
+    "name": "아비아달",
+    "engName": "Abiathar",
+    "gender": "M",
+    "generation": 31.82,
+    "column": -29.595,
+    "parents": [
+      "ahijah_ahitub_eli"
+    ],
+    "spouses": [],
+    "desc": "아히야의 아들. 다윗을 도운 제사장.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ahijah. A priest who helped David."
+  },
+  {
+    "id": "jonathan_abiathar",
+    "name": "요나단",
+    "engName": "Jonathan",
+    "gender": "M",
+    "generation": 32.82,
+    "column": -29.595,
+    "parents": [
+      "abiathar_ahijah_eli"
+    ],
+    "spouses": [],
+    "desc": "아비아달의 아들. 다윗의 아들 아도니야에게 급보를 전함.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Abiathar. Delivered urgent news to David's son Adonijah."
+  },
+  {
+    "id": "lotan_chief",
+    "name": "로단 족장",
+    "engName": "Lotan",
+    "gender": "M",
+    "generation": 20,
+    "column": -35.222,
+    "parents": [],
+    "spouses": [],
+    "desc": "호리 족장. 세일의 아들. 창 36:20.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Chief Hori. Son of Seil. Genesis 36:20."
+  },
+  {
+    "id": "timna_lotan",
+    "name": "딤나",
+    "engName": "Timna",
+    "gender": "M",
+    "generation": 21,
+    "column": -35.926,
+    "parents": [
+      "lotan_chief"
+    ],
+    "spouses": [],
+    "desc": "딤나의 아들",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "son of Timnah"
+  },
+  {
+    "id": "hori_lotan",
+    "name": "호리",
+    "engName": "Hori",
+    "gender": "M",
+    "generation": 21,
+    "column": -35.226,
+    "parents": [
+      "lotan_chief"
+    ],
+    "spouses": [],
+    "desc": "로단의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Rodan."
+  },
+  {
+    "id": "hemam_lotan",
+    "name": "헤맘",
+    "engName": "Hemam",
+    "gender": "M",
+    "generation": 21,
+    "column": -34.526,
+    "parents": [
+      "lotan_chief"
+    ],
+    "spouses": [],
+    "desc": "로단의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Rodan."
+  },
+  {
+    "id": "shobal_chief",
+    "name": "소발 족장",
+    "engName": "Shobal",
+    "gender": "M",
+    "generation": 20,
+    "column": -31.951,
+    "parents": [],
+    "spouses": [],
+    "desc": "호리 족장. 세일의 아들. 창 36:20.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Chief Hori. Son of Seil. Genesis 36:20."
+  },
+  {
+    "id": "alvan_shobal",
+    "name": "알완",
+    "engName": "Alvan",
+    "gender": "M",
+    "generation": 21,
+    "column": -33.726,
+    "parents": [
+      "shobal_chief"
+    ],
+    "spouses": [],
+    "desc": "소발의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Zophar."
+  },
+  {
+    "id": "manahath_shobal",
+    "name": "마나핫",
+    "engName": "Manahath",
+    "gender": "M",
+    "generation": 21,
+    "column": -33.026,
+    "parents": [
+      "shobal_chief"
+    ],
+    "spouses": [],
+    "desc": "소발의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Zophar."
+  },
+  {
+    "id": "ebal_shobal",
+    "name": "에발",
+    "engName": "Ebal",
+    "gender": "M",
+    "generation": 21,
+    "column": -32.326,
+    "parents": [
+      "shobal_chief"
+    ],
+    "spouses": [],
+    "desc": "소발의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Zophar."
+  },
+  {
+    "id": "shepho_shobal",
+    "name": "스보",
+    "engName": "Shepho",
+    "gender": "M",
+    "generation": 21,
+    "column": -31.626,
+    "parents": [
+      "shobal_chief"
+    ],
+    "spouses": [],
+    "desc": "소발의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Zophar."
+  },
+  {
+    "id": "onam_shobal",
+    "name": "오남",
+    "engName": "Onam",
+    "gender": "M",
+    "generation": 21,
+    "column": -30.926,
+    "parents": [
+      "shobal_chief"
+    ],
+    "spouses": [],
+    "desc": "소발의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Zophar."
+  },
+  {
+    "id": "zibeon_chief",
+    "name": "시뵨",
+    "engName": "Zibeon",
+    "gender": "M",
+    "generation": 20,
+    "column": -29.793,
+    "parents": [],
+    "spouses": [],
+    "desc": "호리 족장. 세일의 아들. 창 36:20. (개역한글: 시브온)",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Chief Hori. Son of Seil. Genesis 36:20. (Revised Korean: Sibeon)"
+  },
+  {
+    "id": "aiah_zibeon",
+    "name": "아야",
+    "engName": "Aiah",
+    "gender": "M",
+    "generation": 21,
+    "column": -30.138,
+    "parents": [
+      "zibeon_chief"
+    ],
+    "spouses": [],
+    "desc": "시뵨의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Sibyeon."
+  },
+  {
+    "id": "anah_zibeon",
+    "name": "아나",
+    "engName": "Anah",
+    "gender": "M",
+    "generation": 21,
+    "column": -29.438,
+    "parents": [
+      "zibeon_chief"
+    ],
+    "spouses": [],
+    "desc": "시뵨의 아들. 광야에서 온천을 발견한 자.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Sibyeon. A person who discovered hot springs in the wilderness."
+  },
+  {
+    "id": "anah_chief",
+    "name": "아나 족장",
+    "engName": "Anah",
+    "gender": "M",
+    "generation": 20,
+    "column": -28.274,
+    "parents": [],
+    "spouses": [],
+    "desc": "호리 족장. 세일의 아들. 창 36:20.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Chief Hori. Son of Seil. Genesis 36:20."
+  },
+  {
+    "id": "dishon_anah",
+    "name": "디손",
+    "engName": "Dishon",
+    "gender": "M",
+    "generation": 21,
+    "column": -28.638,
+    "parents": [
+      "anah_chief"
+    ],
+    "spouses": [],
+    "desc": "아나의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Ana's son."
+  },
+  {
+    "id": "oholibamah_anah",
+    "name": "오홀리바마",
+    "engName": "Oholibamah",
+    "gender": "M",
+    "generation": 21,
+    "column": -27.938,
+    "parents": [
+      "anah_chief"
+    ],
+    "spouses": [],
+    "desc": "아니족장의 아들",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Chief Ani's son"
+  },
+  {
+    "id": "dishon_chief",
+    "name": "디손 족장",
+    "engName": "Dishon",
+    "gender": "M",
+    "generation": 20,
+    "column": -26.083,
+    "parents": [],
+    "spouses": [],
+    "desc": "호리 족장. 세일의 아들. 창 36:20.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Chief Hori. Son of Seil. Genesis 36:20."
+  },
+  {
+    "id": "hemdan_dishon",
+    "name": "헴단",
+    "engName": "Hemdan",
+    "gender": "M",
+    "generation": 21,
+    "column": -27.138,
+    "parents": [
+      "dishon_chief"
+    ],
+    "spouses": [],
+    "desc": "디손의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Dishon."
+  },
+  {
+    "id": "eshban_dishon",
+    "name": "에스반",
+    "engName": "Eshban",
+    "gender": "M",
+    "generation": 21,
+    "column": -26.438,
+    "parents": [
+      "dishon_chief"
+    ],
+    "spouses": [],
+    "desc": "디손의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Dishon."
+  },
+  {
+    "id": "ithran_dishon",
+    "name": "이드란",
+    "engName": "Ithran",
+    "gender": "M",
+    "generation": 21,
+    "column": -25.738,
+    "parents": [
+      "dishon_chief"
+    ],
+    "spouses": [],
+    "desc": "디손의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Dishon."
+  },
+  {
+    "id": "cheran_dishon",
+    "name": "그란",
+    "engName": "Cheran",
+    "gender": "M",
+    "generation": 21,
+    "column": -25.038,
+    "parents": [
+      "dishon_chief"
+    ],
+    "spouses": [],
+    "desc": "디손의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Dishon."
+  },
+  {
+    "id": "ezer_chief",
+    "name": "에셀 족장",
+    "engName": "Ezer",
+    "gender": "M",
+    "generation": 20,
+    "column": -23.571,
+    "parents": [],
+    "spouses": [],
+    "desc": "호리 족장. 세일의 아들. 창 36:20.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Chief Hori. Son of Seil. Genesis 36:20."
+  },
+  {
+    "id": "bilhan_ezer",
+    "name": "발한",
+    "engName": "Bilhan",
+    "gender": "M",
+    "generation": 21,
+    "column": -24.268,
+    "parents": [
+      "ezer_chief"
+    ],
+    "spouses": [],
+    "desc": "에셀의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ezer."
+  },
+  {
+    "id": "zaavan_ezer",
+    "name": "사아완",
+    "engName": "Zaavan",
+    "gender": "M",
+    "generation": 21,
+    "column": -23.568,
+    "parents": [
+      "ezer_chief"
+    ],
+    "spouses": [],
+    "desc": "에셀의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ezer."
+  },
+  {
+    "id": "akan_ezer",
+    "name": "아간(에셀아들)",
+    "engName": "Akan",
+    "gender": "M",
+    "generation": 21,
+    "column": -22.868,
+    "parents": [
+      "ezer_chief"
+    ],
+    "spouses": [],
+    "desc": "에셀의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ezer."
+  },
+  {
+    "id": "dishan_chief",
+    "name": "디산 족장",
+    "engName": "Dishan",
+    "gender": "M",
+    "generation": 20,
+    "column": -21.789,
+    "parents": [],
+    "spouses": [],
+    "desc": "호리 족장. 세일의 아들. 창 36:20.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Chief Hori. Son of Seil. Genesis 36:20."
+  },
+  {
+    "id": "uz_dishan",
+    "name": "우스(디산아들)",
+    "engName": "Uz",
+    "gender": "M",
+    "generation": 21,
+    "column": -22.139,
+    "parents": [
+      "dishan_chief"
+    ],
+    "spouses": [],
+    "desc": "디산의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Disan."
+  },
+  {
+    "id": "aran_dishan",
+    "name": "아란",
+    "engName": "Aran",
+    "gender": "M",
+    "generation": 21,
+    "column": -21.439,
+    "parents": [
+      "dishan_chief"
+    ],
+    "spouses": [],
+    "desc": "디산의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Disan."
+  },
+  {
+    "id": "joel_reuben",
+    "name": "요엘",
+    "engName": "Joel",
+    "gender": "M",
+    "generation": 27.04,
+    "column": -38.77,
+    "parents": [],
+    "spouses": [],
+    "desc": "르우벤 자손. 대상 5:4.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Descendants of Reuben. 1 Chronicles 5:4."
+  },
+  {
+    "id": "shemaiah_joel",
+    "name": "스마야(요엘아들)",
+    "engName": "Shemaiah",
+    "gender": "M",
+    "generation": 28.03,
+    "column": -38.77,
+    "parents": [
+      "joel_reuben"
+    ],
+    "spouses": [],
+    "desc": "요엘의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Joel."
+  },
+  {
+    "id": "gog_shemaiah",
+    "name": "곡",
+    "engName": "Gog",
+    "gender": "M",
+    "generation": 29.03,
+    "column": -38.77,
+    "parents": [
+      "shemaiah_joel"
+    ],
+    "spouses": [],
+    "desc": "스마야의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Shemaiah."
+  },
+  {
+    "id": "shimei_gog",
+    "name": "시므이(곡아들)",
+    "engName": "Shimei",
+    "gender": "M",
+    "generation": 30.03,
+    "column": -38.77,
+    "parents": [
+      "gog_shemaiah"
+    ],
+    "spouses": [],
+    "desc": "곡의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Gog."
+  },
+  {
+    "id": "micah_shimei",
+    "name": "미가(시므이아들)",
+    "engName": "Micah",
+    "gender": "M",
+    "generation": 31.03,
+    "column": -38.77,
+    "parents": [
+      "shimei_gog"
+    ],
+    "spouses": [],
+    "desc": "시므이의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Shimei."
+  },
+  {
+    "id": "reaiah_micah",
+    "name": "르아야(미가아들)",
+    "engName": "Reaiah",
+    "gender": "M",
+    "generation": 32.03,
+    "column": -38.77,
+    "parents": [
+      "micah_shimei"
+    ],
+    "spouses": [],
+    "desc": "미가의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Micah."
+  },
+  {
+    "id": "baal_reaiah",
+    "name": "바알",
+    "engName": "Baal",
+    "gender": "M",
+    "generation": 33.03,
+    "column": -38.77,
+    "parents": [
+      "reaiah_micah"
+    ],
+    "spouses": [],
+    "desc": "르아야의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Reiah."
+  },
+  {
+    "id": "beerah_baal",
+    "name": "브에라",
+    "engName": "Beerah",
+    "gender": "M",
+    "generation": 34.03,
+    "column": -38.77,
+    "parents": [
+      "baal_reaiah"
+    ],
+    "spouses": [],
+    "desc": "바알의 아들. 앗수르 왕 디글랏빌레셀에게 사로잡힘.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Baal. Captured by Tiglathpileser, king of Assyria."
+  },
+  {
+    "id": "meshobab_simeon",
+    "name": "메소밥",
+    "engName": "Meshobab",
+    "gender": "M",
+    "generation": 24.84,
+    "column": -36.133,
+    "parents": [],
+    "spouses": [],
+    "desc": "시므온 지파 지도자. 대상 4:34.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Simeon tribe leader. 1 Chronicles 4:34."
+  },
+  {
+    "id": "jamlech_meshobab",
+    "name": "야몰렉",
+    "engName": "Jamlech",
+    "gender": "M",
+    "generation": 25.84,
+    "column": -36.133,
+    "parents": [
+      "meshobab_simeon"
+    ],
+    "spouses": [],
+    "desc": "시므온 지파 지도자.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Simeon tribe leader."
+  },
+  {
+    "id": "amashiah_jamlech",
+    "name": "아마시야(시므온)",
+    "engName": "Amaziah",
+    "gender": "M",
+    "generation": 26.84,
+    "column": -36.133,
+    "parents": [
+      "jamlech_meshobab"
+    ],
+    "spouses": [],
+    "desc": "요사의 아버지.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Losa's father."
+  },
+  {
+    "id": "joshah_amashiah",
+    "name": "요사",
+    "engName": "Joshah",
+    "gender": "M",
+    "generation": 27.84,
+    "column": -36.133,
+    "parents": [
+      "amashiah_jamlech"
+    ],
+    "spouses": [],
+    "desc": "아마시야의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Amasiah."
+  },
+  {
+    "id": "joel_joshah",
+    "name": "요엘(요사아들)",
+    "engName": "Joel",
+    "gender": "M",
+    "generation": 28.84,
+    "column": -36.133,
+    "parents": [
+      "joshah_amashiah"
+    ],
+    "spouses": [],
+    "desc": "요사의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Josa."
+  },
+  {
+    "id": "asiel_joel",
+    "name": "아시엘",
+    "engName": "Asiel",
+    "gender": "M",
+    "generation": 29.84,
+    "column": -36.133,
+    "parents": [
+      "joel_joshah"
+    ],
+    "spouses": [],
+    "desc": "요엘의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Joel."
+  },
+  {
+    "id": "seraiah_asiel",
+    "name": "스라야(아시엘아들)",
+    "engName": "Seraiah",
+    "gender": "M",
+    "generation": 30.84,
+    "column": -36.133,
+    "parents": [
+      "asiel_joel"
+    ],
+    "spouses": [],
+    "desc": "아시엘의 아들. 요시비야의 아버지.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Asiel. Josibiah's father."
+  },
+  {
+    "id": "joshibiah_seraiah",
+    "name": "요시비야",
+    "engName": "Joshibiah",
+    "gender": "M",
+    "generation": 31.84,
+    "column": -36.133,
+    "parents": [
+      "seraiah_asiel"
+    ],
+    "spouses": [],
+    "desc": "스라야의 아들. 예후의 아버지.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Seraiah. Jehu's father."
+  },
+  {
+    "id": "jehu_joshibiah",
+    "name": "예후(시므온)",
+    "engName": "Jehu",
+    "gender": "M",
+    "generation": 32.84,
+    "column": -36.133,
+    "parents": [
+      "joshibiah_seraiah"
+    ],
+    "spouses": [],
+    "desc": "요시비야의 아들. 시므온 지파 지도자.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Josibiah. Simeon tribe leader."
+  },
+  {
+    "id": "elioenai_jehu",
+    "name": "엘료에내",
+    "engName": "Elioenai",
+    "gender": "M",
+    "generation": 33.84,
+    "column": -36.133,
+    "parents": [
+      "jehu_joshibiah"
+    ],
+    "spouses": [],
+    "desc": "예후의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Jehu."
+  },
+  {
+    "id": "jaakobah_elioenai",
+    "name": "야아고바",
+    "engName": "Jaakobah",
+    "gender": "M",
+    "generation": 34.84,
+    "column": -36.133,
+    "parents": [
+      "elioenai_jehu"
+    ],
+    "spouses": [],
+    "desc": "엘료에내의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Elyoenae."
+  },
+  {
+    "id": "jeshohaiah_jaakobah",
+    "name": "여소하야",
+    "engName": "Jeshohaiah",
+    "gender": "M",
+    "generation": 35.84,
+    "column": -36.133,
+    "parents": [
+      "jaakobah_elioenai"
+    ],
+    "spouses": [],
+    "desc": "야아고바의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Jaagoba."
+  },
+  {
+    "id": "asaiah_jeshohaiah",
+    "name": "아사야(시므온)",
+    "engName": "Asaiah",
+    "gender": "M",
+    "generation": 36.84,
+    "column": -36.133,
+    "parents": [
+      "jeshohaiah_jaakobah"
+    ],
+    "spouses": [],
+    "desc": "여소하야의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Ye Sohaya."
+  },
+  {
+    "id": "adiel_asaiah",
+    "name": "아디엘",
+    "engName": "Adiel",
+    "gender": "M",
+    "generation": 37.84,
+    "column": -36.133,
+    "parents": [
+      "asaiah_jeshohaiah"
+    ],
+    "spouses": [],
+    "desc": "아사야의 아들. 여시미엘의 아버지.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Asaiah. Jeshmiel's father."
+  },
+  {
+    "id": "jesimiel_adiel",
+    "name": "여시미엘",
+    "engName": "Jesimiel",
+    "gender": "M",
+    "generation": 38.84,
+    "column": -36.133,
+    "parents": [
+      "adiel_asaiah"
+    ],
+    "spouses": [],
+    "desc": "아디엘의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Adiel."
+  },
+  {
+    "id": "benaiah_jesimiel",
+    "name": "브나야(시므온)",
+    "engName": "Benaiah",
+    "gender": "M",
+    "generation": 39.84,
+    "column": -36.133,
+    "parents": [
+      "jesimiel_adiel"
+    ],
+    "spouses": [],
+    "desc": "여시미엘의 아들. 스마야의 아버지.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Jeshmiel. Shemaiah's father."
+  },
+  {
+    "id": "shemaiah_benaiah",
+    "name": "스마야(브나야아들)",
+    "engName": "Shemaiah",
+    "gender": "M",
+    "generation": 40.84,
+    "column": -36.133,
+    "parents": [
+      "benaiah_jesimiel"
+    ],
+    "spouses": [],
+    "desc": "브나야의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Benaiah."
+  },
+  {
+    "id": "shimri_shemaiah",
+    "name": "시므리",
+    "engName": "Shimri",
+    "gender": "M",
+    "generation": 41.84,
+    "column": -36.133,
+    "parents": [
+      "shemaiah_benaiah"
+    ],
+    "spouses": [],
+    "desc": "스마야의 아들. 여다야의 아버지.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Shemaiah. Jedaiah's father."
+  },
+  {
+    "id": "jedaiah_shimri",
+    "name": "여다야(시므리아들)",
+    "engName": "Jedaiah",
+    "gender": "M",
+    "generation": 42.84,
+    "column": -36.133,
+    "parents": [
+      "shimri_shemaiah"
+    ],
+    "spouses": [],
+    "desc": "시므리의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Zimri."
+  },
+  {
+    "id": "allon_jedaiah",
+    "name": "알론",
+    "engName": "Allon",
+    "gender": "M",
+    "generation": 43.84,
+    "column": -36.133,
+    "parents": [
+      "jedaiah_shimri"
+    ],
+    "spouses": [],
+    "desc": "여다야의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Jedaiah."
+  },
+  {
+    "id": "shiphi_allon",
+    "name": "시비",
+    "engName": "Shiphi",
+    "gender": "M",
+    "generation": 44.84,
+    "column": -36.133,
+    "parents": [
+      "allon_jedaiah"
+    ],
+    "spouses": [],
+    "desc": "알론의 아들. 시사의 아버지.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Alon. Sisa's father."
+  },
+  {
+    "id": "ziza_shiphi",
+    "name": "시사",
+    "engName": "Ziza",
+    "gender": "M",
+    "generation": 45.84,
+    "column": -36.133,
+    "parents": [
+      "shiphi_allon"
+    ],
+    "spouses": [],
+    "desc": "시비의 아들. 시므온 지파 지도자.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Sibi's son. Simeon tribe leader."
+  },
+  {
+    "id": "Son",
+    "name": "아들들",
+    "engName": "Sons",
+    "gender": "M",
+    "generation": 26.01,
+    "column": 43.586,
+    "parents": [
+      "gilead_man",
+      "gilead_wife"
+    ],
+    "spouses": [],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "naomi",
+    "name": "나오미",
+    "engName": "Naomi",
+    "gender": "F",
+    "generation": 28,
+    "column": 2.93,
+    "parents": [],
+    "spouses": [
+      "Elimelech"
+    ],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "mahion",
+    "name": "말론",
+    "engName": "Mahlon",
+    "gender": "M",
+    "generation": 29,
+    "column": 2.1,
+    "parents": [
+      "Elimelech",
+      "naomi"
+    ],
+    "spouses": [
+      "ruth"
+    ],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "Elimelech",
+    "name": "엘리멜렉",
+    "engName": "Elimelech",
+    "gender": "M",
+    "generation": 28,
+    "column": 1.93,
+    "parents": [],
+    "spouses": [
+      "naomi"
+    ],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "Chilion",
+    "name": "기론",
+    "engName": "Chilion",
+    "gender": "M",
+    "generation": 29,
+    "column": 2.833,
+    "parents": [
+      "Elimelech",
+      "naomi"
+    ],
+    "spouses": [],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "hamul",
+    "name": "하몰",
+    "engName": "Hamul",
+    "gender": "M",
+    "generation": 24,
+    "column": 2.7,
+    "parents": [
+      "perez"
+    ],
+    "spouses": [],
+    "desc": "역대상 2:5",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "1 Chronicles 2:5"
+  },
+  {
+    "id": "Shua_daughter",
+    "name": "수아의 딸",
+    "engName": "Daughter of Shua",
+    "gender": "F",
+    "generation": 22,
+    "column": 1.9,
+    "parents": [],
+    "spouses": [
+      "judah"
+    ],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "er",
+    "name": "에르",
+    "engName": "Er",
+    "gender": "M",
+    "generation": 22.1,
+    "column": 4.265,
+    "parents": [
+      "judah",
+      "Shua_daughter"
+    ],
+    "spouses": [],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "onan",
+    "name": "오난",
+    "engName": "Onan",
+    "gender": "M",
+    "generation": 22.1,
+    "column": 4.965,
+    "parents": [
+      "judah",
+      "Shua_daughter"
+    ],
+    "spouses": [],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "shelah-1",
+    "name": "셀라",
+    "engName": "Shelah",
+    "gender": "M",
+    "generation": 22.1,
+    "column": 5.665,
+    "parents": [
+      "judah",
+      "Shua_daughter"
+    ],
+    "spouses": [],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "er-1",
+    "name": "에르",
+    "engName": "Er",
+    "gender": "M",
+    "generation": 22.9,
+    "column": 5.188,
+    "parents": [
+      "shelah-1"
+    ],
+    "spouses": [],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "laadah",
+    "name": "라이다",
+    "engName": "Laadah",
+    "gender": "M",
+    "generation": 22.9,
+    "column": 6.144,
+    "parents": [
+      "shelah-1"
+    ],
+    "spouses": [],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "lecah",
+    "name": "레가",
+    "engName": "Lecah",
+    "gender": "M",
+    "generation": 23.4,
+    "column": 5.192,
+    "parents": [
+      "er-1"
+    ],
+    "spouses": [],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "mareshah",
+    "name": "마레사",
+    "engName": "Mareshah",
+    "gender": "M",
+    "generation": 23.4,
+    "column": 6.146,
+    "parents": [
+      "laadah"
+    ],
+    "spouses": [],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "koz",
+    "name": "고스",
+    "engName": "Koz",
+    "gender": "M",
+    "generation": 28.44,
+    "column": -3.741,
+    "parents": [],
+    "spouses": [],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "anub",
+    "name": "아눕",
+    "engName": "Anub",
+    "gender": "M",
+    "generation": 29.46,
+    "column": -4.434,
+    "parents": [
+      "koz"
+    ],
+    "spouses": [],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "zobebah",
+    "name": "소베바",
+    "engName": "Zobebah",
+    "gender": "M",
+    "generation": 29.48,
+    "column": -3.74,
+    "parents": [
+      "koz"
+    ],
+    "spouses": [],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "harum",
+    "name": "하룸",
+    "engName": "Harum",
+    "gender": "M",
+    "generation": 29.48,
+    "column": -3.048,
+    "parents": [
+      "koz"
+    ],
+    "spouses": [],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "aharhel",
+    "name": "아하엘",
+    "engName": "Aharhel",
+    "gender": "M",
+    "generation": 30.48,
+    "column": -3.045,
+    "parents": [
+      "harum"
+    ],
+    "spouses": [],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "noah_wife",
+    "name": "노아의 아내",
+    "engName": "Noah's Wife",
+    "gender": "F",
+    "generation": 9,
+    "column": -1.171,
+    "parents": [],
+    "spouses": [
+      "noah"
+    ],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "shem_wife",
+    "name": "셈의 아내",
+    "engName": "Shem's Wife",
+    "gender": "F",
+    "generation": 10,
+    "column": 1.1,
+    "parents": [],
+    "spouses": [
+      "shem"
+    ],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "ham_wife",
+    "name": "함의 아내",
+    "engName": "Ham's Wife",
+    "gender": "F",
+    "generation": 10,
+    "column": -1.034,
+    "parents": [],
+    "spouses": [
+      "ham"
+    ],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "japheth_wife",
+    "name": "야벳의 아내",
+    "engName": "Japheth's Wife",
+    "gender": "F",
+    "generation": 10.01,
+    "column": -5.85,
+    "parents": [],
+    "spouses": [
+      "japheth"
+    ],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "peter",
+    "name": "베드로",
+    "engName": "Peter",
+    "gender": "M",
+    "generation": 64.29,
+    "column": -8.9,
+    "parents": [],
+    "spouses": [],
+    "teachers": [
+      "jesus"
+    ],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "Andrew",
+    "name": "안드레",
+    "engName": "Andrew",
+    "gender": "M",
+    "generation": 64.29,
+    "column": -7.108,
+    "parents": [],
+    "spouses": [],
+    "teachers": [
+      "jesus"
+    ],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "james",
+    "name": "야고보",
+    "engName": "James",
+    "gender": "M",
+    "generation": 64.29,
+    "column": -5.725,
+    "parents": [],
+    "spouses": [],
+    "teachers": [
+      "jesus"
+    ],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "john",
+    "name": "요한",
+    "engName": "John",
+    "gender": "M",
+    "generation": 64.29,
+    "column": -4.967,
+    "parents": [],
+    "spouses": [],
+    "teachers": [
+      "jesus"
+    ],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "philip",
+    "name": "빌립",
+    "engName": "Philip",
+    "gender": "M",
+    "generation": 64.29,
+    "column": -4.229,
+    "parents": [],
+    "spouses": [],
+    "teachers": [
+      "jesus"
+    ],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "bartholomew",
+    "name": "바돌로매",
+    "engName": "Bartholomew",
+    "gender": "M",
+    "generation": 64.29,
+    "column": -3.504,
+    "parents": [],
+    "spouses": [],
+    "teachers": [
+      "jesus"
+    ],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "thomas",
+    "name": "도마",
+    "engName": "Thomas",
+    "gender": "M",
+    "generation": 64.29,
+    "column": -2.767,
+    "parents": [],
+    "spouses": [],
+    "teachers": [
+      "jesus"
+    ],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "matthew",
+    "name": "마태",
+    "engName": "Matthew",
+    "gender": "M",
+    "generation": 64.29,
+    "column": -2.013,
+    "parents": [],
+    "spouses": [],
+    "teachers": [
+      "jesus"
+    ],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "james_alphaeus",
+    "name": "야고보",
+    "engName": "James, son of Alphaeus",
+    "gender": "M",
+    "generation": 64.29,
+    "column": -1.241,
+    "parents": [],
+    "spouses": [],
+    "teachers": [
+      "jesus"
+    ],
+    "desc": "알패오의 아들",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "son of alphaeus"
+  },
+  {
+    "id": "thaddaeus",
+    "name": "다대오",
+    "engName": "Thaddaeus",
+    "gender": "M",
+    "generation": 64.28,
+    "column": -0.475,
+    "parents": [],
+    "spouses": [],
+    "teachers": [
+      "jesus"
+    ],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "simon",
+    "name": "시몬",
+    "engName": "Simon",
+    "gender": "M",
+    "generation": 64.28,
+    "column": 0.279,
+    "parents": [],
+    "spouses": [],
+    "teachers": [
+      "jesus"
+    ],
+    "desc": "가나안인/셀롯",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Canaanite/Zeloth"
+  },
+  {
+    "id": "judas_lscariot",
+    "name": "가룟 유다",
+    "engName": "Judas Iscariot",
+    "gender": "M",
+    "generation": 64.27,
+    "column": 1.038,
+    "parents": [],
+    "spouses": [],
+    "teachers": [
+      "jesus"
+    ],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "matthias",
+    "name": "맛디아",
+    "engName": "Matthias",
+    "gender": "M",
+    "generation": 64.27,
+    "column": 2.563,
+    "parents": [],
+    "spouses": [],
+    "teachers": [
+      "jesus"
+    ],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "paul",
+    "name": "바울",
+    "engName": "Paul",
+    "gender": "M",
+    "generation": 64.27,
+    "column": 3.963,
+    "parents": [],
+    "spouses": [],
+    "teachers": [
+      "jesus"
+    ],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "cornelius",
+    "name": "고넬료",
+    "engName": "Cornelius",
+    "gender": "M",
+    "generation": 65.18,
+    "column": -8.9,
+    "parents": [],
+    "spouses": [],
+    "teachers": [
+      "peter"
+    ],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "A_man_lame_from_birth",
+    "name": "나면서 못 걷는 자",
+    "engName": "A man lame from birth",
+    "gender": "M",
+    "generation": 65.46,
+    "column": -9.979,
+    "parents": [],
+    "spouses": [],
+    "teachers": [
+      "peter"
+    ],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "abiel",
+    "name": "아비엘",
+    "engName": "Abiel",
+    "gender": "M",
+    "generation": 26.95,
+    "column": 65.597,
+    "parents": [
+      "zeror"
+    ],
+    "spouses": [
+      "maacah-abiel"
+    ],
+    "desc": "기브온의 조상(대상 9:35) 또는 여이엘. 마아가의 남편이며 기스, 넬 등의 아버지.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Ancestor of Gibeon (1 Chronicles 9:35) or Jeiel. Husband of Maacah and father of Kish, Nel, and others."
+  },
+  {
+    "id": "maacah-abiel",
+    "name": "마아가",
+    "engName": "Maacah",
+    "gender": "F",
+    "generation": 26.95,
+    "column": 66.797,
+    "parents": [],
+    "spouses": [
+      "abiel"
+    ],
+    "desc": "아비엘(여이엘)의 아내.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Wife of Abiel (Jeiel)."
+  },
+  {
+    "id": "ner",
+    "name": "넬",
+    "engName": "Ner",
+    "gender": "M",
+    "generation": 27.95,
+    "column": 63.622,
+    "parents": [
+      "abiel",
+      "maacah-abiel"
+    ],
+    "spouses": [],
+    "desc": "아비엘과 마아가의 아들. 아브넬의 아버지.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Abiel and Maacah. Abner's father."
+  },
+  {
+    "id": "nadab_abiel",
+    "name": "나답",
+    "engName": "Nadab",
+    "gender": "M",
+    "generation": 27.95,
+    "column": 64.297,
+    "parents": [
+      "abiel",
+      "maacah-abiel"
+    ],
+    "spouses": [],
+    "desc": "아비엘과 마아가의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Abiel and Maacah."
+  },
+  {
+    "id": "gedor_abiel",
+    "name": "그돌",
+    "engName": "Gedor",
+    "gender": "M",
+    "generation": 27.95,
+    "column": 64.972,
+    "parents": [
+      "abiel",
+      "maacah-abiel"
+    ],
+    "spouses": [],
+    "desc": "아비엘과 마아가의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Abiel and Maacah."
+  },
+  {
+    "id": "ahio_abiel",
+    "name": "아히오",
+    "engName": "Ahio",
+    "gender": "M",
+    "generation": 27.95,
+    "column": 65.646,
+    "parents": [
+      "abiel",
+      "maacah-abiel"
+    ],
+    "spouses": [],
+    "desc": "아비엘과 마아가의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Abiel and Maacah."
+  },
+  {
+    "id": "zecher_abiel",
+    "name": "세겔",
+    "engName": "Zecher",
+    "gender": "M",
+    "generation": 27.95,
+    "column": 66.997,
+    "parents": [
+      "abiel",
+      "maacah-abiel"
+    ],
+    "spouses": [],
+    "desc": "아비엘과 마아가의 아들 (대상 8:31, 9:37 '스가랴').",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Abiel and Maacah (1 Chronicles 8:31, 9:37 'Zechariah')."
+  },
+  {
+    "id": "mikloth_abiel",
+    "name": "미글롯",
+    "engName": "Mikloth",
+    "gender": "M",
+    "generation": 27.95,
+    "column": 67.672,
+    "parents": [
+      "abiel",
+      "maacah-abiel"
+    ],
+    "spouses": [],
+    "desc": "아비엘과 마아가의 아들. 시므아를 낳음.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Abiel and Maacah. gave birth to Shimeah."
+  },
+  {
+    "id": "shimeah_abiel",
+    "name": "시므아",
+    "engName": "Shimeah",
+    "gender": "M",
+    "generation": 27.95,
+    "column": 68.347,
+    "parents": [
+      "abiel",
+      "maacah-abiel"
+    ],
+    "spouses": [],
+    "desc": "아비엘과 마아가의 아들 (대상 8:32, 9:38 '시므암').",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Abiel and Maacah (1 Chronicles 8:32, 9:38 'Shimeam')."
+  },
+  {
+    "id": "abner",
+    "name": "아브넬",
+    "engName": "Abner",
+    "gender": "M",
+    "generation": 28.95,
+    "column": 63.622,
+    "parents": [
+      "ner"
+    ],
+    "spouses": [],
+    "desc": "넬의 아들. 사울 왕의 군대장관(삼상 14:50).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Nell's son. Commander of King Saul's army (1 Samuel 14:50)."
+  },
+  {
+    "id": "abdon_abiel",
+    "name": "압돈",
+    "engName": "Abdon",
+    "gender": "M",
+    "generation": 27.95,
+    "column": 61.597,
+    "parents": [
+      "abiel",
+      "maacah-abiel"
+    ],
+    "spouses": [],
+    "desc": "아비엘과 마아가의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Abiel and Maacah."
+  },
+  {
+    "id": "zur_abiel",
+    "name": "술",
+    "engName": "Zur",
+    "gender": "M",
+    "generation": 27.95,
+    "column": 62.272,
+    "parents": [
+      "abiel",
+      "maacah-abiel"
+    ],
+    "spouses": [],
+    "desc": "아비엘과 마아가의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Abiel and Maacah."
+  },
+  {
+    "id": "baal_abiel",
+    "name": "바알",
+    "engName": "Baal",
+    "gender": "M",
+    "generation": 27.95,
+    "column": 62.947,
+    "parents": [
+      "abiel",
+      "maacah-abiel"
+    ],
+    "spouses": [],
+    "desc": "아비엘과 마아가의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Abiel and Maacah."
+  },
+  {
+    "id": "ahinoam_saul",
+    "name": "아히노암",
+    "engName": "Ahinoam",
+    "gender": "F",
+    "generation": 28.95,
+    "column": 65.321,
+    "parents": [],
+    "spouses": [
+      "saul"
+    ],
+    "desc": "아히마아스의 딸. 사울 왕의 아내.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Daughter of Ahimaaz. King Saul's wife."
+  },
+  {
+    "id": "rizpah",
+    "name": "리스바",
+    "engName": "Rizpah",
+    "gender": "F",
+    "generation": 28.95,
+    "column": 67.722,
+    "parents": [],
+    "spouses": [
+      "saul"
+    ],
+    "desc": "아야의 딸. 사울 왕의 첩.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Aya's daughter. King Saul's concubine."
+  },
+  {
+    "id": "malchishua_saul",
+    "name": "말기수아",
+    "engName": "Malchi-shua",
+    "gender": "M",
+    "generation": 29.95,
+    "column": 62.572,
+    "parents": [
+      "saul",
+      "ahinoam_saul"
+    ],
+    "spouses": [],
+    "desc": "사울 왕의 아들. 길보아산 전투에서 전사함.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of King Saul. Killed in the Battle of Mount Gilboa."
+  },
+  {
+    "id": "abinadab_saul",
+    "name": "아비나답",
+    "engName": "Abinadab",
+    "gender": "M",
+    "generation": 29.95,
+    "column": 63.247,
+    "parents": [
+      "saul",
+      "ahinoam_saul"
+    ],
+    "spouses": [],
+    "desc": "사울 왕의 아들. 길보아산 전투에서 전사함.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of King Saul. Killed in the Battle of Mount Gilboa."
+  },
+  {
+    "id": "eshbaal_saul",
+    "name": "에스바알",
+    "engName": "Eshbaal",
+    "gender": "M",
+    "generation": 29.95,
+    "column": 64.597,
+    "parents": [
+      "saul",
+      "ahinoam_saul"
+    ],
+    "spouses": [],
+    "desc": "사울 왕의 아들. 이스보셋 왕(대상 8:33).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of King Saul. King Ishbosheth (1 Chronicles 8:33)."
+  },
+  {
+    "id": "merab_saul",
+    "name": "메랍",
+    "engName": "Merab",
+    "gender": "F",
+    "generation": 29.95,
+    "column": 65.272,
+    "parents": [
+      "saul",
+      "ahinoam_saul"
+    ],
+    "spouses": [
+      "adriel"
+    ],
+    "desc": "사울 왕의 큰딸. 아드리엘의 아내.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "King Saul's eldest daughter. Adriel's wife."
+  },
+  {
+    "id": "adriel",
+    "name": "아드리엘",
+    "engName": "Adriel",
+    "gender": "M",
+    "generation": 29.95,
+    "column": 66.155,
+    "parents": [],
+    "spouses": [
+      "merab_saul"
+    ],
+    "desc": "므홀랏 사람 바르실래의 아들. 메랍의 남편.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Barzillai the Meholathite. Merab's husband."
+  },
+  {
+    "id": "armoni",
+    "name": "알모니",
+    "engName": "Armoni",
+    "gender": "M",
+    "generation": 29.95,
+    "column": 67.504,
+    "parents": [
+      "saul",
+      "rizpah"
+    ],
+    "spouses": [],
+    "desc": "사울 왕과 리스바의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of King Saul and Rizpah."
+  },
+  {
+    "id": "mephibosheth_saul",
+    "name": "므비보셋",
+    "engName": "Mephibosheth",
+    "gender": "M",
+    "generation": 29.95,
+    "column": 68.18,
+    "parents": [
+      "saul",
+      "rizpah"
+    ],
+    "spouses": [],
+    "desc": "사울 왕과 리스바의 아들. 요나단의 아들 므비보셋과 동명이인.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of King Saul and Rizpah. Same name as Jonathan's son Mephibosheth."
+  },
+  {
+    "id": "micah_saul",
+    "name": "미가",
+    "engName": "Micah",
+    "gender": "M",
+    "generation": 31.95,
+    "column": 62.522,
+    "parents": [
+      "mephibosheth"
+    ],
+    "spouses": [],
+    "desc": "요나단의 아들 므비보셋의 아들 (대상 8:34,35).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Mephibosheth, son of Jonathan (1 Chronicles 8:34,35)."
+  },
+  {
+    "id": "pithon",
+    "name": "비돈",
+    "engName": "Pithon",
+    "gender": "M",
+    "generation": 32.95,
+    "column": 61.222,
+    "parents": [
+      "micah_saul"
+    ],
+    "spouses": [],
+    "desc": "미가의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Micah."
+  },
+  {
+    "id": "melech",
+    "name": "멜렉",
+    "engName": "Melech",
+    "gender": "M",
+    "generation": 32.95,
+    "column": 61.922,
+    "parents": [
+      "micah_saul"
+    ],
+    "spouses": [],
+    "desc": "미가의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Micah."
+  },
+  {
+    "id": "tarea",
+    "name": "다레아",
+    "engName": "Tarea",
+    "gender": "M",
+    "generation": 32.95,
+    "column": 62.622,
+    "parents": [
+      "micah_saul"
+    ],
+    "spouses": [],
+    "desc": "미가의 아들 (대상 8:35 '다레아', 9:41 '다하레아').",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Micah (1 Chronicles 8:35 'Tareah', 9:41 'Taharea')."
+  },
+  {
+    "id": "ahaz_saul",
+    "name": "아하스",
+    "engName": "Ahaz",
+    "gender": "M",
+    "generation": 32.95,
+    "column": 63.322,
+    "parents": [
+      "micah_saul"
+    ],
+    "spouses": [],
+    "desc": "미가의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Micah."
+  },
+  {
+    "id": "jehoaddah",
+    "name": "여호앗다",
+    "engName": "Jehoaddah",
+    "gender": "M",
+    "generation": 33.95,
+    "column": 63.322,
+    "parents": [
+      "ahaz_saul"
+    ],
+    "spouses": [],
+    "desc": "아하스의 아들 (대상 8:36 '여호앗다', 9:42 '야라').",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Ahaz's son (1 Chronicles 8:36 'Jehoaddah', 9:42 'Jara')."
+  },
+  {
+    "id": "alemeth_saul",
+    "name": "알레멧",
+    "engName": "Alemeth",
+    "gender": "M",
+    "generation": 34.95,
+    "column": 62.617,
+    "parents": [
+      "jehoaddah"
+    ],
+    "spouses": [],
+    "desc": "여호앗다의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Jehoaddah."
+  },
+  {
+    "id": "azmaveth_saul",
+    "name": "아스마웹",
+    "engName": "Azmaveth",
+    "gender": "M",
+    "generation": 34.95,
+    "column": 63.322,
+    "parents": [
+      "jehoaddah"
+    ],
+    "spouses": [],
+    "desc": "여호앗다의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Jehoaddah."
+  },
+  {
+    "id": "zimri_saul",
+    "name": "시므리",
+    "engName": "Zimri",
+    "gender": "M",
+    "generation": 34.95,
+    "column": 64.022,
+    "parents": [
+      "jehoaddah"
+    ],
+    "spouses": [],
+    "desc": "여호앗다의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Jehoaddah."
+  },
+  {
+    "id": "moza_saul",
+    "name": "모사",
+    "engName": "Moza",
+    "gender": "M",
+    "generation": 35.95,
+    "column": 64.022,
+    "parents": [
+      "zimri_saul"
+    ],
+    "spouses": [],
+    "desc": "시므리의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Zimri."
+  },
+  {
+    "id": "binea",
+    "name": "비느아",
+    "engName": "Binea",
+    "gender": "M",
+    "generation": 36.95,
+    "column": 64.022,
+    "parents": [
+      "moza_saul"
+    ],
+    "spouses": [],
+    "desc": "모사의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "son of a counselor."
+  },
+  {
+    "id": "raphah_saul",
+    "name": "라바",
+    "engName": "Raphah",
+    "gender": "M",
+    "generation": 37.95,
+    "column": 64.022,
+    "parents": [
+      "binea"
+    ],
+    "spouses": [],
+    "desc": "비느아의 아들 (대상 8:37 '라바', 9:43 '르바야').",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Phineah (1 Chronicles 8:37 'Raba', 9:43 'Rephaiah')."
+  },
+  {
+    "id": "eleasah_saul",
+    "name": "엘르아사",
+    "engName": "Eleasah",
+    "gender": "M",
+    "generation": 38.95,
+    "column": 64.022,
+    "parents": [
+      "raphah_saul"
+    ],
+    "spouses": [],
+    "desc": "라바의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Rava."
+  },
+  {
+    "id": "azel",
+    "name": "아셀",
+    "engName": "Azel",
+    "gender": "M",
+    "generation": 39.95,
+    "column": 61.721,
+    "parents": [
+      "eleasah_saul"
+    ],
+    "spouses": [],
+    "desc": "엘르아사의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Eleazar."
+  },
+  {
+    "id": "eshek",
+    "name": "에섹",
+    "engName": "Eshek",
+    "gender": "M",
+    "generation": 39.95,
+    "column": 64.909,
+    "parents": [
+      "eleasah_saul"
+    ],
+    "spouses": [],
+    "desc": "엘르아사의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Eleazar."
+  },
+  {
+    "id": "azrikam_saul",
+    "name": "아리스감",
+    "engName": "Azrikam",
+    "gender": "M",
+    "generation": 40.95,
+    "column": 60.033,
+    "parents": [
+      "azel"
+    ],
+    "spouses": [],
+    "desc": "아셀의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Asher."
+  },
+  {
+    "id": "bocheru",
+    "name": "보구루",
+    "engName": "Bocheru",
+    "gender": "M",
+    "generation": 40.95,
+    "column": 60.707,
+    "parents": [
+      "azel"
+    ],
+    "spouses": [],
+    "desc": "아셀의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Asher."
+  },
+  {
+    "id": "ishmael_saul",
+    "name": "이스마엘",
+    "engName": "Ishmael",
+    "gender": "M",
+    "generation": 40.95,
+    "column": 61.383,
+    "parents": [
+      "azel"
+    ],
+    "spouses": [],
+    "desc": "아셀의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Asher."
+  },
+  {
+    "id": "sheariah",
+    "name": "스아랴",
+    "engName": "Sheariah",
+    "gender": "M",
+    "generation": 40.95,
+    "column": 62.057,
+    "parents": [
+      "azel"
+    ],
+    "spouses": [],
+    "desc": "아셀의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Asher."
+  },
+  {
+    "id": "obadiah_saul",
+    "name": "오바디야",
+    "engName": "Obadiah",
+    "gender": "M",
+    "generation": 40.95,
+    "column": 62.732,
+    "parents": [
+      "azel"
+    ],
+    "spouses": [],
+    "desc": "아셀의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Asher."
+  },
+  {
+    "id": "hanan_saul",
+    "name": "하난",
+    "engName": "Hanan",
+    "gender": "M",
+    "generation": 40.95,
+    "column": 63.409,
+    "parents": [
+      "azel"
+    ],
+    "spouses": [],
+    "desc": "아셀의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Asher."
+  },
+  {
+    "id": "ulam_saul",
+    "name": "울람",
+    "engName": "Ulam",
+    "gender": "M",
+    "generation": 40.95,
+    "column": 64.234,
+    "parents": [
+      "eshek"
+    ],
+    "spouses": [],
+    "desc": "에섹의 아들. 활을 잘 쏘는 용사.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Esek. A warrior who is good at shooting a bow."
+  },
+  {
+    "id": "jehush_saul",
+    "name": "여우스",
+    "engName": "Jehush",
+    "gender": "M",
+    "generation": 40.95,
+    "column": 64.909,
+    "parents": [
+      "eshek"
+    ],
+    "spouses": [],
+    "desc": "에섹의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Esek."
+  },
+  {
+    "id": "eliphelet_saul",
+    "name": "엘리벨렛",
+    "engName": "Eliphelet",
+    "gender": "M",
+    "generation": 40.95,
+    "column": 65.584,
+    "parents": [
+      "eshek"
+    ],
+    "spouses": [],
+    "desc": "에섹의 아들.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Esek."
+  },
+  {
+    "id": "shema_reuben",
+    "name": "세마",
+    "engName": "Shema",
+    "gender": "M",
+    "generation": 28.03,
+    "column": -41.104,
+    "parents": [
+      "joel-reuben-1"
+    ],
+    "spouses": [],
+    "desc": "요엘의 아들이며 아사스의 아버지. 대상 5:8.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Joel and father of Asaz. 1 Chronicles 5:8."
+  },
+  {
+    "id": "azaz_reuben",
+    "name": "아사스",
+    "engName": "Azaz",
+    "gender": "M",
+    "generation": 29.03,
+    "column": -41.104,
+    "parents": [
+      "shema_reuben"
+    ],
+    "spouses": [],
+    "desc": "세마의 아들이며 벨라의 아버지. 대상 5:8.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Shema and father of Bela. 1 Chronicles 5:8."
+  },
+  {
+    "id": "bela_reuben",
+    "name": "벨라",
+    "engName": "Bela",
+    "gender": "M",
+    "generation": 30.03,
+    "column": -41.104,
+    "parents": [
+      "azaz_reuben"
+    ],
+    "spouses": [],
+    "desc": "아사스의 아들. 대상 5:8.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Asaz. 1 Chronicles 5:8."
+  },
+  {
+    "id": "zechariah_reuben",
+    "name": "스가랴",
+    "engName": "Zechariah",
+    "gender": "M",
+    "generation": 30.03,
+    "column": -40.404,
+    "parents": [],
+    "spouses": [],
+    "desc": "여이엘의 형제이자 르우벤 지파의 우두머리. 대상 5:7.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Jeiel's brother and head of the Reuben tribe. 1 Chronicles 5:7."
+  },
+  {
+    "id": "jeiel_reuben",
+    "name": "여이엘",
+    "engName": "Jeiel",
+    "gender": "M",
+    "generation": 30.03,
+    "column": -39.704,
+    "parents": [],
+    "spouses": [],
+    "desc": "르우벤 지파 계보의 우두머리. 대상 5:7.",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The head of the Reuben tribe lineage. 1 Chronicles 5:7."
+  },
+  {
+    "id": "gideon_wife",
+    "name": "기드온의 아내들",
+    "engName": "Gideon's Wives",
+    "gender": "F",
+    "generation": 27.01,
+    "column": 44.34,
+    "parents": [],
+    "spouses": [
+      "gideon_man"
+    ],
+    "desc": "기드온의 많은 아내들 (사사기 8:30).",
+    "isMain": false,
+    "isManual": true,
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Gideon's many wives (Judges 8:30)."
+  },
+  {
+    "id": "cush-moses",
+    "name": "구스여인",
+    "engName": "Cushite Woman",
+    "gender": "F",
+    "generation": 25,
+    "column": -25.904,
+    "parents": [],
+    "spouses": [
+      "moses"
+    ],
+    "teachers": [],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "becorath",
+    "name": "베고랏",
+    "engName": "Becorath",
+    "gender": "M",
+    "generation": 25,
+    "column": 65.6,
+    "parents": [
+      "abijah_becher"
+    ],
+    "spouses": [],
+    "teachers": [],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "zeror",
+    "name": "스롤",
+    "engName": "Zeror",
+    "gender": "M",
+    "generation": 25.99,
+    "column": 65.6,
+    "parents": [
+      "becorath"
+    ],
+    "spouses": [],
+    "teachers": [],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "joel-reuben-1",
+    "name": "요엘",
+    "engName": "Joel",
+    "gender": "M",
+    "generation": 27,
+    "column": -41.1,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "desc": "르우벤 지파의 후손으로, 미가의 아버지이자 바알의 할아버지. (역대상 5:4, 8)",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "A descendant of the Reuben tribe, the father of Micah and the grandfather of Baal. (1 Chronicles 5:4, 8)"
+  },
+  {
+    "id": "jokim",
+    "name": "요김",
+    "engName": "Jokim",
+    "gender": "M",
+    "generation": 23.94,
+    "column": 5.201,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "desc": "유다의 아들 셀라 계열의 후손으로, 과거 모압 지역을 다스리거나 왕을 위해 일했던 가문의 인물(대상 4:22)",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "A descendant of Judah's son Shelah, a member of a family that ruled the Moab region or worked for the king in the past (1 Chronicles 4:22)"
+  },
+  {
+    "id": "joash-judah",
+    "name": "요아스",
+    "engName": "Joash",
+    "gender": "M",
+    "generation": 23.94,
+    "column": 5.915,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "men_of_cozeba",
+    "name": "고세바 사람",
+    "engName": "Men of Cozeba",
+    "gender": "M",
+    "generation": 23.94,
+    "column": 7.344,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "desc": "셀라 자손들이 형성하여 거주했던 '고세바(Chozeba)' 지역 출신의 주민/가문(대상 4:22)",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "A resident/family from the 'Chozeba' region formed and inhabited by the descendants of Selah (1 Chronicles 4:22)"
+  },
+  {
+    "id": "jashubi-lehem",
+    "name": "야수비네헴",
+    "engName": "Jashubi-lehem",
+    "gender": "M",
+    "generation": 23.94,
+    "column": 8.058,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "desc": "셀라 후손 가문의 인물(또는 특정 가문/지역 명칭)로, 왕실을 위해 토기 제작이나 왕의 일을 맡았던 자손 중 하나(대상 4:22)",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "A member of the Selah descendant family (or designation of a particular family/region), one of the descendants who made pottery for the royal family or worked on the king's work (1 Chronicles 4:22)"
+  },
+  {
+    "id": "sarah-judah",
+    "name": "사랍",
+    "engName": "Saraph",
+    "gender": "M",
+    "generation": 23.94,
+    "column": 6.63,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "desc": "셀라의 후손으로, 사랍과 함께 모압 지방을 다스렸던 관직이나 지위를 가졌던 인물.",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "A descendant of Shelah, a person who held an official position or position and ruled the region of Moab together with Sarab."
+  },
+  {
+    "id": "shuppim",
+    "name": "숩빔",
+    "engName": "Shuppim",
+    "gender": "M",
+    "generation": 25,
+    "column": 60.842,
+    "parents": [
+      "iri"
+    ],
+    "spouses": [],
+    "teachers": [],
+    "desc": "베냐민 지파 이르(Ir)의 자손으로 기록된 베냐민의 후손(대상 26:16, 성전 문지기 동명이인)",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Descendants of Benjamin, recorded as descendants of Ir of the tribe of Benjamin (1 Chronicles 26:16, same name as temple gatekeeper)"
+  },
+  {
+    "id": "huppim-benjamin",
+    "name": "훕빔",
+    "engName": "Huppim",
+    "gender": "M",
+    "generation": 25,
+    "column": 61.542,
+    "parents": [
+      "iri"
+    ],
+    "spouses": [],
+    "teachers": [],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "maacah-benjamin",
+    "name": "마아가",
+    "engName": "Maacah",
+    "gender": "F",
+    "generation": 25,
+    "column": 62.242,
+    "parents": [
+      "iri"
+    ],
+    "spouses": [],
+    "teachers": [],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "aher",
+    "name": "아헬",
+    "engName": "Aher",
+    "gender": "M",
+    "generation": 25.01,
+    "column": 59.771,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "desc": "대상 7:12",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "1 caravan 7:12"
+  },
+  {
+    "id": "hushim",
+    "name": "후심",
+    "engName": "Hushim",
+    "gender": "M",
+    "generation": 26.03,
+    "column": 59.771,
+    "parents": [
+      "aher"
+    ],
+    "spouses": [],
+    "teachers": [],
+    "desc": "역대상 7장 12절에서는 베냐민 지파 아헬의 아들(후손)로 기록되어 있으며, 단 지파의 아들(창 46:23)이나 베냐민 사람 샤하라임의 아내(대상 8:8)로도 동명이인이 존재(대상 7:12)",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "In 1 Chronicles 7:12, he is recorded as the son (descendant) of Ahel of the tribe of Benjamin, and there is also a person with the same name as the son of the tribe of Dan (Genesis 46:23) and the wife of Shaharaim of Benjamin (1 Chronicles 8:8) (1 Chronicles 7:12)."
+  },
+  {
+    "id": "kish-benjamin",
+    "name": "기스",
+    "engName": "Kish",
+    "gender": "M",
+    "generation": 32,
+    "column": 68.1,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "desc": "베냐민 사람으로 시므이의 아버지이자 모르드개의 증조할아버지(에스더 2:5)",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "A Benjaminite, father of Shimei and great-grandfather of Mordecai (Esther 2:5)"
+  },
+  {
+    "id": "shimei-benjamin",
+    "name": "시므이",
+    "engName": "Shimei",
+    "gender": "M",
+    "generation": 32.97,
+    "column": 68.102,
+    "parents": [
+      "kish-benjamin"
+    ],
+    "spouses": [],
+    "teachers": [],
+    "desc": "기스의 아들이자 야일의 아버지로, 모르드개의 할아버지(에스더 2:5)",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Kish and father of Jair, grandfather of Mordecai (Esther 2:5)"
+  },
+  {
+    "id": "jair-benjamin",
+    "name": "야일",
+    "engName": "Jair",
+    "gender": "M",
+    "generation": 34,
+    "column": 67.702,
+    "parents": [
+      "shimei-benjamin"
+    ],
+    "spouses": [],
+    "teachers": [],
+    "desc": "시므이의 아들이자 모르드개의 아버지이며, 아비하일(에스더의 아버지)의 형제/친족(에스더 2:5)",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Shimei, father of Mordecai, and brother/relative of Abihail (Esther's father) (Esther 2:5)"
+  },
+  {
+    "id": "abihail-benjamin",
+    "name": "아비하일",
+    "engName": "Abihail",
+    "gender": "M",
+    "generation": 34,
+    "column": 68.6,
+    "parents": [
+      "shimei-benjamin"
+    ],
+    "spouses": [],
+    "teachers": [],
+    "desc": "모르드개의 삼촌이자 에스더(하다사)의 친아버지(에스더 2:15, 9:29)",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Mordecai's uncle and Esther (Hadassah)'s biological father (Esther 2:15, 9:29)"
+  },
+  {
+    "id": "mordecai",
+    "name": "모르드개",
+    "engName": "Mordecai",
+    "gender": "M",
+    "generation": 35.01,
+    "column": 67.702,
+    "parents": [
+      "jair-benjamin"
+    ],
+    "spouses": [],
+    "teachers": [],
+    "desc": "야일의 아들이자 에스더의 사촌 오빠(삼촌의 아들)로, 하만의 유다인 학살 음모를 막아내고 왕 다음가는 총리가 된 인물(에스더 2:5-7, 에스더 10:3)",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The son of Jair and Esther's cousin (uncle's son), he stopped Haman's plot to massacre the Jews and became prime minister next to the king (Esther 2:5-7, Esther 10:3)"
+  },
+  {
+    "id": "esther",
+    "name": "에스더",
+    "engName": "Esther",
+    "gender": "F",
+    "generation": 34.99,
+    "column": 68.601,
+    "parents": [
+      "abihail-benjamin"
+    ],
+    "spouses": [],
+    "teachers": [],
+    "desc": "아비하일의 딸이자 모르드개의 사촌 동생으로, 페르시아 아하수에로 왕의 왕후가 되어 \"죽으면 죽으리이다\"라는 결단으로 민족을 구한 인물(에스더 2:7 2:15-17, 에스더 7-8장)",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Abihail's daughter and Mordecai's younger cousin, she became queen of King Ahasuerus of Persia and saved her people with the decision, \"If I die, I will die\" (Esther 2:7 2:15-17, Esther 7-8)"
+  },
+  {
+    "id": "manoah-dan",
+    "name": "마노아",
+    "engName": "Manoah",
+    "gender": "M",
+    "generation": 23.08,
+    "column": 78.087,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "desc": "단 지파 소라 땅 출신의 인물로, 여호와의 사자에게 나실인의 출생 고지를 받은 사사 삼손의 아버지(삿 13:2-24)",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "A person from the land of Zorah of the tribe of Dan, the father of Samson, the judge who received notice of the birth of the Nazirites from the angel of the Lord (Judges 13:2-24)"
+  },
+  {
+    "id": "samson-dan",
+    "name": "삼손",
+    "engName": "Samson",
+    "gender": "M",
+    "generation": 24.01,
+    "column": 78.085,
+    "parents": [
+      "manoah-dan"
+    ],
+    "spouses": [
+      "Delilah",
+      "samson-wife"
+    ],
+    "teachers": [],
+    "desc": "하나님께 바쳐진 나실인이자 초인적인 힘을 가진 단 지파 출신의 사사로, 블레셋 사람들로부터 이스라엘을 구원하며 20년 동안 사사로 활동(삿 13-16장)",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "A Nazarite dedicated to God and a judge from the tribe of Dan with superhuman strength. He saved Israel from the Philistines and served as a judge for 20 years (Judges 13-16)."
+  },
+  {
+    "id": "Delilah",
+    "name": "들릴라",
+    "engName": "Delilah",
+    "gender": "F",
+    "generation": 24.01,
+    "column": 79.064,
+    "parents": [],
+    "spouses": [
+      "samson-dan"
+    ],
+    "teachers": [],
+    "desc": "소렉 골짜기에 살던 여인으로, 블레셋 방백들의 뇌물을 받고 삼손을 유혹하여 그 괴력의 출처(머리털)를 알아내어 그를 빠뜨린 인물(삿 16:4-21)",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "A woman who lived in the Valley of Sorek, who took bribes from Philistine lords to seduce Samson and find out the source of his super strength (his hair) and drowned him (Judges 16:4-21)."
+  },
+  {
+    "id": "samson-wife",
+    "name": "삼손의 부인",
+    "engName": "Samson's Wife",
+    "gender": "F",
+    "generation": 24.01,
+    "column": 77.106,
+    "parents": [],
+    "spouses": [
+      "samson-dan"
+    ],
+    "teachers": [],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "shamgar",
+    "name": "삼갈",
+    "engName": "Shamgar",
+    "gender": "M",
+    "generation": 24.96,
+    "column": 74.835,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "desc": "아낫의 아들로, 소 모는 막대기 하나로 블레셋 사람 600명을 죽이고 이스라엘을 구원한 소사사(小士師)",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Anat, Sojusa (小士師), who saved Israel by killing 600 Philistines with a single stick."
+  },
+  {
+    "id": "Mahalath-wife",
+    "name": "마할랏",
+    "engName": "Mahalath",
+    "gender": "F",
+    "generation": 19,
+    "column": -10.3,
+    "parents": [],
+    "spouses": [
+      "esau"
+    ],
+    "teachers": [],
+    "desc": "",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": []
+  },
+  {
+    "id": "Ibzan",
+    "name": "입산",
+    "engName": "Ibzan",
+    "gender": "M",
+    "generation": 26.63,
+    "column": 23.679,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "desc": "베들레헴 출신으로 딸 30명과 아들 30명을 타국/다른 가문과 혼인시켰으며, 7년 동안 이스라엘의 사사로 활동한 인물",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "A person from Bethlehem who married 30 daughters and 30 sons into foreign countries/families, and served as a judge in Israel for 7 years."
+  },
+  {
+    "id": "dodo",
+    "name": "도도",
+    "engName": "Dodo",
+    "gender": "M",
+    "generation": 24.7,
+    "column": 22.166,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "desc": "잇사갈 지파 사람으로, 사사 돌라의 할아버지(부아의 아버지) 삿 10:1",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "From the tribe of Issachar, grandfather of Judge Tola (father of Puah) Judges 10:1"
+  },
+  {
+    "id": "puah",
+    "name": "부아",
+    "engName": "Puah",
+    "gender": "M",
+    "generation": 25.61,
+    "column": 22.164,
+    "parents": [
+      "dodo"
+    ],
+    "spouses": [],
+    "teachers": [],
+    "desc": "도도의 아들이자 사사 돌라의 아버지",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "Son of Dodo and father of Judge Tola"
+  },
+  {
+    "id": "tola-judges",
+    "name": "돌라",
+    "engName": "Tola",
+    "gender": "M",
+    "generation": 26.61,
+    "column": 22.166,
+    "parents": [
+      "puah"
+    ],
+    "spouses": [],
+    "teachers": [],
+    "desc": "잇사갈 사람 도도의 손자이자 부아의 아들로, 에프라임 산지 샤밀에 거주하며 23년 동안 이스라엘을 구원하고 다스린 사사",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "The son of Puah and the grandson of Dodo of Issachar, a judge who lived in Shamil in the hill country of Ephraim and saved and ruled Israel for 23 years."
+  },
+  {
+    "id": "ehud",
+    "name": "에훗",
+    "engName": "Ehud",
+    "gender": "M",
+    "generation": 33,
+    "column": 65.5,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "desc": "베냐민 지파 게라의 아들이자 왼손잡이 사사로, 18년 동안 이스라엘을 압제하던 모압 왕 에글론을 비밀리에 살해하고 이스라엘에 80년 동안의 평화를 가져온 인물(삿 3:12-30)",
+    "isMain": false,
+    "isManual": true,
+    "prophets": [],
+    "relatedPeople": [],
+    "engDesc": "A left-handed judge and son of Gera of the tribe of Benjamin, who secretly murdered Eglon, king of Moab, who had oppressed Israel for 18 years, and brought 80 years of peace to Israel (Judges 3:12-30)"
+  },
+  {
+    "id": "prophet_samuel",
+    "name": "사무엘",
+    "engName": "Samuel",
+    "gender": "M",
+    "generation": 31.21,
+    "column": -2.194,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [
+      "saul",
+      "david"
+    ],
+    "desc": "선지자 직분을 제도화하고 이스라엘의 첫 두 왕에게 기름을 부음(삼상 3:19-20; 16:13)",
+    "isMain": false,
+    "isProphet": true,
+    "isManual": true,
+    "engDesc": "Institutionalizes the office of prophet and anoints the first two kings of Israel (1 Samuel 3:19-20; 16:13)"
+  },
+  {
+    "id": "prophet_nathan",
+    "name": "나단",
+    "engName": "Nathan",
+    "gender": "M",
+    "generation": 31.97,
+    "column": -2.754,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [
+      "david"
+    ],
+    "desc": "다윗 왕의 죄(밧세바 사건)를 책망하고, 영원한 왕위를 약속하는 '다윗 언약'을 전함.(삼하 7:16)",
+    "isMain": false,
+    "isProphet": true,
+    "isManual": true,
+    "engDesc": "Rebuked King David for his sin (Bathsheba incident) and preached the ‘Davidic Covenant’ that promised eternal throne (2 Samuel 7:16)."
+  },
+  {
+    "id": "prophet_gad",
+    "name": "갓",
+    "engName": "Gad",
+    "gender": "M",
+    "generation": 31.97,
+    "column": -1.992,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [
+      "david"
+    ],
+    "desc": "다윗의 선견자로 활동하며, 다윗이 교만하여 시행한 인구조사의 죄에 대한 하나님의 징벌을 전달함.(대상 21:9-10)",
+    "isMain": false,
+    "isProphet": true,
+    "isManual": true,
+    "engDesc": "Acted as David's seer and delivered God's punishment for David's sin of arrogant census (1 Chronicles 21:9-10)."
+  },
+  {
+    "id": "prophet_ahijah",
+    "name": "아히야",
+    "engName": "Ahijah",
+    "gender": "M",
+    "generation": 32.98,
+    "column": -2.754,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [
+      "solomon"
+    ],
+    "desc": "솔로몬의 우상숭배로 인해 나라가 남북으로 갈라질 것을 새로운 옷을 십이 조각으로 찢는 상징 행위로 예언함.(왕상 11:31)",
+    "isMain": false,
+    "isProphet": true,
+    "isManual": true,
+    "engDesc": "It was prophesied that the nation would be divided into North and South due to Solomon's idolatry through the symbolic act of tearing the new garment into twelve pieces (1 Kings 11:31)."
+  },
+  {
+    "id": "prophet_iddo",
+    "name": "잇도",
+    "engName": "Iddo",
+    "gender": "M",
+    "generation": 32.98,
+    "column": -1.992,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "desc": "남유다 왕조(르호보암, 아비야)의 궁정 선지자 겸 역사 기록가(사가)(역대하 12:15)\n솔로몬 말기 ~ 북이스라엘 '여로보암 1세'에 대한 예언 (역대하 9:29)",
+    "isMain": false,
+    "isProphet": true,
+    "isManual": true,
+    "engDesc": "Court prophet and historical recorder of the southern Judah dynasty (Rehoboam, Abijah) (2 Chronicles 12:15)\nLate Solomon ~ Prophecy about ‘Jeroboam I’ of Northern Israel (2 Chronicles 9:29)"
+  },
+  {
+    "id": "prophet_shemaiah",
+    "name": "스마야",
+    "engName": "Shemaiah",
+    "gender": "M",
+    "generation": 33.68,
+    "column": -3.121,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "desc": "이름의 의미는 \"여호와께서 들으셨다\" \n(대하 11:2-4; 12:5-7; 15)",
+    "isMain": false,
+    "isProphet": true,
+    "isManual": true,
+    "engDesc": "The meaning of the name is “Jehovah has heard.” \n(2 Chronicles 11:2-4; 12:5-7; 15)"
+  },
+  {
+    "id": "prophet_azariah",
+    "name": "아사랴",
+    "engName": "Azariah",
+    "gender": "M",
+    "generation": 35.98,
+    "column": -1.496,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [
+      "asa"
+    ],
+    "desc": "오뎃의 아들. \n유다 왕 아사의 통치 시절, 하나님의 영(성령)이 임하여 아사 왕과 온 유다 및 베냐민 무리에게 담대히 하나님의 메시지를 전했던 선지자.(대하 15:1-8)",
+    "isMain": false,
+    "isProphet": true,
+    "isManual": true,
+    "engDesc": "Odette's son. \nDuring the reign of King Asa of Judah, the Spirit of God came upon him and he was a prophet who boldly delivered God's message to King Asa and all of Judah and Benjamin (2 Chronicles 15:1-8)."
+  },
+  {
+    "id": "prophet_hanani",
+    "name": "하나니",
+    "engName": "Hanani",
+    "gender": "M",
+    "generation": 35.99,
+    "column": -2.187,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [
+      "asa"
+    ],
+    "desc": "유다 왕 아사가 아람(시리아) 왕을 의지하자 이를 책망하다가 옥에 갇혔던 선견자(역대하 16:7~10). 예후 선지자의 아버지이기도 함(열왕기상 16:1).",
+    "isMain": false,
+    "isProphet": true,
+    "isManual": true,
+    "engDesc": "A seer who was imprisoned for rebuking Asa, the king of Judah, for relying on the king of Aram (Syria) (2 Chronicles 16:7-10). He was also the father of the prophet Jehu (1 Kings 16:1)."
+  },
+  {
+    "id": "prophet_jehu",
+    "name": "예후",
+    "engName": "Jehu",
+    "gender": "M",
+    "generation": 35.06,
+    "column": -4.129,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [
+      "baasha",
+      "jehoshaphat"
+    ],
+    "desc": "북이스라엘의 바아사 왕을 책망하였고(열왕기상 16:1~7), 훗날 남유다의 여호사밧 왕이 아합 가문과 동맹한 것을 담대히 책망(역대하 19:2).",
+    "isMain": false,
+    "isProphet": true,
+    "isManual": true,
+    "engDesc": "He rebuked King Baasha of northern Israel (1 Kings 16:1-7), and later boldly rebuked King Jehoshaphat of southern Judah for allying with the Ahab family (2 Chronicles 19:2)."
+  },
+  {
+    "id": "prophet_elijah",
+    "name": "엘리야",
+    "engName": "Elijah",
+    "gender": "M",
+    "generation": 40.45,
+    "column": -2.866,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [
+      "ahab",
+      "jezebel"
+    ],
+    "desc": "아합 왕과 이세벨 황후 시절, 바알과 아세라 숭배에 맞서 싸운 대표적인 예언자(왕상 17장~왕하 2장).",
+    "isMain": false,
+    "isProphet": true,
+    "isManual": true,
+    "engDesc": "A representative prophet who fought against Baal and Asherah worship during the reign of King Ahab and Empress Jezebel (1 Kings 17 - 2 Kings 2)."
+  },
+  {
+    "id": "prophet_ahijah_1",
+    "name": "아히야",
+    "engName": "Ahijah",
+    "gender": "M",
+    "generation": 33.69,
+    "column": -4.129,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [
+      "jeroboam1"
+    ],
+    "desc": "솔로몬의 옷을 12조각으로 찢어 여로보암에게 10조각을 주며 이스라엘이 둘로 나누어질 것을 예언한 선지자 (열왕기상 11:29–39).",
+    "isMain": false,
+    "isProphet": true,
+    "isManual": true,
+    "engDesc": "A prophet who tore Solomon's clothes into 12 pieces and gave 10 pieces to Jeroboam, predicting that Israel would be divided in two (1 Kings 11:29–39)."
+  },
+  {
+    "id": "prophet_elisha",
+    "name": "엘리사",
+    "engName": "Elisha",
+    "gender": "M",
+    "generation": 40.9,
+    "column": -2.866,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [
+      "jehoash_jehoahaz",
+      "jehoram_ahab",
+      "jehoahaz_jehu",
+      "jehu"
+    ],
+    "desc": "갑절의 영감으로 나아만 장군 치유 등 수많은 기적을 행함(왕하 2:9; 5:14)",
+    "isMain": false,
+    "isProphet": true,
+    "isManual": true,
+    "engDesc": "Performed numerous miracles, including healing General Naaman, with double the amount of inspiration (2 Kings 2:9; 5:14)"
+  },
+  {
+    "id": "prophet_jonah",
+    "name": "요나",
+    "engName": "Jonah",
+    "gender": "M",
+    "generation": 44.47,
+    "column": -3.896,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [
+      "jeroboam2"
+    ],
+    "desc": "적국 앗수르의 수도 니느웨로 파송되어 회개를 선포함(욘 4:10-11)",
+    "isMain": false,
+    "isProphet": true,
+    "isManual": true,
+    "engDesc": "Sent to Nineveh, the capital of the enemy Assyria, and declared repentance (Jon 4:10-11)"
+  },
+  {
+    "id": "prophet_hosea",
+    "name": "호세아",
+    "engName": "Hosea",
+    "gender": "M",
+    "generation": 45.33,
+    "column": -3.897,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [
+      "jeroboam2"
+    ],
+    "desc": "음란한 아내 고멜과의 결혼을 통해 변함없는 하나님의 사랑을 전함(호 6:3)",
+    "isMain": false,
+    "isProphet": true,
+    "isManual": true,
+    "engDesc": "He preached God’s unchanging love through his marriage to his adulterous wife, Gomer (Hosea 6:3)."
+  },
+  {
+    "id": "prophet_amos",
+    "name": "아모스",
+    "engName": "Amos",
+    "gender": "M",
+    "generation": 44.9,
+    "column": -3.894,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [
+      "jeroboam2"
+    ],
+    "desc": "형식적 번영 속에 가득한 불의를 비판하며 공의와 정의를 선포(암 5:24)",
+    "isMain": false,
+    "isProphet": true,
+    "isManual": true,
+    "engDesc": "Criticizing the injustice that abounds in formal prosperity and proclaiming righteousness and righteousness (Amos 5:24)"
+  },
+  {
+    "id": "prophet_jahaziel",
+    "name": "야하시엘",
+    "engName": "Jahaziel",
+    "gender": "M",
+    "generation": 37,
+    "column": -1.092,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [
+      "jehoshaphat"
+    ],
+    "desc": "모압과 암몬 연합군이 침공했을 때 성령이 임하여 *\"이 전쟁은 너희에게 속한 것이 아니요 하나님께 속한 것이니라\"*라는 유명한 메시지를 전한 아삽 자손 레위인(대하 20:14–17).",
+    "isMain": false,
+    "isProphet": true,
+    "isManual": true,
+    "engDesc": "When the combined armies of Moab and Ammon invaded, the Holy Spirit came upon them and the Levites of the descendants of Asaph delivered the famous message, “The battle is not yours, but God’s”* (2 Chronicles 20:14–17)."
+  },
+  {
+    "id": "prophet_eliezer",
+    "name": "엘리에셀",
+    "engName": "Eliezer",
+    "gender": "M",
+    "generation": 37.48,
+    "column": -1.087,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [
+      "jehoshaphat"
+    ],
+    "desc": "도다와후의 아들로, 여호사밧 왕이 악한 아합의 아들 아하시야와 배를 건조하여 동맹을 맺자 그 배들이 파선될 것을 예언한 선지자(역대하 20:37).",
+    "isMain": false,
+    "isProphet": true,
+    "isManual": true,
+    "engDesc": "The son of Dodawahu, the prophet who predicted that King Jehoshaphat would be shipwrecked when he formed an alliance with Ahaziah, son of the wicked Ahab, by building ships (2 Chronicles 20:37)."
+  },
+  {
+    "id": "prophet_obadiah",
+    "name": "오바댜",
+    "engName": "Obadiah",
+    "gender": "M",
+    "generation": 42.13,
+    "column": -2.414,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "desc": "구약성경 중 가장 짧은 책인 오바댜서(Obadiah)를 기록한 선지자로, 에돔 민족의 오만함과 유다를 향한 악행에 대한 하나님의 심판을 예언",
+    "isMain": false,
+    "isProphet": true,
+    "isManual": true,
+    "engDesc": "A prophet who wrote the Book of Obadiah, the shortest book in the Old Testament, prophesied God's judgment on the arrogance of the Edomites and their evil deeds against Judah."
+  },
+  {
+    "id": "prophet_joel",
+    "name": "요엘",
+    "engName": "Joel",
+    "gender": "M",
+    "generation": 37.01,
+    "column": -1.786,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "desc": "구약성경 요엘서(Joel)의 저자로 브두엘의 아들입니다. 메뚜기 재앙을 계기로 여호와의 날과 성령 강림(\"내가 내 영을 만민에게 부어 주리니\", 요엘 2:28)을 예언한 선지자",
+    "isMain": false,
+    "isProphet": true,
+    "isManual": true,
+    "engDesc": "He is the son of Bethuel and the author of the Old Testament book of Joel. A prophet who prophesied the day of Jehovah and the coming of the Holy Spirit (“I will pour out my Spirit on all people,” Joel 2:28) in the wake of the locust plague."
+  },
+  {
+    "id": "prophet_huldah",
+    "name": "여선지자 훌다",
+    "engName": "Huldah",
+    "gender": "M",
+    "generation": 47.24,
+    "column": -2.035,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [
+      "josiah"
+    ],
+    "desc": "남유다의 개혁 군주 요시야 왕 통치 시절 활동했던 여선지자로, 보관원 살룸의 아내(왕하 22:14, 대하 34:22).",
+    "isMain": false,
+    "isProphet": true,
+    "isManual": true,
+    "engDesc": "A female prophet who was active during the reign of King Josiah, the reforming monarch of southern Judah, and the wife of Shallum, the custodian (2 Kings 22:14, 2 Chronicles 34:22)."
+  },
+  {
+    "id": "prophet_nahum",
+    "name": "나훔",
+    "engName": "Nahum",
+    "gender": "M",
+    "generation": 46.4,
+    "column": -3.129,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "desc": "잔혹하고 오만했던 앗수르 제국의 수도 니느웨에 내릴 하나님의 공의로운 심판과 멸망을 담대히 선포",
+    "isMain": false,
+    "isProphet": true,
+    "isManual": true,
+    "engDesc": "Boldly declare God's righteous judgment and destruction on Nineveh, the cruel and arrogant capital of the Assyrian Empire."
+  },
+  {
+    "id": "prophet_zephaniah",
+    "name": "스바냐",
+    "engName": "Zephaniah",
+    "gender": "M",
+    "generation": 47.24,
+    "column": -2.758,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [
+      "josiah"
+    ],
+    "desc": "히스기야 왕의 현손(4대손)인 왕족 출신 선지자입니다. 요시야 왕 통치 시절 활동하며 '여호와의 날'에 임할 심판과 남은 자의 구원을 선포",
+    "isMain": false,
+    "isProphet": true,
+    "isManual": true,
+    "engDesc": "He is a royal prophet who is the great-grandson (4th generation) of King Hezekiah. Active during the reign of King Josiah, he declared the judgment to come on the ‘day of the Lord’ and the salvation of the remnant."
+  },
+  {
+    "id": "prophet_habakkuk",
+    "name": "하박국",
+    "engName": "Habakkuk",
+    "gender": "M",
+    "generation": 47.73,
+    "column": -3.129,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "desc": "구약성경 하박국서(Book of Habakkuk)의 저자\n의인의 고난과 하나님의 공의에 대해 질문하며 믿음의 승리를 노래",
+    "isMain": false,
+    "isProphet": true,
+    "isManual": true,
+    "engDesc": "Author of the Old Testament Book of Habakkuk\nSings about the victory of faith while asking questions about the suffering of the righteous and God’s justice."
+  },
+  {
+    "id": "prophet_jeremiah",
+    "name": "예레미야",
+    "engName": "Jeremiah",
+    "gender": "M",
+    "generation": 48.94,
+    "column": -2.035,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [
+      "josiah",
+      "jehoahaz",
+      "jehoiakim",
+      "jeconiah",
+      "zedekiah"
+    ],
+    "desc": "구약성경 예레미야서(Jeremiah)와 예레미야애가(Lamentations)의 저자로, 아나돗의 제사장 힐기야의 아들입니다. 남유다 말기 몰락해 가는 나라와 예루살렘의 멸망을 바라보며 회개를 촉구하고 눈물로 선포하여 '눈물의 선지자'",
+    "isMain": false,
+    "isProphet": true,
+    "isManual": true,
+    "engDesc": "He is the author of the Old Testament books of Jeremiah and Lamentations and is the son of Hilkiah, priest of Anathoth. In the last days of Southern Judah, looking at the declining nation and the destruction of Jerusalem, he called for repentance and proclaimed it with tears, becoming the ‘prophet of tears.’"
+  },
+  {
+    "id": "prophet_ezekiel",
+    "name": "에스겔",
+    "engName": "Ezekiel",
+    "gender": "M",
+    "generation": 51.77,
+    "column": -1.524,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "desc": "부시의 아들이자 제사장 출신으로, 바벨론의 2차 침공 때(B.C. 597년) 여호야긴 왕과 함께 바벨론으로 사로잡혀 감(에스겔 1:1–3).",
+    "isMain": false,
+    "isProphet": true,
+    "isManual": true,
+    "engDesc": "The son of Busi and a priest, he was taken captive to Babylon with King Jehoiachin during the second invasion of Babylon (597 B.C.) (Ezekiel 1:1–3)."
+  },
+  {
+    "id": "prophet_daniel",
+    "name": "다니엘",
+    "engName": "Daniel",
+    "gender": "M",
+    "generation": 51.78,
+    "column": -2.343,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "desc": "",
+    "isMain": false,
+    "isProphet": true,
+    "isManual": true
+  },
+  {
+    "id": "prophet_haggai",
+    "name": "학개",
+    "engName": "Haggai",
+    "gender": "M",
+    "generation": 54.61,
+    "column": -1.524,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "desc": "포로 귀환 후 주변 민족들의 방해와 경제적 어려움으로 인해 16년간 중단되어 있던 예루살렘 성전(제2성전 / 스룹바벨 성전) 재건 공사를 다시 시작하도록 백성들과 지도자들(총독 스룹바벨, 대제사장 여호수아)을 독려",
+    "isMain": false,
+    "isProphet": true,
+    "isManual": true,
+    "engDesc": "Encouraged the people and leaders (Governor Zerubbabel and High Priest Joshua) to restart the reconstruction of the Jerusalem Temple (Second Temple / Zerubbabel Temple), which had been suspended for 16 years due to interference from surrounding peoples and economic difficulties after returning from captivity."
+  },
+  {
+    "id": "prophet_zechariah",
+    "name": "스가랴",
+    "engName": "Zechariah",
+    "gender": "M",
+    "generation": 55.07,
+    "column": -1.524,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "desc": "스가랴서(Zechariah)의 저자로, 베레갸의 아들이자 잇도의 손자입니다. 학개 선지자와 함께 포로 귀환 후 성전 재건을 독려했으며, 메시아에 관한 수많은 예언(나귀 타고 오시는 왕, 은 30개에 팔리심 등)을 남김",
+    "isMain": false,
+    "isProphet": true,
+    "isManual": true,
+    "engDesc": "The author of Zechariah, the son of Berechiah and the grandson of Iddo. Together with the prophet Haggai, he encouraged the rebuilding of the temple after returning from captivity, and left numerous prophecies about the Messiah (the king coming on a donkey, being sold for 30 pieces of silver, etc.)"
+  },
+  {
+    "id": "prophet_malachi",
+    "name": "말라기",
+    "engName": "Malachi",
+    "gender": "M",
+    "generation": 56.58,
+    "column": -1.524,
+    "parents": [],
+    "spouses": [],
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "desc": "느헤미야 시대 이후(B.C. 430년경), 제2성전이 완공된 후 오랜 시간이 지나 백성들과 제사장들의 영적 매너리즘과 형식주의가 만연했던 시기에 활동",
+    "isMain": false,
+    "isProphet": true,
+    "isManual": true,
+    "engDesc": "Active after the era of Nehemiah (around 430 B.C.), a long time after the completion of the Second Temple, during a time when spiritual mannerism and formalism among the people and priests were prevalent."
+  },
+  {
+    "id": "adah-ahab",
+    "name": "아달랴",
+    "engName": "Athaliah",
+    "gender": "F",
+    "generation": 40.89,
+    "column": -3.799,
+    "parents": [
+      "ahab",
+      "jezebel"
+    ],
+    "spouses": [],
+    "teachers": [],
+    "prophets": [],
+    "relatedPeople": [],
+    "desc": "",
+    "isMain": false,
+    "isProphet": false,
+    "isManual": true
+  }
+];
+
+// === AUTO-INJECTED SEED DATA FOR LINES AND ANNOTATIONS ===
+(function() {
+  const seedKey = 'bible_tree_full_data_v16_v6';
+  if (!window.localStorage.getItem(seedKey)) {
+    window.localStorage.setItem('bible_tree_line_bends', JSON.stringify({"bathsheba+david": [{"x": 15543.880000000001, "y": 5970}], "rel-adam+eve": [{"x": 16443.88, "y": 210}], "rel-jokshan": [{"x": 25123.88, "y": 3810}], "rel-terah": [{"x": 18493.88, "y": 3440}, {"x": 18593.88, "y": 3140}], "rel-abraham+keturah": [{"x": 14053.880000000001, "y": 3630}, {"x": 13543.880000000001, "y": 3630}], "rel-abraham+hagar": [{"x": 17913.88, "y": 3560}], "rel-terah->nahor": [{"x": 16593.88, "y": 3450}, {"x": 16343.880000000001, "y": 2770}], "rel-terah->haran": [{"x": 15533.880000000001, "y": 3450}, {"x": 15423.880000000001, "y": 2950}], "rel-bathsheba+david->nathan_bathsheba": [{"x": 18373.88, "y": 5970}], "spouse-abraham+keturah": [{"x": 14643.880000000001, "y": 2930}, {"x": 14643.880000000001, "y": 3540}], "rel-isaac+rebekah->esau": [{"x": 12893.880000000001, "y": 3810}, {"x": 12823.880000000001, "y": 3430}], "rel-hezron+machir_daughter->segub_hezron": [{"x": 18683.88, "y": 4510}], "rel-sheshan_ishi->ahlai_sheshan": [{"x": 15673.880000000001, "y": 5760}, {"x": 15382.395625000001, "y": 5791.5}], "rel-abraham+hagar->ishmael": [{"x": 14310, "y": 3560}]}));
+    window.localStorage.setItem('bible_tree_custom_visual_lines', JSON.stringify([]));
+    window.localStorage.setItem('bible_tree_canvas_junctions', JSON.stringify([]));
+    window.localStorage.setItem('bible_tree_spouse_splits', JSON.stringify({"adam+eve": 0.5660661764705925, "gilead_conc+gilead_man": 0.0631371572066321, "jacob+zilpah": 0.8562547987422477, "bilhah+jacob": 0.95516, "jacob+rachel": 0.8936402261568482, "abraham+keturah": 0.018, "abraham+hagar": 0.02, "basemath_esau+esau": 0.7556966021160495, "esau+oholibamah": 0.9262121127118996, "ahinoam_david+david": 0.8711067813637272, "abigail_david+david": 0.9385042519485669, "david+maachah_david": 0.95, "david+other_wives_david": 0.95, "david+eglah_david": 0.95, "abital_david+david": 0.95, "david+haggith_david": 0.95, "abiah_hezron+hezron": 0.27929022873194187, "chelubai+unknown_wife_caleb": 0.95, "chelubai+maachah_concubine": 0.9443092186906878, "chelubai+ephrath": 0.8366929567131333, "chelubai+ephah_concubine": 0.8991033380681825, "adah_cain+lamech_cain": 0.38115625000000364, "lamech_cain+zillah_cain": 0.6499062500000037}));
+    window.localStorage.setItem('bible_tree_annotations', JSON.stringify([{"id": "note-welcome", "text": "\uc131\uacbd \uc778\ubb3c \uc871\ubcf4 \ubcf4\ub4dc\n(\ub9c8\uc6b0\uc2a4 \ub4dc\ub798\uadf8\ub85c \uc774\ub3d9, \ud720\ub85c \ud655\ub300/\ucd95\uc18c)", "x": -50, "y": 40, "width": 260, "height": 55, "fontSize": 13, "bold": true, "color": "#1e293b", "bgColor": "#f8fafc"}]));
+    window.localStorage.setItem('bible_tree_style_settings', JSON.stringify({"lineColor": "#919191", "mainLineColor": "#ff9300", "spouseLineColor": "#ef4444", "lineWidth": 3, "cornerRadius": 12, "splitOffset": 90, "lineType": "orthogonal", "siblingGap": 7}));
+    window.localStorage.setItem('bible_tree_custom_polygons', JSON.stringify([{"id": "poly-cain", "label": "\uac00\uc778 \uc790\uc190 \uacc4\uc5f4", "color": "#b1dd8c", "fillOpacity": 0.02, "points": [{"x": 14349.64, "y": 250}, {"x": 15359.64, "y": 250}, {"x": 15359.64, "y": 1460}, {"x": 14349.64, "y": 1460}], "labelOffsetX": 7, "labelOffsetY": 14}, {"id": "poly-japheth", "label": "\uc57c\ubcb3 \uc790\uc190 (\uc720\ub7fd/\ubd81\ubc29\uacc4 \ubbfc\uc871)", "color": "#cce8b5", "fillOpacity": 0.03, "points": [{"x": 11605.92, "y": 1859}, {"x": 14134.16, "y": 1859}, {"x": 14134.16, "y": 2341}, {"x": 11605.92, "y": 2341}], "labelOffsetX": 0, "labelOffsetY": 11}, {"id": "poly-ham", "label": "\ud568 \uc790\uc190 (\uac00\ub098\uc548/\uc544\ud504\ub9ac\uce74\uacc4 \ubbfc\uc871)", "color": "#ffc4ab", "fillOpacity": 0.03, "points": [{"x": 14342.16, "y": 1859}, {"x": 15430.16, "y": 1859}, {"x": 15430.16, "y": 2341}, {"x": 14342.16, "y": 2341}], "labelOffsetX": 0, "labelOffsetY": 15}, {"id": "poly-joktan", "label": "\uc695\ub2e8 \uc790\uc190 (\uc544\ub77c\ube44\uc544 \ubd80\uc871 \uc5f0\ud569)", "color": "#a8c6fe", "fillOpacity": 0.03, "points": [{"x": 13552.080000000002, "y": 2579}, {"x": 15558.079999999998, "y": 2579}, {"x": 15558.079999999998, "y": 2881}, {"x": 13552.080000000002, "y": 2881}], "labelOffsetX": -1, "labelOffsetY": 14}, {"id": "poly-keturah", "label": "\uadf8\ub450\ub77c \uc790\uc190 (\ubbf8\ub514\uc548 \ub4f1 \uc544\ub77c\ube44\uc544 \ubd80\uc871)", "color": "#ffd877", "fillOpacity": 0.03, "points": [{"x": 12935.04, "y": 3047.0000000000005}, {"x": 14261.119999999999, "y": 3047.0000000000005}, {"x": 14260, "y": 3480}, {"x": 12940, "y": 3480}], "labelOffsetX": 570, "labelOffsetY": 12}, {"id": "poly-ishmael", "label": "\uc774\uc2a4\ub9c8\uc5d8 12\ubc29\ubc31 \uc790\uc190 (\uc544\ub78d \ubbfc\uc871)", "color": "#f5ec00", "fillOpacity": 0.03, "points": [{"x": 13453.880000000001, "y": 3550}, {"x": 15582.079999999998, "y": 3550.9999999999995}, {"x": 15583.880000000001, "y": 3800}, {"x": 13453.880000000001, "y": 3800}], "borderStyle": "dashdot", "labelOffsetX": 5, "labelOffsetY": 14}, {"id": "poly-esau", "label": "\uc5d0\uc11c(\uc5d0\ub3d4) \uc790\uc190 \uc871\uc7a5 \uacc4\uc5f4", "color": "#eab308", "fillOpacity": 0.03, "points": [{"x": 10707.599999999999, "y": 3479}, {"x": 12869.64, "y": 3480}, {"x": 12869.64, "y": 3960}, {"x": 10707.599999999999, "y": 3961}], "labelOffsetX": 8, "labelOffsetY": 18}, {"id": "poly-mary", "label": "\ub9c8\ub9ac\uc544 \uacc4\ubcf4 (\ub204\uac00\ubcf5\uc74c 3\uc7a5 \ud608\ud1b5)", "color": "#06b6d4", "fillOpacity": 0.03, "points": [{"x": 14175.880000000001, "y": 6000}, {"x": 14415.880000000001, "y": 6000}, {"x": 14415.880000000001, "y": 11300}, {"x": 14165.880000000001, "y": 11300}]}, {"id": "poly-custom-1784385482819", "label": "\ud638\ub9ac\uc871\uc18d\uc758 \uc871\uc7a5\ub4e4(\ucc3d 36:20-30)", "color": "#c4bc00", "fillOpacity": 0.01, "points": [{"x": 10690, "y": 3480}, {"x": 7000, "y": 3480}, {"x": 7000, "y": 3960}, {"x": 10690, "y": 3960}], "borderStyle": "dashdot", "labelOffsetX": -3731, "labelOffsetY": 16}, {"id": "poly-custom-1784387765825", "label": "\ub974\uc6b0\ubca4 \uc9c0\ud30c(\ucc3d 46:9, \ubbfc 26:5-11, \ub300\uc0c1 5:3-9)", "color": "#f5ec00", "fillOpacity": 0.03, "points": [{"x": 6557.655624999999, "y": 4018}, {"x": 7237.65856617011, "y": 4018}, {"x": 7229.639999999999, "y": 6290}, {"x": 6559.639999999999, "y": 6290}], "labelOffsetX": 7, "labelOffsetY": 16, "borderStyle": "dashdot", "strokeWidth": 2}, {"id": "poly-custom-1784395334424", "label": "2. \uc2dc\ubbc0\uc628 \uc9c0\ud30c(\ucc3d 46:10, \ubbfc 26:12,13, \ub300\uc0c1 4:24-38)", "color": "#22c55e", "fillOpacity": 0.03, "points": [{"x": 7247.98076923077, "y": 4017.8605769230776}, {"x": 7247.98076923077, "y": 8707.091346153848}, {"x": 7844.953407934545, "y": 8707.091346153848}, {"x": 7840, "y": 4750}, {"x": 7460, "y": 4750}, {"x": 7460.187442816168, "y": 4366.862125660399}, {"x": 8240.293659187737, "y": 4366.862125660399}, {"x": 8240.293659187737, "y": 4017.829991321004}], "labelOffsetX": -963.0769230769232, "labelOffsetY": 10.76923076923077}, {"id": "poly-custom-1784395624003", "label": "3 \ub808\uc704 \uc9c0\ud30c(\ucc3d 46:11, \ubbfc 26:16-25, \ub300\uc0c1 23:7-24, \uc2a4 7:1-5)", "color": "#f97316", "fillOpacity": 0.03, "points": [{"x": 8252.596153846154, "y": 4014.7836538461543}, {"x": 8252.596153846154, "y": 4387.142200913312}, {"x": 7473.916938675823, "y": 4387.142200913312}, {"x": 7473.916938675823, "y": 4696.387760001995}, {"x": 7888.389211191322, "y": 4696.387760001995}, {"x": 7888.389211191322, "y": 11119.646857731523}, {"x": 10340, "y": 11120}, {"x": 10290, "y": 4940}, {"x": 12971.249828314174, "y": 4934.783462505303}, {"x": 12971.249828314174, "y": 4511.473889593867}, {"x": 12790.960438225535, "y": 4511.473889593867}, {"x": 12790.960438225535, "y": 4017.5190845898087}]}]));
+    
+    // Clear out any old character edits/custom characters so they don't override our new perfect BIBLE_CHARACTERS
+    window.localStorage.removeItem('bible_tree_character_edits');
+    window.localStorage.removeItem('bible_tree_custom_characters');
+    window.localStorage.removeItem('bible_tree_deleted_ids');
+    
+    window.localStorage.setItem(seedKey, "true");
+  }
+})();
+// ===============================

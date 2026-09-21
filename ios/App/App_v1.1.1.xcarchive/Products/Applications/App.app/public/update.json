@@ -1,0 +1,11 @@
+{
+  "version": "1.0.34",
+  "notes": "성경 족보 5분 데모 및 레몬스퀴지 자동 웹훅 연동 버전",
+  "pub_date": "2026-07-31T19:20:00Z",
+  "platforms": {
+    "darwin-universal": {
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVSL1RDeVhIeFhLYmJrbm45aGpSRjVyaXFvSE9oUnlvMkJ2Rlg0Q2NFaEpnVlVPbWd1RHdxdVVBTkRiQ212Q0llWU1vWVljb3BiT0NHZ1pHb3crbExrMGNTV2Z0ZVVqa1FZPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg1NDkzMjc1CWZpbGU6QmlibGVHZW5lYWxvZ3kuYXBwLnRhci5negpLSGx3UVA1Y1BHb3MzQ2FENCtWa3AzVmx5Y2o0NU5WMGFQUlQxMnpmNFpuaUxqV3JEekVCZVlZa3FZK2U3dWxweEMwS1VpOEUzdlQyZUNJWXNCc3hBZz09Cg==",
+      "url": "https://f.jubilee.or.kr/BibleGenealogy.app.tar.gz"
+    }
+  }
+}
