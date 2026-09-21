@@ -96,18 +96,26 @@ class ViewController: CAPBridgeViewController {
             }
         }
         
-        // Hide any residual toolbar or vibrancy effect subviews in the theme frame
+        // Hide and remove any residual toolbar or vibrancy effect subviews in the theme frame
         if let contentView = win.value(forKey: "contentView") as? NSObject {
             contentView.setValue(true, forKey: "wantsLayer")
-            if let themeFrame = contentView.value(forKey: "superview") as? NSObject,
-               let subviews = themeFrame.value(forKey: "subviews") as? [NSObject] {
-                for subview in subviews {
-                    let className = NSStringFromClass(type(of: subview))
-                    if className.contains("Toolbar") || className.contains("VisualEffect") {
-                        subview.setValue(0.0, forKey: "alphaValue")
-                        subview.setValue(true, forKey: "isHidden")
-                    }
-                }
+            if let themeFrame = contentView.value(forKey: "superview") as? NSObject {
+                purgeToolbarViews(from: themeFrame, preserveContentView: contentView)
+            }
+        }
+    }
+
+    private func purgeToolbarViews(from parent: NSObject, preserveContentView: NSObject) {
+        guard let subviews = parent.value(forKey: "subviews") as? [NSObject] else { return }
+        for subview in subviews {
+            if subview === preserveContentView { continue }
+            let className = NSStringFromClass(type(of: subview))
+            if className.contains("Toolbar") || className.contains("VisualEffect") || className.contains("TitleTextField") {
+                subview.setValue(0.0, forKey: "alphaValue")
+                subview.setValue(true, forKey: "isHidden")
+                _ = subview.perform(NSSelectorFromString("removeFromSuperview"))
+            } else {
+                purgeToolbarViews(from: subview, preserveContentView: preserveContentView)
             }
         }
     }
