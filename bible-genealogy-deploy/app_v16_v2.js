@@ -11089,7 +11089,7 @@ function setupZoomPan() {
       if (tempPolygonPoints.length >= 3) {
         const startPt = tempPolygonPoints[0];
         const distToStart = Math.hypot(clickX - startPt.x, clickY - startPt.y);
-        const closeThreshold = Math.max(25, 30 / currentScale);
+        const closeThreshold = Math.max(28, 35 / currentScale);
         if (distToStart <= closeThreshold) {
           completePolygonCreation();
           return;
@@ -14325,15 +14325,100 @@ function completePolygonCreation() {
     return;
   }
   
-  const name = prompt(currentLang === 'en' ? "Enter the name for the new polygon area:" : "새로운 다각형 영역의 이름을 입력하세요:", currentLang === 'en' ? "New Area" : "새 영역");
-  if (name === null) return;
+  const modal = document.getElementById('polygon-name-modal');
+  const titleEl = document.getElementById('polygon-modal-title');
+  const inputEl = document.getElementById('polygon-name-input');
+  const formEl = document.getElementById('polygon-name-form');
+  const confirmBtn = document.getElementById('polygon-name-confirm-btn');
+  const cancelBtn = document.getElementById('polygon-name-cancel-btn');
+  const closeBtn = document.getElementById('polygon-name-close-btn');
+
+  const defaultPlaceholder = currentLang === 'en' ? "New Area" : "새 영역";
+
+  if (!modal || !inputEl) {
+    // Fallback if modal DOM element is missing
+    const name = prompt(currentLang === 'en' ? "Enter the name for the new polygon area:" : "새로운 다각형 영역의 이름을 입력하세요:", defaultPlaceholder);
+    if (name === null) return;
+    finalizePolygonCreation(name);
+    return;
+  }
+
+  if (titleEl) {
+    titleEl.textContent = currentLang === 'en' ? "Enter the name for the new polygon area:" : "새로운 다각형 영역의 이름을 입력하세요:";
+  }
   
+  inputEl.placeholder = defaultPlaceholder;
+  inputEl.value = defaultPlaceholder;
+  modal.style.display = 'flex';
+
+  setTimeout(() => {
+    inputEl.focus();
+    inputEl.select();
+  }, 50);
+
+  function closeModal() {
+    modal.style.display = 'none';
+    cleanup();
+  }
+
+  function handleConfirm(e) {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    const enteredName = inputEl.value.trim() || defaultPlaceholder;
+    closeModal();
+    finalizePolygonCreation(enteredName);
+  }
+
+  function handleCancel(e) {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    closeModal();
+  }
+
+  function handleKeyDown(e) {
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      closeModal();
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      handleConfirm();
+    }
+  }
+
+  function handleOverlayClick(e) {
+    if (e.target === modal) {
+      closeModal();
+    }
+  }
+
+  function cleanup() {
+    confirmBtn?.removeEventListener('click', handleConfirm);
+    cancelBtn?.removeEventListener('click', handleCancel);
+    closeBtn?.removeEventListener('click', handleCancel);
+    formEl?.removeEventListener('submit', handleConfirm);
+    inputEl?.removeEventListener('keydown', handleKeyDown);
+    modal.removeEventListener('click', handleOverlayClick);
+  }
+
+  confirmBtn?.addEventListener('click', handleConfirm);
+  cancelBtn?.addEventListener('click', handleCancel);
+  closeBtn?.addEventListener('click', handleCancel);
+  formEl?.addEventListener('submit', handleConfirm);
+  inputEl?.addEventListener('keydown', handleKeyDown);
+  modal.addEventListener('click', handleOverlayClick);
+}
+
+function finalizePolygonCreation(name) {
   pushHistoryState();
   const polyId = `poly-custom-${Date.now()}`;
   const randomColors = ['#f97316', '#3b82f6', '#22c55e', '#ef4444', '#a855f7', '#ec4899', '#eab308', '#06b6d4'];
   const randomColor = randomColors[Math.floor(Math.random() * randomColors.length)];
   
-  const trimmedName = name.trim() || (currentLang === 'en' ? "New Area" : "새 영역");
+  const trimmedName = (name && name.trim()) || (currentLang === 'en' ? "New Area" : "새 영역");
   
   customPolygons.push({
     id: polyId,
@@ -14371,6 +14456,7 @@ function updateTempPolygonPreview(mousePt = null, isNearStart = false) {
     preview.setAttribute('stroke-dasharray', '5 5');
     preview.setAttribute('fill', '#ea580c');
     preview.setAttribute('fill-opacity', '0.1');
+    preview.style.pointerEvents = 'none';
     svgLayer.appendChild(preview);
   }
   
@@ -14403,8 +14489,19 @@ function updateTempPolygonPreview(mousePt = null, isNearStart = false) {
       startCircle = document.createElementNS(svgNS, 'circle');
       startCircle.id = 'temp-polygon-start-circle';
       startCircle.style.cursor = 'pointer';
+      startCircle.style.pointerEvents = 'all';
+      startCircle.addEventListener('pointerdown', (e) => {
+        e.stopPropagation();
+      });
       startCircle.addEventListener('click', (e) => {
         e.stopPropagation();
+        if (tempPolygonPoints.length >= 3) {
+          completePolygonCreation();
+        }
+      });
+      startCircle.addEventListener('touchend', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
         if (tempPolygonPoints.length >= 3) {
           completePolygonCreation();
         }
@@ -14416,14 +14513,14 @@ function updateTempPolygonPreview(mousePt = null, isNearStart = false) {
 
     const scaleFactor = Math.min(1.5, Math.max(0.4, currentScale));
     if (tempPolygonPoints.length >= 3) {
-      const radius = isNearStart ? (14 / scaleFactor) : (8 / scaleFactor);
+      const radius = isNearStart ? (16 / scaleFactor) : (10 / scaleFactor);
       startCircle.setAttribute('r', radius);
       startCircle.setAttribute('fill', isNearStart ? '#10b981' : '#ea580c');
       startCircle.setAttribute('stroke', '#ffffff');
       startCircle.setAttribute('stroke-width', isNearStart ? '3' : '2');
-      startCircle.style.filter = isNearStart ? 'drop-shadow(0 0 6px rgba(16, 185, 129, 0.9))' : 'drop-shadow(0 0 4px rgba(234, 88, 12, 0.7))';
+      startCircle.style.filter = isNearStart ? 'drop-shadow(0 0 8px rgba(16, 185, 129, 0.95))' : 'drop-shadow(0 0 5px rgba(234, 88, 12, 0.8))';
     } else {
-      startCircle.setAttribute('r', 6 / scaleFactor);
+      startCircle.setAttribute('r', 7 / scaleFactor);
       startCircle.setAttribute('fill', '#ea580c');
       startCircle.setAttribute('stroke', '#ffffff');
       startCircle.setAttribute('stroke-width', '2');
