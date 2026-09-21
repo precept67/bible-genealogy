@@ -161,13 +161,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
             }
         }
+        attachScriptMessageHandler()
     }
 
     private func suppressTitlebarHoverEffects(in view: NSObject) {
         let className = NSStringFromClass(type(of: view))
         
-        // Suppress visual effects and hover decorations
-        if className.contains("VisualEffect") || className.contains("Decoration") || className.contains("Toolbar") {
+        // Suppress visual effects, toolbar, and titlebar container completely
+        if className.contains("Titlebar") || className.contains("VisualEffect") || className.contains("Decoration") || className.contains("Toolbar") {
             view.setValue(0.0, forKey: "alphaValue")
             view.setValue(true, forKey: "isHidden")
             if view.responds(to: NSSelectorFromString("setMaterial:")) {
@@ -178,13 +179,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Traverse children
         if let subviews = view.value(forKey: "subviews") as? [NSObject] {
             for subview in subviews {
-                let subClass = NSStringFromClass(type(of: subview))
-                // Do not hide the actual close/miniaturize/zoom widgets
-                if !subClass.contains("Widget") && !subClass.contains("Button") {
-                    suppressTitlebarHoverEffects(in: subview)
-                }
+                suppressTitlebarHoverEffects(in: subview)
             }
         }
+    }
+
+    private func attachScriptMessageHandler() {
+        var targetVC: CAPBridgeViewController? = nil
+        if let root = self.window?.rootViewController as? CAPBridgeViewController {
+            targetVC = root
+        } else if let window = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) ?? UIApplication.shared.windows.first,
+                  let root = window.rootViewController as? CAPBridgeViewController {
+            targetVC = root
+        }
+        targetVC?.webView?.configuration.userContentController.removeScriptMessageHandler(forName: "macWindowControl")
+        targetVC?.webView?.configuration.userContentController.add(self, name: "macWindowControl")
     }
     #endif
 
@@ -206,3 +215,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
 }
+
+#if targetEnvironment(macCatalyst)
+import WebKit
+
+extension AppDelegate: WKScriptMessageHandler {
+    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        guard message.name == "macWindowControl", let action = message.body as? String else { return }
+        DispatchQueue.main.async {
+            if let nsAppClass = NSClassFromString("NSApplication") as? NSObject.Type,
+               let sharedApp = nsAppClass.perform(NSSelectorFromString("sharedApplication"))?.takeUnretainedValue() as? NSObject,
+               let windows = sharedApp.value(forKey: "windows") as? [NSObject],
+               let win = windows.first {
+                switch action {
+                case "close":
+                    _ = win.perform(NSSelectorFromString("performClose:"), with: nil)
+                case "minimize":
+                    _ = win.perform(NSSelectorFromString("miniaturize:"), with: nil)
+                case "zoom", "fullscreen":
+                    _ = win.perform(NSSelectorFromString("toggleFullScreen:"), with: nil)
+                default:
+                    break
+                }
+            }
+        }
+    }
+}
+#endif

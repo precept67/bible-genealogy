@@ -21417,7 +21417,34 @@ function initCustomHeaderFeatures() {
   // 전역 가상 키보드 닫기 핸들러 기동 (빈 공간 터치 시 키보드 내리기)
   setupGlobalKeyboardDismiss();
   setupFullscreenStateWatcher();
+  setupMacTrafficLights();
   initSmartMenubar();
+}
+
+function setupMacTrafficLights() {
+  function sendWindowControl(action) {
+    if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.macWindowControl) {
+      window.webkit.messageHandlers.macWindowControl.postMessage(action);
+    } else {
+      if (action === 'close') {
+        window.close();
+      } else if (action === 'zoom' || action === 'fullscreen') {
+        if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+          document.documentElement.requestFullscreen?.() || document.body.requestFullscreen?.();
+        } else {
+          document.exitFullscreen?.() || document.webkitExitFullscreen?.();
+        }
+      }
+    }
+  }
+
+  const closeBtn = document.getElementById('mac-tl-close');
+  const minBtn = document.getElementById('mac-tl-min');
+  const zoomBtn = document.getElementById('mac-tl-zoom');
+
+  if (closeBtn) closeBtn.onclick = () => sendWindowControl('close');
+  if (minBtn) minBtn.onclick = () => sendWindowControl('minimize');
+  if (zoomBtn) zoomBtn.onclick = () => sendWindowControl('zoom');
 }
 
 function setupFullscreenStateWatcher() {
