@@ -21537,7 +21537,7 @@ function initSmartMenubar() {
       menubar.style.setProperty('left', '0px', 'important');
       menubar.style.setProperty('right', '0px', 'important');
       menubar.style.setProperty('top', '0px', 'important');
-      menubar.style.setProperty('padding-left', isMacFS ? '16px' : '80px', 'important');
+      menubar.style.setProperty('padding-left', '16px', 'important');
     }
     saveState();
   }

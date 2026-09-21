@@ -5365,7 +5365,7 @@ body.is-fullscreen.platform-macos #desktop-mac-titlebar-bg,
   z-index: 25000;
   align-items: center;
   justify-content: space-between;
-  padding: 0 16px 0 80px;
+  padding: 0 16px;
   box-sizing: border-box;
   font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
   font-size: 14px;
@@ -5382,7 +5382,7 @@ html.platform-macos #desktop-mac-menubar,
 body.platform-macos #desktop-mac-menubar {
   display: flex !important;
   top: 0px !important;
-  padding: 0 16px 0 80px !important;
+  padding: 0 16px !important;
   background: #ffffff !important;
   color: #111827 !important;
   backdrop-filter: none !important;
