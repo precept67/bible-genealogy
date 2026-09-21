@@ -1,6 +1,6 @@
 [package]
 name = "bible-genealogy"
-version = "1.0.0"
+version = "1.1.4"
 description = "Bible Genealogy Desktop App"
 authors = ["precept67"]
 edition = "2021"
