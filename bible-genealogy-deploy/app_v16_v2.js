@@ -10557,6 +10557,8 @@ function getCustomOrthogonalPath(x0, y0, x_child, y_child, points) {
   vertices.push({ x: x_child, y: y_child });
   
   return getRoundedCornersPath(vertices, styleSettings.cornerRadius);
+}
+
 function syncZoomText() {
   const percent = `${Math.round(currentScale * 100)}%`;
   const zoomLevelEl = document.getElementById('zoom-level');
