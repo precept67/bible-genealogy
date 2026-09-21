@@ -3198,8 +3198,8 @@ window.addEventListener('DOMContentLoaded', async () => {
     console.warn("Storage restore startup note:", err);
   }
 
-  // Automatic iCloud remote change detector on window focus
-  window.addEventListener('focus', async () => {
+  // Automatic iCloud remote change detector on window focus & periodic check
+  const checkRemoteICloudSync = async () => {
     if (localStorage.getItem('icloud_sync_enabled') === 'true' && typeof getICloudSyncDirectory === 'function' && window.__TAURI__) {
       try {
         const syncDir = await getICloudSyncDirectory();
@@ -3219,7 +3219,10 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
       } catch (_) {}
     }
-  });
+  };
+
+  window.addEventListener('focus', checkRemoteICloudSync);
+  setInterval(checkRemoteICloudSync, 10000);
 
   // Flush all data to local disk on close/hide/background
   const flushAllLocalData = () => {
@@ -17047,23 +17050,67 @@ async function waitForCapacitorPlugins(maxWaitMs = 1200) {
   }
 }
 
-// Complete Tree & Layout State Serialization for Local Persistence
+// Complete Tree & Layout State Serialization for Local Persistence & iCloud Sync
 function getCompleteTreeState() {
+  const currentAnnots = (typeof annotations !== 'undefined' && Array.isArray(annotations) && annotations.length > 0)
+    ? annotations
+    : JSON.parse(localStorage.getItem('bible_tree_annotations') || '[]');
+
+  const currentPolys = (typeof customPolygons !== 'undefined' && Array.isArray(customPolygons) && customPolygons.length > 0)
+    ? customPolygons
+    : JSON.parse(localStorage.getItem('bible_tree_custom_polygons') || '[]');
+
+  const currentEvents = (typeof events !== 'undefined' && Array.isArray(events) && events.length > 0)
+    ? events
+    : JSON.parse(localStorage.getItem('bible_tree_events') || '[]');
+
+  const currentLocs = (typeof locations !== 'undefined' && Array.isArray(locations) && locations.length > 0)
+    ? locations
+    : JSON.parse(localStorage.getItem('bible_tree_locations') || '[]');
+
+  const currentBends = (typeof lineBends !== 'undefined' && lineBends && typeof lineBends === 'object')
+    ? lineBends
+    : JSON.parse(localStorage.getItem('bible_tree_line_bends') || '{}');
+
+  const currentZIndices = (typeof lineZIndices !== 'undefined' && lineZIndices && typeof lineZIndices === 'object')
+    ? lineZIndices
+    : JSON.parse(localStorage.getItem('bible_tree_line_zindices') || '{}');
+
+  const currentSplits = (typeof spouseSplits !== 'undefined' && spouseSplits && typeof spouseSplits === 'object')
+    ? spouseSplits
+    : JSON.parse(localStorage.getItem('bible_tree_spouse_splits') || '{}');
+
+  const currentLines = (typeof customVisualLines !== 'undefined' && Array.isArray(customVisualLines))
+    ? customVisualLines
+    : JSON.parse(localStorage.getItem('bible_tree_custom_visual_lines') || '[]');
+
+  const currentJuncs = (typeof canvasJunctions !== 'undefined' && Array.isArray(canvasJunctions))
+    ? canvasJunctions
+    : JSON.parse(localStorage.getItem('bible_tree_canvas_junctions') || '[]');
+
+  const currentStyles = (typeof styleSettings !== 'undefined' && styleSettings && typeof styleSettings === 'object')
+    ? styleSettings
+    : JSON.parse(localStorage.getItem('bible_tree_style_settings') || '{}');
+
+  const customCharacters = (typeof db !== 'undefined' && Array.isArray(db))
+    ? db.filter(c => c && c.isCustom)
+    : JSON.parse(localStorage.getItem('bible_tree_custom_characters') || '[]');
+
   return {
     version: "16.0",
-    customCharacters: JSON.parse(localStorage.getItem('bible_tree_custom_characters') || '[]'),
+    customCharacters: customCharacters,
     characterEdits: JSON.parse(localStorage.getItem('bible_tree_character_edits') || '{}'),
     deletedIds: JSON.parse(localStorage.getItem('bible_tree_deleted_ids') || '[]'),
-    events: JSON.parse(localStorage.getItem('bible_tree_events') || '[]'),
-    locations: JSON.parse(localStorage.getItem('bible_tree_locations') || '[]'),
-    annotations: JSON.parse(localStorage.getItem('bible_tree_annotations') || '[]'),
-    customPolygons: JSON.parse(localStorage.getItem('bible_tree_custom_polygons') || '[]'),
-    lineBends: JSON.parse(localStorage.getItem('bible_tree_line_bends') || '{}'),
-    lineZIndices: JSON.parse(localStorage.getItem('bible_tree_line_zindices') || '{}'),
-    spouseSplits: JSON.parse(localStorage.getItem('bible_tree_spouse_splits') || '{}'),
-    customVisualLines: JSON.parse(localStorage.getItem('bible_tree_custom_visual_lines') || '[]'),
-    canvasJunctions: JSON.parse(localStorage.getItem('bible_tree_canvas_junctions') || '[]'),
-    styleSettings: JSON.parse(localStorage.getItem('bible_tree_style_settings') || '{}')
+    events: currentEvents,
+    locations: currentLocs,
+    annotations: currentAnnots,
+    customPolygons: currentPolys,
+    lineBends: currentBends,
+    lineZIndices: currentZIndices,
+    spouseSplits: currentSplits,
+    customVisualLines: currentLines,
+    canvasJunctions: currentJuncs,
+    styleSettings: currentStyles
   };
 }
 
@@ -17388,8 +17435,8 @@ async function applyRestoredTreeState(state) {
       } catch(_) { currentCustom = []; }
       
       const customMap = new Map();
-      state.customCharacters.forEach(c => { if (c && c.id) customMap.set(c.id, c); });
       currentCustom.forEach(c => { if (c && c.id) customMap.set(c.id, c); });
+      state.customCharacters.forEach(c => { if (c && c.id) customMap.set(c.id, c); });
       const allCustom = Array.from(customMap.values());
       activeCustomIds = new Set(allCustom.map(c => c.id));
       localStorage.setItem('bible_tree_custom_characters', JSON.stringify(allCustom));
@@ -17401,7 +17448,7 @@ async function applyRestoredTreeState(state) {
         currentEdits = JSON.parse(localStorage.getItem('bible_tree_character_edits') || '{}');
         if (!currentEdits || typeof currentEdits !== 'object' || Array.isArray(currentEdits)) currentEdits = {};
       } catch(_) { currentEdits = {}; }
-      localStorage.setItem('bible_tree_character_edits', JSON.stringify({ ...state.characterEdits, ...currentEdits }));
+      localStorage.setItem('bible_tree_character_edits', JSON.stringify({ ...currentEdits, ...state.characterEdits }));
     }
 
     if (state.deletedIds && Array.isArray(state.deletedIds)) {
@@ -17410,10 +17457,11 @@ async function applyRestoredTreeState(state) {
         currentDeleted = JSON.parse(localStorage.getItem('bible_tree_deleted_ids') || '[]');
         if (!Array.isArray(currentDeleted)) currentDeleted = [];
       } catch(_) { currentDeleted = []; }
-      const mergedDeleted = Array.from(new Set([...state.deletedIds, ...currentDeleted])).filter(id => !activeCustomIds.has(id));
+      const mergedDeleted = Array.from(new Set([...currentDeleted, ...state.deletedIds])).filter(id => !activeCustomIds.has(id));
       localStorage.setItem('bible_tree_deleted_ids', JSON.stringify(mergedDeleted));
     }
 
+    // Annotations / Boxes (메모 상자 / 텍스트 상자 - 내용 및 위치 완벽 동기화)
     if (state.annotations && Array.isArray(state.annotations)) {
       let currentAnnots = [];
       try {
@@ -17421,11 +17469,14 @@ async function applyRestoredTreeState(state) {
         if (!Array.isArray(currentAnnots)) currentAnnots = [];
       } catch(_) { currentAnnots = []; }
       const annotMap = new Map();
-      state.annotations.forEach(a => { if (a && a.id) annotMap.set(a.id, a); });
       currentAnnots.forEach(a => { if (a && a.id) annotMap.set(a.id, a); });
-      localStorage.setItem('bible_tree_annotations', JSON.stringify(Array.from(annotMap.values())));
+      state.annotations.forEach(a => { if (a && a.id) annotMap.set(a.id, a); });
+      const mergedAnnots = Array.from(annotMap.values());
+      annotations = mergedAnnots;
+      localStorage.setItem('bible_tree_annotations', JSON.stringify(mergedAnnots));
     }
 
+    // Events (사건 마커 - 이름, 설명, 위치 동기화)
     if (state.events && Array.isArray(state.events)) {
       let currentEvents = [];
       try {
@@ -17433,11 +17484,14 @@ async function applyRestoredTreeState(state) {
         if (!Array.isArray(currentEvents)) currentEvents = [];
       } catch(_) { currentEvents = []; }
       const evMap = new Map();
-      state.events.forEach(e => { if (e && e.id) evMap.set(e.id, e); });
       currentEvents.forEach(e => { if (e && e.id) evMap.set(e.id, e); });
-      localStorage.setItem('bible_tree_events', JSON.stringify(Array.from(evMap.values())));
+      state.events.forEach(e => { if (e && e.id) evMap.set(e.id, e); });
+      const mergedEvents = Array.from(evMap.values());
+      events = mergedEvents;
+      localStorage.setItem('bible_tree_events', JSON.stringify(mergedEvents));
     }
 
+    // Locations (장소 마커 - 이름, 설명, 위치 동기화)
     if (state.locations && Array.isArray(state.locations)) {
       let currentLocs = [];
       try {
@@ -17445,11 +17499,14 @@ async function applyRestoredTreeState(state) {
         if (!Array.isArray(currentLocs)) currentLocs = [];
       } catch(_) { currentLocs = []; }
       const locMap = new Map();
-      state.locations.forEach(l => { if (l && l.id) locMap.set(l.id, l); });
       currentLocs.forEach(l => { if (l && l.id) locMap.set(l.id, l); });
-      localStorage.setItem('bible_tree_locations', JSON.stringify(Array.from(locMap.values())));
+      state.locations.forEach(l => { if (l && l.id) locMap.set(l.id, l); });
+      const mergedLocs = Array.from(locMap.values());
+      locations = mergedLocs;
+      localStorage.setItem('bible_tree_locations', JSON.stringify(mergedLocs));
     }
 
+    // Custom Polygons / Boxes (다각형 영역 박스 - 라벨, 좌표/위치 목록 points 완벽 동기화)
     if (state.customPolygons && Array.isArray(state.customPolygons)) {
       let currentPolys = [];
       try {
@@ -17457,29 +17514,47 @@ async function applyRestoredTreeState(state) {
         if (!Array.isArray(currentPolys)) currentPolys = [];
       } catch(_) { currentPolys = []; }
       const polyMap = new Map();
-      state.customPolygons.forEach(p => { if (p && p.id) polyMap.set(p.id, p); });
       currentPolys.forEach(p => { if (p && p.id) polyMap.set(p.id, p); });
-      localStorage.setItem('bible_tree_custom_polygons', JSON.stringify(Array.from(polyMap.values())));
+      state.customPolygons.forEach(p => { if (p && p.id) polyMap.set(p.id, p); });
+      const mergedPolys = Array.from(polyMap.values());
+      customPolygons = mergedPolys;
+      localStorage.setItem('bible_tree_custom_polygons', JSON.stringify(mergedPolys));
     }
 
+    // Line Bends (연결선 꺾임점 좌표 동기화)
     if (state.lineBends && typeof state.lineBends === 'object' && !Array.isArray(state.lineBends)) {
       let currentBends = {};
       try {
         currentBends = JSON.parse(localStorage.getItem('bible_tree_line_bends') || '{}');
         if (!currentBends || typeof currentBends !== 'object') currentBends = {};
       } catch(_) { currentBends = {}; }
-      localStorage.setItem('bible_tree_line_bends', JSON.stringify({ ...state.lineBends, ...currentBends }));
+      lineBends = { ...currentBends, ...state.lineBends };
+      localStorage.setItem('bible_tree_line_bends', JSON.stringify(lineBends));
     }
 
+    // Spouse Splits
     if (state.spouseSplits && typeof state.spouseSplits === 'object' && !Array.isArray(state.spouseSplits)) {
       let currentSplits = {};
       try {
         currentSplits = JSON.parse(localStorage.getItem('bible_tree_spouse_splits') || '{}');
         if (!currentSplits || typeof currentSplits !== 'object') currentSplits = {};
       } catch(_) { currentSplits = {}; }
-      localStorage.setItem('bible_tree_spouse_splits', JSON.stringify({ ...state.spouseSplits, ...currentSplits }));
+      spouseSplits = { ...currentSplits, ...state.spouseSplits };
+      localStorage.setItem('bible_tree_spouse_splits', JSON.stringify(spouseSplits));
     }
 
+    // Line Z-Indices
+    if (state.lineZIndices && typeof state.lineZIndices === 'object' && !Array.isArray(state.lineZIndices)) {
+      let currentZ = {};
+      try {
+        currentZ = JSON.parse(localStorage.getItem('bible_tree_line_zindices') || '{}');
+        if (!currentZ || typeof currentZ !== 'object') currentZ = {};
+      } catch(_) { currentZ = {}; }
+      lineZIndices = { ...currentZ, ...state.lineZIndices };
+      localStorage.setItem('bible_tree_line_zindices', JSON.stringify(lineZIndices));
+    }
+
+    // Custom Visual Lines
     if (state.customVisualLines && Array.isArray(state.customVisualLines)) {
       let currentLines = [];
       try {
@@ -17487,11 +17562,14 @@ async function applyRestoredTreeState(state) {
         if (!Array.isArray(currentLines)) currentLines = [];
       } catch(_) { currentLines = []; }
       const lineMap = new Map();
-      state.customVisualLines.forEach(l => { if (l && l.id) lineMap.set(l.id, l); });
       currentLines.forEach(l => { if (l && l.id) lineMap.set(l.id, l); });
-      localStorage.setItem('bible_tree_custom_visual_lines', JSON.stringify(Array.from(lineMap.values())));
+      state.customVisualLines.forEach(l => { if (l && l.id) lineMap.set(l.id, l); });
+      const mergedLines = Array.from(lineMap.values());
+      customVisualLines = mergedLines;
+      localStorage.setItem('bible_tree_custom_visual_lines', JSON.stringify(mergedLines));
     }
 
+    // Canvas Junctions (분기점 위치 동기화)
     if (state.canvasJunctions && Array.isArray(state.canvasJunctions)) {
       let currentJuncs = [];
       try {
@@ -17499,16 +17577,17 @@ async function applyRestoredTreeState(state) {
         if (!Array.isArray(currentJuncs)) currentJuncs = [];
       } catch(_) { currentJuncs = []; }
       const juncMap = new Map();
-      state.canvasJunctions.forEach(j => { if (j && j.id) juncMap.set(j.id, j); });
       currentJuncs.forEach(j => { if (j && j.id) juncMap.set(j.id, j); });
-      localStorage.setItem('bible_tree_canvas_junctions', JSON.stringify(Array.from(juncMap.values())));
+      state.canvasJunctions.forEach(j => { if (j && j.id) juncMap.set(j.id, j); });
+      const mergedJuncs = Array.from(juncMap.values());
+      canvasJunctions = mergedJuncs;
+      localStorage.setItem('bible_tree_canvas_junctions', JSON.stringify(mergedJuncs));
     }
 
+    // Style Settings
     if (state.styleSettings && typeof state.styleSettings === 'object') {
-      const val = localStorage.getItem('bible_tree_style_settings');
-      if (!val || val === '{}' || val === 'null') {
-        localStorage.setItem('bible_tree_style_settings', JSON.stringify(state.styleSettings));
-      }
+      styleSettings = { ...styleSettings, ...state.styleSettings };
+      localStorage.setItem('bible_tree_style_settings', JSON.stringify(styleSettings));
     }
 
     // Re-populate in-memory database and runtime variables
@@ -17527,6 +17606,7 @@ async function applyRestoredTreeState(state) {
     if (typeof initBoard === 'function') initBoard();
     if (typeof renderTree === 'function') renderTree();
     if (typeof renderAnnotations === 'function') renderAnnotations();
+    if (typeof renderCustomPolygons === 'function') renderCustomPolygons();
     if (typeof drawConnections === 'function') drawConnections();
     if (typeof renderJunctions === 'function') renderJunctions();
     if (typeof updateStats === 'function') updateStats();
@@ -17542,18 +17622,24 @@ async function applyRestoredNotesData(importedNotes) {
   isRestoringNotesData = true;
   try {
     let currentNotes = userNotes || {};
+    try {
+      const stored = localStorage.getItem('bible_tree_user_notes');
+      if (stored) {
+        currentNotes = { ...JSON.parse(stored), ...currentNotes };
+      }
+    } catch(_) {}
+
     for (const key of Object.keys(importedNotes)) {
-      if (!currentNotes[key]) {
-        currentNotes[key] = importedNotes[key];
-      } else {
-        const cur = currentNotes[key];
-        const imp = importedNotes[key];
-        if (typeof imp === 'string' && imp.trim()) {
-          if (!cur || typeof cur !== 'string' || !cur.trim()) {
+      const imp = importedNotes[key];
+      if (imp !== undefined && imp !== null) {
+        if (typeof imp === 'string') {
+          if (imp.trim() !== '') {
             currentNotes[key] = imp;
           }
-        } else if (typeof imp === 'object' && imp !== null) {
-          currentNotes[key] = { ...(typeof cur === 'object' ? cur : {}), ...imp };
+        } else if (typeof imp === 'object') {
+          currentNotes[key] = { ...(typeof currentNotes[key] === 'object' ? currentNotes[key] : {}), ...imp };
+        } else {
+          currentNotes[key] = imp;
         }
       }
     }
@@ -17561,6 +17647,10 @@ async function applyRestoredNotesData(importedNotes) {
     localStorage.setItem('bible_tree_user_notes', JSON.stringify(userNotes));
     await idbSave('bible_genealogy_notes_autobackup', userNotes);
     if (typeof updateAllNoteBadges === 'function') updateAllNoteBadges();
+    const noteTextarea = document.getElementById('note-text');
+    if (noteTextarea && typeof activePersonId !== 'undefined' && activePersonId && userNotes[activePersonId]) {
+      noteTextarea.value = userNotes[activePersonId];
+    }
   } finally {
     isRestoringNotesData = false;
   }
