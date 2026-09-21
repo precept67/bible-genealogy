@@ -53,11 +53,11 @@ let isRestoringNotesData = false;
     // Sync only genealogy/memos specific app data keys
     if (key.startsWith('bible_tree_') || key.startsWith('bible_genealogy_')) {
       if (typeof window.triggerICloudSync === 'function') {
-        // Debounce sync triggers by 800ms to group consecutive edits
+        // Debounce sync triggers by 80ms for instant responsiveness
         clearTimeout(syncTimeout);
         syncTimeout = setTimeout(() => {
-          window.triggerICloudSync('auto');
-        }, 800);
+          window.triggerICloudSync(false, false);
+        }, 80);
       }
 
       // Automatically persist tree and layout data to local filesystem/disk
@@ -68,7 +68,7 @@ let isRestoringNotesData = false;
           if (typeof triggerAutoBackup === 'function') {
             triggerAutoBackup(true);
           }
-        }, 50);
+        }, 40);
       }
     }
   };
@@ -3198,7 +3198,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     console.warn("Storage restore startup note:", err);
   }
 
-  // Automatic iCloud remote change detector on window focus & periodic check
+  // Automatic iCloud remote change detector on window focus & fast periodic check (every 3s)
   const checkRemoteICloudSync = async () => {
     if (localStorage.getItem('icloud_sync_enabled') === 'true' && typeof getICloudSyncDirectory === 'function' && window.__TAURI__) {
       try {
@@ -3211,7 +3211,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             const parsed = JSON.parse(content);
             const remoteTime = parsed.lastModified || 0;
             const localTime = parseInt(localStorage.getItem('icloud_last_sync_time') || '0', 10);
-            if (remoteTime > localTime + 1500) {
+            if (remoteTime > localTime + 500) {
               console.log("[iCloud] Remote changes detected from another Mac, pulling latest data...");
               await pullDataFromICloud(false);
             }
@@ -3222,7 +3222,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   };
 
   window.addEventListener('focus', checkRemoteICloudSync);
-  setInterval(checkRemoteICloudSync, 10000);
+  setInterval(checkRemoteICloudSync, 3000);
 
   // Flush all data to local disk on close/hide/background
   const flushAllLocalData = () => {
@@ -4327,6 +4327,9 @@ function saveAnnotations() {
   if (typeof persistTreeDataLocally === 'function') {
     persistTreeDataLocally(true);
   }
+  if (localStorage.getItem('icloud_sync_enabled') === 'true' && typeof pushDataToICloud === 'function') {
+    pushDataToICloud(false, true);
+  }
   if (isAdminMode) {
     debouncedAutoSaveToServer();
   }
@@ -4514,6 +4517,9 @@ function saveEvents() {
   if (typeof persistTreeDataLocally === 'function') {
     persistTreeDataLocally(true);
   }
+  if (localStorage.getItem('icloud_sync_enabled') === 'true' && typeof pushDataToICloud === 'function') {
+    pushDataToICloud(false, true);
+  }
   if (isAdminMode && typeof renderSpawnerPanel === 'function') renderSpawnerPanel();
 }
 
@@ -4540,6 +4546,9 @@ function saveLocations() {
   localStorage.setItem('bible_tree_locations', JSON.stringify(locations));
   if (typeof persistTreeDataLocally === 'function') {
     persistTreeDataLocally(true);
+  }
+  if (localStorage.getItem('icloud_sync_enabled') === 'true' && typeof pushDataToICloud === 'function') {
+    pushDataToICloud(false, true);
   }
   if (isAdminMode && typeof renderSpawnerPanel === 'function') renderSpawnerPanel();
 }
@@ -4585,6 +4594,9 @@ function saveCustomPolygons() {
   localStorage.setItem('bible_tree_custom_polygons', JSON.stringify(customPolygons));
   if (typeof persistTreeDataLocally === 'function') {
     persistTreeDataLocally(true);
+  }
+  if (localStorage.getItem('icloud_sync_enabled') === 'true' && typeof pushDataToICloud === 'function') {
+    pushDataToICloud(false, true);
   }
   if (isAdminMode) {
     debouncedAutoSaveToServer();
@@ -17226,11 +17238,13 @@ async function getICloudSyncDirectory() {
 }
 
 let icloudPushDebounceTimer = null;
-async function pushDataToICloud(showNotification = false) {
+async function pushDataToICloud(showNotification = false, immediate = false) {
   if (isRestoringLocalData || isRestoringNotesData) return false;
   
   if (icloudPushDebounceTimer) clearTimeout(icloudPushDebounceTimer);
   
+  const delay = (immediate || showNotification) ? 0 : 100;
+
   return new Promise((resolve) => {
     icloudPushDebounceTimer = setTimeout(async () => {
       try {
@@ -17275,7 +17289,7 @@ async function pushDataToICloud(showNotification = false) {
         if (showNotification) alert("iCloud 백업 저장 중 오류가 발생했습니다: " + err.message);
         resolve(false);
       }
-    }, showNotification ? 10 : 300);
+    }, delay);
   });
 }
 
@@ -18018,6 +18032,9 @@ async function saveUserNotes(immediate = true) {
   // Run automatic background backup locally (Tauri & Capacitor & IndexedDB)
   triggerAutoBackup(immediate);
   persistTreeDataLocally(immediate);
+  if (localStorage.getItem('icloud_sync_enabled') === 'true' && typeof pushDataToICloud === 'function') {
+    pushDataToICloud(false, immediate);
+  }
 
   const licenseKey = localStorage.getItem('bible_genealogy_license_key');
   if (!userToken && !licenseKey) return;
