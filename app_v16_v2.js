@@ -10636,7 +10636,7 @@ function setupZoomPan() {
   function isScrollableOverlay(target) {
     if (!target) return false;
     const overlay = target.closest(
-      '#study-panel, .layer-control-panel, #search-panel, .modal-content, #admin-modal, #layer-item-modal, #style-editor-panel, #help-guide-modal, #install-guide-modal, #desktop-license-modal, #admin-dashboard-modal, #bottom-spawner-panel'
+      '#study-panel, .layer-control-panel, #search-panel, #search-results, .search-results-dropdown, .mac-search-results, #mobile-search-results, .modal-content, #admin-modal, #layer-item-modal, #style-editor-panel, #help-guide-modal, #install-guide-modal, #desktop-license-modal, #admin-dashboard-modal, #bottom-spawner-panel'
     );
     if (!overlay) return false;
     const style = window.getComputedStyle(overlay);
@@ -10653,6 +10653,10 @@ function setupZoomPan() {
       target.closest('header') ||
       target.closest('#control-panel') ||
       target.closest('#search-panel') ||
+      target.closest('#search-results') ||
+      target.closest('.search-results-dropdown') ||
+      target.closest('.mac-search-results') ||
+      target.closest('#mobile-search-results') ||
       target.closest('#admin-actions-bar') ||
       target.closest('.modal-content') ||
       target.closest('.modal-overlay') ||
@@ -12286,30 +12290,30 @@ function highlightRelatedElements(itemId, itemType) {
   }
 }
 
-// Setup Search
-function setupSearch() {
-  const searchResults = document.getElementById('search-results');
+// Setup Search (Universal for Desktop, iPhone, Android, iPad, Tablet)
+function bindUniversalSearchInput(inputEl, resultsEl) {
+  if (!inputEl) return;
   
   let savedPanX = panX;
   let savedPanY = panY;
   let savedScale = currentScale;
 
-  searchInput.addEventListener('focus', () => {
+  inputEl.addEventListener('focus', () => {
     savedPanX = panX;
     savedPanY = panY;
     savedScale = currentScale;
   });
 
-  searchInput.addEventListener('input', (e) => {
+  inputEl.addEventListener('input', (e) => {
     const query = e.target.value.trim().toLowerCase();
     
     document.querySelectorAll('.person-card.highlight, .layer-marker.highlight, .canvas-annotation.highlight, .canvas-junction-node.highlight').forEach(el => {
       el.classList.remove('highlight');
     });
     
-    if (searchResults) {
-      searchResults.innerHTML = '';
-      searchResults.style.display = 'none';
+    if (resultsEl) {
+      resultsEl.innerHTML = '';
+      resultsEl.style.display = 'none';
     }
     
     if (!query) {
@@ -12331,82 +12335,156 @@ function setupSearch() {
       ...(showEvents ? events.map(e => ({...e, dataType: 'event'})) : []),
       ...(showLocations ? locations.map(l => ({...l, dataType: 'location'})) : [])
     ];
-    
-    // Find the best match, prioritizing exact match -> starts-with match -> contains match
-    let partialMatch = combinedData.find(item => {
+
+    // Helper to extract all searchable detail text for an item
+    function getDetailSearchText(item) {
+      let parts = [];
+      if (item.desc) parts.push(item.desc);
+      if (item.engDesc) parts.push(item.engDesc);
+      if (item.meaning) parts.push(item.meaning);
+      if (item.engMeaning) parts.push(item.engMeaning);
+      if (item.verse) parts.push(item.verse);
+      if (item.verses) parts.push(Array.isArray(item.verses) ? item.verses.join(' ') : item.verses);
+      if (item.reference) parts.push(item.reference);
+      if (item.hometown && item.hometown.name) parts.push(item.hometown.name);
+      if (item.activities) {
+        if (Array.isArray(item.activities)) {
+          parts.push(item.activities.map(a => `${a.name || a.title || ''} ${a.desc || ''}`).join(' '));
+        } else {
+          parts.push(item.activities);
+        }
+      }
+      if (typeof userNotes !== 'undefined' && userNotes && userNotes[item.id]) {
+        parts.push(userNotes[item.id]);
+      }
+      return parts.join(' ');
+    }
+
+    // Helper to generate snippet around matched keyword
+    function getSearchSnippet(fullText, q) {
+      if (!fullText) return '';
+      const lower = fullText.toLowerCase();
+      const idx = lower.indexOf(q);
+      if (idx === -1) return '';
+      const start = Math.max(0, idx - 16);
+      const end = Math.min(fullText.length, idx + q.length + 24);
+      let snip = fullText.substring(start, end);
+      if (start > 0) snip = '...' + snip;
+      if (end < fullText.length) snip = snip + '...';
+      
+      const escaped = snip.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const escapedQ = q.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const reg = new RegExp(`(${escapedQ.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+      return escaped.replace(reg, '<mark>$1</mark>');
+    }
+
+    // Collect matches with scoring
+    const matches = [];
+    combinedData.forEach(item => {
       const name = (item.dataType === 'person') ? getCharName(item) : ((item.dataType === 'event') ? getEventName(item) : getLocationName(item));
       const eng = item.engName || '';
-      return name.toLowerCase() === query || eng.toLowerCase() === query;
+      const nameLower = name.toLowerCase();
+      const engLower = eng.toLowerCase();
+      const detailText = getDetailSearchText(item);
+      const detailLower = detailText.toLowerCase();
+
+      let score = 0;
+      let matchType = '';
+      let snippet = '';
+
+      if (nameLower === query || engLower === query) {
+        score = 100;
+        matchType = 'exact_name';
+      } else if (nameLower.startsWith(query) || engLower.startsWith(query)) {
+        score = 80;
+        matchType = 'starts_name';
+      } else if (nameLower.includes(query) || engLower.includes(query)) {
+        score = 60;
+        matchType = 'contains_name';
+      } else if (detailLower.includes(query)) {
+        score = 40;
+        matchType = 'detail';
+        snippet = getSearchSnippet(detailText, query);
+      }
+
+      if (score > 0) {
+        matches.push({ item, score, matchType, snippet, displayName: name, engName: eng });
+      }
     });
-    if (!partialMatch) {
-      partialMatch = combinedData.find(item => {
-        const name = (item.dataType === 'person') ? getCharName(item) : ((item.dataType === 'event') ? getEventName(item) : getLocationName(item));
-        const eng = item.engName || '';
-        return name.toLowerCase().startsWith(query) || eng.toLowerCase().startsWith(query);
-      });
-    }
-    if (!partialMatch) {
-      partialMatch = combinedData.find(item => {
-        const name = (item.dataType === 'person') ? getCharName(item) : ((item.dataType === 'event') ? getEventName(item) : getLocationName(item));
-        const eng = item.engName || '';
-        return name.toLowerCase().includes(query) || eng.toLowerCase().includes(query);
-      });
-    }
-    
-    if (partialMatch) {
-      if (partialMatch.dataType === 'person') {
-        const card = document.getElementById(`card-${partialMatch.id}`);
+
+    // Sort: highest relevance score first, then shorter names
+    matches.sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      return a.displayName.length - b.displayName.length;
+    });
+
+    // Top match will automatically be highlighted & centered on canvas
+    const topMatch = matches[0]?.item;
+    if (topMatch) {
+      if (topMatch.dataType === 'person') {
+        const card = document.getElementById(`card-${topMatch.id}`);
         if (card) {
           card.classList.add('highlight');
-          centerOnNode(partialMatch.id);
+          centerOnNode(topMatch.id);
         }
       } else {
-        const marker = document.getElementById(`${partialMatch.dataType}-${partialMatch.id}`);
+        const marker = document.getElementById(`${topMatch.dataType}-${topMatch.id}`);
         if (marker) {
           marker.classList.add('highlight');
-          centerOnCoords(partialMatch.x, partialMatch.y);
+          centerOnCoords(topMatch.x, topMatch.y);
         }
       }
     }
 
-    // Next, check for EXACT namesakes to populate the dropdown
-    const exactMatches = combinedData.filter(item => {
-      const name = (item.dataType === 'person') ? getCharName(item) : ((item.dataType === 'event') ? getEventName(item) : getLocationName(item));
-      const eng = item.engName || '';
-      return name.toLowerCase() === query || eng.toLowerCase() === query;
-    });
-    
-    // Only show dropdown if they typed a full name that has multiple identical matches
-    if (exactMatches.length > 1 && searchResults) {
-      searchResults.style.display = 'block';
-      exactMatches.forEach(matched => {
+    // Populate search dropdown list
+    if (matches.length > 0 && resultsEl) {
+      resultsEl.style.display = 'block';
+      resultsEl.innerHTML = '';
+      
+      matches.slice(0, 30).forEach(m => {
+        const matched = m.item;
         const li = document.createElement('li');
         li.className = 'search-result-item';
         
-        let parentInfo = '';
-        if (matched.dataType === 'person' && matched.parents && matched.parents.length > 0) {
-          const parentId = matched.parents[0];
-          const parent = db.find(p => p.id === parentId);
-          if (parent) {
-            const parentName = getCharName(parent);
-            const textChild = currentLang === 'en' ? `Child of ${parentName}` : `${parentName}의 자녀`;
-            parentInfo = `<span class="parent-info">(${textChild})</span>`;
+        let badgeInfo = '';
+        if (matched.dataType === 'person') {
+          if (matched.parents && matched.parents.length > 0) {
+            const parentId = matched.parents[0];
+            const parent = db.find(p => p.id === parentId);
+            if (parent) {
+              const parentName = getCharName(parent);
+              const textChild = currentLang === 'en' ? `Child of ${parentName}` : `${parentName}의 자녀`;
+              badgeInfo = `<span class="parent-info">(${textChild})</span>`;
+            }
           }
         } else if (matched.dataType === 'event') {
           const textEvent = currentLang === 'en' ? 'Event' : '사건';
-          parentInfo = `<span class="parent-info">(📜 ${textEvent})</span>`;
+          badgeInfo = `<span class="parent-info">(📜 ${textEvent})</span>`;
         } else if (matched.dataType === 'location') {
           const textLoc = currentLang === 'en' ? 'Location' : '장소';
-          parentInfo = `<span class="parent-info">(📍 ${textLoc})</span>`;
+          badgeInfo = `<span class="parent-info">(📍 ${textLoc})</span>`;
         }
         
         const displayName = matched.dataType === 'person' ? getCharName(matched) : cleanLayerName(matched.dataType === 'event' ? getEventName(matched) : getLocationName(matched));
-        li.innerHTML = `<strong>${displayName}</strong> ${parentInfo}`;
         
-        li.addEventListener('click', () => {
+        let snippetHtml = '';
+        if (m.matchType === 'detail' && m.snippet) {
+          const detailLabel = currentLang === 'en' ? 'Detail' : '상세정보';
+          snippetHtml = `<div class="search-result-snippet"><span class="search-snippet-tag">[${detailLabel}]</span> ${m.snippet}</div>`;
+        }
+        
+        li.innerHTML = `
+          <div class="search-result-header">
+            <strong>${displayName}</strong> ${badgeInfo}
+          </div>
+          ${snippetHtml}
+        `;
+        
+        li.addEventListener('click', (e) => {
+          e.stopPropagation();
           const selectName = matched.dataType === 'person' ? getCharName(matched) : (matched.dataType === 'event' ? getEventName(matched) : getLocationName(matched));
-          searchInput.value = selectName;
-          searchResults.style.display = 'none';
+          inputEl.value = selectName;
+          resultsEl.style.display = 'none';
           
           document.querySelectorAll('.person-card.highlight, .layer-marker.highlight').forEach(el => {
             el.classList.remove('highlight');
@@ -12418,6 +12496,9 @@ function setupSearch() {
               card.classList.add('highlight');
               centerOnNode(matched.id);
             }
+            if (m.matchType === 'detail' && typeof openStudyPanel === 'function') {
+              openStudyPanel(matched.id);
+            }
           } else {
             const marker = document.getElementById(`${matched.dataType}-${matched.id}`);
             if (marker) {
@@ -12425,46 +12506,65 @@ function setupSearch() {
               centerOnCoords(matched.x, matched.y);
             }
           }
-          // 검색 리스트 클릭 완료 즉시 검색창 안전 리셋 및 돋보기 원복!
           if (window.closeSearchWrapper) {
             window.closeSearchWrapper();
           }
         });
         
-        searchResults.appendChild(li);
+        resultsEl.appendChild(li);
       });
     }
   });
-  
-  searchInput.addEventListener('keydown', (e) => {
+
+  inputEl.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
-      searchInput.blur();
-      // 엔터 키 검색 완료 즉시 검색창 안전 리셋 및 돋보기 원복!
+      inputEl.blur();
       if (window.closeSearchWrapper) {
         window.closeSearchWrapper();
       }
     }
   });
 
+  if (resultsEl) {
+    resultsEl.addEventListener('wheel', (e) => {
+      e.stopPropagation();
+    }, { passive: true });
+    resultsEl.addEventListener('touchmove', (e) => {
+      e.stopPropagation();
+    }, { passive: true });
+  }
+}
+
+function setupSearch() {
+  const desktopInput = document.getElementById('searchInput');
+  const desktopResults = document.getElementById('search-results');
+  const mobileInput = document.getElementById('mobileSearchInput') || document.getElementById('search-input');
+  const mobileResults = document.getElementById('mobile-search-results') || desktopResults;
+
+  if (desktopInput) {
+    bindUniversalSearchInput(desktopInput, desktopResults);
+  }
+  if (mobileInput && mobileInput !== desktopInput) {
+    bindUniversalSearchInput(mobileInput, mobileResults);
+  }
+
   const handleGlobalOutsideClick = (e) => {
     // 0. Search Results Panel auto close when clicking/touching outside
     const searchWrapper = document.getElementById('floating-search-wrapper');
-    const searchInput = document.getElementById('searchInput') || document.getElementById('search-input');
-    const searchResults = document.getElementById('search-results');
+    const allSearchResults = document.querySelectorAll('#search-results, #mobile-search-results, .search-results-dropdown');
     
-    if (searchResults && searchResults.style.display !== 'none') {
-      const isClickInsideSearch = 
-        (searchWrapper && searchWrapper.contains(e.target)) || 
-        (searchResults && searchResults.contains(e.target)) ||
-        e.target.closest('#floating-search-wrapper') ||
-        e.target.closest('#search-results');
-        
-      if (!isClickInsideSearch) {
-        if (window.closeSearchWrapper) {
-          window.closeSearchWrapper();
-        } else {
-          searchResults.style.display = 'none';
-        }
+    let isClickInsideAnySearch = false;
+    if (searchWrapper && searchWrapper.contains(e.target)) isClickInsideAnySearch = true;
+    if (e.target.closest('#floating-search-wrapper') || e.target.closest('#desktop-mac-menubar') || e.target.closest('.search-results-dropdown')) {
+      isClickInsideAnySearch = true;
+    }
+    
+    if (!isClickInsideAnySearch) {
+      allSearchResults.forEach(resEl => {
+        resEl.style.display = 'none';
+      });
+      if (window.closeSearchWrapper) {
+        window.closeSearchWrapper();
       }
     }
 
@@ -20461,34 +20561,36 @@ function setupSlideLockDragEvents() {
 
 // Floating Header Actions: Settings & Search Drawer
 function setupFloatingHeaderEvents() {
-  const searchInput = document.getElementById('searchInput') || document.getElementById('search-input');
+  const allInputs = document.querySelectorAll('#searchInput, #mobileSearchInput, .mac-search-input, .search-box');
   const searchWrapper = document.getElementById('floating-search-wrapper');
 
-  if (searchInput) {
-    // 검색 결과 드롭다운 닫기 헬퍼
-    const closeSearchWrapper = () => {
-      document.body.classList.remove('search-focused');
-      const resultsDropdown = document.getElementById('search-results');
-      if (resultsDropdown) {
-        resultsDropdown.style.display = 'none';
-        resultsDropdown.innerHTML = '';
-      }
-    };
+  const closeSearchWrapper = () => {
+    document.body.classList.remove('search-focused');
+    const allDropdowns = document.querySelectorAll('#search-results, #mobile-search-results, .search-results-dropdown');
+    allDropdowns.forEach(dd => {
+      dd.style.display = 'none';
+      dd.innerHTML = '';
+    });
+  };
 
-    // 전역 스코프에서 다른 검색 리스트 클릭 및 키 바인딩 시 복구할 수 있도록 노출
-    window.closeSearchWrapper = closeSearchWrapper;
+  window.closeSearchWrapper = closeSearchWrapper;
 
-    // 포커스 아웃(blur) 시 검색 결과 드롭다운 닫기
-    searchInput.addEventListener('blur', () => {
+  allInputs.forEach(input => {
+    input.addEventListener('blur', () => {
       setTimeout(() => {
         const activeEl = document.activeElement;
-        const resultsDropdown = document.getElementById('search-results');
-        if (searchWrapper && !searchWrapper.contains(activeEl) && (!resultsDropdown || !resultsDropdown.contains(activeEl))) {
+        const allDropdowns = document.querySelectorAll('#search-results, #mobile-search-results, .search-results-dropdown');
+        let isInsideAny = false;
+        allDropdowns.forEach(dd => {
+          if (dd && dd.contains(activeEl)) isInsideAny = true;
+        });
+        if (searchWrapper && searchWrapper.contains(activeEl)) isInsideAny = true;
+        if (!isInsideAny) {
           closeSearchWrapper();
         }
       }, 200);
     });
-  }
+  });
 }
 
 // Reposition separate undo/redo toggles to maintain exactly 4px gap side by side with the centered zoom bar
