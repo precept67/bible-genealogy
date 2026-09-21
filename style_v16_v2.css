@@ -5390,7 +5390,7 @@ body.platform-macos #desktop-mac-menubar {
   transition: top 0.2s ease, padding 0.2s ease;
 }
 
-/* Fullscreen: Menubar has proper safe-area padding and clean white background */
+/* Fullscreen: Menubar has guaranteed safe-area clearance and clean solid background */
 html.is-fullscreen #desktop-mac-menubar,
 body.is-fullscreen #desktop-mac-menubar,
 html.is-fullscreen.platform-macos #desktop-mac-menubar,
@@ -5398,11 +5398,12 @@ body.is-fullscreen.platform-macos #desktop-mac-menubar,
 :fullscreen #desktop-mac-menubar,
 :-webkit-full-screen #desktop-mac-menubar {
   top: 0 !important;
-  padding-top: env(safe-area-inset-top, 0px) !important;
-  padding-bottom: 0px !important;
+  padding-top: max(env(safe-area-inset-top, 0px), 14px) !important;
+  padding-bottom: 4px !important;
   padding-left: 16px !important;
   padding-right: 16px !important;
-  height: calc(38px + env(safe-area-inset-top, 0px)) !important;
+  height: calc(40px + max(env(safe-area-inset-top, 0px), 14px)) !important;
+  align-items: flex-end !important;
   background: #ffffff !important;
   color: #111827 !important;
   border-bottom: 1px solid rgba(0, 0, 0, 0.12) !important;
@@ -5411,16 +5412,24 @@ body.is-fullscreen.platform-macos #desktop-mac-menubar,
   -webkit-backdrop-filter: none !important;
 }
 
+html.is-fullscreen #desktop-mac-menubar .mac-menubar-left,
+body.is-fullscreen #desktop-mac-menubar .mac-menubar-left,
+html.is-fullscreen #desktop-mac-menubar .mac-menubar-right,
+body.is-fullscreen #desktop-mac-menubar .mac-menubar-right {
+  height: 38px !important;
+}
+
 @media (display-mode: fullscreen) {
   #desktop-mac-menubar,
   html.platform-macos #desktop-mac-menubar,
   body.platform-macos #desktop-mac-menubar {
     top: 0 !important;
-    padding-top: env(safe-area-inset-top, 0px) !important;
-    padding-bottom: 0px !important;
+    padding-top: max(env(safe-area-inset-top, 0px), 14px) !important;
+    padding-bottom: 4px !important;
     padding-left: 16px !important;
     padding-right: 16px !important;
-    height: calc(38px + env(safe-area-inset-top, 0px)) !important;
+    height: calc(40px + max(env(safe-area-inset-top, 0px), 14px)) !important;
+    align-items: flex-end !important;
     background: #ffffff !important;
     color: #111827 !important;
     border-bottom: 1px solid rgba(0, 0, 0, 0.12) !important;
@@ -5466,8 +5475,8 @@ html.is-fullscreen.platform-macos #viewer-container,
 body.is-fullscreen.platform-macos #viewer-container,
 html.is-fullscreen #viewer-container,
 body.is-fullscreen #viewer-container {
-  top: calc(38px + env(safe-area-inset-top, 0px)) !important;
-  height: calc(100% - 38px - env(safe-area-inset-top, 0px)) !important;
+  top: calc(40px + max(env(safe-area-inset-top, 0px), 14px)) !important;
+  height: calc(100% - 40px - max(env(safe-area-inset-top, 0px), 14px)) !important;
 }
 
 /* When menubar is floating in windowed mode: viewer starts at top: 0px */
