@@ -118,7 +118,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
 
-        // Direct AppKit NSWindow transparency configuration to eliminate vibrancy blur shelf
+        // Direct AppKit NSWindow configuration: elevate web view above toolbar and remove toolbar background
         if let nsAppClass = NSClassFromString("NSApplication"),
            let nsApp = (nsAppClass as AnyObject).value(forKeyPath: "sharedApplication") as? NSObject,
            let windows = nsApp.value(forKeyPath: "windows") as? [NSObject] {
@@ -127,6 +127,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 win.setValue(1, forKey: "titleVisibility")
                 win.setValue(nil, forKey: "toolbar")
                 win.setValue([], forKey: "titlebarAccessoryViewControllers")
+                
+                // Inspect window frame hierarchy to suppress empty toolbar vibrancy layers and bring content view forward
+                if let contentView = win.value(forKey: "contentView") as? NSObject {
+                    contentView.setValue(true, forKey: "wantsLayer")
+                    if let themeFrame = contentView.value(forKey: "superview") as? NSObject,
+                       let subviews = themeFrame.value(forKey: "subviews") as? [NSObject] {
+                        for subview in subviews {
+                            let className = NSStringFromClass(type(of: subview))
+                            if className.contains("Toolbar") || className.contains("VisualEffect") || className.contains("TitlebarContainer") {
+                                subview.setValue(0.0, forKey: "alphaValue")
+                            }
+                        }
+                    }
+                }
             }
         }
     }
