@@ -5390,7 +5390,7 @@ body.platform-macos #desktop-mac-menubar {
   transition: top 0.2s ease, padding 0.2s ease;
 }
 
-/* Fullscreen: Move menubar to the very top (top: 0) with 100% TRANSPARENCY */
+/* Fullscreen: Menubar has proper safe-area padding and clean white background */
 html.is-fullscreen #desktop-mac-menubar,
 body.is-fullscreen #desktop-mac-menubar,
 html.is-fullscreen.platform-macos #desktop-mac-menubar,
@@ -5398,11 +5398,15 @@ body.is-fullscreen.platform-macos #desktop-mac-menubar,
 :fullscreen #desktop-mac-menubar,
 :-webkit-full-screen #desktop-mac-menubar {
   top: 0 !important;
-  padding: 0 16px !important;
-  background: transparent !important;
-  border: none !important;
-  border-bottom: none !important;
-  box-shadow: none !important;
+  padding-top: env(safe-area-inset-top, 0px) !important;
+  padding-bottom: 0px !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+  height: calc(38px + env(safe-area-inset-top, 0px)) !important;
+  background: #ffffff !important;
+  color: #111827 !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04) !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
@@ -5412,11 +5416,15 @@ body.is-fullscreen.platform-macos #desktop-mac-menubar,
   html.platform-macos #desktop-mac-menubar,
   body.platform-macos #desktop-mac-menubar {
     top: 0 !important;
-    padding: 0 16px !important;
-    background: transparent !important;
-    border: none !important;
-    border-bottom: none !important;
-    box-shadow: none !important;
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    padding-bottom: 0px !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    height: calc(38px + env(safe-area-inset-top, 0px)) !important;
+    background: #ffffff !important;
+    color: #111827 !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12) !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04) !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
   }
@@ -5440,10 +5448,10 @@ body.platform-macos[data-theme="dark"] #desktop-mac-menubar {
 [data-theme="dark"] body.is-fullscreen #desktop-mac-menubar,
 [data-theme="dark"] html.is-fullscreen.platform-macos #desktop-mac-menubar,
 [data-theme="dark"] body.is-fullscreen.platform-macos #desktop-mac-menubar {
-  background: transparent !important;
-  border: none !important;
-  border-bottom: none !important;
-  box-shadow: none !important;
+  background: #1e1e1e !important;
+  color: #f3f4f6 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2) !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
@@ -5455,18 +5463,11 @@ body.platform-macos #viewer-container {
 }
 
 html.is-fullscreen.platform-macos #viewer-container,
-body.is-fullscreen.platform-macos #viewer-container {
-  top: 0px !important;
-  height: 100% !important;
-}
-
-/* In fullscreen mode: Viewer is ALWAYS 100% full height from top: 0 */
+body.is-fullscreen.platform-macos #viewer-container,
 html.is-fullscreen #viewer-container,
-body.is-fullscreen #viewer-container,
-html.is-fullscreen.platform-macos #viewer-container,
-body.is-fullscreen.platform-macos #viewer-container {
-  top: 0px !important;
-  height: 100% !important;
+body.is-fullscreen #viewer-container {
+  top: calc(38px + env(safe-area-inset-top, 0px)) !important;
+  height: calc(100% - 38px - env(safe-area-inset-top, 0px)) !important;
 }
 
 /* When menubar is floating in windowed mode: viewer starts at top: 0px */
