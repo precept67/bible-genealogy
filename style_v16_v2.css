@@ -5328,6 +5328,35 @@ body.platform-macos #main-titlebar {
    macOS Style Unified Top System Titlebar & Menu Bar
    ========================================================= */
 #desktop-mac-titlebar-bg {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 28px;
+  background: #ffffff;
+  z-index: 24999;
+  -webkit-app-region: drag;
+  pointer-events: auto;
+}
+
+html.platform-macos #desktop-mac-titlebar-bg,
+body.platform-macos #desktop-mac-titlebar-bg {
+  display: block !important;
+}
+
+[data-theme="dark"] #desktop-mac-titlebar-bg,
+html.platform-macos[data-theme="dark"] #desktop-mac-titlebar-bg,
+body.platform-macos[data-theme="dark"] #desktop-mac-titlebar-bg {
+  background: #1e1e1e !important;
+}
+
+html.is-fullscreen #desktop-mac-titlebar-bg,
+body.is-fullscreen #desktop-mac-titlebar-bg,
+html.is-fullscreen.platform-macos #desktop-mac-titlebar-bg,
+body.is-fullscreen.platform-macos #desktop-mac-titlebar-bg,
+:fullscreen #desktop-mac-titlebar-bg,
+:-webkit-full-screen #desktop-mac-titlebar-bg {
   display: none !important;
 }
 
@@ -5361,8 +5390,8 @@ body.platform-macos #main-titlebar {
 html.platform-macos #desktop-mac-menubar,
 body.platform-macos #desktop-mac-menubar {
   display: flex !important;
-  top: 0px !important;
-  padding: 0 16px 0 80px !important;
+  top: 28px !important;
+  padding: 0 16px !important;
   background: #ffffff !important;
   color: #111827 !important;
   backdrop-filter: none !important;
@@ -5430,8 +5459,14 @@ body.platform-macos[data-theme="dark"] #desktop-mac-menubar {
 
 html.platform-macos #viewer-container,
 body.platform-macos #viewer-container {
-  top: 38px !important;
-  height: calc(100% - 38px) !important;
+  top: 66px !important;
+  height: calc(100% - 66px) !important;
+}
+
+html.is-fullscreen.platform-macos #viewer-container,
+body.is-fullscreen.platform-macos #viewer-container {
+  top: 0px !important;
+  height: 100% !important;
 }
 
 /* In fullscreen mode: Viewer is ALWAYS 100% full height from top: 0 */
