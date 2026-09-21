@@ -108,6 +108,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     #if targetEnvironment(macCatalyst)
     private func configureMacCatalystWindow() {
         // 1. Direct UIKit WindowScene configuration
+        self.window?.rootViewController?.title = ""
         for scene in UIApplication.shared.connectedScenes {
             if let windowScene = scene as? UIWindowScene {
                 windowScene.title = ""
@@ -115,6 +116,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 windowScene.titlebar?.toolbar = nil
                 if #available(iOS 14.0, *) {
                     windowScene.titlebar?.separatorStyle = .none
+                }
+                for win in windowScene.windows {
+                    win.rootViewController?.title = ""
                 }
             }
         }
