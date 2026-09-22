@@ -11860,11 +11860,13 @@ function centerOnCoords(x, y) {
     panY = targetY;
     targetPanX = targetX;
     targetPanY = targetY;
+    targetScale = safeScale;
     updateTransform();
   } else {
     if (!isZoomAnimating) {
       scaleAtAnimationStart = safeScale;
     }
+    targetScale = safeScale;
     targetPanX = targetX;
     targetPanY = targetY;
     startZoomAnimation();
@@ -12729,15 +12731,16 @@ function bindUniversalSearchInput(inputEl, resultsEl) {
       return;
     }
     
-    // Combine data sources based on active legend layer checkboxes
+    // Combine data sources based on active legend layer checkboxes (always include annotations and custom items)
     const showPeople = document.getElementById('toggle-layer-people')?.checked !== false;
     const showEvents = document.getElementById('toggle-layer-events')?.checked !== false;
     const showLocations = document.getElementById('toggle-layer-locations')?.checked !== false;
     
     const combinedData = [
       ...(showPeople ? db.map(c => ({...c, dataType: 'person'})) : []),
-      ...(showEvents ? events.map(e => ({...e, dataType: 'event'})) : []),
-      ...(showLocations ? locations.map(l => ({...l, dataType: 'location'})) : [])
+      ...events.map(e => ({...e, dataType: 'event'})),
+      ...locations.map(l => ({...l, dataType: 'location'})),
+      ...(typeof annotations !== 'undefined' && Array.isArray(annotations) ? annotations.map(a => ({...a, dataType: 'annotation'})) : [])
     ];
 
     // Helper to extract all searchable detail text for an item
@@ -12750,7 +12753,9 @@ function bindUniversalSearchInput(inputEl, resultsEl) {
       if (item.verse) parts.push(item.verse);
       if (item.verses) parts.push(Array.isArray(item.verses) ? item.verses.join(' ') : item.verses);
       if (item.reference) parts.push(item.reference);
+      if (item.refs) parts.push(Array.isArray(item.refs) ? item.refs.join(' ') : item.refs);
       if (item.hometown && item.hometown.name) parts.push(item.hometown.name);
+      if (item.text) parts.push(typeof getLocalizedAnnotationText === 'function' ? getLocalizedAnnotationText(item.text) : item.text);
       if (item.activities) {
         if (Array.isArray(item.activities)) {
           parts.push(item.activities.map(a => `${a.name || a.title || ''} ${a.desc || ''}`).join(' '));
@@ -12782,13 +12787,71 @@ function bindUniversalSearchInput(inputEl, resultsEl) {
       return escaped.replace(reg, '<mark>$1</mark>');
     }
 
+    // Helper to navigate, center, and highlight any item
+    function navigateToItem(matched, matchType) {
+      document.querySelectorAll('.person-card.highlight, .layer-marker.highlight, .canvas-annotation.highlight, .canvas-junction-node.highlight').forEach(el => {
+        el.classList.remove('highlight');
+      });
+
+      if (matched.dataType === 'person') {
+        const card = document.getElementById(`card-${matched.id}`);
+        if (card) {
+          card.classList.add('highlight');
+          centerOnNode(matched.id);
+        } else {
+          const coords = coordinates[matched.id];
+          if (coords) centerOnCoords(coords.x, coords.y);
+        }
+        if (matchType === 'detail' && typeof openStudyPanel === 'function') {
+          openStudyPanel(matched.id);
+        }
+      } else if (matched.dataType === 'event') {
+        const toggleLayer = document.getElementById('toggle-layer-events');
+        if (toggleLayer && !toggleLayer.checked) {
+          toggleLayer.checked = true;
+          const layer = document.getElementById('layer-events');
+          if (layer) layer.style.display = '';
+        }
+        const marker = document.getElementById(`event-${matched.id}`);
+        if (marker) {
+          marker.classList.add('highlight');
+        }
+        centerOnCoords(matched.x, matched.y);
+      } else if (matched.dataType === 'location') {
+        const toggleLayer = document.getElementById('toggle-layer-locations');
+        if (toggleLayer && !toggleLayer.checked) {
+          toggleLayer.checked = true;
+          const layer = document.getElementById('layer-locations');
+          if (layer) layer.style.display = '';
+        }
+        const marker = document.getElementById(`location-${matched.id}`);
+        if (marker) {
+          marker.classList.add('highlight');
+        }
+        centerOnCoords(matched.x, matched.y);
+      } else if (matched.dataType === 'annotation') {
+        const el = document.getElementById(`annot-${matched.id}`);
+        if (el) {
+          el.classList.add('highlight');
+        }
+        const centerX = (matched.x || 0) + ((matched.width || 180) / 2);
+        const centerY = (matched.y || 0) + ((matched.height || 100) / 2);
+        centerOnCoords(centerX, centerY);
+      }
+    }
+
     // Collect matches with scoring
     const matches = [];
     combinedData.forEach(item => {
-      const name = (item.dataType === 'person') ? getCharName(item) : ((item.dataType === 'event') ? getEventName(item) : getLocationName(item));
+      let name = '';
+      if (item.dataType === 'person') name = getCharName(item);
+      else if (item.dataType === 'event') name = getEventName(item);
+      else if (item.dataType === 'location') name = getLocationName(item);
+      else if (item.dataType === 'annotation') name = typeof getLocalizedAnnotationText === 'function' ? getLocalizedAnnotationText(item.text) : (item.text || '');
+
       const eng = item.engName || '';
-      const nameLower = name.toLowerCase();
-      const engLower = eng.toLowerCase();
+      const nameLower = (name || '').toLowerCase();
+      const engLower = (eng || '').toLowerCase();
       const detailText = getDetailSearchText(item);
       const detailLower = detailText.toLowerCase();
 
@@ -12796,13 +12859,13 @@ function bindUniversalSearchInput(inputEl, resultsEl) {
       let matchType = '';
       let snippet = '';
 
-      if (nameLower === query || engLower === query) {
+      if (nameLower === query || (engLower && engLower === query)) {
         score = 100;
         matchType = 'exact_name';
-      } else if (nameLower.startsWith(query) || engLower.startsWith(query)) {
+      } else if (nameLower.startsWith(query) || (engLower && engLower.startsWith(query))) {
         score = 80;
         matchType = 'starts_name';
-      } else if (nameLower.includes(query) || engLower.includes(query)) {
+      } else if (nameLower.includes(query) || (engLower && engLower.includes(query))) {
         score = 60;
         matchType = 'contains_name';
       } else if (detailLower.includes(query)) {
@@ -12819,25 +12882,13 @@ function bindUniversalSearchInput(inputEl, resultsEl) {
     // Sort: highest relevance score first, then shorter names
     matches.sort((a, b) => {
       if (b.score !== a.score) return b.score - a.score;
-      return a.displayName.length - b.displayName.length;
+      return (a.displayName || '').length - (b.displayName || '').length;
     });
 
-    // Top match will automatically be highlighted & centered on canvas
+    // Top match will automatically be highlighted & centered on canvas in real-time
     const topMatch = matches[0]?.item;
     if (topMatch) {
-      if (topMatch.dataType === 'person') {
-        const card = document.getElementById(`card-${topMatch.id}`);
-        if (card) {
-          card.classList.add('highlight');
-          centerOnNode(topMatch.id);
-        }
-      } else {
-        const marker = document.getElementById(`${topMatch.dataType}-${topMatch.id}`);
-        if (marker) {
-          marker.classList.add('highlight');
-          centerOnCoords(topMatch.x, topMatch.y);
-        }
-      }
+      navigateToItem(topMatch, matches[0]?.matchType);
     }
 
     // Populate search dropdown list
@@ -12867,10 +12918,17 @@ function bindUniversalSearchInput(inputEl, resultsEl) {
         } else if (matched.dataType === 'location') {
           const textLoc = currentLang === 'en' ? 'Location' : '장소';
           badgeInfo = `<span class="parent-info">(📍 ${textLoc})</span>`;
+        } else if (matched.dataType === 'annotation') {
+          const textNote = currentLang === 'en' ? 'Text Box' : '텍스트 상자';
+          badgeInfo = `<span class="parent-info">(📝 ${textNote})</span>`;
         }
         
-        const displayName = matched.dataType === 'person' ? getCharName(matched) : cleanLayerName(matched.dataType === 'event' ? getEventName(matched) : getLocationName(matched));
-        
+        let displayName = '';
+        if (matched.dataType === 'person') displayName = getCharName(matched);
+        else if (matched.dataType === 'event') displayName = cleanLayerName(getEventName(matched));
+        else if (matched.dataType === 'location') displayName = cleanLayerName(getLocationName(matched));
+        else if (matched.dataType === 'annotation') displayName = typeof getLocalizedAnnotationText === 'function' ? getLocalizedAnnotationText(matched.text) : (matched.text || '');
+
         let snippetHtml = '';
         if (m.matchType === 'detail' && m.snippet) {
           const detailLabel = currentLang === 'en' ? 'Detail' : '상세정보';
@@ -12893,26 +12951,8 @@ function bindUniversalSearchInput(inputEl, resultsEl) {
             resultsEl.style.display = 'none';
           }
           
-          document.querySelectorAll('.person-card.highlight, .layer-marker.highlight').forEach(el => {
-            el.classList.remove('highlight');
-          });
+          navigateToItem(matched, m.matchType);
           
-          if (matched.dataType === 'person') {
-            const card = document.getElementById(`card-${matched.id}`);
-            if (card) {
-              card.classList.add('highlight');
-              centerOnNode(matched.id);
-            }
-            if (m.matchType === 'detail' && typeof openStudyPanel === 'function') {
-              openStudyPanel(matched.id);
-            }
-          } else {
-            const marker = document.getElementById(`${matched.dataType}-${matched.id}`);
-            if (marker) {
-              marker.classList.add('highlight');
-              centerOnCoords(matched.x, matched.y);
-            }
-          }
           if (window.closeSearchWrapper) {
             window.closeSearchWrapper();
           }
@@ -12925,6 +12965,10 @@ function bindUniversalSearchInput(inputEl, resultsEl) {
 
   inputEl.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
+      const topMatch = matches[0]?.item;
+      if (topMatch) {
+        navigateToItem(topMatch, matches[0]?.matchType);
+      }
       inputEl.value = '';
       document.querySelectorAll('#searchInput, #mobileSearchInput, .mac-search-input, .search-box').forEach(inp => inp.value = '');
       if (resultsEl) {
