@@ -6864,28 +6864,6 @@ function initBoard() {
   boardWidth = stableBoardWidth;
   centerX = stableCenterX;
   
-  // Filter out and delete default relative events/locations that were never manually placed by the admin
-  let needsSave = false;
-  events = events.filter(ev => {
-    if (ev.x !== undefined && ev.x < 5000) {
-      needsSave = true;
-      return false; // delete it
-    }
-    return true;
-  });
-  locations = locations.filter(loc => {
-    if (loc.x !== undefined && loc.x < 5000) {
-      needsSave = true;
-      return false; // delete it
-    }
-    return true;
-  });
-  if (needsSave) {
-    saveEvents();
-    saveLocations();
-    autoSaveToServer();
-  }
-  
   // Set dimensions on elements
   treeBoard.style.width = `${boardWidth}px`;
   treeBoard.style.height = `${boardHeight}px`;
@@ -19795,8 +19773,10 @@ function setupLayerItemModalEvents() {
         if (isLayerItemAddMode) {
           const prefix = activeLayerType === 'event' ? 'ev-' : 'loc-';
           const newId = prefix + Date.now();
-          const finalX = (newLayerItemCoords && typeof newLayerItemCoords.x === 'number') ? newLayerItemCoords.x : 15000;
-          const finalY = (newLayerItemCoords && typeof newLayerItemCoords.y === 'number') ? newLayerItemCoords.y : 300;
+          const fallbackCenterX = Math.round((-panX + (viewerContainer ? viewerContainer.clientWidth / 2 : 500)) / (currentScale || 1));
+          const fallbackCenterY = Math.round((-panY + (viewerContainer ? viewerContainer.clientHeight / 2 : 300)) / (currentScale || 1));
+          const finalX = (newLayerItemCoords && typeof newLayerItemCoords.x === 'number') ? newLayerItemCoords.x : fallbackCenterX;
+          const finalY = (newLayerItemCoords && typeof newLayerItemCoords.y === 'number') ? newLayerItemCoords.y : fallbackCenterY;
           const newItem = {
             id: newId,
             name: nameVal,
