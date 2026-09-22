@@ -11429,31 +11429,99 @@ function setupZoomPan() {
       return;
     }
 
-    // 사건 추가 모드 (마우스/터치 지정 위치에 생성)
+    // 사건 추가 모드 (마우스/터치 지정 위치에 바로 박스 생성)
     if (isAddEventModeActive) {
       if (target.closest('#study-panel') || target.closest('#admin-modal') || target.closest('#admin-actions-bar') || target.closest('.control-btn')) return;
-      const rect = viewerContainer ? viewerContainer.getBoundingClientRect() : { left: 0, top: 0 };
-      const mouseX = clientX - rect.left;
-      const mouseY = clientY - rect.top;
-      const worldX = (mouseX - panX) / currentScale;
-      const worldY = (mouseY - panY) / currentScale;
-      newLayerItemCoords = { x: Math.round(worldX), y: Math.round(worldY) };
+      const rect = treeBoard.getBoundingClientRect();
+      const clickX = (clientX - rect.left) / currentScale;
+      const clickY = (clientY - rect.top) / currentScale;
+      
+      const newEvent = {
+        id: "ev-" + Date.now(),
+        name: currentLang === 'en' ? "New Event" : "새 사건",
+        desc: "",
+        refs: [],
+        relatedPeople: [],
+        relatedLocations: [],
+        x: Math.round(clickX),
+        y: Math.round(clickY),
+        generation: Math.round(clickY / 200),
+        column: parseFloat((clickX / 140).toFixed(1))
+      };
+      
+      events.push(newEvent);
+      saveEvents();
+      autoSaveToServer();
+      
+      // Auto toggle events layer on
+      const toggleLayer = document.getElementById('toggle-layer-events');
+      if (toggleLayer && !toggleLayer.checked) {
+        toggleLayer.checked = true;
+        const layer = document.getElementById('layer-events');
+        if (layer) layer.style.display = '';
+      }
+      
+      selectedEventIds.clear();
+      selectedEventIds.add(newEvent.id);
+      selectedEventId = newEvent.id;
+      selectedLocationIds.clear(); selectedLocationId = null;
+      selectedPersonIds.clear(); selectedPersonId = null;
+      selectedAnnotationIds.clear(); selectedAnnotationId = null;
+      selectedPolygonId = null;
+      
+      renderEvents();
+      updateTransform();
+      updateMultiSelectCountBadge();
       deactivateAddEventMode();
-      openLayerItemAddForm('event');
+      showToast(currentLang === 'en' ? "📜 New event created. Drag to move, double-click to edit." : "📜 새 사건이 생성되었습니다. 드래그하여 이동하고 더블클릭하여 편집하세요.");
       return;
     }
 
-    // 장소/지명 추가 모드 (마우스/터치 지정 위치에 생성)
+    // 장소/지명 추가 모드 (마우스/터치 지정 위치에 바로 박스 생성)
     if (isAddLocationModeActive) {
       if (target.closest('#study-panel') || target.closest('#admin-modal') || target.closest('#admin-actions-bar') || target.closest('.control-btn')) return;
-      const rect = viewerContainer ? viewerContainer.getBoundingClientRect() : { left: 0, top: 0 };
-      const mouseX = clientX - rect.left;
-      const mouseY = clientY - rect.top;
-      const worldX = (mouseX - panX) / currentScale;
-      const worldY = (mouseY - panY) / currentScale;
-      newLayerItemCoords = { x: Math.round(worldX), y: Math.round(worldY) };
+      const rect = treeBoard.getBoundingClientRect();
+      const clickX = (clientX - rect.left) / currentScale;
+      const clickY = (clientY - rect.top) / currentScale;
+      
+      const newLocation = {
+        id: "loc-" + Date.now(),
+        name: currentLang === 'en' ? "New Location" : "새 장소",
+        desc: "",
+        refs: [],
+        relatedPeople: [],
+        relatedEvents: [],
+        x: Math.round(clickX),
+        y: Math.round(clickY),
+        generation: Math.round(clickY / 200),
+        column: parseFloat((clickX / 140).toFixed(1))
+      };
+      
+      locations.push(newLocation);
+      saveLocations();
+      autoSaveToServer();
+      
+      // Auto toggle locations layer on
+      const toggleLayer = document.getElementById('toggle-layer-locations');
+      if (toggleLayer && !toggleLayer.checked) {
+        toggleLayer.checked = true;
+        const layer = document.getElementById('layer-locations');
+        if (layer) layer.style.display = '';
+      }
+      
+      selectedLocationIds.clear();
+      selectedLocationIds.add(newLocation.id);
+      selectedLocationId = newLocation.id;
+      selectedEventIds.clear(); selectedEventId = null;
+      selectedPersonIds.clear(); selectedPersonId = null;
+      selectedAnnotationIds.clear(); selectedAnnotationId = null;
+      selectedPolygonId = null;
+      
+      renderLocations();
+      updateTransform();
+      updateMultiSelectCountBadge();
       deactivateAddLocationMode();
-      openLayerItemAddForm('location');
+      showToast(currentLang === 'en' ? "📍 New location created. Drag to move, double-click to edit." : "📍 새 장소가 생성되었습니다. 드래그하여 이동하고 더블클릭하여 편집하세요.");
       return;
     }
 
@@ -18882,12 +18950,16 @@ function makeLayerDraggable(el, item, type) {
           multiItems.forEach(mi => {
             mi.item.x = Math.round(mi.origX + dx);
             mi.item.y = Math.round(mi.origY + dy);
+            mi.item.generation = Math.round(mi.item.y / 200);
+            mi.item.column = parseFloat((mi.item.x / 140).toFixed(1));
             mi.el.style.left = `${mi.item.x * currentScale}px`;
             mi.el.style.top = `${mi.item.y * currentScale}px`;
           });
         } else {
           item.x = Math.round(originalX + dx);
           item.y = Math.round(originalY + dy);
+          item.generation = Math.round(item.y / 200);
+          item.column = parseFloat((item.x / 140).toFixed(1));
           el.style.left = `${item.x * currentScale}px`;
           el.style.top = `${item.y * currentScale}px`;
         }
@@ -18896,6 +18968,8 @@ function makeLayerDraggable(el, item, type) {
     
     const onMouseUp = (endEvent) => {
       endEvent.stopPropagation();
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('mouseup', onMouseUp);
       
@@ -18913,8 +18987,8 @@ function makeLayerDraggable(el, item, type) {
       }
     };
     
-    window.addEventListener('mousemove', onMouseMove);
-    window.addEventListener('mouseup', onMouseUp);
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
   });
 
   // Touch Drag
@@ -18975,12 +19049,16 @@ function makeLayerDraggable(el, item, type) {
           multiItems.forEach(mi => {
             mi.item.x = Math.round(mi.origX + dx);
             mi.item.y = Math.round(mi.origY + dy);
+            mi.item.generation = Math.round(mi.item.y / 200);
+            mi.item.column = parseFloat((mi.item.x / 140).toFixed(1));
             mi.el.style.left = `${mi.item.x * currentScale}px`;
             mi.el.style.top = `${mi.item.y * currentScale}px`;
           });
         } else {
           item.x = Math.round(originalX + dx);
           item.y = Math.round(originalY + dy);
+          item.generation = Math.round(item.y / 200);
+          item.column = parseFloat((item.x / 140).toFixed(1));
           el.style.left = `${item.x * currentScale}px`;
           el.style.top = `${item.y * currentScale}px`;
         }
@@ -18988,6 +19066,9 @@ function makeLayerDraggable(el, item, type) {
     };
     
     const onTouchEnd = (endEvent) => {
+      document.removeEventListener('touchmove', onTouchMove);
+      document.removeEventListener('touchend', onTouchEnd);
+      document.removeEventListener('touchcancel', onTouchEnd);
       window.removeEventListener('touchmove', onTouchMove);
       window.removeEventListener('touchend', onTouchEnd);
       window.removeEventListener('touchcancel', onTouchEnd);
@@ -19005,9 +19086,9 @@ function makeLayerDraggable(el, item, type) {
       }
     };
     
-    window.addEventListener('touchmove', onTouchMove, { passive: false });
-    window.addEventListener('touchend', onTouchEnd);
-    window.addEventListener('touchcancel', onTouchEnd);
+    document.addEventListener('touchmove', onTouchMove, { passive: false });
+    document.addEventListener('touchend', onTouchEnd);
+    document.addEventListener('touchcancel', onTouchEnd);
   }, { passive: true });
 }
 
