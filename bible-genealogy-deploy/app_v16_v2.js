@@ -2923,6 +2923,20 @@ function handleGlobalKeydown(e) {
     return;
   }
 
+  if (typeof isAddEventModeActive !== 'undefined' && isAddEventModeActive && e.key === 'Escape') {
+    e.preventDefault();
+    if (typeof deactivateAddEventMode === 'function') deactivateAddEventMode();
+    if (typeof showToast === 'function') showToast("사건 추가가 취소되었습니다.");
+    return;
+  }
+
+  if (typeof isAddLocationModeActive !== 'undefined' && isAddLocationModeActive && e.key === 'Escape') {
+    e.preventDefault();
+    if (typeof deactivateAddLocationMode === 'function') deactivateAddLocationMode();
+    if (typeof showToast === 'function') showToast("장소/지명 추가가 취소되었습니다.");
+    return;
+  }
+
   // Handle Add Polygon Mode shortcuts
   if (isAddPolygonModeActive) {
     if (e.key === 'Escape') {
@@ -3219,6 +3233,8 @@ let cachedAdminPassword = 'admin';
 let editingPersonId = null; // null means adding a new person
 let isAddPersonModeActive = false;
 let isAddAnnotationModeActive = false;
+let isAddEventModeActive = false;
+let isAddLocationModeActive = false;
 let activeSpawnerItem = null;
 let activeSpawnerType = null;
 
@@ -11435,6 +11451,30 @@ function setupZoomPan() {
       return;
     }
 
+    // 사건 추가 모드 (마우스/터치 지정 위치에 생성)
+    if (isAddEventModeActive) {
+      if (target.closest('#study-panel') || target.closest('#admin-modal') || target.closest('#admin-actions-bar') || target.closest('.control-btn')) return;
+      const rect = treeBoard.getBoundingClientRect();
+      const clickX = (clientX - rect.left) / currentScale;
+      const clickY = (clientY - rect.top) / currentScale;
+      newLayerItemCoords = { x: Math.round(clickX), y: Math.round(clickY) };
+      deactivateAddEventMode();
+      openLayerItemAddForm('event');
+      return;
+    }
+
+    // 장소/지명 추가 모드 (마우스/터치 지정 위치에 생성)
+    if (isAddLocationModeActive) {
+      if (target.closest('#study-panel') || target.closest('#admin-modal') || target.closest('#admin-actions-bar') || target.closest('.control-btn')) return;
+      const rect = treeBoard.getBoundingClientRect();
+      const clickX = (clientX - rect.left) / currentScale;
+      const clickY = (clientY - rect.top) / currentScale;
+      newLayerItemCoords = { x: Math.round(clickX), y: Math.round(clickY) };
+      deactivateAddLocationMode();
+      openLayerItemAddForm('location');
+      return;
+    }
+
     // 3) 인물 추가 모드
     if (isAddPersonModeActive) {
       if (target.closest('.person-card') || target.closest('.canvas-annotation')) return;
@@ -13638,33 +13678,21 @@ function setupAdminMode() {
 
   if (adminAddEventBtn) {
     bindHybridButton(adminAddEventBtn, () => {
-      let containerCenterX = viewerContainer.clientWidth / 2;
-      let containerCenterY = viewerContainer.clientHeight / 2;
-      if (containerCenterX === 0) {
-        containerCenterX = window.innerWidth / 2;
-        containerCenterY = (window.innerHeight - 80) / 2;
+      if (isAddEventModeActive) {
+        deactivateAddEventMode();
+      } else {
+        activateAddEventMode();
       }
-      const worldX = (containerCenterX - panX) / currentScale;
-      const worldY = (containerCenterY - panY) / currentScale;
-      newLayerItemCoords = { x: Math.round(worldX), y: Math.round(worldY) };
-      
-      openLayerItemAddForm('event');
     });
   }
 
   if (adminAddLocationBtn) {
     bindHybridButton(adminAddLocationBtn, () => {
-      let containerCenterX = viewerContainer.clientWidth / 2;
-      let containerCenterY = viewerContainer.clientHeight / 2;
-      if (containerCenterX === 0) {
-        containerCenterX = window.innerWidth / 2;
-        containerCenterY = (window.innerHeight - 80) / 2;
+      if (isAddLocationModeActive) {
+        deactivateAddLocationMode();
+      } else {
+        activateAddLocationMode();
       }
-      const worldX = (containerCenterX - panX) / currentScale;
-      const worldY = (containerCenterY - panY) / currentScale;
-      newLayerItemCoords = { x: Math.round(worldX), y: Math.round(worldY) };
-      
-      openLayerItemAddForm('location');
     });
   }
 
@@ -14368,10 +14396,164 @@ window.addEventListener('resize', () => {
   }
 });
 
+function activateAddEventMode() {
+  deactivateAddPersonMode();
+  deactivateAddAnnotationMode();
+  deactivateAddPolygonMode();
+  deactivateAddLinkMode();
+  deactivateAddLocationMode();
+  cancelPlacementMode();
+
+  isAddEventModeActive = true;
+  if (adminAddEventBtn) {
+    adminAddEventBtn.classList.add('active-tool');
+    adminAddEventBtn.classList.add('danger');
+    adminAddEventBtn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 26.5px; height: 26.5px;"><img class="custom-add-event-icon" src="add_event_btn_active.png" alt="사건 추가" style="width: 26.5px; height: 26.5px; object-fit: contain; pointer-events: none;" /></span>';
+  }
+  viewerContainer.style.cursor = 'crosshair';
+
+  const ghost = document.createElement('div');
+  ghost.id = 'event-ghost-preview';
+  ghost.style.position = 'fixed';
+  ghost.style.padding = '6px 14px';
+  ghost.style.border = '2px dashed #3b82f6';
+  ghost.style.borderRadius = '20px';
+  ghost.style.background = 'rgba(59, 130, 246, 0.15)';
+  ghost.style.color = '#1d4ed8';
+  ghost.style.fontWeight = 'bold';
+  ghost.style.fontSize = '12px';
+  ghost.style.pointerEvents = 'none';
+  ghost.style.transform = 'translate(-50%, -50%)';
+  ghost.style.zIndex = '9999';
+  ghost.innerHTML = '📜 새 사건 위치';
+  document.body.appendChild(ghost);
+
+  const onMouseMove = (e) => {
+    if (!isAddEventModeActive) {
+      document.removeEventListener('mousemove', onMouseMove);
+      return;
+    }
+    ghost.style.left = `${e.clientX}px`;
+    ghost.style.top = `${e.clientY}px`;
+  };
+  document.addEventListener('mousemove', onMouseMove);
+
+  const banner = document.getElementById('add-person-instruction');
+  if (banner) {
+    banner.innerHTML = currentLang === 'en'
+      ? '📜 <span>Click (touch) anywhere on the board to place an event box.</span>'
+      : '📜 <span>보드 위의 원하는 위치를 클릭(터치)하면 사건 박스가 생성됩니다.</span>';
+    positionAddInstructionBanner();
+    banner.style.display = 'flex';
+  }
+  showToast(currentLang === 'en'
+    ? "📜 Add Event Mode: Click (touch) canvas to place."
+    : "📜 사건 추가 모드: 배치할 캔버스 위치를 클릭(터치)하세요.");
+}
+
+function deactivateAddEventMode() {
+  isAddEventModeActive = false;
+  if (adminAddEventBtn) {
+    adminAddEventBtn.classList.remove('active-tool');
+    adminAddEventBtn.classList.remove('danger');
+    adminAddEventBtn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 26.5px; height: 26.5px;"><img class="custom-add-event-icon" src="add_event_btn.png" alt="사건 추가" style="width: 26.5px; height: 26.5px; object-fit: contain; pointer-events: none;" /></span>';
+  }
+  viewerContainer.style.cursor = 'grab';
+
+  const ghost = document.getElementById('event-ghost-preview');
+  if (ghost) ghost.remove();
+
+  const banner = document.getElementById('add-person-instruction');
+  if (banner) banner.style.display = 'none';
+
+  const toastContainer = document.getElementById('toast-container');
+  if (toastContainer && typeof positionToastContainer === 'function') {
+    positionToastContainer(toastContainer);
+  }
+}
+
+function activateAddLocationMode() {
+  deactivateAddPersonMode();
+  deactivateAddAnnotationMode();
+  deactivateAddPolygonMode();
+  deactivateAddLinkMode();
+  deactivateAddEventMode();
+  cancelPlacementMode();
+
+  isAddLocationModeActive = true;
+  if (adminAddLocationBtn) {
+    adminAddLocationBtn.classList.add('active-tool');
+    adminAddLocationBtn.classList.add('danger');
+    adminAddLocationBtn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 26.5px; height: 26.5px;"><img class="custom-add-location-icon" src="add_location_btn_active.png" alt="장소 추가" style="width: 26.5px; height: 26.5px; object-fit: contain; pointer-events: none;" /></span>';
+  }
+  viewerContainer.style.cursor = 'crosshair';
+
+  const ghost = document.createElement('div');
+  ghost.id = 'location-ghost-preview';
+  ghost.style.position = 'fixed';
+  ghost.style.padding = '6px 14px';
+  ghost.style.border = '2px dashed #10b981';
+  ghost.style.borderRadius = '20px';
+  ghost.style.background = 'rgba(16, 185, 129, 0.15)';
+  ghost.style.color = '#047857';
+  ghost.style.fontWeight = 'bold';
+  ghost.style.fontSize = '12px';
+  ghost.style.pointerEvents = 'none';
+  ghost.style.transform = 'translate(-50%, -50%)';
+  ghost.style.zIndex = '9999';
+  ghost.innerHTML = '📍 새 장소 위치';
+  document.body.appendChild(ghost);
+
+  const onMouseMove = (e) => {
+    if (!isAddLocationModeActive) {
+      document.removeEventListener('mousemove', onMouseMove);
+      return;
+    }
+    ghost.style.left = `${e.clientX}px`;
+    ghost.style.top = `${e.clientY}px`;
+  };
+  document.addEventListener('mousemove', onMouseMove);
+
+  const banner = document.getElementById('add-person-instruction');
+  if (banner) {
+    banner.innerHTML = currentLang === 'en'
+      ? '📍 <span>Click (touch) anywhere on the board to place a location box.</span>'
+      : '📍 <span>보드 위의 원하는 위치를 클릭(터치)하면 장소/지명 박스가 생성됩니다.</span>';
+    positionAddInstructionBanner();
+    banner.style.display = 'flex';
+  }
+  showToast(currentLang === 'en'
+    ? "📍 Add Location Mode: Click (touch) canvas to place."
+    : "📍 장소/지명 추가 모드: 배치할 캔버스 위치를 클릭(터치)하세요.");
+}
+
+function deactivateAddLocationMode() {
+  isAddLocationModeActive = false;
+  if (adminAddLocationBtn) {
+    adminAddLocationBtn.classList.remove('active-tool');
+    adminAddLocationBtn.classList.remove('danger');
+    adminAddLocationBtn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 26.5px; height: 26.5px;"><img class="custom-add-location-icon" src="add_location_btn.png" alt="장소 추가" style="width: 26.5px; height: 26.5px; object-fit: contain; pointer-events: none;" /></span>';
+  }
+  viewerContainer.style.cursor = 'grab';
+
+  const ghost = document.getElementById('location-ghost-preview');
+  if (ghost) ghost.remove();
+
+  const banner = document.getElementById('add-person-instruction');
+  if (banner) banner.style.display = 'none';
+
+  const toastContainer = document.getElementById('toast-container');
+  if (toastContainer && typeof positionToastContainer === 'function') {
+    positionToastContainer(toastContainer);
+  }
+}
+
 function activateAddAnnotationMode() {
   deactivateAddPersonMode();
   deactivateAddLinkMode();
   deactivateAddPolygonMode();
+  deactivateAddEventMode();
+  deactivateAddLocationMode();
   cancelPlacementMode();
   
   isAddAnnotationModeActive = true;
@@ -14442,6 +14624,10 @@ function deactivateAddAnnotationMode() {
 
 function activateAddPersonMode() {
   deactivateAddAnnotationMode();
+  deactivateAddEventMode();
+  deactivateAddLocationMode();
+  deactivateAddPolygonMode();
+  deactivateAddLinkMode();
   isAddPersonModeActive = true;
   adminAddBtn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 26.5px; height: 26.5px;"><img class="custom-add-person-icon" src="add_person_btn_active.png" alt="인물 추가" style="width: 26.5px; height: 26.5px; object-fit: contain; pointer-events: none;" /></span>';
   adminAddBtn.classList.add('danger');
@@ -14477,6 +14663,10 @@ function deactivateAddPersonMode() {
 
 function activateAddLinkMode() {
   deactivateAddAnnotationMode();
+  deactivateAddEventMode();
+  deactivateAddLocationMode();
+  deactivateAddPolygonMode();
+  deactivateAddPersonMode();
   isAddLinkModeActive = true;
   linkSourceId = null;
   if (adminAddLinkBtn) {
@@ -14495,8 +14685,6 @@ function activateAddLinkMode() {
   showToast(currentLang === 'en'
     ? "Add Line Mode: Click the first box (figure or text) to connect."
     : "연결선 추가 모드: 연결할 첫 번째 상자(인물 또는 텍스트)를 클릭하세요.");
-  
-  if (isAddPersonModeActive) deactivateAddPersonMode();
 }
 
 function deactivateAddLinkMode() {
@@ -14543,6 +14731,8 @@ function deactivateAddPolygonMode() {
 
 function activateAddPolygonMode() {
   deactivateAddAnnotationMode();
+  deactivateAddEventMode();
+  deactivateAddLocationMode();
   if (isAddLinkModeActive) deactivateAddLinkMode();
   if (isAddPersonModeActive) deactivateAddPersonMode();
   
@@ -18654,13 +18844,34 @@ function makeLayerDraggable(el, item, type) {
   // Mouse Drag
   el.addEventListener('mousedown', (e) => {
     if (!isAdminMode) return;
+    if (e.button !== 0) return; // Left click only
     e.stopPropagation();
     
     let isDragging = false;
     let startX = e.clientX;
     let startY = e.clientY;
-    let originalX = item.x;
-    let originalY = item.y;
+    let originalX = item.x || 0;
+    let originalY = item.y || 0;
+
+    // Support multi-selection dragging if multiple events/locations are selected
+    let multiItems = [];
+    if (type === 'event' && selectedEventIds && selectedEventIds.has(item.id) && selectedEventIds.size > 1) {
+      selectedEventIds.forEach(id => {
+        const ev = events.find(x => x.id === id);
+        const domEl = document.getElementById('event-' + id);
+        if (ev && domEl) {
+          multiItems.push({ item: ev, el: domEl, origX: ev.x || 0, origY: ev.y || 0 });
+        }
+      });
+    } else if (type === 'location' && selectedLocationIds && selectedLocationIds.has(item.id) && selectedLocationIds.size > 1) {
+      selectedLocationIds.forEach(id => {
+        const loc = locations.find(x => x.id === id);
+        const domEl = document.getElementById('location-' + id);
+        if (loc && domEl) {
+          multiItems.push({ item: loc, el: domEl, origX: loc.x || 0, origY: loc.y || 0 });
+        }
+      });
+    }
     
     el.style.zIndex = 30;
     
@@ -18668,7 +18879,7 @@ function makeLayerDraggable(el, item, type) {
       const dx_pixels = moveEvent.clientX - startX;
       const dy_pixels = moveEvent.clientY - startY;
       
-      if (Math.abs(dx_pixels) > 4 || Math.abs(dy_pixels) > 4) {
+      if (Math.abs(dx_pixels) > 3 || Math.abs(dy_pixels) > 3) {
         if (!isDragging) {
           pushHistoryState();
           isDragging = true;
@@ -18678,11 +18889,20 @@ function makeLayerDraggable(el, item, type) {
       if (isDragging) {
         const dx = dx_pixels / currentScale;
         const dy = dy_pixels / currentScale;
-        item.x = Math.round(originalX + dx);
-        item.y = Math.round(originalY + dy);
-        
-        el.style.left = `${item.x * currentScale}px`;
-        el.style.top = `${item.y * currentScale}px`;
+
+        if (multiItems.length > 1) {
+          multiItems.forEach(mi => {
+            mi.item.x = Math.round(mi.origX + dx);
+            mi.item.y = Math.round(mi.origY + dy);
+            mi.el.style.left = `${mi.item.x * currentScale}px`;
+            mi.el.style.top = `${mi.item.y * currentScale}px`;
+          });
+        } else {
+          item.x = Math.round(originalX + dx);
+          item.y = Math.round(originalY + dy);
+          el.style.left = `${item.x * currentScale}px`;
+          el.style.top = `${item.y * currentScale}px`;
+        }
       }
     };
     
@@ -18713,8 +18933,27 @@ function makeLayerDraggable(el, item, type) {
     const touch = e.touches[0];
     let startX = touch.clientX;
     let startY = touch.clientY;
-    let originalX = item.x;
-    let originalY = item.y;
+    let originalX = item.x || 0;
+    let originalY = item.y || 0;
+
+    let multiItems = [];
+    if (type === 'event' && selectedEventIds && selectedEventIds.has(item.id) && selectedEventIds.size > 1) {
+      selectedEventIds.forEach(id => {
+        const ev = events.find(x => x.id === id);
+        const domEl = document.getElementById('event-' + id);
+        if (ev && domEl) {
+          multiItems.push({ item: ev, el: domEl, origX: ev.x || 0, origY: ev.y || 0 });
+        }
+      });
+    } else if (type === 'location' && selectedLocationIds && selectedLocationIds.has(item.id) && selectedLocationIds.size > 1) {
+      selectedLocationIds.forEach(id => {
+        const loc = locations.find(x => x.id === id);
+        const domEl = document.getElementById('location-' + id);
+        if (loc && domEl) {
+          multiItems.push({ item: loc, el: domEl, origX: loc.x || 0, origY: loc.y || 0 });
+        }
+      });
+    }
     
     el.style.zIndex = 30;
     
@@ -18724,7 +18963,7 @@ function makeLayerDraggable(el, item, type) {
       const dx_pixels = currentTouch.clientX - startX;
       const dy_pixels = currentTouch.clientY - startY;
       
-      if (Math.abs(dx_pixels) > 6 || Math.abs(dy_pixels) > 6) {
+      if (Math.abs(dx_pixels) > 5 || Math.abs(dy_pixels) > 5) {
         if (!isDragging) {
           pushHistoryState();
           isDragging = true;
@@ -18737,11 +18976,20 @@ function makeLayerDraggable(el, item, type) {
       if (isDragging) {
         const dx = dx_pixels / currentScale;
         const dy = dy_pixels / currentScale;
-        item.x = Math.round(originalX + dx);
-        item.y = Math.round(originalY + dy);
-        
-        el.style.left = `${item.x * currentScale}px`;
-        el.style.top = `${item.y * currentScale}px`;
+
+        if (multiItems.length > 1) {
+          multiItems.forEach(mi => {
+            mi.item.x = Math.round(mi.origX + dx);
+            mi.item.y = Math.round(mi.origY + dy);
+            mi.el.style.left = `${mi.item.x * currentScale}px`;
+            mi.el.style.top = `${mi.item.y * currentScale}px`;
+          });
+        } else {
+          item.x = Math.round(originalX + dx);
+          item.y = Math.round(originalY + dy);
+          el.style.left = `${item.x * currentScale}px`;
+          el.style.top = `${item.y * currentScale}px`;
+        }
       }
     };
     
@@ -19528,20 +19776,25 @@ function setupLayerItemModalEvents() {
         if (isLayerItemAddMode) {
           const prefix = activeLayerType === 'event' ? 'ev-' : 'loc-';
           const newId = prefix + Date.now();
+          const finalX = (newLayerItemCoords && typeof newLayerItemCoords.x === 'number') ? newLayerItemCoords.x : 15000;
+          const finalY = (newLayerItemCoords && typeof newLayerItemCoords.y === 'number') ? newLayerItemCoords.y : 300;
           const newItem = {
             id: newId,
             name: nameVal,
             desc: descVal,
             refs: refsArray,
             relatedPeople: checkedPeople,
-            generation: newLayerItemCoords ? Math.round(newLayerItemCoords.y / 200) : 0,
-            column: newLayerItemCoords ? parseFloat((newLayerItemCoords.x / 140).toFixed(1)) : 0
+            x: finalX,
+            y: finalY,
+            generation: Math.round(finalY / 200),
+            column: parseFloat((finalX / 140).toFixed(1))
           };
           
           if (activeLayerType === 'event') {
             newItem.relatedLocations = checkedLocations;
             events.push(newItem);
             saveEvents();
+            autoSaveToServer();
             
             // Auto toggle events layer on
             const toggleLayer = document.getElementById('toggle-layer-events');
@@ -19551,12 +19804,23 @@ function setupLayerItemModalEvents() {
               if (layer) layer.style.display = '';
             }
             
+            selectedEventIds.clear();
+            selectedEventIds.add(newId);
+            selectedEventId = newId;
+            selectedLocationIds.clear(); selectedLocationId = null;
+            selectedPersonIds.clear(); selectedPersonId = null;
+            selectedAnnotationIds.clear(); selectedAnnotationId = null;
+            selectedPolygonId = null;
+
             renderEvents();
+            updateTransform();
+            updateMultiSelectCountBadge();
             showToast("📜 새 사건이 추가되었습니다.");
           } else {
             newItem.relatedEvents = checkedEvents;
             locations.push(newItem);
             saveLocations();
+            autoSaveToServer();
             
             // Auto toggle locations layer on
             const toggleLayer = document.getElementById('toggle-layer-locations');
@@ -19566,7 +19830,17 @@ function setupLayerItemModalEvents() {
               if (layer) layer.style.display = '';
             }
             
+            selectedLocationIds.clear();
+            selectedLocationIds.add(newId);
+            selectedLocationId = newId;
+            selectedEventIds.clear(); selectedEventId = null;
+            selectedPersonIds.clear(); selectedPersonId = null;
+            selectedAnnotationIds.clear(); selectedAnnotationId = null;
+            selectedPolygonId = null;
+
             renderLocations();
+            updateTransform();
+            updateMultiSelectCountBadge();
             showToast("📍 새 장소가 추가되었습니다.");
           }
         } else {
@@ -21590,28 +21864,22 @@ function setupDesktopMacMenubar() {
     if (!isAdminMode && typeof window.toggleAdminEditMode === 'function') {
       window.toggleAdminEditMode();
     }
-    let containerCenterX = viewerContainer ? viewerContainer.clientWidth / 2 : window.innerWidth / 2;
-    let containerCenterY = viewerContainer ? viewerContainer.clientHeight / 2 : (window.innerHeight - 80) / 2;
-    if (containerCenterX === 0) containerCenterX = window.innerWidth / 2;
-    if (containerCenterY === 0) containerCenterY = (window.innerHeight - 80) / 2;
-    const worldX = (containerCenterX - panX) / currentScale;
-    const worldY = (containerCenterY - panY) / currentScale;
-    newLayerItemCoords = { x: Math.round(worldX), y: Math.round(worldY) };
-    if (typeof openLayerItemAddForm === 'function') openLayerItemAddForm('event');
+    if (isAddEventModeActive) {
+      if (typeof deactivateAddEventMode === 'function') deactivateAddEventMode();
+    } else {
+      if (typeof activateAddEventMode === 'function') activateAddEventMode();
+    }
   };
 
   window.triggerAddLocation = function() {
     if (!isAdminMode && typeof window.toggleAdminEditMode === 'function') {
       window.toggleAdminEditMode();
     }
-    let containerCenterX = viewerContainer ? viewerContainer.clientWidth / 2 : window.innerWidth / 2;
-    let containerCenterY = viewerContainer ? viewerContainer.clientHeight / 2 : (window.innerHeight - 80) / 2;
-    if (containerCenterX === 0) containerCenterX = window.innerWidth / 2;
-    if (containerCenterY === 0) containerCenterY = (window.innerHeight - 80) / 2;
-    const worldX = (containerCenterX - panX) / currentScale;
-    const worldY = (containerCenterY - panY) / currentScale;
-    newLayerItemCoords = { x: Math.round(worldX), y: Math.round(worldY) };
-    if (typeof openLayerItemAddForm === 'function') openLayerItemAddForm('location');
+    if (isAddLocationModeActive) {
+      if (typeof deactivateAddLocationMode === 'function') deactivateAddLocationMode();
+    } else {
+      if (typeof activateAddLocationMode === 'function') activateAddLocationMode();
+    }
   };
 
   window.clipboardBoxData = null;
