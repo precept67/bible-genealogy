@@ -11454,10 +11454,12 @@ function setupZoomPan() {
     // 사건 추가 모드 (마우스/터치 지정 위치에 생성)
     if (isAddEventModeActive) {
       if (target.closest('#study-panel') || target.closest('#admin-modal') || target.closest('#admin-actions-bar') || target.closest('.control-btn')) return;
-      const rect = treeBoard.getBoundingClientRect();
-      const clickX = (clientX - rect.left) / currentScale;
-      const clickY = (clientY - rect.top) / currentScale;
-      newLayerItemCoords = { x: Math.round(clickX), y: Math.round(clickY) };
+      const rect = viewerContainer ? viewerContainer.getBoundingClientRect() : { left: 0, top: 0 };
+      const mouseX = clientX - rect.left;
+      const mouseY = clientY - rect.top;
+      const worldX = (mouseX - panX) / currentScale;
+      const worldY = (mouseY - panY) / currentScale;
+      newLayerItemCoords = { x: Math.round(worldX), y: Math.round(worldY) };
       deactivateAddEventMode();
       openLayerItemAddForm('event');
       return;
@@ -11466,10 +11468,12 @@ function setupZoomPan() {
     // 장소/지명 추가 모드 (마우스/터치 지정 위치에 생성)
     if (isAddLocationModeActive) {
       if (target.closest('#study-panel') || target.closest('#admin-modal') || target.closest('#admin-actions-bar') || target.closest('.control-btn')) return;
-      const rect = treeBoard.getBoundingClientRect();
-      const clickX = (clientX - rect.left) / currentScale;
-      const clickY = (clientY - rect.top) / currentScale;
-      newLayerItemCoords = { x: Math.round(clickX), y: Math.round(clickY) };
+      const rect = viewerContainer ? viewerContainer.getBoundingClientRect() : { left: 0, top: 0 };
+      const mouseX = clientX - rect.left;
+      const mouseY = clientY - rect.top;
+      const worldX = (mouseX - panX) / currentScale;
+      const worldY = (mouseY - panY) / currentScale;
+      newLayerItemCoords = { x: Math.round(worldX), y: Math.round(worldY) };
       deactivateAddLocationMode();
       openLayerItemAddForm('location');
       return;
@@ -14421,11 +14425,12 @@ function activateAddEventMode() {
   ghost.style.background = 'rgba(59, 130, 246, 0.15)';
   ghost.style.color = '#1d4ed8';
   ghost.style.fontWeight = 'bold';
-  ghost.style.fontSize = '12px';
+  ghost.style.fontSize = '13px';
   ghost.style.pointerEvents = 'none';
-  ghost.style.transform = 'translate(-50%, -50%)';
+  ghost.style.transform = `translate(-50%, -50%) scale(${currentScale})`;
+  ghost.style.transformOrigin = '50% 50%';
   ghost.style.zIndex = '9999';
-  ghost.innerHTML = '📜 새 사건 위치';
+  ghost.innerHTML = '📜 새 사건';
   document.body.appendChild(ghost);
 
   const onMouseMove = (e) => {
@@ -14497,11 +14502,12 @@ function activateAddLocationMode() {
   ghost.style.background = 'rgba(16, 185, 129, 0.15)';
   ghost.style.color = '#047857';
   ghost.style.fontWeight = 'bold';
-  ghost.style.fontSize = '12px';
+  ghost.style.fontSize = '13px';
   ghost.style.pointerEvents = 'none';
-  ghost.style.transform = 'translate(-50%, -50%)';
+  ghost.style.transform = `translate(-50%, -50%) scale(${currentScale})`;
+  ghost.style.transformOrigin = '50% 50%';
   ghost.style.zIndex = '9999';
-  ghost.innerHTML = '📍 새 장소 위치';
+  ghost.innerHTML = '📍 새 장소';
   document.body.appendChild(ghost);
 
   const onMouseMove = (e) => {
@@ -18845,6 +18851,7 @@ function makeLayerDraggable(el, item, type) {
   el.addEventListener('mousedown', (e) => {
     if (!isAdminMode) return;
     if (e.button !== 0) return; // Left click only
+    e.preventDefault(); // Prevent native text selection or HTML drag
     e.stopPropagation();
     
     let isDragging = false;
@@ -18873,8 +18880,6 @@ function makeLayerDraggable(el, item, type) {
       });
     }
     
-    el.style.zIndex = 30;
-    
     const onMouseMove = (moveEvent) => {
       const dx_pixels = moveEvent.clientX - startX;
       const dy_pixels = moveEvent.clientY - startY;
@@ -18883,6 +18888,11 @@ function makeLayerDraggable(el, item, type) {
         if (!isDragging) {
           pushHistoryState();
           isDragging = true;
+          el.classList.add('dragging');
+          if (multiItems.length > 1) {
+            multiItems.forEach(mi => mi.el.classList.add('dragging'));
+          }
+          document.body.style.cursor = 'grabbing';
         }
       }
       
@@ -18911,7 +18921,11 @@ function makeLayerDraggable(el, item, type) {
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('mouseup', onMouseUp);
       
-      el.style.zIndex = '';
+      el.classList.remove('dragging');
+      if (multiItems.length > 1) {
+        multiItems.forEach(mi => mi.el.classList.remove('dragging'));
+      }
+      document.body.style.cursor = '';
       
       if (isDragging) {
         if (type === 'event') saveEvents();
@@ -18955,8 +18969,6 @@ function makeLayerDraggable(el, item, type) {
       });
     }
     
-    el.style.zIndex = 30;
-    
     const onTouchMove = (moveEvent) => {
       if (moveEvent.touches.length > 1) return;
       const currentTouch = moveEvent.touches[0];
@@ -18967,6 +18979,10 @@ function makeLayerDraggable(el, item, type) {
         if (!isDragging) {
           pushHistoryState();
           isDragging = true;
+          el.classList.add('dragging');
+          if (multiItems.length > 1) {
+            multiItems.forEach(mi => mi.el.classList.add('dragging'));
+          }
         }
         if (moveEvent.cancelable) {
           moveEvent.preventDefault();
@@ -18998,7 +19014,10 @@ function makeLayerDraggable(el, item, type) {
       window.removeEventListener('touchend', onTouchEnd);
       window.removeEventListener('touchcancel', onTouchEnd);
       
-      el.style.zIndex = '';
+      el.classList.remove('dragging');
+      if (multiItems.length > 1) {
+        multiItems.forEach(mi => mi.el.classList.remove('dragging'));
+      }
       
       if (isDragging) {
         if (type === 'event') saveEvents();
