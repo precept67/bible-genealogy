@@ -4509,6 +4509,20 @@ function loadAnnotations() {
         annotations = [];
       } else {
         annotations = annotations.filter(a => a.id !== "note-welcome" && !((a.text || "").includes("성경 인물 족보 보드")));
+        
+        // Self-heal and migrate Ibzan annotation to 9th Judge (삿 12:8-10)
+        let changed = false;
+        annotations.forEach(a => {
+          if (a.id === 'annotation_1785294547788_pdgzw7hbp' || (a.relatedPeople && a.relatedPeople.includes('Ibzan')) || (a.text && a.text.includes('12:8-10') && (a.text.includes('6대 사사') || a.text.includes('6대')))) {
+            if (a.text !== "9대 사사, 23년 (삿 12:8-10)\n") {
+              a.text = "9대 사사, 23년 (삿 12:8-10)\n";
+              changed = true;
+            }
+          }
+        });
+        if (changed) {
+          localStorage.setItem('bible_tree_annotations', JSON.stringify(annotations));
+        }
       }
     } catch (e) {
       console.error("Failed to parse annotations.", e);
