@@ -17011,20 +17011,30 @@ const adminLogoutBtn = document.getElementById('admin-logout-btn');
 if (userLogoutBtn) userLogoutBtn.addEventListener('click', handleLogout);
 if (adminLogoutBtn) adminLogoutBtn.addEventListener('click', handleLogout);
 
-// Security Enhancements
+// Security Enhancements (Permissive for all detail panels, modals, and text inputs)
+function isTextEditingOrDetailTarget(el) {
+  if (!el) return false;
+  const targetEl = el.nodeType === 3 ? el.parentElement : el;
+  if (!targetEl) return false;
+  if (targetEl.tagName === 'INPUT' || targetEl.tagName === 'TEXTAREA' || targetEl.tagName === 'SELECT' || targetEl.isContentEditable) return true;
+  if (typeof targetEl.closest === 'function') {
+    if (targetEl.closest('input, textarea, select, [contenteditable="true"], #study-panel, #admin-modal, #layer-item-modal, #polygon-name-modal, #settings-modal, #help-guide-modal, .modal-content, .panel-body, .desc-text, .activity-add-form, .resource-input-wrapper')) {
+      return true;
+    }
+  }
+  return false;
+}
+
 document.addEventListener('contextmenu', e => {
-  const targetEl = e.target && e.target.nodeType === 3 ? e.target.parentElement : e.target;
-  if (targetEl && (targetEl.tagName === 'INPUT' || targetEl.tagName === 'TEXTAREA' || targetEl.isContentEditable || (typeof targetEl.closest === 'function' && targetEl.closest('[contenteditable="true"]')))) return;
+  if (isTextEditingOrDetailTarget(e.target) || isTextEditingOrDetailTarget(document.activeElement)) return;
   e.preventDefault();
 });
 document.addEventListener('selectstart', e => {
-  const targetEl = e.target && e.target.nodeType === 3 ? e.target.parentElement : e.target;
-  if (targetEl && (targetEl.tagName === 'INPUT' || targetEl.tagName === 'TEXTAREA' || targetEl.isContentEditable || (typeof targetEl.closest === 'function' && targetEl.closest('[contenteditable="true"]')))) return;
+  if (isTextEditingOrDetailTarget(e.target) || isTextEditingOrDetailTarget(document.activeElement)) return;
   e.preventDefault();
 });
 document.addEventListener('dragstart', e => {
-  const targetEl = e.target && e.target.nodeType === 3 ? e.target.parentElement : e.target;
-  if (targetEl && (targetEl.tagName === 'INPUT' || targetEl.tagName === 'TEXTAREA' || targetEl.isContentEditable || (typeof targetEl.closest === 'function' && targetEl.closest('[contenteditable="true"]')))) return;
+  if (isTextEditingOrDetailTarget(e.target) || isTextEditingOrDetailTarget(document.activeElement)) return;
   e.preventDefault();
 });
 document.addEventListener('keydown', e => {
@@ -20588,9 +20598,12 @@ function renderSpawnerPanel(filterQuery = '') {
 (function() {
   let devToolsProtectionEnabled = true;
 
-  // 1. Disable Right Click (except inside inputs)
+  // 1. Disable Right Click (except inside inputs and detail panels)
   document.addEventListener('contextmenu', (e) => {
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable || e.target.closest('[contenteditable="true"]')) {
+    if (typeof isTextEditingOrDetailTarget === 'function' && (isTextEditingOrDetailTarget(e.target) || isTextEditingOrDetailTarget(document.activeElement))) {
+      return;
+    }
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable || (typeof e.target.closest === 'function' && e.target.closest('[contenteditable="true"]'))) {
       return;
     }
     e.preventDefault();
@@ -20602,7 +20615,9 @@ function renderSpawnerPanel(filterQuery = '') {
     const isShift = e.shiftKey;
     const isAlt = e.altKey;
     
-    const isInput = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable || e.target.closest('[contenteditable="true"]');
+    const isInput = (typeof isTextEditingOrDetailTarget === 'function' && (isTextEditingOrDetailTarget(e.target) || isTextEditingOrDetailTarget(document.activeElement))) ||
+                    e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable ||
+                    (typeof e.target.closest === 'function' && e.target.closest('[contenteditable="true"]'));
     
     // F12 key
     if (e.key === 'F12') {
@@ -20625,12 +20640,6 @@ function renderSpawnerPanel(filterQuery = '') {
       e.preventDefault();
       return false;
     }
-    
-    // Save Page: Ctrl+S / Cmd+S
-    if (isMetaOrCtrl && (e.key === 's' || e.key === 'S')) {
-      e.preventDefault();
-      return false;
-    }
 
     // Print: Ctrl+P / Cmd+P
     if (isMetaOrCtrl && (e.key === 'p' || e.key === 'P')) {
@@ -20638,7 +20647,7 @@ function renderSpawnerPanel(filterQuery = '') {
       return false;
     }
 
-    // Canvas Selection/Copy Blocks: Ctrl+C, Ctrl+X, Ctrl+A (Allow box copy if in edit mode or box selected)
+    // Canvas Selection/Copy Blocks: Ctrl+C, Ctrl+X, Ctrl+A (Allow box copy if on canvas, but NEVER block inside inputs/detail panels)
     if (!isInput && isMetaOrCtrl) {
       if (e.key === 'c' || e.key === 'C') {
         if (typeof window.copySelectedBox === 'function' && window.copySelectedBox()) {
@@ -20655,20 +20664,23 @@ function renderSpawnerPanel(filterQuery = '') {
     }
   }, true);
 
-  // 3. Disable Drag, Select, and Copy on non-inputs
+  // 3. Disable Drag, Select, and Copy only on raw canvas background
   document.addEventListener('selectstart', (e) => {
+    if (typeof isTextEditingOrDetailTarget === 'function' && (isTextEditingOrDetailTarget(e.target) || isTextEditingOrDetailTarget(document.activeElement))) return;
     const targetEl = e.target && e.target.nodeType === 3 ? e.target.parentElement : e.target;
     if (targetEl && (targetEl.tagName === 'INPUT' || targetEl.tagName === 'TEXTAREA' || targetEl.isContentEditable || (typeof targetEl.closest === 'function' && targetEl.closest('[contenteditable="true"]')))) return;
     e.preventDefault();
   });
   
   document.addEventListener('copy', (e) => {
+    if (typeof isTextEditingOrDetailTarget === 'function' && (isTextEditingOrDetailTarget(e.target) || isTextEditingOrDetailTarget(document.activeElement))) return;
     const targetEl = e.target && e.target.nodeType === 3 ? e.target.parentElement : e.target;
     if (targetEl && (targetEl.tagName === 'INPUT' || targetEl.tagName === 'TEXTAREA' || targetEl.isContentEditable || (typeof targetEl.closest === 'function' && targetEl.closest('[contenteditable="true"]')))) return;
     e.preventDefault();
   });
 
   document.addEventListener('dragstart', (e) => {
+    if (typeof isTextEditingOrDetailTarget === 'function' && (isTextEditingOrDetailTarget(e.target) || isTextEditingOrDetailTarget(document.activeElement))) return;
     const targetEl = e.target && e.target.nodeType === 3 ? e.target.parentElement : e.target;
     if (targetEl && (targetEl.tagName === 'INPUT' || targetEl.tagName === 'TEXTAREA' || targetEl.isContentEditable || (typeof targetEl.closest === 'function' && targetEl.closest('[contenteditable="true"]')))) return;
     e.preventDefault();
@@ -21953,8 +21965,48 @@ function setupDesktopMacMenubar() {
     if (!isAdminMode && typeof window.toggleAdminEditMode === 'function') window.toggleAdminEditMode();
     if (typeof activateAddPolygonMode === 'function') activateAddPolygonMode();
   });
-  bindMenuAction('mac-menu-copy', () => window.copySelectedBox());
-  bindMenuAction('mac-menu-paste', () => window.pasteSelectedBox());
+  bindMenuAction('mac-menu-copy', () => {
+    const activeEl = document.activeElement;
+    const isInput = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.isContentEditable);
+    const sel = window.getSelection();
+    const hasSelection = sel && sel.toString().length > 0;
+
+    if (isInput || hasSelection) {
+      document.execCommand('copy');
+      return;
+    }
+    if (typeof window.copySelectedBox === 'function') window.copySelectedBox();
+  });
+
+  bindMenuAction('mac-menu-paste', async () => {
+    const activeEl = document.activeElement;
+    const isInput = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.isContentEditable);
+
+    if (isInput) {
+      try {
+        if (navigator.clipboard && navigator.clipboard.readText) {
+          const text = await navigator.clipboard.readText();
+          if (text) {
+            if (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA') {
+              const start = activeEl.selectionStart || 0;
+              const end = activeEl.selectionEnd || 0;
+              const val = activeEl.value || '';
+              activeEl.value = val.substring(0, start) + text + val.substring(end);
+              activeEl.selectionStart = activeEl.selectionEnd = start + text.length;
+              activeEl.dispatchEvent(new Event('input', { bubbles: true }));
+              activeEl.dispatchEvent(new Event('change', { bubbles: true }));
+              return;
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('Clipboard paste error:', err);
+      }
+      document.execCommand('paste');
+      return;
+    }
+    if (typeof window.pasteSelectedBox === 'function') window.pasteSelectedBox();
+  });
   bindMenuAction('mac-menu-duplicate-box', () => window.duplicateSelectedBox());
   bindMenuAction('mac-menu-undo', () => { if (typeof performUndo === 'function') performUndo(); });
   bindMenuAction('mac-menu-redo', () => { if (typeof performRedo === 'function') performRedo(); });
