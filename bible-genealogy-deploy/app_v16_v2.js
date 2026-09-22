@@ -2600,6 +2600,57 @@ function isInputTarget(el) {
   return false;
 }
 
+function isDetailContextActive() {
+  const studyPanel = document.getElementById('study-panel');
+  const isStudyPanelActive = studyPanel && (studyPanel.classList.contains('active') || studyPanel.classList.contains('expanded') || studyPanel.style.display === 'block');
+  const adminModal = document.getElementById('admin-modal');
+  const isAdminModalActive = adminModal && (adminModal.style.display === 'flex' || adminModal.style.display === 'block' || adminModal.classList.contains('active'));
+  const layerModal = document.getElementById('layer-item-modal');
+  const isLayerModalActive = layerModal && (layerModal.style.display === 'flex' || layerModal.style.display === 'block' || layerModal.classList.contains('active'));
+  const polyNameModal = document.getElementById('polygon-name-modal');
+  const isPolyNameActive = polyNameModal && (polyNameModal.style.display === 'flex' || polyNameModal.style.display === 'block');
+  const stylePanel = document.getElementById('style-editor-panel');
+  const isStylePanelActive = stylePanel && (stylePanel.style.display === 'block' || stylePanel.classList.contains('active'));
+  
+  return !!(isStudyPanelActive || isAdminModalActive || isLayerModalActive || isPolyNameActive || isStylePanelActive);
+}
+
+function applyTextFormatting(inputEl, formatType) {
+  if (!inputEl) return;
+  const start = inputEl.selectionStart !== undefined ? inputEl.selectionStart : 0;
+  const end = inputEl.selectionEnd !== undefined ? inputEl.selectionEnd : 0;
+  const val = inputEl.value || '';
+  const selectedText = val.substring(start, end);
+  
+  let prefix = '', suffix = '';
+  if (formatType === 'bold') {
+    prefix = '**'; suffix = '**';
+  } else if (formatType === 'italic') {
+    prefix = '*'; suffix = '*';
+  } else if (formatType === 'underline') {
+    prefix = '<u>'; suffix = '</u>';
+  } else if (formatType === 'link') {
+    prefix = '['; suffix = '](https://)';
+  }
+  
+  const defaultPlaceholder = formatType === 'link' ? '링크텍스트' : '텍스트';
+  const insertText = selectedText || defaultPlaceholder;
+  const before = val.substring(0, start);
+  const after = val.substring(end);
+  const newText = before + prefix + insertText + suffix + after;
+  inputEl.value = newText;
+  
+  // Set cursor position around inserted text
+  const newStart = start + prefix.length;
+  const newEnd = start + prefix.length + insertText.length;
+  if (typeof inputEl.setSelectionRange === 'function') {
+    inputEl.setSelectionRange(newStart, newEnd);
+  }
+  
+  // Trigger input event to auto-save and update UI
+  inputEl.dispatchEvent(new Event('input', { bubbles: true }));
+}
+
 window.toggleSettingsModal = function() {
   const modal = document.getElementById('settings-modal');
   if (!modal) return;
@@ -2616,29 +2667,121 @@ window.toggleSettingsModal = function() {
 // Attach capture-phase keydown handler on window and document
 function handleGlobalKeydown(e) {
   const isCmdOrCtrl = e.metaKey || e.ctrlKey;
-  const isEKey = (e.key && (e.key.toLowerCase() === 'e' || e.key === 'ㄷ' || e.key === 'ㄸ')) || e.code === 'KeyE' || e.keyCode === 69;
+  const activeEl = document.activeElement;
+  const targetEl = e.target;
+  const inInput = isInputTarget(targetEl) || isInputTarget(activeEl);
+  
+  const inStudyPanel = !!((targetEl && targetEl.closest && targetEl.closest('#study-panel')) || (activeEl && activeEl.closest && activeEl.closest('#study-panel')));
+  const inAdminModal = !!((targetEl && targetEl.closest && targetEl.closest('#admin-modal')) || (activeEl && activeEl.closest && activeEl.closest('#admin-modal')));
+  const inLayerModal = !!((targetEl && targetEl.closest && targetEl.closest('#layer-item-modal')) || (activeEl && activeEl.closest && activeEl.closest('#layer-item-modal')));
+  const inPolyNameModal = !!((targetEl && targetEl.closest && targetEl.closest('#polygon-name-modal')) || (activeEl && activeEl.closest && activeEl.closest('#polygon-name-modal')));
+  const inDetailContext = inStudyPanel || inAdminModal || inLayerModal || inPolyNameModal || isDetailContextActive();
 
-  // 1. Shortcut to Toggle Edit / Lock Mode (Cmd+Shift+E, Ctrl+Shift+E, or Shift+E outside inputs)
-  if (isEKey && e.shiftKey && !e.altKey) {
-    const inInput = isInputTarget(e.target) || isInputTarget(document.activeElement);
-    if (isCmdOrCtrl || !inInput) {
+  // 1. 상세정보창 / 모달 / 편집창 최우선 저장 단축키: Cmd+S / Ctrl+S (웹 브라우저 저장 창 방지 및 즉시 저장)
+  const isKeyS = (e.key === 's' || e.key === 'S' || e.key === 'ㄴ' || e.code === 'KeyS');
+  if (isCmdOrCtrl && !e.shiftKey && !e.altKey && isKeyS) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const adminModalEl = document.getElementById('admin-modal');
+    if (inAdminModal || (adminModalEl && (adminModalEl.style.display === 'flex' || adminModalEl.style.display === 'block' || adminModalEl.classList.contains('active')))) {
+      saveAdminForm();
+      return;
+    }
+    const layerModalEl = document.getElementById('layer-item-modal');
+    if (inLayerModal || (layerModalEl && (layerModalEl.style.display === 'flex' || layerModalEl.style.display === 'block' || layerModalEl.classList.contains('active')))) {
+      const submitBtn = document.getElementById('layer-item-modal-submit');
+      if (submitBtn) submitBtn.click();
+      return;
+    }
+    const polyNameModalEl = document.getElementById('polygon-name-modal');
+    if (inPolyNameModal || (polyNameModalEl && (polyNameModalEl.style.display === 'flex' || polyNameModalEl.style.display === 'block'))) {
+      const submitBtn = document.getElementById('polygon-name-submit');
+      if (submitBtn) submitBtn.click();
+      return;
+    }
+    const studyPanelEl = document.getElementById('study-panel');
+    if (inStudyPanel || (studyPanelEl && (studyPanelEl.classList.contains('active') || studyPanelEl.classList.contains('expanded')))) {
+      const saveBtn = document.getElementById('panel-save');
+      if (saveBtn) {
+        saveBtn.click();
+        showToast(currentLang === 'en' ? "Notes & details saved." : "상세 정보 및 메모가 저장되었습니다.");
+      }
+      return;
+    }
+    
+    // 캔버스 상태일 때 전체 가계도 데이터 수동 저장
+    if (typeof saveDatabase === 'function') saveDatabase();
+    if (typeof persistTreeDataLocally === 'function') persistTreeDataLocally(true);
+    if (typeof pushDataToICloud === 'function' && localStorage.getItem('icloud_sync_enabled') === 'true') {
+      pushDataToICloud(false, true);
+    }
+    showToast(currentLang === 'en' ? "Genealogy tree data saved." : "가계도 데이터가 저장되었습니다.");
+    return;
+  }
+
+  // 2. 상세정보창 / 모달 편집 완료 단축키: Cmd+Enter / Ctrl+Enter
+  if (isCmdOrCtrl && (e.key === 'Enter' || e.code === 'Enter' || e.code === 'NumpadEnter')) {
+    const adminModalEl = document.getElementById('admin-modal');
+    if (inAdminModal || (adminModalEl && (adminModalEl.style.display === 'flex' || adminModalEl.style.display === 'block' || adminModalEl.classList.contains('active')))) {
       e.preventDefault();
       e.stopPropagation();
-      window.toggleAdminEditMode();
+      saveAdminForm();
+      return;
+    }
+    const layerModalEl = document.getElementById('layer-item-modal');
+    if (inLayerModal || (layerModalEl && (layerModalEl.style.display === 'flex' || layerModalEl.style.display === 'block' || layerModalEl.classList.contains('active')))) {
+      e.preventDefault();
+      e.stopPropagation();
+      const submitBtn = document.getElementById('layer-item-modal-submit');
+      if (submitBtn) submitBtn.click();
+      return;
+    }
+    const polyNameModalEl = document.getElementById('polygon-name-modal');
+    if (inPolyNameModal || (polyNameModalEl && (polyNameModalEl.style.display === 'flex' || polyNameModalEl.style.display === 'block'))) {
+      e.preventDefault();
+      e.stopPropagation();
+      const submitBtn = document.getElementById('polygon-name-submit');
+      if (submitBtn) submitBtn.click();
+      return;
+    }
+    const studyPanelEl = document.getElementById('study-panel');
+    if (inStudyPanel || (studyPanelEl && (studyPanelEl.classList.contains('active') || studyPanelEl.classList.contains('expanded')))) {
+      e.preventDefault();
+      e.stopPropagation();
+      const saveBtn = document.getElementById('panel-save');
+      if (saveBtn) saveBtn.click();
       return;
     }
   }
 
-  // 2. Shortcut for Preferences / 환경설정: Cmd + , or Ctrl + ,
-  if (isCmdOrCtrl && (e.key === ',' || e.code === 'Comma' || e.keyCode === 188)) {
-    e.preventDefault();
-    e.stopPropagation();
-    window.toggleSettingsModal();
-    return;
-  }
-
-  // 3. Escape key to close open modals
+  // 3. Escape 키 처리 (열려있는 모달/상세창 최우선 순위로 닫기)
   if (e.key === 'Escape') {
+    const adminModalEl = document.getElementById('admin-modal');
+    if (adminModalEl && (adminModalEl.style.display === 'flex' || adminModalEl.style.display === 'block' || adminModalEl.classList.contains('active'))) {
+      e.preventDefault();
+      e.stopPropagation();
+      closeAdminForm();
+      return;
+    }
+    const layerModalEl = document.getElementById('layer-item-modal');
+    if (layerModalEl && (layerModalEl.style.display === 'flex' || layerModalEl.style.display === 'block' || layerModalEl.classList.contains('active'))) {
+      e.preventDefault();
+      e.stopPropagation();
+      const cancelBtn = document.getElementById('layer-item-modal-cancel') || document.getElementById('layer-item-modal-close');
+      if (cancelBtn) cancelBtn.click();
+      else layerModalEl.style.display = 'none';
+      return;
+    }
+    const polyNameModalEl = document.getElementById('polygon-name-modal');
+    if (polyNameModalEl && (polyNameModalEl.style.display === 'flex' || polyNameModalEl.style.display === 'block')) {
+      e.preventDefault();
+      e.stopPropagation();
+      const cancelBtn = document.getElementById('polygon-name-cancel') || document.getElementById('polygon-name-close');
+      if (cancelBtn) cancelBtn.click();
+      else polyNameModalEl.style.display = 'none';
+      return;
+    }
     const settingsModal = document.getElementById('settings-modal');
     if (settingsModal && (settingsModal.style.display === 'flex' || settingsModal.classList.contains('active'))) {
       e.preventDefault();
@@ -2653,9 +2796,77 @@ function handleGlobalKeydown(e) {
       helpModal.style.display = 'none';
       return;
     }
+    const studyPanelEl = document.getElementById('study-panel');
+    if (studyPanelEl && (studyPanelEl.classList.contains('active') || studyPanelEl.classList.contains('expanded'))) {
+      e.preventDefault();
+      e.stopPropagation();
+      closeStudyPanel();
+      return;
+    }
   }
 
-  // 4. Zoom shortcuts: Cmd+Plus, Cmd+Minus, Cmd+0
+  // 4. 상세정보창 / 메모장 / 텍스트 입력창 서식 단축키 (Cmd+B, Cmd+I, Cmd+U, Cmd+K)
+  if (isCmdOrCtrl && !e.altKey && inInput) {
+    const targetInput = (activeEl && isInputTarget(activeEl)) ? activeEl : targetEl;
+    if (targetInput && (targetInput.tagName === 'TEXTAREA' || targetInput.tagName === 'INPUT')) {
+      const keyLower = (e.key || '').toLowerCase();
+      if (keyLower === 'b' || e.code === 'KeyB' || e.key === 'ㅠ') {
+        e.preventDefault();
+        e.stopPropagation();
+        applyTextFormatting(targetInput, 'bold');
+        return;
+      }
+      if (keyLower === 'i' || e.code === 'KeyI' || e.key === 'ㅑ') {
+        e.preventDefault();
+        e.stopPropagation();
+        applyTextFormatting(targetInput, 'italic');
+        return;
+      }
+      if (keyLower === 'u' || e.code === 'KeyU' || e.key === 'ㅕ') {
+        e.preventDefault();
+        e.stopPropagation();
+        applyTextFormatting(targetInput, 'underline');
+        return;
+      }
+      if (keyLower === 'k' || e.code === 'KeyK' || e.key === 'ㅏ') {
+        e.preventDefault();
+        e.stopPropagation();
+        applyTextFormatting(targetInput, 'link');
+        return;
+      }
+    }
+  }
+
+  // 5. 텍스트 입력 필드에 포커스가 있는 경우: 캔버스 전역 단축키(노드 이동, 가계도 되돌리기, 삭제, 모드 전환 등) 간섭 원천 차단
+  if (inInput) {
+    // 텍스트 필드 내부에서는 브라우저 고유의 Undo/Redo, 복사/붙여넣기, 글자 삭제가 100% 정상 작동하도록 바로 반환
+    return;
+  }
+
+  // 6. 상세정보창 / 모달 내부가 클릭/활성화된 상태인 경우: 캔버스 박스 삭제/복사/이동 단축키 간섭 방지
+  if (inDetailContext) {
+    if (e.key === 'Delete' || e.key === 'Backspace') return;
+    if (isCmdOrCtrl && (e.key === 'c' || e.key === 'v' || e.key === 'd' || e.key === 'x')) return;
+  }
+
+  // 7. Shortcut to Toggle Edit / Lock Mode (Cmd+Shift+E, Ctrl+Shift+E, or Shift+E outside inputs)
+  const isEKey = (e.key && (e.key.toLowerCase() === 'e' || e.key === 'ㄷ' || e.key === 'ㄸ')) || e.code === 'KeyE' || e.keyCode === 69;
+  if (isEKey && e.shiftKey && !e.altKey) {
+    e.preventDefault();
+    e.stopPropagation();
+    window.toggleAdminEditMode();
+    return;
+  }
+
+  // 8. Shortcut for Preferences / 환경설정: Cmd + , or Ctrl + ,
+  if (isCmdOrCtrl && (e.key === ',' || e.code === 'Comma' || e.keyCode === 188)) {
+    e.preventDefault();
+    e.stopPropagation();
+    window.toggleSettingsModal();
+    return;
+  }
+
+  // 9. Zoom shortcuts: Cmd+Plus, Cmd+Minus, Cmd+0
   if (isCmdOrCtrl && (e.key === '=' || e.key === '+' || e.code === 'Equal' || e.code === 'NumpadAdd')) {
     e.preventDefault();
     e.stopPropagation();
@@ -2678,7 +2889,7 @@ function handleGlobalKeydown(e) {
     return;
   }
 
-  // 5. Option/Alt shortcuts: ⌥A (Adam), ⌥T (Theme)
+  // 10. Option/Alt shortcuts: ⌥A (Adam), ⌥T (Theme)
   if (e.altKey && !isCmdOrCtrl) {
     if (e.code === 'KeyA' || (e.key && e.key.toLowerCase() === 'a') || e.key === 'ㅁ') {
       e.preventDefault();
@@ -2695,9 +2906,6 @@ function handleGlobalKeydown(e) {
       return;
     }
   }
-
-  const inInput = isInputTarget(e.target) || isInputTarget(document.activeElement);
-  if (inInput) return;
 
   if (typeof isAdminMode === 'undefined' || !isAdminMode) return;
 
@@ -3476,9 +3684,8 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   // Complete Global Keyboard Shortcuts (Web & Desktop In-App Menus)
   window.addEventListener('keydown', (e) => {
-    const activeEl = document.activeElement;
-    const isInput = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'SELECT' || activeEl.isContentEditable || activeEl.closest('[contenteditable="true"]'));
-    if (isInput) return;
+    const inInput = isInputTarget(e.target) || isInputTarget(document.activeElement);
+    if (inInput || (typeof isDetailContextActive === 'function' && isDetailContextActive())) return;
 
     const isMetaOrCtrl = e.metaKey || e.ctrlKey;
     const isShift = e.shiftKey;
@@ -3640,9 +3847,9 @@ window.addEventListener('DOMContentLoaded', async () => {
   window.addEventListener('keydown', (e) => {
     if (!isAdminMode) return;
     
-    // Ignore nudging if typing in inputs/textareas
-    const activeEl = document.activeElement;
-    if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'SELECT' || activeEl.isContentEditable)) {
+    // Ignore nudging if typing in inputs/textareas or inside active detail window
+    const inInput = isInputTarget(e.target) || isInputTarget(document.activeElement);
+    if (inInput || (typeof isDetailContextActive === 'function' && isDetailContextActive())) {
       return;
     }
     
