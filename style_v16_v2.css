@@ -2418,23 +2418,177 @@ datalist {
   stroke-width: 2.5px !important;
   cursor: grab !important;
   pointer-events: auto !important;
-  filter: drop-shadow(0px 1px 3px rgba(0,0,0,0.3)) !important;
-  transition: fill 0.2s, stroke-width 0.2s;
+  filter: drop-shadow(0px 1.5px 4px rgba(0,0,0,0.45)) !important;
+  transition: r 0.15s ease, stroke-width 0.15s ease, fill 0.15s ease;
+}
+
+.line-drag-handle.handle-start {
+  stroke: #10b981 !important;
+}
+
+.line-drag-handle.handle-end {
+  stroke: #f97316 !important;
+}
+
+.line-drag-handle.selected-line-handle {
+  stroke-width: 3.5px !important;
+  filter: drop-shadow(0px 2px 7px rgba(37, 99, 235, 0.6)) !important;
 }
 
 .line-drag-handle:hover {
-  fill: #ff7800 !important;
-  stroke: #ffffff !important;
-  r: 8px !important;
+  fill: #ffffff !important;
+  stroke-width: 3.5px !important;
+  r: 9px !important;
   cursor: grab !important;
+  filter: drop-shadow(0px 2.5px 8px rgba(0,0,0,0.6)) !important;
+}
+
+.line-drag-handle.handle-start:hover {
+  stroke: #059669 !important;
+  fill: #d1fae5 !important;
+}
+
+.line-drag-handle.handle-end:hover {
+  stroke: #ea580c !important;
+  fill: #ffedd5 !important;
 }
 
 .line-drag-handle.dragging-endpoint {
-  fill: #ff7800 !important;
-  stroke: #ffffff !important;
-  r: 9px !important;
+  fill: #ffedd5 !important;
+  stroke: #ea580c !important;
+  stroke-width: 4px !important;
+  r: 10px !important;
   cursor: grabbing !important;
-  filter: drop-shadow(0px 2px 6px rgba(255, 120, 0, 0.7)) !important;
+  filter: drop-shadow(0px 3px 12px rgba(234, 88, 12, 0.8)) !important;
+}
+
+/* Floating Line Context Menu */
+.floating-context-menu {
+  position: fixed;
+  z-index: 99999;
+  min-width: 200px;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22), 0 2px 6px rgba(0, 0, 0, 0.08);
+  padding: 6px 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  user-select: none;
+  animation: contextMenuPop 0.12s ease-out;
+}
+
+@keyframes contextMenuPop {
+  0% { opacity: 0; transform: scale(0.95); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.context-menu-header {
+  padding: 6px 14px 4px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.context-menu-divider {
+  height: 1px;
+  background: rgba(0, 0, 0, 0.08);
+  margin: 4px 0;
+}
+
+.context-menu-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 14px;
+  font-size: 13px;
+  color: #1f2937;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+
+.context-menu-item:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.context-menu-item .item-icon {
+  margin-right: 8px;
+  font-size: 14px;
+}
+
+.context-menu-item .item-label {
+  flex: 1;
+  font-weight: 500;
+}
+
+.context-menu-item .item-shortcut {
+  font-size: 11px;
+  color: #9ca3af;
+  margin-left: 10px;
+}
+
+.context-menu-item.item-add-point {
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.context-menu-item.item-add-point:hover {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.context-menu-item.item-delete {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+.context-menu-item.item-delete:hover {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.context-menu-item.item-close {
+  color: #6b7280;
+}
+
+.context-menu-item.item-close:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .floating-context-menu {
+    background: rgba(31, 41, 55, 0.95);
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  }
+  .context-menu-header {
+    color: #9ca3af;
+  }
+  .context-menu-divider {
+    background: rgba(255, 255, 255, 0.1);
+  }
+  .context-menu-item {
+    color: #e5e7eb;
+  }
+  .context-menu-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+  }
+  .context-menu-item.item-delete {
+    color: #f87171;
+  }
+  .context-menu-item.item-delete:hover {
+    background: rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
+  }
+  .context-menu-item.item-close {
+    color: #9ca3af;
+  }
 }
 
 /* Canvas Junction Node (meet point from image: green inside red ring) */

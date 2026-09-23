@@ -3013,10 +3013,214 @@ function handleGlobalKeydown(e) {
 window.addEventListener('keydown', handleGlobalKeydown, true);
 document.addEventListener('keydown', handleGlobalKeydown, true);
 
+function showLineContextMenu(e, lineKey) {
+  if (e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  
+  hideLineContextMenu();
+  if (!lineKey) return;
+  
+  selectedLineKey = lineKey;
+  drawConnections();
+  
+  const isCustomLine = customVisualLines.some(l => l.id === lineKey);
+  const isTeacherLine = lineKey.startsWith('teacher-') || lineKey.startsWith('preacher-');
+  const isSingleRelationLine = lineKey.startsWith('rel-');
+  const isSpouseLine = lineKey.includes('+') && !isSingleRelationLine && !isCustomLine && !isTeacherLine;
+  
+  let lineTypeName = "연결선";
+  if (isCustomLine) lineTypeName = "사용자 연결선";
+  else if (isTeacherLine) lineTypeName = "전도자/양육 연결선";
+  else if (isSpouseLine) lineTypeName = "부부(배우자) 연결선";
+  else if (isSingleRelationLine) lineTypeName = "부모-자녀 관계선";
+  else lineTypeName = "가계도 관계선";
+  
+  let clickBoardX = 0;
+  let clickBoardY = 0;
+  if (e) {
+    const rect = treeBoard.getBoundingClientRect();
+    clickBoardX = Math.round((e.clientX - rect.left) / currentScale);
+    clickBoardY = Math.round((e.clientY - rect.top) / currentScale);
+  }
+
+  const menu = document.createElement('div');
+  menu.id = 'line-context-menu';
+  menu.className = 'floating-context-menu';
+  
+  const hasBends = lineBends[lineKey] && lineBends[lineKey].length > 0;
+  
+  menu.innerHTML = `
+    <div class="context-menu-header">
+      <span class="context-menu-title">${lineTypeName}</span>
+    </div>
+    <div class="context-menu-divider"></div>
+    <div class="context-menu-item item-add-point" id="ctx-line-add-point">
+      <span class="item-icon">➕</span>
+      <span class="item-label">연결선 점추가 (꺾임점 생성)</span>
+    </div>
+    <div class="context-menu-item item-delete" id="ctx-line-delete">
+      <span class="item-icon">🗑️</span>
+      <span class="item-label">연결선 삭제</span>
+      <span class="item-shortcut">Del</span>
+    </div>
+    ${isCustomLine ? `
+    <div class="context-menu-item" id="ctx-line-style">
+      <span class="item-icon">🎨</span>
+      <span class="item-label">선 스타일 전환 (직계/배우자/일반)</span>
+    </div>` : ''}
+    ${hasBends ? `
+    <div class="context-menu-item" id="ctx-line-reset-bends">
+      <span class="item-icon">📍</span>
+      <span class="item-label">꺾임점 초기화 (직선화)</span>
+    </div>` : ''}
+    <div class="context-menu-divider"></div>
+    <div class="context-menu-item item-close" id="ctx-line-close">
+      <span class="item-icon">✕</span>
+      <span class="item-label">닫기</span>
+    </div>
+  `;
+  
+  document.body.appendChild(menu);
+  
+  const menuWidth = 240;
+  const menuHeight = menu.offsetHeight || 180;
+  let posX = (e ? e.clientX : window.innerWidth / 2) + 5;
+  let posY = (e ? e.clientY : window.innerHeight / 2) + 5;
+  
+  if (posX + menuWidth > window.innerWidth) {
+    posX = window.innerWidth - menuWidth - 12;
+  }
+  if (posY + menuHeight > window.innerHeight) {
+    posY = window.innerHeight - menuHeight - 12;
+  }
+  if (posX < 8) posX = 8;
+  if (posY < 8) posY = 8;
+  
+  menu.style.left = `${posX}px`;
+  menu.style.top = `${posY}px`;
+  
+  // Point addition listener
+  const addPointBtn = menu.querySelector('#ctx-line-add-point');
+  if (addPointBtn) {
+    addPointBtn.addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      hideLineContextMenu();
+      
+      pushHistoryState();
+      if (!lineBends[lineKey]) {
+        lineBends[lineKey] = [];
+      }
+      
+      // If click coords are valid, insert point
+      let targetPtX = clickBoardX;
+      let targetPtY = clickBoardY;
+      
+      if (!targetPtX && !targetPtY) {
+        // Fallback: use middle of line
+        const customLine = customVisualLines.find(l => l.id === lineKey);
+        if (customLine) {
+          const s = getElementCenter(customLine.from);
+          const t = getElementCenter(customLine.to);
+          if (s && t) {
+            targetPtX = Math.round((s.x + t.x) / 2);
+            targetPtY = Math.round((s.y + t.y) / 2);
+          }
+        }
+      }
+      
+      if (targetPtX || targetPtY) {
+        lineBends[lineKey].push({ x: targetPtX, y: targetPtY });
+        selectedBendIndex = lineBends[lineKey].length - 1;
+        saveLineBends();
+        if (typeof persistTreeDataLocally === 'function') persistTreeDataLocally(true);
+        drawConnections();
+        showToast("연결선에 새 점(꺾임점)이 추가되었습니다. 점을 드래그하여 이동할 수 있습니다.");
+      }
+    });
+  }
+
+  const deleteBtn = menu.querySelector('#ctx-line-delete');
+  if (deleteBtn) {
+    deleteBtn.addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      hideLineContextMenu();
+      deleteSelectedLine();
+    });
+  }
+  
+  const styleBtn = menu.querySelector('#ctx-line-style');
+  if (styleBtn) {
+    styleBtn.addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      hideLineContextMenu();
+      const line = customVisualLines.find(l => l.id === lineKey);
+      if (line) {
+        pushHistoryState();
+        if (!line.style || line.style === 'normal') {
+          line.style = 'main';
+          showToast("메시아 직계선 스타일로 변경되었습니다.");
+        } else if (line.style === 'main') {
+          line.style = 'spouse';
+          showToast("배우자 연결선 스타일로 변경되었습니다.");
+        } else {
+          line.style = 'normal';
+          showToast("일반 연결선 스타일로 변경되었습니다.");
+        }
+        saveCustomVisualLines();
+        if (typeof persistTreeDataLocally === 'function') persistTreeDataLocally(true);
+        drawConnections();
+      }
+    });
+  }
+  
+  const resetBendsBtn = menu.querySelector('#ctx-line-reset-bends');
+  if (resetBendsBtn) {
+    resetBendsBtn.addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      hideLineContextMenu();
+      pushHistoryState();
+      delete lineBends[lineKey];
+      saveLineBends();
+      if (typeof persistTreeDataLocally === 'function') persistTreeDataLocally(true);
+      drawConnections();
+      showToast("연결선 꺾임점이 초기화되었습니다.");
+    });
+  }
+  
+  const closeBtn = menu.querySelector('#ctx-line-close');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      hideLineContextMenu();
+    });
+  }
+  
+  const outsideClickListener = (ev) => {
+    if (!menu.contains(ev.target)) {
+      hideLineContextMenu();
+      window.removeEventListener('mousedown', outsideClickListener, true);
+    }
+  };
+  setTimeout(() => {
+    window.addEventListener('mousedown', outsideClickListener, true);
+  }, 10);
+}
+
+function hideLineContextMenu() {
+  const existing = document.getElementById('line-context-menu');
+  if (existing) {
+    existing.remove();
+  }
+}
+
 function deleteSelectedLine() {
   if (!selectedLineKey) return;
   
+  const isCustomLine = customVisualLines.some(l => l.id === selectedLineKey);
   const isTeacherLine = selectedLineKey.startsWith('teacher-') || selectedLineKey.startsWith('preacher-');
+  const isSingleRelationLine = selectedLineKey.startsWith('rel-');
   const isSpouseLine = selectedLineKey.includes('+') && !isSingleRelationLine && !isCustomLine && !isTeacherLine;
   
   if (isCustomLine) {
@@ -3027,6 +3231,7 @@ function deleteSelectedLine() {
       selectedLineKey = null;
       saveCustomVisualLines();
       saveLineBends();
+      if (typeof persistTreeDataLocally === 'function') persistTreeDataLocally(true);
       drawConnections();
       showToast("연결선이 삭제되었습니다.");
     }
@@ -4866,30 +5071,29 @@ function getElementCenter(id) {
         y: jNode.y
       };
     }
-  } else if (id.startsWith('annot-')) {
-    const annotId = parseInt(id.replace('annot-', ''));
-    if (isNaN(annotId)) return null;
-    const annot = annotations.find(a => a.id === annotId);
+  } else if (id.startsWith('annot-') || annotations.some(a => String(a.id) === id)) {
+    const rawId = id.replace('annot-', '');
+    const annot = annotations.find(a => String(a.id) === rawId || String(a.id) === id);
     if (annot) {
       return {
-        x: annot.x + annot.width / 2,
-        y: annot.y + annot.height / 2
+        x: annot.x + (annot.width || 120) / 2,
+        y: annot.y + (annot.height || 40) / 2
       };
     }
-  } else if (id.startsWith('event-') || id.startsWith('ev-')) {
-    const evId = id.startsWith('event-') ? id.replace('event-', '') : id;
-    const ev = events.find(e => String(e.id) === String(evId));
+  } else if (id.startsWith('event-') || id.startsWith('ev-') || events.some(e => String(e.id) === id)) {
+    const rawId = id.replace('event-', '').replace('ev-', '');
+    const ev = events.find(e => String(e.id) === rawId || String(e.id) === id || `event-${e.id}` === id || `ev-${e.id}` === id);
     if (ev) {
       return { x: ev.x, y: ev.y };
     }
-  } else if (id.startsWith('location-') || id.startsWith('loc-')) {
-    const locId = id.startsWith('location-') ? id.replace('location-', '') : id;
-    const loc = locations.find(l => String(l.id) === String(locId));
+  } else if (id.startsWith('location-') || id.startsWith('loc-') || locations.some(l => String(l.id) === id)) {
+    const rawId = id.replace('location-', '').replace('loc-', '');
+    const loc = locations.find(l => String(l.id) === rawId || String(l.id) === id || `location-${l.id}` === id || `loc-${l.id}` === id);
     if (loc) {
       return { x: loc.x, y: loc.y };
     }
   } else {
-    const coord = coordinates[id];
+    const coord = coordinates[id] || (coordinates[id.replace('card-', '')]);
     if (coord) {
       return {
         x: coord.x,
@@ -4949,10 +5153,10 @@ function getClosestPointOnParentLine(px, py, parentKey) {
     if (p1 && p2) {
       const leftNode = p1.x < p2.x ? p1 : p2;
       const rightNode = p1.x < p2.x ? p2 : p1;
-      const x1 = leftNode.x + CARD_WIDTH / 2;
-      const x2 = rightNode.x - CARD_WIDTH / 2;
-      const ratio = spouseSplits[parentKey] !== undefined ? spouseSplits[parentKey] : 0.5;
-      sourceX = x1 + (x2 - x1) * ratio;
+      const splitRatio = spouseSplits[parentKey] !== undefined ? spouseSplits[parentKey] : 0.5;
+      const leftX = leftNode.x + CARD_WIDTH / 2;
+      const rightX = rightNode.x - CARD_WIDTH / 2;
+      sourceX = leftX + (rightX - leftX) * splitRatio;
       sourceY = leftNode.y;
     }
   }
@@ -5077,15 +5281,14 @@ function getBoxPorts(id) {
       'bottom-left':  { x: jNode.x - r * 0.7, y: jNode.y + r * 0.7, dir: 'DOWN' },
       'bottom-right': { x: jNode.x + r * 0.7, y: jNode.y + r * 0.7, dir: 'DOWN' }
     };
-  } else if (id.startsWith('annot-')) {
-    const annotId = parseInt(id.replace('annot-', ''));
-    if (isNaN(annotId)) return null;
-    const annot = annotations.find(a => a.id === annotId);
+  } else if (id.startsWith('annot-') || annotations.some(a => String(a.id) === id)) {
+    const rawId = id.replace('annot-', '');
+    const annot = annotations.find(a => String(a.id) === rawId || String(a.id) === id);
     if (!annot) return null;
     const x = annot.x;
     const y = annot.y;
-    const w = annot.width;
-    const h = annot.height;
+    const w = annot.width || 120;
+    const h = annot.height || 40;
     return {
       top:          { x: x + w / 2, y: y,         dir: 'UP' },
       right:        { x: x + w,     y: y + h / 2, dir: 'RIGHT' },
@@ -5096,9 +5299,9 @@ function getBoxPorts(id) {
       'bottom-left':  { x: x,         y: y + h,     dir: 'DOWN' },
       'bottom-right': { x: x + w,     y: y + h,     dir: 'DOWN' }
     };
-  } else if (id.startsWith('event-') || id.startsWith('ev-')) {
-    const evId = id.startsWith('event-') ? id.replace('event-', '') : id;
-    const ev = events.find(e => String(e.id) === String(evId));
+  } else if (id.startsWith('event-') || id.startsWith('ev-') || events.some(e => String(e.id) === id)) {
+    const rawId = id.replace('event-', '').replace('ev-', '');
+    const ev = events.find(e => String(e.id) === rawId || String(e.id) === id || `event-${e.id}` === id || `ev-${e.id}` === id);
     if (!ev) return null;
     const el = document.getElementById(`event-${ev.id}`);
     const w = el && el.offsetWidth ? el.offsetWidth : 120;
@@ -5115,9 +5318,9 @@ function getBoxPorts(id) {
       'bottom-left':  { x: x,            y: y + h,     dir: 'DOWN' },
       'bottom-right': { x: x + w,        y: y + h,     dir: 'DOWN' }
     };
-  } else if (id.startsWith('location-') || id.startsWith('loc-')) {
-    const locId = id.startsWith('location-') ? id.replace('location-', '') : id;
-    const loc = locations.find(l => String(l.id) === String(locId));
+  } else if (id.startsWith('location-') || id.startsWith('loc-') || locations.some(l => String(l.id) === id)) {
+    const rawId = id.replace('location-', '').replace('loc-', '');
+    const loc = locations.find(l => String(l.id) === rawId || String(l.id) === id || `location-${l.id}` === id || `loc-${l.id}` === id);
     if (!loc) return null;
     const el = document.getElementById(`location-${loc.id}`);
     const w = el && el.offsetWidth ? el.offsetWidth : 120;
@@ -5135,7 +5338,7 @@ function getBoxPorts(id) {
       'bottom-right': { x: x + w,        y: y + h,     dir: 'DOWN' }
     };
   } else {
-    const coord = coordinates[id];
+    const coord = coordinates[id] || (coordinates[id.replace('card-', '')]);
     if (!coord) return null;
     const x = coord.x - CARD_WIDTH / 2;
     const y = coord.y - CARD_HEIGHT / 2;
@@ -5172,16 +5375,24 @@ function getClosestPortOfBox(boxId, targetX, targetY) {
   return bestPort;
 }
 
+function isSameEntityId(id1, id2) {
+  if (!id1 || !id2) return false;
+  if (String(id1) === String(id2)) return true;
+  const clean1 = String(id1).replace(/^(card-|annot-|event-|location-|ev-|loc-)/, '');
+  const clean2 = String(id2).replace(/^(card-|annot-|event-|location-|ev-|loc-)/, '');
+  return clean1 === clean2 && clean1 !== '';
+}
+
 function findSnappingTarget(mouseX, mouseY, otherEndId) {
   let bestTargetId = null;
   let bestPortKey = null;
   let bestPortCoord = null;
   let minD = Infinity;
-  const snapRadius = 55; // snapping distance in pixels
+  const snapRadius = 65; // Extended comfortable snapping radius
   
   // 1. Scan Junction Nodes (prioritized for easier spatial selection)
   canvasJunctions.forEach(jNode => {
-    if (String(jNode.id) === String(otherEndId)) return;
+    if (otherEndId && isSameEntityId(jNode.id, otherEndId)) return;
     const ports = getBoxPorts(jNode.id);
     if (ports) {
       Object.keys(ports).forEach(k => {
@@ -5206,13 +5417,20 @@ function findSnappingTarget(mouseX, mouseY, otherEndId) {
   // 2. Scan person-cards, canvas-annotations, and layer-markers (events, locations)
   const candidateBoxes = [];
   document.querySelectorAll('.person-card, .canvas-annotation, .layer-marker').forEach(el => {
-    let id = el.getAttribute('data-id') || el.id;
-    if (!id) return;
-    if (id.startsWith('card-')) id = id.replace('card-', '');
-    if (id.startsWith('event-')) id = id.replace('event-', '');
-    if (id.startsWith('location-')) id = id.replace('location-', '');
-    if (String(id) === String(otherEndId)) return;
-    candidateBoxes.push({ id, el });
+    let rawId = el.getAttribute('data-id') || el.id;
+    if (!rawId) return;
+    
+    let targetStoreId = rawId;
+    if (rawId.startsWith('card-')) {
+      targetStoreId = rawId.replace('card-', '');
+    } else if (el.classList.contains('canvas-annotation') && !rawId.startsWith('annot-')) {
+      targetStoreId = `annot-${rawId}`;
+    } else if (el.id && (el.id.startsWith('event-') || el.id.startsWith('location-'))) {
+      targetStoreId = el.id;
+    }
+    
+    if (otherEndId && isSameEntityId(targetStoreId, otherEndId)) return;
+    candidateBoxes.push({ id: targetStoreId, el });
   });
   
   candidateBoxes.forEach(cand => {
@@ -8349,6 +8567,7 @@ function renderTree() {
             });
             
             drawConnections();
+            if (typeof renderJunctions === 'function') renderJunctions();
           }
         }
         
@@ -8820,6 +9039,11 @@ function drawConnections() {
           drawConnections();
         });
         
+        helperPath.addEventListener('contextmenu', (e) => {
+          if (!isAdminMode) return;
+          showLineContextMenu(e, spouseKey);
+        });
+        
         pathsToDraw.push({
           key: spouseKey,
           elements: [path, helperPath],
@@ -9025,6 +9249,11 @@ function drawConnections() {
         drawConnections();
       });
       
+      helperPath.addEventListener('contextmenu', (e) => {
+        if (!isAdminMode) return;
+        showLineContextMenu(e, key);
+      });
+      
       pathsToDraw.push({
         key: key,
         elements: [childPath, helperPath],
@@ -9095,6 +9324,11 @@ function drawConnections() {
           drawConnections();
         });
         
+        helperPath.addEventListener('contextmenu', (e) => {
+          if (!isAdminMode) return;
+          showLineContextMenu(e, childRelationKey);
+        });
+        
         pathsToDraw.push({
           key: childRelationKey,
           elements: [childPath, helperPath],
@@ -9108,7 +9342,8 @@ function drawConnections() {
   drawTeacherConnections(svgNS, true, pathsToDraw);
 
   // 4. Render Custom Visual Lines (Logos style)
-  renderCustomVisualLines(svgNS, true, pathsToDraw);
+  const handlesToDraw = [];
+  renderCustomVisualLines(svgNS, true, pathsToDraw, handlesToDraw);
   
   // Sort and append all connector lines by z-index
   pathsToDraw.sort((a, b) => a.zIndex - b.zIndex);
@@ -9118,6 +9353,9 @@ function drawConnections() {
 
   // Draw deferred spouse node circles so they render on top of all spouse/parent-child connector lines
   spouseCirclesToDraw.forEach(c => svgLayer.appendChild(c));
+
+  // Draw all endpoint handles on top of all connector lines and helper paths
+  handlesToDraw.forEach(h => svgLayer.appendChild(h));
   
   // Render bend handles if in Admin Mode
   renderBendHandles();
@@ -9615,7 +9853,8 @@ function drawConnectionsWithoutRecreatingHandles() {
   drawTeacherConnections(svgNS, false, pathsToDraw);
 
   // Render Custom Visual Lines (Logos style)
-  renderCustomVisualLines(svgNS, false, pathsToDraw);
+  const handlesToDraw = [];
+  renderCustomVisualLines(svgNS, false, pathsToDraw, handlesToDraw);
   
   // Sort and append all connector lines by z-index
   pathsToDraw.sort((a, b) => a.zIndex - b.zIndex);
@@ -9625,6 +9864,9 @@ function drawConnectionsWithoutRecreatingHandles() {
 
   // Draw deferred spouse node circles so they render on top of all spouse/parent-child connector lines
   spouseCirclesToDraw.forEach(c => svgLayer.appendChild(c));
+
+  // Draw all endpoint handles on top of all connector lines and helper paths
+  handlesToDraw.forEach(h => svgLayer.appendChild(h));
 }
 
 function drawTeacherConnections(svgNS, recreateClickListeners, pathsToDraw) {
@@ -9697,6 +9939,11 @@ function drawTeacherConnections(svgNS, recreateClickListeners, pathsToDraw) {
             lineBends[key].push({ x: clickX, y: clickY });
             saveLineBends();
             drawConnections();
+          });
+          
+          helperPath.addEventListener('contextmenu', (e) => {
+            if (!isAdminMode) return;
+            showLineContextMenu(e, key);
           });
         }
         
@@ -10363,7 +10610,7 @@ function insertVertexOnClosestSegment(poly, clickX, clickY) {
   return false;
 }
 
-function renderCustomVisualLines(svgNS, recreateClickListeners, pathsToDraw) {
+function renderCustomVisualLines(svgNS, recreateClickListeners, pathsToDraw, handlesToDraw) {
   customVisualLines.forEach(line => {
     if (!line || !line.from || !line.to || typeof line.from !== 'string' || typeof line.to !== 'string') return;
     let start = null;
@@ -10562,6 +10809,11 @@ function renderCustomVisualLines(svgNS, recreateClickListeners, pathsToDraw) {
           drawConnections();
         }
       });
+      
+      helperPath.addEventListener('contextmenu', (e) => {
+        if (!isAdminMode) return;
+        showLineContextMenu(e, key);
+      });
     }
     
     if (pathsToDraw) {
@@ -10576,13 +10828,14 @@ function renderCustomVisualLines(svgNS, recreateClickListeners, pathsToDraw) {
     
     // Create drag handles for endpoints of all custom lines in admin mode
     if (isAdminMode) {
+      const isLineSelected = selectedLineKey === key;
       const createHandle = (pt, isStart) => {
         const handle = document.createElementNS(svgNS, "circle");
         handle.setAttribute("cx", pt.x);
         handle.setAttribute("cy", pt.y);
-        handle.setAttribute("r", 6);
-        handle.setAttribute("class", "line-drag-handle");
-        handle.setAttribute("title", isStart ? "연결선 시작점 드래그하여 다른 점/박스로 이동" : "연결선 끝점 드래그하여 다른 점/박스로 이동");
+        handle.setAttribute("r", isLineSelected ? 8 : 6.5);
+        handle.setAttribute("class", `line-drag-handle ${isStart ? 'handle-start' : 'handle-end'} ${isLineSelected ? 'selected-line-handle' : ''}`);
+        handle.setAttribute("title", isStart ? "연결선 시작점: 드래그하여 다른 점/박스로 연결 이동 (우클릭: 삭제/메뉴)" : "연결선 끝점: 드래그하여 다른 점/박스로 연결 이동 (우클릭: 삭제/메뉴)");
         
         const startPress = (clientX, clientY) => {
           let activeSnapTarget = null;
@@ -10625,7 +10878,8 @@ function renderCustomVisualLines(svgNS, recreateClickListeners, pathsToDraw) {
                                document.getElementById(`card-${activeSnapTarget}`) || 
                                document.getElementById(`annot-${activeSnapTarget}`) ||
                                document.getElementById(`event-${activeSnapTarget}`) ||
-                               document.getElementById(`location-${activeSnapTarget}`);
+                               document.getElementById(`location-${activeSnapTarget}`) ||
+                               document.querySelector(`[data-id="${activeSnapTarget}"]`);
               if (targetEl) {
                 targetEl.classList.add('link-hovered-target');
                 const portEl = targetEl.querySelector(`.port-${activeSnapPort}`);
@@ -10645,6 +10899,7 @@ function renderCustomVisualLines(svgNS, recreateClickListeners, pathsToDraw) {
               previewPathD = getRoundedCornersPath(vertices, styleSettings.cornerRadius);
             }
             path.setAttribute("d", previewPathD);
+            helperPath.setAttribute("d", previewPathD);
             
             handle.setAttribute("cx", isStart ? curStart.x : curEnd.x);
             handle.setAttribute("cy", isStart ? curStart.y : curEnd.y);
@@ -10665,7 +10920,7 @@ function renderCustomVisualLines(svgNS, recreateClickListeners, pathsToDraw) {
             });
             document.querySelectorAll('.card-link-port').forEach(p => p.classList.remove('port-target-hover'));
             
-            if (activeSnapTarget) {
+            if (activeSnapTarget && activeSnapPort) {
               pushHistoryState();
               if (isStart) {
                 line.from = activeSnapTarget;
@@ -10675,10 +10930,11 @@ function renderCustomVisualLines(svgNS, recreateClickListeners, pathsToDraw) {
                 line.toPort = activeSnapPort;
               }
               saveCustomVisualLines();
+              if (typeof persistTreeDataLocally === 'function') persistTreeDataLocally(true);
               debouncedAutoSaveToServer();
               showToast("연결선 연결 위치가 성공적으로 이동되었습니다.");
             } else {
-              showToast("연결할 포트를 찾지 못해 기존 포트 위치로 복원되었습니다.");
+              showToast("연결할 포트를 찾지 못해 기존 위치로 유지되었습니다.");
             }
             
             drawConnections();
@@ -10706,9 +10962,15 @@ function renderCustomVisualLines(svgNS, recreateClickListeners, pathsToDraw) {
         };
         
         handle.addEventListener('mousedown', (e) => {
+          if (e.button === 2) return; // Right click handled by contextmenu
           e.stopPropagation();
           e.preventDefault();
           startPress(e.clientX, e.clientY);
+        });
+        
+        handle.addEventListener('contextmenu', (e) => {
+          if (!isAdminMode) return;
+          showLineContextMenu(e, key);
         });
         
         handle.addEventListener('touchstart', (e) => {
@@ -10718,7 +10980,11 @@ function renderCustomVisualLines(svgNS, recreateClickListeners, pathsToDraw) {
           }
         });
         
-        svgLayer.appendChild(handle);
+        if (handlesToDraw) {
+          handlesToDraw.push(handle);
+        } else {
+          svgLayer.appendChild(handle);
+        }
       };
       
       createHandle(start, true);
@@ -12733,6 +12999,17 @@ function bindUniversalSearchInput(inputEl, resultsEl) {
   let savedPanX = panX;
   let savedPanY = panY;
   let savedScale = currentScale;
+  let searchDebounceTimer = null;
+  let isComposing = false;
+
+  inputEl.addEventListener('compositionstart', () => {
+    isComposing = true;
+  });
+
+  inputEl.addEventListener('compositionend', (e) => {
+    isComposing = false;
+    runSearch(e.target.value);
+  });
 
   inputEl.addEventListener('focus', () => {
     savedPanX = panX;
@@ -12740,19 +13017,17 @@ function bindUniversalSearchInput(inputEl, resultsEl) {
     savedScale = currentScale;
   });
 
-  inputEl.addEventListener('input', (e) => {
-    const query = e.target.value.trim().toLowerCase();
-    
-    document.querySelectorAll('.person-card.highlight, .layer-marker.highlight, .canvas-annotation.highlight, .canvas-junction-node.highlight').forEach(el => {
-      el.classList.remove('highlight');
-    });
-    
-    if (resultsEl) {
-      resultsEl.innerHTML = '';
-      resultsEl.style.display = 'none';
-    }
+  const runSearch = (rawVal) => {
+    const query = (rawVal || '').trim().toLowerCase();
     
     if (!query) {
+      document.querySelectorAll('.person-card.highlight, .layer-marker.highlight, .canvas-annotation.highlight, .canvas-junction-node.highlight').forEach(el => {
+        el.classList.remove('highlight');
+      });
+      if (resultsEl) {
+        resultsEl.innerHTML = '';
+        resultsEl.style.display = 'none';
+      }
       clearAllHighlights();
       panX = savedPanX;
       panY = savedPanY;
@@ -12922,75 +13197,96 @@ function bindUniversalSearchInput(inputEl, resultsEl) {
     }
 
     // Populate search dropdown list
-    if (matches.length > 0 && resultsEl) {
-      resultsEl.style.display = 'block';
-      resultsEl.innerHTML = '';
-      
-      matches.slice(0, 30).forEach(m => {
-        const matched = m.item;
-        const li = document.createElement('li');
-        li.className = 'search-result-item';
+    if (resultsEl) {
+      if (matches.length > 0) {
+        resultsEl.style.display = 'block';
+        resultsEl.innerHTML = '';
         
-        let badgeInfo = '';
-        if (matched.dataType === 'person') {
-          if (matched.parents && matched.parents.length > 0) {
-            const parentId = matched.parents[0];
-            const parent = db.find(p => p.id === parentId);
-            if (parent) {
-              const parentName = getCharName(parent);
-              const textChild = currentLang === 'en' ? `Child of ${parentName}` : `${parentName}의 자녀`;
-              badgeInfo = `<span class="parent-info">(${textChild})</span>`;
+        matches.slice(0, 30).forEach(m => {
+          const matched = m.item;
+          const li = document.createElement('li');
+          li.className = 'search-result-item';
+          
+          let badgeInfo = '';
+          if (matched.dataType === 'person') {
+            if (matched.parents && matched.parents.length > 0) {
+              const parentId = matched.parents[0];
+              const parent = db.find(p => p.id === parentId);
+              if (parent) {
+                const parentName = getCharName(parent);
+                const textChild = currentLang === 'en' ? `Child of ${parentName}` : `${parentName}의 자녀`;
+                badgeInfo = `<span class="parent-info">(${textChild})</span>`;
+              }
             }
+          } else if (matched.dataType === 'event') {
+            const textEvent = currentLang === 'en' ? 'Event' : '사건';
+            badgeInfo = `<span class="parent-info">(📜 ${textEvent})</span>`;
+          } else if (matched.dataType === 'location') {
+            const textLoc = currentLang === 'en' ? 'Location' : '장소';
+            badgeInfo = `<span class="parent-info">(📍 ${textLoc})</span>`;
+          } else if (matched.dataType === 'annotation') {
+            const textNote = currentLang === 'en' ? 'Text Box' : '텍스트 상자';
+            badgeInfo = `<span class="parent-info">(📝 ${textNote})</span>`;
           }
-        } else if (matched.dataType === 'event') {
-          const textEvent = currentLang === 'en' ? 'Event' : '사건';
-          badgeInfo = `<span class="parent-info">(📜 ${textEvent})</span>`;
-        } else if (matched.dataType === 'location') {
-          const textLoc = currentLang === 'en' ? 'Location' : '장소';
-          badgeInfo = `<span class="parent-info">(📍 ${textLoc})</span>`;
-        } else if (matched.dataType === 'annotation') {
-          const textNote = currentLang === 'en' ? 'Text Box' : '텍스트 상자';
-          badgeInfo = `<span class="parent-info">(📝 ${textNote})</span>`;
-        }
-        
-        let displayName = '';
-        if (matched.dataType === 'person') displayName = getCharName(matched);
-        else if (matched.dataType === 'event') displayName = cleanLayerName(getEventName(matched));
-        else if (matched.dataType === 'location') displayName = cleanLayerName(getLocationName(matched));
-        else if (matched.dataType === 'annotation') displayName = typeof getLocalizedAnnotationText === 'function' ? getLocalizedAnnotationText(matched.text) : (matched.text || '');
+          
+          let displayName = '';
+          if (matched.dataType === 'person') displayName = getCharName(matched);
+          else if (matched.dataType === 'event') displayName = cleanLayerName(getEventName(matched));
+          else if (matched.dataType === 'location') displayName = cleanLayerName(getLocationName(matched));
+          else if (matched.dataType === 'annotation') displayName = typeof getLocalizedAnnotationText === 'function' ? getLocalizedAnnotationText(matched.text) : (matched.text || '');
 
-        let snippetHtml = '';
-        if (m.matchType === 'detail' && m.snippet) {
-          const detailLabel = currentLang === 'en' ? 'Detail' : '상세정보';
-          snippetHtml = `<div class="search-result-snippet"><span class="search-snippet-tag">[${detailLabel}]</span> ${m.snippet}</div>`;
-        }
-        
-        li.innerHTML = `
-          <div class="search-result-header">
-            <strong>${displayName}</strong> ${badgeInfo}
-          </div>
-          ${snippetHtml}
-        `;
-        
-        li.addEventListener('click', (e) => {
-          e.stopPropagation();
-          inputEl.value = '';
-          document.querySelectorAll('#searchInput, #mobileSearchInput, .mac-search-input, .search-box').forEach(inp => inp.value = '');
-          if (resultsEl) {
-            resultsEl.innerHTML = '';
-            resultsEl.style.display = 'none';
+          let snippetHtml = '';
+          if (m.matchType === 'detail' && m.snippet) {
+            const detailLabel = currentLang === 'en' ? 'Detail' : '상세정보';
+            snippetHtml = `<div class="search-result-snippet"><span class="search-snippet-tag">[${detailLabel}]</span> ${m.snippet}</div>`;
           }
           
-          navigateToItem(matched, m.matchType);
+          li.innerHTML = `
+            <div class="search-result-header">
+              <strong>${displayName}</strong> ${badgeInfo}
+            </div>
+            ${snippetHtml}
+          `;
           
-          if (window.closeSearchWrapper) {
-            window.closeSearchWrapper();
-          }
+          li.addEventListener('click', (e) => {
+            e.stopPropagation();
+            inputEl.value = '';
+            document.querySelectorAll('#searchInput, #mobileSearchInput, .mac-search-input, .search-box').forEach(inp => inp.value = '');
+            if (resultsEl) {
+              resultsEl.innerHTML = '';
+              resultsEl.style.display = 'none';
+            }
+            
+            navigateToItem(matched, m.matchType);
+            
+            if (window.closeSearchWrapper) {
+              window.closeSearchWrapper();
+            }
+          });
+          
+          resultsEl.appendChild(li);
         });
-        
-        resultsEl.appendChild(li);
-      });
+      } else {
+        resultsEl.innerHTML = '';
+        resultsEl.style.display = 'none';
+      }
     }
+  };
+
+  inputEl.addEventListener('input', (e) => {
+    const val = e.target.value;
+    if (!val || val.trim() === '') {
+      clearTimeout(searchDebounceTimer);
+      runSearch('');
+      return;
+    }
+    
+    if (isComposing) return; // Wait for IME composition to complete
+    
+    clearTimeout(searchDebounceTimer);
+    searchDebounceTimer = setTimeout(() => {
+      runSearch(val);
+    }, 70);
   });
 
   inputEl.addEventListener('keydown', (e) => {
@@ -17725,16 +18021,31 @@ async function persistTreeDataLocally(immediate = false) {
     // Tier 2: Tauri Desktop (macOS / Windows / Linux)
     if (window.__TAURI__ && window.__TAURI__.fs && window.__TAURI__.path) {
       try {
-        const docDir = await window.__TAURI__.path.documentDir();
-        const treePath = await window.__TAURI__.path.join(docDir, 'bible_genealogy_tree_autobackup.json');
-        await window.__TAURI__.fs.writeTextFile(treePath, dataStr);
-
+        // 2-1. Primary: AppData directory (macOS ~/Library/Application Support/... - never prompts TCC popup)
         try {
-          const extraDir = await window.__TAURI__.path.join(docDir, '열린족보이야기_데이터');
-          await window.__TAURI__.fs.createDir(extraDir, { recursive: true });
-          const extraPath = await window.__TAURI__.path.join(extraDir, 'bible_genealogy_tree_autobackup.json');
-          await window.__TAURI__.fs.writeTextFile(extraPath, dataStr);
-        } catch(_) {}
+          const appData = await window.__TAURI__.path.appDataDir();
+          await window.__TAURI__.fs.createDir(appData, { recursive: true });
+          const appTreePath = await window.__TAURI__.path.join(appData, 'bible_genealogy_tree_autobackup.json');
+          await window.__TAURI__.fs.writeTextFile(appTreePath, dataStr);
+        } catch (appDataErr) {
+          console.warn("[AppData 트리 저장 알림]", appDataErr);
+        }
+
+        // 2-2. Secondary: Documents folder (for user visibility)
+        try {
+          const docDir = await window.__TAURI__.path.documentDir();
+          const treePath = await window.__TAURI__.path.join(docDir, 'bible_genealogy_tree_autobackup.json');
+          await window.__TAURI__.fs.writeTextFile(treePath, dataStr);
+
+          try {
+            const extraDir = await window.__TAURI__.path.join(docDir, '열린족보이야기_데이터');
+            await window.__TAURI__.fs.createDir(extraDir, { recursive: true });
+            const extraPath = await window.__TAURI__.path.join(extraDir, 'bible_genealogy_tree_autobackup.json');
+            await window.__TAURI__.fs.writeTextFile(extraPath, dataStr);
+          } catch(_) {}
+        } catch (docErr) {
+          console.warn("[문서 폴더 트리 저장 건너뜀/실패]", docErr);
+        }
         console.log("[로컬 영구 저장] 데스크톱 트리 백업 저장 완료");
       } catch (err) {
         console.warn("[데스크톱 영구 저장 실패]", err);
@@ -18242,16 +18553,28 @@ async function restoreTreeDataLocally() {
     // 2. Check Tauri Desktop
     else if (window.__TAURI__ && window.__TAURI__.fs && window.__TAURI__.path) {
       try {
-        const docDir = await window.__TAURI__.path.documentDir();
-        const primaryPath = await window.__TAURI__.path.join(docDir, 'bible_genealogy_tree_autobackup.json');
-        const secondaryPath = await window.__TAURI__.path.join(docDir, '열린족보이야기_데이터', 'bible_genealogy_tree_autobackup.json');
-        
+        // Check AppData directory first
         try {
-          treeJson = await window.__TAURI__.fs.readTextFile(primaryPath);
-        } catch(_) {
+          const appData = await window.__TAURI__.path.appDataDir();
+          const appPath = await window.__TAURI__.path.join(appData, 'bible_genealogy_tree_autobackup.json');
+          treeJson = await window.__TAURI__.fs.readTextFile(appPath);
+        } catch (_) {}
+
+        // If not found in AppData, check Documents folder
+        if (!treeJson) {
           try {
-            treeJson = await window.__TAURI__.fs.readTextFile(secondaryPath);
-          } catch(_) {}
+            const docDir = await window.__TAURI__.path.documentDir();
+            const primaryPath = await window.__TAURI__.path.join(docDir, 'bible_genealogy_tree_autobackup.json');
+            const secondaryPath = await window.__TAURI__.path.join(docDir, '열린족보이야기_데이터', 'bible_genealogy_tree_autobackup.json');
+            
+            try {
+              treeJson = await window.__TAURI__.fs.readTextFile(primaryPath);
+            } catch(_) {
+              try {
+                treeJson = await window.__TAURI__.fs.readTextFile(secondaryPath);
+              } catch(_) {}
+            }
+          } catch (_) {}
         }
       } catch (_) {}
     }
@@ -18324,17 +18647,30 @@ async function fetchUserNotes() {
     // 3. Check Tauri Desktop
     else if (window.__TAURI__ && window.__TAURI__.fs && window.__TAURI__.path) {
       try {
-        const docDir = await window.__TAURI__.path.documentDir();
-        const backupPath = await window.__TAURI__.path.join(docDir, 'bible_genealogy_notes_autobackup.json');
-        const secondaryBackupPath = await window.__TAURI__.path.join(docDir, '열린족보이야기_데이터', 'bible_genealogy_notes_autobackup.json');
-        
         let backupJsonText = null;
+
+        // Check AppData directory first
         try {
-          backupJsonText = await window.__TAURI__.fs.readTextFile(backupPath);
-        } catch(_) {
+          const appData = await window.__TAURI__.path.appDataDir();
+          const appBackupPath = await window.__TAURI__.path.join(appData, 'bible_genealogy_notes_autobackup.json');
+          backupJsonText = await window.__TAURI__.fs.readTextFile(appBackupPath);
+        } catch (_) {}
+
+        // Fallback to Documents folder
+        if (!backupJsonText) {
           try {
-            backupJsonText = await window.__TAURI__.fs.readTextFile(secondaryBackupPath);
-          } catch(_) {}
+            const docDir = await window.__TAURI__.path.documentDir();
+            const backupPath = await window.__TAURI__.path.join(docDir, 'bible_genealogy_notes_autobackup.json');
+            const secondaryBackupPath = await window.__TAURI__.path.join(docDir, '열린족보이야기_데이터', 'bible_genealogy_notes_autobackup.json');
+            
+            try {
+              backupJsonText = await window.__TAURI__.fs.readTextFile(backupPath);
+            } catch(_) {
+              try {
+                backupJsonText = await window.__TAURI__.fs.readTextFile(secondaryBackupPath);
+              } catch(_) {}
+            }
+          } catch (_) {}
         }
 
         if (backupJsonText) {
@@ -18531,24 +18867,41 @@ async function runBackupActual() {
 
     // Save to Tauri Desktop
     if (window.__TAURI__ && window.__TAURI__.fs && window.__TAURI__.path) {
-      const docDir = await window.__TAURI__.path.documentDir();
-      
-      const backupPath = await window.__TAURI__.path.join(docDir, 'bible_genealogy_notes_autobackup.json');
-      await window.__TAURI__.fs.writeTextFile(backupPath, notesJsonStr);
-      
-      const treeBackupPath = await window.__TAURI__.path.join(docDir, 'bible_genealogy_tree_autobackup.json');
-      await window.__TAURI__.fs.writeTextFile(treeBackupPath, treeJsonStr);
-
+      // 1. Primary: AppData directory
       try {
-        const extraDir = await window.__TAURI__.path.join(docDir, '열린족보이야기_데이터');
-        await window.__TAURI__.fs.createDir(extraDir, { recursive: true });
-        const extraNotesPath = await window.__TAURI__.path.join(extraDir, 'bible_genealogy_notes_autobackup.json');
-        const extraTreePath = await window.__TAURI__.path.join(extraDir, 'bible_genealogy_tree_autobackup.json');
-        await window.__TAURI__.fs.writeTextFile(extraNotesPath, notesJsonStr);
-        await window.__TAURI__.fs.writeTextFile(extraTreePath, treeJsonStr);
-      } catch (_) {}
+        const appData = await window.__TAURI__.path.appDataDir();
+        await window.__TAURI__.fs.createDir(appData, { recursive: true });
+        const appNotesPath = await window.__TAURI__.path.join(appData, 'bible_genealogy_notes_autobackup.json');
+        const appTreePath = await window.__TAURI__.path.join(appData, 'bible_genealogy_tree_autobackup.json');
+        await window.__TAURI__.fs.writeTextFile(appNotesPath, notesJsonStr);
+        await window.__TAURI__.fs.writeTextFile(appTreePath, treeJsonStr);
+      } catch (appDataErr) {
+        console.warn("[AppData 백업 저장 알림]", appDataErr);
+      }
 
-      console.log("[로컬 백업 완료] 데스크톱 문서 폴더 저장 완료");
+      // 2. Secondary: Documents folder
+      try {
+        const docDir = await window.__TAURI__.path.documentDir();
+        
+        const backupPath = await window.__TAURI__.path.join(docDir, 'bible_genealogy_notes_autobackup.json');
+        await window.__TAURI__.fs.writeTextFile(backupPath, notesJsonStr);
+        
+        const treeBackupPath = await window.__TAURI__.path.join(docDir, 'bible_genealogy_tree_autobackup.json');
+        await window.__TAURI__.fs.writeTextFile(treeBackupPath, treeJsonStr);
+
+        try {
+          const extraDir = await window.__TAURI__.path.join(docDir, '열린족보이야기_데이터');
+          await window.__TAURI__.fs.createDir(extraDir, { recursive: true });
+          const extraNotesPath = await window.__TAURI__.path.join(extraDir, 'bible_genealogy_notes_autobackup.json');
+          const extraTreePath = await window.__TAURI__.path.join(extraDir, 'bible_genealogy_tree_autobackup.json');
+          await window.__TAURI__.fs.writeTextFile(extraNotesPath, notesJsonStr);
+          await window.__TAURI__.fs.writeTextFile(extraTreePath, treeJsonStr);
+        } catch (_) {}
+      } catch (docErr) {
+        console.warn("[문서 폴더 백업 건너뜀/실패]", docErr);
+      }
+
+      console.log("[로컬 백업 완료] 데스크톱 백업 저장 완료");
     }
   } catch (err) {
     console.error("Auto-backup 실패:", err);
@@ -19255,6 +19608,14 @@ function makeLayerDraggable(el, item, type) {
           el.style.left = `${item.x * currentScale}px`;
           el.style.top = `${item.y * currentScale}px`;
         }
+        
+        // Real-time redraw of connecting lines and junctions when moving box
+        if (typeof drawConnections === 'function') {
+          drawConnections();
+        }
+        if (typeof renderJunctions === 'function') {
+          renderJunctions();
+        }
       }
     };
     
@@ -19276,6 +19637,12 @@ function makeLayerDraggable(el, item, type) {
         else saveLocations();
         autoSaveToServer();
         el.isDraggingFinished = true;
+        if (typeof drawConnections === 'function') {
+          drawConnections();
+        }
+        if (typeof renderJunctions === 'function') {
+          renderJunctions();
+        }
       }
     };
     
@@ -19354,6 +19721,14 @@ function makeLayerDraggable(el, item, type) {
           el.style.left = `${item.x * currentScale}px`;
           el.style.top = `${item.y * currentScale}px`;
         }
+        
+        // Real-time redraw for touch movement
+        if (typeof drawConnections === 'function') {
+          drawConnections();
+        }
+        if (typeof renderJunctions === 'function') {
+          renderJunctions();
+        }
       }
     };
     
@@ -19375,6 +19750,12 @@ function makeLayerDraggable(el, item, type) {
         else saveLocations();
         autoSaveToServer();
         el.isDraggingFinished = true;
+        if (typeof drawConnections === 'function') {
+          drawConnections();
+        }
+        if (typeof renderJunctions === 'function') {
+          renderJunctions();
+        }
       }
     };
     
