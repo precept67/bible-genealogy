@@ -19434,33 +19434,61 @@ function getMapAnchorForLocation(loc) {
 
 function showCanvasBibleMap(loc) {
   const layer = document.getElementById('canvas-bible-map-layer');
-  if (!layer || !loc) return;
-  
-  activeMapLocationId = loc.id;
-  const anchor = getMapAnchorForLocation(loc);
-  
-  // 지도의 앵커 위치가 장소 박스의 (loc.x, loc.y)와 정확히 일치하도록 좌상단 오프셋 계산
-  const mapLeft = (loc.x - anchor.x) * currentScale;
-  const mapTop = (loc.y - anchor.y) * currentScale;
-  
+  if (!layer) return;
+
+  let targetLoc = loc;
+  if (typeof loc === 'string') {
+    const found = locations.find(l => (l.name && l.name.includes(loc)) || (l.id && l.id === loc));
+    if (found) targetLoc = found;
+    else targetLoc = { x: 1280, y: 752, name: loc, id: 'temp_' + loc };
+  }
+  if (!targetLoc) return;
+
+  activeMapLocationId = targetLoc.id;
+
+  // Position map layer centered behind the location node in tree-board space
+  const mapW = 2400;
+  const mapH = 1400;
+  const posX = typeof targetLoc.x === 'number' ? targetLoc.x : 1280;
+  const posY = typeof targetLoc.y === 'number' ? targetLoc.y : 752;
+
+  layer.style.left = `${posX - (mapW / 2)}px`;
+  layer.style.top = `${posY - (mapH / 2)}px`;
+  layer.style.transform = 'none';
+
   layer.style.display = 'block';
-  layer.style.transform = `translate(${mapLeft}px, ${mapTop}px) scale(${currentScale})`;
-  
-  // 강제 리플로우 후 active 클래스 적용하여 확실하게 애니메이션 표시
   void layer.offsetWidth;
   layer.classList.add('active');
-  
-  // 지도 내부의 활성 비콘 핀 위치 갱신
-  const beacon = document.getElementById('active-map-pin-beacon');
-  if (beacon) {
-    beacon.style.left = `${anchor.x}px`;
-    beacon.style.top = `${anchor.y}px`;
-    beacon.style.display = 'block';
+
+  if (typeof initCanvasLeafletBibleMap === 'function') {
+    initCanvasLeafletBibleMap();
   }
-  
-  // 클릭된 장소 마커 하이라이트 효과
+
+  // Find KMZ GPS match
+  const searchKey = targetLoc.name || targetLoc.id || '';
+  const matched = (typeof findBestBiblePlaceMatch === 'function') ? findBestBiblePlaceMatch(searchKey) : null;
+  const targetLat = matched ? matched.lat : 31.7683;
+  const targetLng = matched ? matched.lng : 35.2137;
+  const displayName = matched ? matched.name : (cleanLayerName(getLocationName(targetLoc)) || '성경 지리');
+  const displayDesc = matched ? matched.desc : '구글 어스 실측 성경 지리';
+
+  if (typeof highlightCanvasMapGPS === 'function') {
+    if (typeof canvasLeafletBibleMap !== 'undefined' && canvasLeafletBibleMap) {
+      canvasLeafletBibleMap.invalidateSize();
+      highlightCanvasMapGPS(targetLat, targetLng, displayName, displayDesc);
+    } else {
+      setTimeout(() => {
+        if (typeof canvasLeafletBibleMap !== 'undefined' && canvasLeafletBibleMap) {
+          canvasLeafletBibleMap.invalidateSize();
+          highlightCanvasMapGPS(targetLat, targetLng, displayName, displayDesc);
+        }
+      }, 100);
+    }
+  }
+
+  // Highlight clicked node on tree board
   document.querySelectorAll('.marker-location').forEach(m => m.classList.remove('map-active-target'));
-  const activeMarker = document.getElementById(`location-${loc.id}`);
+  const activeMarker = document.getElementById(`location-${targetLoc.id}`);
   if (activeMarker) {
     activeMarker.classList.add('map-active-target');
   }
@@ -19469,34 +19497,36 @@ function showCanvasBibleMap(loc) {
 function hideCanvasBibleMap() {
   const layer = document.getElementById('canvas-bible-map-layer');
   if (!layer) return;
-  
+
   activeMapLocationId = null;
   layer.classList.remove('active');
-  
+
   document.querySelectorAll('.marker-location').forEach(m => m.classList.remove('map-active-target'));
-  const beacon = document.getElementById('active-map-pin-beacon');
-  if (beacon) beacon.style.display = 'none';
-  
+
+  if (typeof canvasMapActiveMarker !== 'undefined' && canvasMapActiveMarker && typeof canvasLeafletBibleMap !== 'undefined' && canvasLeafletBibleMap) {
+    canvasLeafletBibleMap.removeLayer(canvasMapActiveMarker);
+    canvasMapActiveMarker = null;
+  }
+
   setTimeout(() => {
     if (!activeMapLocationId && layer) {
       layer.style.display = 'none';
     }
-  }, 450);
+  }, 420);
 }
 
 function updateCanvasBibleMapPosition() {
   if (!activeMapLocationId) return;
   const layer = document.getElementById('canvas-bible-map-layer');
   if (!layer) return;
-  
+
   const loc = locations.find(l => l.id === activeMapLocationId);
   if (!loc) return;
-  
-  const anchor = getMapAnchorForLocation(loc);
-  const mapLeft = (loc.x - anchor.x) * currentScale;
-  const mapTop = (loc.y - anchor.y) * currentScale;
-  
-  layer.style.transform = `translate(${mapLeft}px, ${mapTop}px) scale(${currentScale})`;
+
+  const mapW = 2400;
+  const mapH = 1400;
+  layer.style.left = `${loc.x - (mapW / 2)}px`;
+  layer.style.top = `${loc.y - (mapH / 2)}px`;
 }
 
 function renderLocations() {
@@ -23991,25 +24021,24 @@ if (document.readyState === 'loading') {
 }
 
 // =========================================================================
-// 🗺️ Leaflet.js & KMZ Real GPS Bible Map Viewer Controller
+// 🗺️ Leaflet.js & KMZ Real GPS Canvas Map Engine (Directly on Tree Board)
 // =========================================================================
-let leafletBibleMap = null;
-let leafletBibleMapLayers = {};
-let currentBibleMapLayerType = 'terrain';
-let bibleMapMarkersGroup = null;
-let bibleMapActiveMarker = null;
-let isBibleMapInitialized = false;
+let canvasLeafletBibleMap = null;
+let canvasLeafletLayers = {};
+let currentCanvasMapLayerType = 'terrain';
+let canvasMapMarkersGroup = null;
+let canvasMapActiveMarker = null;
+let isCanvasMapInitialized = false;
 
-function initLeafletBibleMap() {
-  if (isBibleMapInitialized || typeof L === 'undefined') return;
-  const container = document.getElementById('leaflet-bible-map');
+function initCanvasLeafletBibleMap() {
+  if (isCanvasMapInitialized || typeof L === 'undefined') return;
+  const container = document.getElementById('canvas-leaflet-bible-map');
   if (!container) return;
 
   try {
-    // Initialize Leaflet Map centered on Israel / Canaan / Middle East region
-    leafletBibleMap = L.map('leaflet-bible-map', {
+    canvasLeafletBibleMap = L.map('canvas-leaflet-bible-map', {
       center: [31.7683, 35.2137],
-      zoom: 8,
+      zoom: 12,
       zoomControl: true,
       attributionControl: true
     });
@@ -24020,10 +24049,10 @@ function initLeafletBibleMap() {
       attribution: 'Map: &copy; <a href="https://opentopomap.org">OpenTopoMap</a>'
     });
 
-    // 2. ESRI World Imagery (위성 사진)
+    // 2. ESRI Satellite (위성 사진)
     const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
       maxZoom: 18,
-      attribution: 'Tiles &copy; Esri &mdash; DigitalGlobe, GeoEye, Earthstar Geographics'
+      attribution: 'Tiles &copy; Esri &mdash; DigitalGlobe, GeoEye'
     });
 
     // 3. OpenStreetMap (일반 지도)
@@ -24032,266 +24061,125 @@ function initLeafletBibleMap() {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     });
 
-    leafletBibleMapLayers = {
+    canvasLeafletLayers = {
       terrain: terrainLayer,
       satellite: satelliteLayer,
       streets: streetsLayer
     };
 
-    // Default layer: terrain
-    terrainLayer.addTo(leafletBibleMap);
+    terrainLayer.addTo(canvasLeafletBibleMap);
 
-    // Markers layer group
-    bibleMapMarkersGroup = L.layerGroup().addTo(leafletBibleMap);
+    // All 2,758 KMZ place markers
+    canvasMapMarkersGroup = L.layerGroup().addTo(canvasLeafletBibleMap);
 
-    // Load KMZ places
     if (window.BIBLE_KMZ_PLACES && Array.isArray(window.BIBLE_KMZ_PLACES)) {
-      loadPlacesIntoBibleMap(window.BIBLE_KMZ_PLACES);
+      window.BIBLE_KMZ_PLACES.forEach(place => {
+        if (typeof place.lat !== 'number' || typeof place.lng !== 'number') return;
+        const marker = L.circleMarker([place.lat, place.lng], {
+          radius: 5,
+          fillColor: '#ea580c',
+          color: '#ffffff',
+          weight: 1.5,
+          opacity: 0.9,
+          fillOpacity: 0.85
+        });
+        marker.bindTooltip(`<b>${place.name}</b>`, {
+          direction: 'top',
+          offset: [0, -5],
+          className: 'bible-map-tooltip'
+        });
+        marker.on('click', (e) => {
+          if (e && e.originalEvent) e.originalEvent.stopPropagation();
+          highlightCanvasMapGPS(place.lat, place.lng, place.name, place.desc);
+        });
+        canvasMapMarkersGroup.addLayer(marker);
+      });
     }
 
-    isBibleMapInitialized = true;
-    setupBibleMapControls();
+    isCanvasMapInitialized = true;
+    setupCanvasMapMiniControls();
   } catch (err) {
-    console.error('Error initializing Leaflet Bible Map:', err);
+    console.error('Error initializing Canvas Leaflet Bible Map:', err);
   }
 }
 
-function loadPlacesIntoBibleMap(places) {
-  if (!bibleMapMarkersGroup || !places) return;
-  bibleMapMarkersGroup.clearLayers();
+function setupCanvasMapMiniControls() {
+  const closeBtn = document.getElementById('canvas-map-close-btn');
+  if (closeBtn) {
+    closeBtn.onclick = (e) => {
+      e.stopPropagation();
+      hideCanvasBibleMap();
+      if (typeof closeStudyPanel === 'function') closeStudyPanel();
+    };
+  }
 
-  places.forEach(place => {
-    if (typeof place.lat !== 'number' || typeof place.lng !== 'number') return;
+  const layerBtns = document.querySelectorAll('.canvas-map-layer-btn');
+  layerBtns.forEach(btn => {
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      const targetLayer = btn.getAttribute('data-layer');
+      if (!targetLayer || targetLayer === currentCanvasMapLayerType || !canvasLeafletLayers[targetLayer] || !canvasLeafletBibleMap) return;
 
-    const marker = L.circleMarker([place.lat, place.lng], {
-      radius: 6,
-      fillColor: '#ea580c',
-      color: '#ffffff',
-      weight: 1.5,
-      opacity: 1,
-      fillOpacity: 0.88
-    });
+      canvasLeafletBibleMap.removeLayer(canvasLeafletLayers[currentCanvasMapLayerType]);
+      canvasLeafletLayers[targetLayer].addTo(canvasLeafletBibleMap);
+      currentCanvasMapLayerType = targetLayer;
 
-    marker.bindTooltip(`<b>${place.name}</b>`, {
-      direction: 'top',
-      offset: [0, -6],
-      className: 'bible-map-tooltip'
-    });
-
-    marker.on('click', (e) => {
-      if (e && e.originalEvent) e.originalEvent.stopPropagation();
-      highlightBibleMapPlace(place, marker);
-    });
-
-    place._marker = marker;
-    bibleMapMarkersGroup.addLayer(marker);
+      layerBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    };
   });
-}
-
-function highlightBibleMapPlace(place, marker) {
-  if (!leafletBibleMap || !place) return;
-
-  const infoCard = document.getElementById('bible-map-info-card');
-  const nameEl = document.getElementById('info-card-name');
-  const coordsEl = document.getElementById('info-card-coords');
-  const descEl = document.getElementById('info-card-desc');
-
-  if (nameEl) nameEl.textContent = place.name;
-  if (coordsEl) coordsEl.textContent = `${place.lat.toFixed(5)}° N, ${place.lng.toFixed(5)}° E`;
-  if (descEl) descEl.innerHTML = (place.desc || '구글 어스 실측 성경 지명 데이터').replace(/\n/g, '<br>');
-  if (infoCard) infoCard.style.display = 'flex';
-
-  // Fly to location smoothly
-  const currentZoom = leafletBibleMap.getZoom();
-  const targetZoom = Math.max(currentZoom, 13);
-  leafletBibleMap.flyTo([place.lat, place.lng], targetZoom, { duration: 0.8 });
-
-  // Pulsing Beacon on active location
-  if (bibleMapActiveMarker) {
-    leafletBibleMap.removeLayer(bibleMapActiveMarker);
-    bibleMapActiveMarker = null;
-  }
-
-  const pulseIcon = L.divIcon({
-    className: 'custom-leaflet-pulse-icon',
-    html: '<div class="beacon-pulse" style="width:34px;height:34px;margin-left:-17px;margin-top:-17px;border-color:#ea580c;background:rgba(234,88,12,0.25);"></div><div class="beacon-dot" style="width:12px;height:12px;margin-left:-6px;margin-top:-6px;background:#ea580c;border:2px solid #fff;"></div>',
-    iconSize: [0, 0]
-  });
-
-  bibleMapActiveMarker = L.marker([place.lat, place.lng], { icon: pulseIcon, zIndexOffset: 1000 }).addTo(leafletBibleMap);
-}
-
-function openBibleMapModal(targetNameOrCoords) {
-  const modal = document.getElementById('bible-map-modal');
-  if (!modal) return;
-
-  modal.style.display = 'flex';
-
-  if (!isBibleMapInitialized) {
-    initLeafletBibleMap();
-  }
-
-  setTimeout(() => {
-    if (leafletBibleMap) {
-      leafletBibleMap.invalidateSize();
-    }
-  }, 100);
-
-  if (targetNameOrCoords && typeof targetNameOrCoords === 'string') {
-    const query = targetNameOrCoords.trim();
-    if (query && window.BIBLE_KMZ_PLACES) {
-      const matched = findBestBiblePlaceMatch(query);
-      if (matched) {
-        setTimeout(() => {
-          highlightBibleMapPlace(matched, matched._marker);
-        }, 150);
-        return;
-      }
-    }
-  }
-
-  // Default view to Canaan / Jerusalem area
-  if (leafletBibleMap && !targetNameOrCoords) {
-    leafletBibleMap.setView([31.7683, 35.2137], 8);
-  }
 }
 
 function findBestBiblePlaceMatch(query) {
   if (!window.BIBLE_KMZ_PLACES || !Array.isArray(window.BIBLE_KMZ_PLACES)) return null;
-  const q = query.toLowerCase().replace(/[\(\)\[\]\,\.\'\"]/g, '').trim();
+  const q = String(query).toLowerCase().replace(/[\(\)\[\]\,\.\'\"]/g, '').trim();
   if (!q) return null;
 
   // 1. Exact match
   let match = window.BIBLE_KMZ_PLACES.find(p => p.name.toLowerCase() === q || (p.id && p.id.toLowerCase() === q));
   if (match) return match;
 
-  // 2. Starts with match
+  // 2. Starts with
   match = window.BIBLE_KMZ_PLACES.find(p => p.name.toLowerCase().startsWith(q) || q.startsWith(p.name.toLowerCase()));
   if (match) return match;
 
-  // 3. Substring match
+  // 3. Substring
   match = window.BIBLE_KMZ_PLACES.find(p => p.name.toLowerCase().includes(q) || (p.desc && p.desc.toLowerCase().includes(q)));
   if (match) return match;
 
   return null;
 }
 
-function closeBibleMapModal() {
-  const modal = document.getElementById('bible-map-modal');
-  if (modal) modal.style.display = 'none';
+function highlightCanvasMapGPS(lat, lng, name, desc) {
+  if (!canvasLeafletBibleMap) return;
 
-  const resultsDropdown = document.getElementById('bible-map-search-results');
-  if (resultsDropdown) resultsDropdown.style.display = 'none';
+  const nameEl = document.getElementById('canvas-map-place-name');
+  const coordsEl = document.getElementById('canvas-map-place-coords');
+  if (nameEl) nameEl.textContent = name || '성경 지명';
+  if (coordsEl) coordsEl.textContent = `${lat.toFixed(4)}° N, ${lng.toFixed(4)}° E ${desc ? '| ' + desc.replace(/\n/g, ' ').substring(0, 45) + '...' : ''}`;
 
-  const infoCard = document.getElementById('bible-map-info-card');
-  if (infoCard) infoCard.style.display = 'none';
+  canvasLeafletBibleMap.flyTo([lat, lng], 12, { duration: 0.8 });
 
-  if (bibleMapActiveMarker && leafletBibleMap) {
-    leafletBibleMap.removeLayer(bibleMapActiveMarker);
-    bibleMapActiveMarker = null;
-  }
-}
-
-function setupBibleMapControls() {
-  const closeBtn = document.getElementById('bible-map-close-btn');
-  if (closeBtn) closeBtn.onclick = closeBibleMapModal;
-
-  const infoCloseBtn = document.getElementById('bible-map-info-close');
-  if (infoCloseBtn) {
-    infoCloseBtn.onclick = () => {
-      const infoCard = document.getElementById('bible-map-info-card');
-      if (infoCard) infoCard.style.display = 'none';
-      if (bibleMapActiveMarker && leafletBibleMap) {
-        leafletBibleMap.removeLayer(bibleMapActiveMarker);
-        bibleMapActiveMarker = null;
-      }
-    };
+  if (canvasMapActiveMarker) {
+    canvasLeafletBibleMap.removeLayer(canvasMapActiveMarker);
+    canvasMapActiveMarker = null;
   }
 
-  const modal = document.getElementById('bible-map-modal');
-  if (modal) {
-    modal.onclick = (e) => {
-      if (e.target === modal) closeBibleMapModal();
-    };
-  }
-
-  // Layer toggles
-  const layerBtns = document.querySelectorAll('.map-layer-btn');
-  layerBtns.forEach(btn => {
-    btn.onclick = () => {
-      const targetLayer = btn.getAttribute('data-layer');
-      if (!targetLayer || targetLayer === currentBibleMapLayerType || !leafletBibleMapLayers[targetLayer]) return;
-
-      leafletBibleMap.removeLayer(leafletBibleMapLayers[currentBibleMapLayerType]);
-      leafletBibleMapLayers[targetLayer].addTo(leafletBibleMap);
-      currentBibleMapLayerType = targetLayer;
-
-      layerBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-    };
+  const pulseIcon = L.divIcon({
+    className: 'custom-leaflet-pulse-icon',
+    html: '<div class="beacon-pulse" style="width:36px;height:36px;margin-left:-18px;margin-top:-18px;border-color:#ea580c;background:rgba(234,88,12,0.3);"></div><div class="beacon-dot" style="width:14px;height:14px;margin-left:-7px;margin-top:-7px;background:#ea580c;border:2px solid #fff;"></div>',
+    iconSize: [0, 0]
   });
 
-  // Search input and dropdown
-  const searchInput = document.getElementById('bible-map-search-input');
-  const resultsDropdown = document.getElementById('bible-map-search-results');
+  canvasMapActiveMarker = L.marker([lat, lng], { icon: pulseIcon, zIndexOffset: 1000 }).addTo(canvasLeafletBibleMap);
+}
 
-  if (searchInput && resultsDropdown) {
-    searchInput.oninput = () => {
-      const val = searchInput.value.trim().toLowerCase();
-      if (!val || !window.BIBLE_KMZ_PLACES) {
-        resultsDropdown.style.display = 'none';
-        resultsDropdown.innerHTML = '';
-        return;
-      }
-
-      const filtered = window.BIBLE_KMZ_PLACES.filter(p => 
-        p.name.toLowerCase().includes(val) || (p.desc && p.desc.toLowerCase().includes(val))
-      ).slice(0, 25);
-
-      if (filtered.length === 0) {
-        resultsDropdown.innerHTML = '<div style="padding: 12px; color: #94a3b8; font-size: 12px; text-align: center;">일치하는 성경 지명이 없습니다.</div>';
-        resultsDropdown.style.display = 'block';
-        return;
-      }
-
-      resultsDropdown.innerHTML = filtered.map((p, idx) => `
-        <div class="bible-map-result-item" data-idx="${idx}">
-          <div>
-            <div class="bible-map-result-name">${p.name}</div>
-            <div class="bible-map-result-coords">${p.lat.toFixed(4)}° N, ${p.lng.toFixed(4)}° E</div>
-          </div>
-          <span style="font-size: 14px; opacity: 0.6;">📍</span>
-        </div>
-      `).join('');
-      resultsDropdown.style.display = 'block';
-
-      resultsDropdown.querySelectorAll('.bible-map-result-item').forEach(item => {
-        item.onclick = () => {
-          const idx = parseInt(item.getAttribute('data-idx'), 10);
-          const selectedPlace = filtered[idx];
-          if (selectedPlace) {
-            highlightBibleMapPlace(selectedPlace, selectedPlace._marker);
-            resultsDropdown.style.display = 'none';
-            searchInput.value = selectedPlace.name;
-          }
-        };
-      });
-    };
-
-    searchInput.onkeydown = (e) => {
-      if (e.key === 'Enter') {
-        const firstItem = resultsDropdown.querySelector('.bible-map-result-item');
-        if (firstItem) {
-          firstItem.click();
-        }
-      } else if (e.key === 'Escape') {
-        resultsDropdown.style.display = 'none';
-      }
-    };
-  }
+function openBibleMapModal(target) {
+  showCanvasBibleMap(target);
 }
 
 window.openBibleMapModal = openBibleMapModal;
-window.closeBibleMapModal = closeBibleMapModal;
-window.initLeafletBibleMap = initLeafletBibleMap;
+window.showCanvasBibleMap = showCanvasBibleMap;
+window.hideCanvasBibleMap = hideCanvasBibleMap;
+window.initCanvasLeafletBibleMap = initCanvasLeafletBibleMap;
 
