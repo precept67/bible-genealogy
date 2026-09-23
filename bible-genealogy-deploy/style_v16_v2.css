@@ -6279,3 +6279,10 @@ textarea,
   pointer-events: auto !important;
 }
 
+/* Global cursor styling when in Add Mode (Event, Location, Person, Annotation) */
+#viewer-container.add-mode-active,
+#viewer-container.add-mode-active * {
+  cursor: cell !important;
+}
+
+
