@@ -2040,7 +2040,286 @@
       <div id="zoom-wrapper">
         <div id="tree-board">
           <!-- Canvas Background Bible Map Layer (Deepest Background Layer) -->
-          <div id="canvas-bible-map-layer" class="canvas-bible-map-layer" style="display: none; opacity: 0;"></div>
+          <div id="canvas-bible-map-layer" class="canvas-bible-map-layer" style="display: none; opacity: 0;">
+<svg id="canvas-bible-map-svg" viewBox="0 0 3000 2200" width="3000" height="2200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Vintage Parchment & Relief Filters -->
+    <linearGradient id="bg-parchment" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f7f1e5" stop-opacity="0.95"/>
+      <stop offset="50%" stop-color="#eedfc8" stop-opacity="0.92"/>
+      <stop offset="100%" stop-color="#e3ceb0" stop-opacity="0.95"/>
+    </linearGradient>
+
+    <linearGradient id="sea-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d0e2ec" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#b6d5e5" stop-opacity="0.9"/>
+    </linearGradient>
+
+    <linearGradient id="nile-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#8bbcd6"/>
+      <stop offset="100%" stop-color="#6ea9cb"/>
+    </linearGradient>
+
+    <filter id="map-shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="15" stdDeviation="25" flood-color="#000" flood-opacity="0.35"/>
+    </filter>
+
+    <filter id="pin-glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Pattern for ancient terrain hatching -->
+    <pattern id="hatch-mountains" width="20" height="20" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="0" x2="0" y2="20" stroke="#bfa382" stroke-width="1.2" opacity="0.35"/>
+    </pattern>
+
+    <pattern id="sea-waves" width="60" height="30" patternUnits="userSpaceOnUse">
+      <path d="M 5,15 Q 15,5 25,15 T 45,15" fill="none" stroke="#9bbdc9" stroke-width="1" opacity="0.4"/>
+    </pattern>
+  </defs>
+
+  <style>
+    .map-frame { fill: url(#bg-parchment); stroke: #7d5e3f; stroke-width: 8; rx: 24; filter: url(#map-shadow); }
+    .map-inner-border { fill: none; stroke: #a3825e; stroke-width: 2; stroke-dasharray: 8 6; rx: 16; }
+    .sea-area { fill: url(#sea-grad); stroke: #8caebd; stroke-width: 2.5; }
+    .lake-area { fill: #97c2d6; stroke: #7da5b8; stroke-width: 2; }
+    .river-path { fill: none; stroke: #7da5b8; stroke-linecap: round; stroke-linejoin: round; }
+    .main-river { stroke-width: 5; }
+    .sub-river { stroke-width: 2.8; }
+    .ancient-road { fill: none; stroke: #c28859; stroke-width: 2.5; stroke-dasharray: 6 5; opacity: 0.85; }
+    .region-label { font-family: 'Cinzel', 'Noto Serif KR', 'Batang', serif; font-weight: 700; fill: #8a6a4b; letter-spacing: 6px; text-anchor: middle; opacity: 0.65; }
+    .sea-label { font-family: 'Cinzel', 'Noto Serif KR', 'Batang', serif; font-style: italic; font-weight: 600; fill: #5c8496; letter-spacing: 4px; text-anchor: middle; }
+    .city-dot { fill: #8b2500; stroke: #fff; stroke-width: 1.5; }
+    .city-label { font-family: 'Noto Sans KR', 'Pretendard', sans-serif; font-weight: 600; font-size: 22px; fill: #3d2b1f; }
+    .city-label-sub { font-size: 15px; fill: #6b5344; font-weight: 400; }
+    .active-beacon { fill: #ff9800; stroke: #ffffff; stroke-width: 4; filter: url(#pin-glow); }
+  </style>
+
+  <!-- Background Base Parchment -->
+  <rect x="20" y="20" width="2960" height="2160" class="map-frame" />
+  <rect x="35" y="35" width="2930" height="2130" class="map-inner-border" />
+
+  <!-- Mediterranean Sea (지중해) -->
+  <!-- Outline from Aegean/Cyprus down along Levant coast to Egypt Delta and west -->
+  <path class="sea-area" d="
+    M 35,35 
+    L 1250,35 
+    Q 1200,300 1150,550 
+    Q 1120,750 1100,950 
+    Q 1060,1200 1020,1450 
+    Q 950,1580 750,1650 
+    Q 600,1680 400,1720 
+    Q 200,1750 35,1780 
+    Z" />
+  <rect x="40" y="40" width="1050" height="1500" fill="url(#sea-waves)" pointer-events="none" />
+
+  <!-- Persian Gulf (페르시아 만) -->
+  <path class="sea-area" d="
+    M 2650,1850 
+    Q 2750,1950 2965,2000 
+    L 2965,2165 
+    L 2550,2165 
+    Q 2580,2000 2650,1850 
+    Z" />
+
+  <!-- Red Sea (홍해 - 수에즈만 & 아카바만) -->
+  <!-- Gulf of Suez (West arm) -->
+  <path class="sea-area" d="
+    M 680,1880 
+    Q 740,1980 820,2165 
+    L 680,2165 
+    Q 610,2020 580,1930 
+    Z" />
+  <!-- Gulf of Aqaba (East arm) -->
+  <path class="sea-area" d="
+    M 980,1850 
+    Q 990,1980 1020,2165 
+    L 940,2165 
+    Q 920,2000 910,1880 
+    Z" />
+
+  <!-- Cyprus Island (구브로 섬) -->
+  <path class="sea-area" d="M 680,450 Q 820,400 950,420 Q 880,520 740,510 Z" />
+  <text x="810" y="475" class="city-label-sub" text-anchor="middle" fill="#4a7082">구브로 (키프로스)</text>
+
+  <!-- Dead Sea (염해 / 사해) -->
+  <path class="lake-area" d="
+    M 1090,1320 
+    Q 1115,1380 1110,1470 
+    Q 1085,1510 1075,1480 
+    Q 1080,1390 1090,1320 
+    Z" />
+
+  <!-- Sea of Galilee (갈릴리 호수 / 긴네렛) -->
+  <ellipse cx="1115" cy="1020" rx="26" ry="38" class="lake-area" />
+
+  <!-- Jordan River (요단강) -->
+  <path class="river-path sub-river" d="M 1115,1058 Q 1105,1180 1095,1320" />
+
+  <!-- Nile River & Delta (나일강 & 고센 삼각주) -->
+  <path class="river-path main-river" stroke="url(#nile-grad)" d="
+    M 420,2165 
+    Q 430,1950 450,1820 
+    L 380,1730 M 450,1820 L 460,1720 M 450,1820 L 530,1740 
+    M 450,1820 L 600,1750" />
+
+  <!-- Euphrates River (유브라데 강) -->
+  <path class="river-path main-river" d="
+    M 2150,280 
+    Q 1900,420 1760,580 
+    Q 1650,750 1800,980 
+    Q 2000,1200 2320,1500 
+    Q 2520,1700 2680,1850" />
+
+  <!-- Tigris River (티그리스 / 힛데겔 강) -->
+  <path class="river-path main-river" d="
+    M 2350,220 
+    Q 2200,480 2250,780 
+    Q 2320,1050 2480,1380 
+    Q 2580,1620 2680,1850" />
+
+  <!-- Ancient Roads / Routes -->
+  <!-- 해변 길 (Via Maris) -->
+  <path class="ancient-road" d="M 450,1780 Q 750,1680 980,1500 Q 1060,1250 1100,950 Q 1200,650 1350,550" />
+  <!-- 왕의 대로 (King's Highway) -->
+  <path class="ancient-road" d="M 980,1900 Q 1160,1650 1170,1300 Q 1180,1000 1350,750 Q 1550,650 1750,600" />
+
+  <!-- Mountain Relief Regions (산지 음영) -->
+  <path d="M 1030,1100 Q 1080,1300 1020,1500 Q 980,1400 1030,1100 Z" fill="url(#hatch-mountains)" />
+  <path d="M 2100,150 Q 2450,200 2400,450 Q 2050,400 2100,150 Z" fill="url(#hatch-mountains)" />
+  <path d="M 720,1920 Q 850,1950 820,2100 Q 700,2050 720,1920 Z" fill="url(#hatch-mountains)" />
+
+  <!-- Major Region Typography Watermarks -->
+  <text x="550" y="950" class="sea-label" font-size="46">대 해 (지 중 해)</text>
+  <text x="550" y="1010" class="sea-label" font-size="22" opacity="0.7">THE MEDITERRANEAN SEA</text>
+
+  <text x="2150" y="850" class="region-label" font-size="44">메 소 포 타 미 아</text>
+  <text x="2150" y="900" class="region-label" font-size="20">MESOPOTAMIA</text>
+
+  <text x="1040" y="1180" class="region-label" font-size="34" fill="#a0522d">가 나 안</text>
+  <text x="1040" y="1215" class="region-label" font-size="17" fill="#a0522d">CANAAN</text>
+
+  <text x="350" y="1950" class="region-label" font-size="38">애 굽 (이 집 트)</text>
+  <text x="350" y="1990" class="region-label" font-size="18">EGYPT</text>
+
+  <text x="780" y="2060" class="region-label" font-size="28">시 내 반 도</text>
+  <text x="2780" y="1940" class="sea-label" font-size="26">페르시아만</text>
+  <text x="630" y="2060" class="sea-label" font-size="22" transform="rotate(-65 630 2060)">홍 해 (수에즈만)</text>
+
+  <!-- Significant Bible Place Locations & Anchors -->
+
+  <!-- 1. 에덴 동산 / 아라랏 (Eden / Ararat region) -->
+  <g id="map-loc-eden" transform="translate(2280, 260)">
+    <circle cx="0" cy="0" r="9" class="city-dot" fill="#2e7d32"/>
+    <text x="18" y="8" class="city-label">에덴동산 / 아라랏</text>
+    <text x="18" y="28" class="city-label-sub">인류의 요람 & 방주 안식</text>
+  </g>
+
+  <!-- 2. 하란 (Haran) -->
+  <g id="map-loc-haran" transform="translate(1750, 590)">
+    <circle cx="0" cy="0" r="9" class="city-dot"/>
+    <text x="18" y="6" class="city-label">하란 (Haran)</text>
+    <text x="18" y="26" class="city-label-sub">데라의 정착 & 아브라함 소명</text>
+  </g>
+
+  <!-- 3. 시날 평지 / 바벨탑 (Plain of Shinar / Babylon) -->
+  <g id="map-loc-shinar" transform="translate(2360, 1420)">
+    <circle cx="0" cy="0" r="9" class="city-dot"/>
+    <text x="18" y="6" class="city-label">시날 평지 (바벨탑)</text>
+    <text x="18" y="26" class="city-label-sub">인류 분산과 언어 혼잡</text>
+  </g>
+
+  <!-- 4. 갈대아 우르 (Ur) -->
+  <g id="map-loc-ur" transform="translate(2580, 1760)">
+    <circle cx="0" cy="0" r="9" class="city-dot"/>
+    <text x="18" y="6" class="city-label">갈대아 우르 (Ur)</text>
+    <text x="18" y="26" class="city-label-sub">아브라함의 고향</text>
+  </g>
+
+  <!-- 5. 애굽 고센 땅 (Goshen) -->
+  <g id="map-loc-goshen" transform="translate(480, 1720)">
+    <circle cx="0" cy="0" r="9" class="city-dot" fill="#00838f"/>
+    <text x="18" y="6" class="city-label">애굽 고센 땅 (Goshen)</text>
+    <text x="18" y="26" class="city-label-sub">야곱 족속 번성과 출애굽 출발지</text>
+  </g>
+
+  <!-- 6. 홍해 (Red Sea Crossing) -->
+  <g id="map-loc-red_sea" transform="translate(680, 1920)">
+    <circle cx="0" cy="0" r="9" class="city-dot" fill="#0277bd"/>
+    <text x="18" y="6" class="city-label">홍해 (Red Sea)</text>
+    <text x="18" y="26" class="city-label-sub">기적의 바다 도하</text>
+  </g>
+
+  <!-- 7. 시내산 (Mount Sinai) -->
+  <g id="map-loc-sinai" transform="translate(780, 2100)">
+    <circle cx="0" cy="0" r="9" class="city-dot"/>
+    <text x="18" y="6" class="city-label">시내산 (Mt. Sinai)</text>
+    <text x="18" y="26" class="city-label-sub">십계명 수여 & 성막 건립</text>
+  </g>
+
+  <!-- 8. 모리아산 / 예루살렘 성벽 (Jerusalem & Mount Moriah) -->
+  <g id="map-loc-jerusalem" transform="translate(1070, 1280)">
+    <circle cx="0" cy="0" r="11" class="city-dot" fill="#d84315" stroke-width="2.5"/>
+    <text x="20" y="4" class="city-label" font-weight="700" fill="#b71c1c">예루살렘 / 모리아산</text>
+    <text x="20" y="24" class="city-label-sub">성전 터, 다윗 성, 성벽 중건</text>
+  </g>
+
+  <!-- 9. 베들레헴 (Bethlehem) -->
+  <g id="map-loc-bethlehem" transform="translate(1070, 1335)">
+    <circle cx="0" cy="0" r="8" class="city-dot"/>
+    <text x="18" y="6" class="city-label">베들레헴 (Bethlehem)</text>
+    <text x="18" y="24" class="city-label-sub">다윗의 고향, 예수 탄생지</text>
+  </g>
+
+  <!-- 10. 헤브론 (Hebron) -->
+  <g id="map-loc-hebron" transform="translate(1050, 1400)">
+    <circle cx="0" cy="0" r="8" class="city-dot"/>
+    <text x="18" y="6" class="city-label">헤브론 (Hebron)</text>
+    <text x="18" y="24" class="city-label-sub">막벨라 굴, 족장들의 매장지</text>
+  </g>
+
+  <!-- 11. 벧엘 & 세겜 (Bethel & Shechem) -->
+  <g id="map-loc-shechem" transform="translate(1090, 1170)">
+    <circle cx="0" cy="0" r="8" class="city-dot"/>
+    <text x="18" y="6" class="city-label">세겜 &amp; 벧엘 (Shechem/Bethel)</text>
+    <text x="18" y="24" class="city-label-sub">아브라함의 첫 단 &amp; 야곱의 서원</text>
+  </g>
+
+  <!-- 12. 갈릴리 & 나사렛 (Galilee & Nazareth) -->
+  <g id="map-loc-galilee" transform="translate(1120, 1010)">
+    <circle cx="0" cy="0" r="8" class="city-dot"/>
+    <text x="18" y="6" class="city-label">갈릴리 / 나사렛</text>
+    <text x="18" y="24" class="city-label-sub">예수님의 공생애 사역 중심지</text>
+  </g>
+
+  <!-- Active Pin Beacon Container (Dynamically placed over active location) -->
+  <g id="active-map-pin-beacon" style="display: none;">
+    <circle cx="0" cy="0" r="35" class="active-beacon" opacity="0.4">
+      <animate attributeName="r" values="15;45;15" dur="2s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.7;0.1;0.7" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="0" cy="0" r="14" fill="#ff6d00" stroke="#ffffff" stroke-width="3.5" filter="url(#pin-glow)"/>
+    <circle cx="0" cy="0" r="6" fill="#ffffff"/>
+  </g>
+
+  <!-- Compass Rose (방위표) -->
+  <g transform="translate(2750, 280)">
+    <circle cx="0" cy="0" r="65" fill="none" stroke="#9e7c56" stroke-width="2"/>
+    <path d="M 0,-60 L 12,-15 L 60,0 L 15,12 L 0,60 L -12,15 L -60,0 L -15,-12 Z" fill="#8d6e4b"/>
+    <path d="M 0,-60 L 0,0 L 60,0 Z M 0,60 L 0,0 L -60,0 Z" fill="#5d4037"/>
+    <text x="0" y="-72" font-family="'Cinzel', serif" font-weight="bold" font-size="22" fill="#5d4037" text-anchor="middle">N (북)</text>
+    <text x="78" y="8" font-family="'Cinzel', serif" font-weight="bold" font-size="18" fill="#5d4037">E</text>
+    <text x="-78" y="8" font-family="'Cinzel', serif" font-weight="bold" font-size="18" fill="#5d4037" text-anchor="end">W</text>
+    <text x="0" y="88" font-family="'Cinzel', serif" font-weight="bold" font-size="18" fill="#5d4037" text-anchor="middle">S</text>
+  </g>
+
+</svg>
+          </div>
           <svg id="svg-polygons-layer" xmlns="http://www.w3.org/2000/svg" style="position: absolute; top: 0; left: 0; max-width: none !important; max-height: none !important; overflow: visible !important; pointer-events: none; z-index: 2;"></svg>
           <svg id="svg-layer" xmlns="http://www.w3.org/2000/svg">
             <defs>

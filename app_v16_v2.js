@@ -19440,9 +19440,7 @@ function initCanvasBibleMap() {
 
 function showCanvasBibleMap(loc) {
   const layer = document.getElementById('canvas-bible-map-layer');
-  if (!layer) return;
-  
-  initCanvasBibleMap();
+  if (!layer || !loc) return;
   
   activeMapLocationId = loc.id;
   const anchor = getMapAnchorForLocation(loc);
@@ -19454,9 +19452,9 @@ function showCanvasBibleMap(loc) {
   layer.style.display = 'block';
   layer.style.transform = `translate(${mapLeft}px, ${mapTop}px) scale(${currentScale})`;
   
-  requestAnimationFrame(() => {
-    layer.classList.add('active');
-  });
+  // 강제 리플로우 후 active 클래스 적용하여 확실하게 애니메이션 표시
+  void layer.offsetWidth;
+  layer.classList.add('active');
   
   // 지도 내부의 활성 비콘 핀 위치 갱신
   const beacon = document.getElementById('active-map-pin-beacon');
@@ -19939,6 +19937,10 @@ function openLayerDetails(data, type) {
   
   activePersonId = data.id; // 노트와 리소스를 이 ID에 연동
   activeStudyPanelType = type;
+  
+  if (type === 'location' && typeof showCanvasBibleMap === 'function') {
+    showCanvasBibleMap(data);
+  }
   
   const infoTitleEl = document.getElementById('panel-info-title');
   const titleEl = document.getElementById('panel-name');

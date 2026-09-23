@@ -2841,15 +2841,18 @@ datalist {
   transform-origin: 0 0;
   transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.45s ease;
   will-change: transform, opacity;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  border-radius: 24px;
 }
 
 .canvas-bible-map-layer.active {
-  opacity: 0.42; /* Subtle and balanced opacity */
+  opacity: 0.85 !important; /* Clearly visible and authentic parchment */
+  display: block !important;
 }
 
 .layer-marker.marker-location.map-active-target {
-  filter: drop-shadow(0 0 12px #ff9800) drop-shadow(0 0 4px #ffffff) !important;
-  z-index: 15 !important;
+  filter: drop-shadow(0 0 14px #ff9800) drop-shadow(0 0 6px #ffffff) !important;
+  z-index: 20 !important;
 }
 
 #layer-locations {
