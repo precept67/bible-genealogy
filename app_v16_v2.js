@@ -11104,7 +11104,9 @@ function setupZoomPan() {
   
   window.addEventListener('mouseup', () => {
     isDragging = false;
-    if (viewerContainer) viewerContainer.style.cursor = 'default';
+    if (viewerContainer && !isAddPersonModeActive && !isAddEventModeActive && !isAddLocationModeActive && !isAddAnnotationModeActive && !isAddPolygonModeActive && !isAddLinkModeActive) {
+      viewerContainer.style.cursor = 'default';
+    }
     
     if (activeAnnotationId) {
       activeAnnotationId = null;
@@ -11144,7 +11146,9 @@ function setupZoomPan() {
   
   viewerContainer.addEventListener('mouseleave', () => {
     isDragging = false;
-    if (viewerContainer) viewerContainer.style.cursor = 'default';
+    if (viewerContainer && !isAddPersonModeActive && !isAddEventModeActive && !isAddLocationModeActive && !isAddAnnotationModeActive && !isAddPolygonModeActive && !isAddLinkModeActive) {
+      viewerContainer.style.cursor = 'default';
+    }
     
     if (activeAnnotationId) {
       activeAnnotationId = null;
@@ -14504,7 +14508,10 @@ function activateAddEventMode() {
     adminAddEventBtn.classList.add('danger');
     adminAddEventBtn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 26.5px; height: 26.5px;"><img class="custom-add-event-icon" src="add_event_btn_active.png" alt="사건 추가" style="width: 26.5px; height: 26.5px; object-fit: contain; pointer-events: none;" /></span>';
   }
-  viewerContainer.style.cursor = 'crosshair';
+  if (viewerContainer) {
+    viewerContainer.classList.add('add-mode-active');
+    viewerContainer.style.cursor = 'cell';
+  }
 
   const ghost = document.createElement('div');
   ghost.id = 'event-ghost-preview';
@@ -14553,7 +14560,10 @@ function deactivateAddEventMode() {
     adminAddEventBtn.classList.remove('danger');
     adminAddEventBtn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 26.5px; height: 26.5px;"><img class="custom-add-event-icon" src="add_event_btn.png" alt="사건 추가" style="width: 26.5px; height: 26.5px; object-fit: contain; pointer-events: none;" /></span>';
   }
-  viewerContainer.style.cursor = 'grab';
+  if (viewerContainer) {
+    viewerContainer.classList.remove('add-mode-active');
+    viewerContainer.style.cursor = 'grab';
+  }
 
   const ghost = document.getElementById('event-ghost-preview');
   if (ghost) ghost.remove();
@@ -14581,7 +14591,10 @@ function activateAddLocationMode() {
     adminAddLocationBtn.classList.add('danger');
     adminAddLocationBtn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 26.5px; height: 26.5px;"><img class="custom-add-location-icon" src="add_location_btn_active.png" alt="장소 추가" style="width: 26.5px; height: 26.5px; object-fit: contain; pointer-events: none;" /></span>';
   }
-  viewerContainer.style.cursor = 'crosshair';
+  if (viewerContainer) {
+    viewerContainer.classList.add('add-mode-active');
+    viewerContainer.style.cursor = 'cell';
+  }
 
   const ghost = document.createElement('div');
   ghost.id = 'location-ghost-preview';
@@ -14630,7 +14643,10 @@ function deactivateAddLocationMode() {
     adminAddLocationBtn.classList.remove('danger');
     adminAddLocationBtn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 26.5px; height: 26.5px;"><img class="custom-add-location-icon" src="add_location_btn.png" alt="장소 추가" style="width: 26.5px; height: 26.5px; object-fit: contain; pointer-events: none;" /></span>';
   }
-  viewerContainer.style.cursor = 'grab';
+  if (viewerContainer) {
+    viewerContainer.classList.remove('add-mode-active');
+    viewerContainer.style.cursor = 'grab';
+  }
 
   const ghost = document.getElementById('location-ghost-preview');
   if (ghost) ghost.remove();
@@ -14658,7 +14674,10 @@ function activateAddAnnotationMode() {
     adminAddNoteBtn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 26.5px; height: 26.5px;"><img class="custom-add-note-icon" src="add_note_btn_active.png" alt="텍스트 상자 추가" style="width: 26.5px; height: 26.5px; object-fit: contain; pointer-events: none;"></span>';
     adminAddNoteBtn.classList.add('danger');
   }
-  viewerContainer.style.cursor = 'crosshair';
+  if (viewerContainer) {
+    viewerContainer.classList.add('add-mode-active');
+    viewerContainer.style.cursor = 'cell';
+  }
   
   // Create a ghost outline following the cursor
   const ghost = document.createElement('div');
@@ -14704,7 +14723,10 @@ function deactivateAddAnnotationMode() {
     adminAddNoteBtn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 26.5px; height: 26.5px;"><img class="custom-add-note-icon" src="add_note_btn.png" alt="텍스트 상자 추가" style="width: 26.5px; height: 26.5px; object-fit: contain; pointer-events: none;"></span>';
     adminAddNoteBtn.classList.remove('danger');
   }
-  viewerContainer.style.cursor = 'grab';
+  if (viewerContainer) {
+    viewerContainer.classList.remove('add-mode-active');
+    viewerContainer.style.cursor = 'grab';
+  }
   
   const ghost = document.getElementById('note-ghost-preview');
   if (ghost) ghost.remove();
@@ -14727,7 +14749,10 @@ function activateAddPersonMode() {
   isAddPersonModeActive = true;
   adminAddBtn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 26.5px; height: 26.5px;"><img class="custom-add-person-icon" src="add_person_btn_active.png" alt="인물 추가" style="width: 26.5px; height: 26.5px; object-fit: contain; pointer-events: none;" /></span>';
   adminAddBtn.classList.add('danger');
-  viewerContainer.style.cursor = 'cell';
+  if (viewerContainer) {
+    viewerContainer.classList.add('add-mode-active');
+    viewerContainer.style.cursor = 'cell';
+  }
   
   const banner = document.getElementById('add-person-instruction');
   if (banner) {
@@ -14746,7 +14771,10 @@ function deactivateAddPersonMode() {
   isAddPersonModeActive = false;
   adminAddBtn.innerHTML = '<span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 26.5px; height: 26.5px;"><img class="custom-add-person-icon" src="add_person_btn.png" alt="인물 추가" style="width: 26.5px; height: 26.5px; object-fit: contain; pointer-events: none;" /></span>';
   adminAddBtn.classList.remove('danger');
-  viewerContainer.style.cursor = 'grab';
+  if (viewerContainer) {
+    viewerContainer.classList.remove('add-mode-active');
+    viewerContainer.style.cursor = 'grab';
+  }
   
   const banner = document.getElementById('add-person-instruction');
   if (banner) banner.style.display = 'none';
