@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=overlays-content">
   <title>열린 족보이야기</title>
+  <link rel="stylesheet" href="leaflet/leaflet.css">
   <script>
     (function() {
       var isTauri = !!window.__TAURI__;
@@ -1968,6 +1969,7 @@
             <div class="mac-menu-entry" id="mac-menu-reset-zoom"><span class="label">100% 기본 크기</span><span class="shortcut">⌘0</span></div>
             <div class="mac-menu-divider"></div>
             <div class="mac-menu-entry" id="mac-menu-center-adam"><span class="label">시작 위치(아담)로 이동</span><span class="shortcut">⌥A</span></div>
+            <div class="mac-menu-entry" id="mac-menu-open-bible-map"><span class="label">🗺️ 성경 실측 지도 (KMZ)</span><span class="shortcut">⌥M</span></div>
             <div class="mac-menu-entry" id="mac-menu-theme-toggle"><span class="label">다크 모드</span><span class="shortcut">⌥T</span></div>
           </div>
         </div>
@@ -2039,6 +2041,14 @@
 
       <div id="zoom-wrapper">
         <div id="tree-board">
+          <!-- Canvas Background Bible Map Layer (Deepest Background Layer) -->
+          <div id="canvas-bible-map-layer" class="canvas-bible-map-layer" style="display: none; opacity: 0;">
+            <img id="canvas-bible-map-img" src="bible_map_image.jpg" class="canvas-bible-map-img" alt="성경 고지도" />
+            <div id="active-map-pin-beacon" class="map-beacon-marker" style="display: none;">
+              <div class="beacon-pulse"></div>
+              <div class="beacon-dot"></div>
+            </div>
+          </div>
           <svg id="svg-polygons-layer" xmlns="http://www.w3.org/2000/svg" style="position: absolute; top: 0; left: 0; max-width: none !important; max-height: none !important; overflow: visible !important; pointer-events: none; z-index: 2;"></svg>
           <svg id="svg-layer" xmlns="http://www.w3.org/2000/svg">
             <defs>
@@ -3150,6 +3160,59 @@
       });
     }
   </script>
+  <script src="leaflet/leaflet.js"></script>
+  <script src="bible_kmz_data.js"></script>
   <script src="app_v16_v2.js?v=25745"></script>
+
+    <!-- 🗺️ 성경 지리 & KMZ 실측 지도 뷰어 모달 -->
+    <div id="bible-map-modal" class="modal-overlay" style="display: none; z-index: 10000;">
+      <div class="bible-map-modal-container">
+        <!-- Map Header -->
+        <div class="bible-map-header">
+          <div class="bible-map-title-area">
+            <span class="map-icon">🗺️</span>
+            <div>
+              <h3 id="bible-map-title">성경 지리 실측 지도</h3>
+              <span id="bible-map-subtitle" class="bible-map-subtitle">Google Earth 실측 GPS 연동 (2,758개 성경 지명)</span>
+            </div>
+          </div>
+          
+          <!-- Search in Map -->
+          <div class="bible-map-search-box">
+            <input type="text" id="bible-map-search-input" placeholder="성경 지명 검색 (예: 베들레헴, 갈릴리, 하란...)" autocomplete="off" />
+            <div id="bible-map-search-results" class="bible-map-results-dropdown" style="display: none;"></div>
+          </div>
+
+          <!-- Map Style Switcher & Controls -->
+          <div class="bible-map-controls">
+            <div class="map-layer-toggles">
+              <button type="button" class="map-layer-btn active" data-layer="terrain" title="오픈 지형도">⛰️ 지형도</button>
+              <button type="button" class="map-layer-btn" data-layer="satellite" title="위성 사진">🛰️ 위성</button>
+              <button type="button" class="map-layer-btn" data-layer="streets" title="일반 지도">🗺️ 일반</button>
+            </div>
+            <button id="bible-map-close-btn" class="close-btn" title="닫기">&times;</button>
+          </div>
+        </div>
+
+        <!-- Map Body -->
+        <div class="bible-map-body">
+          <div id="leaflet-bible-map" class="leaflet-bible-map-view"></div>
+          
+          <!-- Selected Location Floating Info Panel -->
+          <div id="bible-map-info-card" class="bible-map-info-card" style="display: none;">
+            <button id="bible-map-info-close" class="info-card-close">&times;</button>
+            <div class="info-card-header">
+              <span class="info-card-badge">📍 성경 지명</span>
+              <h4 id="info-card-name">베들레헴 (Bethlehem)</h4>
+              <div id="info-card-coords" class="info-card-coords">31.70459° N, 35.20669° E</div>
+            </div>
+            <div id="info-card-body" class="info-card-body">
+              <p id="info-card-desc"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
 </body>
 </html>
