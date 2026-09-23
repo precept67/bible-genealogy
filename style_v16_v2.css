@@ -2828,6 +2828,30 @@ datalist {
   pointer-events: none; /* Let clicks pass through empty areas */
 }
 
+/* Canvas Background Bible Map Layer (Deepest Canvas Layer) */
+.canvas-bible-map-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3000px;
+  height: 2200px;
+  pointer-events: none;
+  z-index: 1; /* Below polygons (2), lines (3), markers (4), cards (10) */
+  opacity: 0;
+  transform-origin: 0 0;
+  transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.45s ease;
+  will-change: transform, opacity;
+}
+
+.canvas-bible-map-layer.active {
+  opacity: 0.42; /* Subtle and balanced opacity */
+}
+
+.layer-marker.marker-location.map-active-target {
+  filter: drop-shadow(0 0 12px #ff9800) drop-shadow(0 0 4px #ffffff) !important;
+  z-index: 15 !important;
+}
+
 #layer-locations {
   z-index: 4; /* Locations placed above polygons and labels */
 }

@@ -12361,6 +12361,9 @@ function updateTransform(onlyPan = false) {
   }
 
   // Safari SVG filter compatibility check (now observed once during drawing)
+  if (typeof updateCanvasBibleMapPosition === 'function') {
+    updateCanvasBibleMapPosition();
+  }
 }
 
 // SVG glow path MutationObserver (safely duplicates highlighted lines in background for 100% Safari/WebKit compatibility)
@@ -13943,6 +13946,9 @@ function closeStudyPanel() {
   activePersonId = null;
   activeStudyPanelType = null;
   clearAllHighlights();
+  if (typeof hideCanvasBibleMap === 'function') {
+    hideCanvasBibleMap();
+  }
   
   if (wasOpenedFromFilter) {
     wasOpenedFromFilter = false;
@@ -19346,6 +19352,160 @@ function renderEvents() {
   });
 }
 
+// ==========================================
+// 🗺️ 성경 지리 배경 맵 레이어 엔진 (Bible Map Background Layer)
+// ==========================================
+let activeMapLocationId = null;
+let bibleMapSvgLoaded = false;
+
+const BIBLE_MAP_ANCHORS = {
+  '에덴동산': { x: 2280, y: 260 },
+  '에덴': { x: 2280, y: 260 },
+  '아라랏': { x: 2280, y: 260 },
+  '하란': { x: 1750, y: 590 },
+  '시날 평지': { x: 2360, y: 1420 },
+  '시날': { x: 2360, y: 1420 },
+  '바벨탑': { x: 2360, y: 1420 },
+  '바벨론': { x: 2360, y: 1420 },
+  '갈대아 우르': { x: 2580, y: 1760 },
+  '우르': { x: 2580, y: 1760 },
+  '애굽 고센 땅': { x: 480, y: 1720 },
+  '고센': { x: 480, y: 1720 },
+  '애굽': { x: 480, y: 1720 },
+  '이집트': { x: 480, y: 1720 },
+  '홍해': { x: 680, y: 1920 },
+  '시내산': { x: 780, y: 2100 },
+  '시내': { x: 780, y: 2100 },
+  '모리아산': { x: 1070, y: 1280 },
+  '모리아': { x: 1070, y: 1280 },
+  '예루살렘 성벽': { x: 1070, y: 1280 },
+  '예루살렘': { x: 1070, y: 1280 },
+  '베들레헴': { x: 1070, y: 1335 },
+  '헤브론': { x: 1050, y: 1400 },
+  '세겜': { x: 1090, y: 1170 },
+  '벧엘': { x: 1080, y: 1220 },
+  '갈릴리': { x: 1120, y: 1010 },
+  '나사렛': { x: 1120, y: 1010 },
+  '여리고': { x: 1100, y: 1260 },
+  '사해': { x: 1090, y: 1400 },
+  '염해': { x: 1090, y: 1400 },
+  '요단강': { x: 1105, y: 1180 },
+  '다메섹': { x: 1350, y: 850 }
+};
+
+function getMapAnchorForLocation(loc) {
+  if (!loc) return { x: 1070, y: 1280 };
+  const name = (loc.name || '').trim();
+  const eng = (loc.engName || '').trim();
+  
+  // 1. 완전 일치
+  for (const [key, pt] of Object.entries(BIBLE_MAP_ANCHORS)) {
+    if (name === key || (eng && eng.toLowerCase() === key.toLowerCase())) {
+      return pt;
+    }
+  }
+  // 2. 부분 포함 일치
+  for (const [key, pt] of Object.entries(BIBLE_MAP_ANCHORS)) {
+    if (name.includes(key) || (eng && eng.toLowerCase().includes(key.toLowerCase()))) {
+      return pt;
+    }
+  }
+  // 기본 가나안 중앙(예루살렘 인근)
+  return { x: 1070, y: 1280 };
+}
+
+function initCanvasBibleMap() {
+  const layer = document.getElementById('canvas-bible-map-layer');
+  if (!layer || bibleMapSvgLoaded) return;
+  
+  fetch('bible_map_background.svg')
+    .then(res => {
+      if (!res.ok) throw new Error("HTTP error " + res.status);
+      return res.text();
+    })
+    .then(svgText => {
+      layer.innerHTML = svgText;
+      bibleMapSvgLoaded = true;
+    })
+    .catch(() => {
+      fetch('assets/bible_map_background.svg')
+        .then(res => res.text())
+        .then(svgText => {
+          layer.innerHTML = svgText;
+          bibleMapSvgLoaded = true;
+        })
+        .catch(err => console.warn("Could not load bible map SVG", err));
+    });
+}
+
+function showCanvasBibleMap(loc) {
+  const layer = document.getElementById('canvas-bible-map-layer');
+  if (!layer) return;
+  
+  initCanvasBibleMap();
+  
+  activeMapLocationId = loc.id;
+  const anchor = getMapAnchorForLocation(loc);
+  
+  // 지도의 앵커 위치가 장소 박스의 (loc.x, loc.y)와 정확히 일치하도록 좌상단 오프셋 계산
+  const mapLeft = (loc.x - anchor.x) * currentScale;
+  const mapTop = (loc.y - anchor.y) * currentScale;
+  
+  layer.style.display = 'block';
+  layer.style.transform = `translate(${mapLeft}px, ${mapTop}px) scale(${currentScale})`;
+  
+  requestAnimationFrame(() => {
+    layer.classList.add('active');
+  });
+  
+  // 지도 내부의 활성 비콘 핀 위치 갱신
+  const beacon = document.getElementById('active-map-pin-beacon');
+  if (beacon) {
+    beacon.setAttribute('transform', `translate(${anchor.x}, ${anchor.y})`);
+    beacon.style.display = 'block';
+  }
+  
+  // 클릭된 장소 마커 하이라이트 효과
+  document.querySelectorAll('.marker-location').forEach(m => m.classList.remove('map-active-target'));
+  const activeMarker = document.getElementById(`location-${loc.id}`);
+  if (activeMarker) {
+    activeMarker.classList.add('map-active-target');
+  }
+}
+
+function hideCanvasBibleMap() {
+  const layer = document.getElementById('canvas-bible-map-layer');
+  if (!layer) return;
+  
+  activeMapLocationId = null;
+  layer.classList.remove('active');
+  
+  document.querySelectorAll('.marker-location').forEach(m => m.classList.remove('map-active-target'));
+  const beacon = document.getElementById('active-map-pin-beacon');
+  if (beacon) beacon.style.display = 'none';
+  
+  setTimeout(() => {
+    if (!activeMapLocationId && layer) {
+      layer.style.display = 'none';
+    }
+  }, 450);
+}
+
+function updateCanvasBibleMapPosition() {
+  if (!activeMapLocationId) return;
+  const layer = document.getElementById('canvas-bible-map-layer');
+  if (!layer) return;
+  
+  const loc = locations.find(l => l.id === activeMapLocationId);
+  if (!loc) return;
+  
+  const anchor = getMapAnchorForLocation(loc);
+  const mapLeft = (loc.x - anchor.x) * currentScale;
+  const mapTop = (loc.y - anchor.y) * currentScale;
+  
+  layer.style.transform = `translate(${mapLeft}px, ${mapTop}px) scale(${currentScale})`;
+}
+
 function renderLocations() {
   const layer = document.getElementById('layer-locations');
   if (!layer) return;
@@ -19401,8 +19561,14 @@ function renderLocations() {
         }
         updateMultiSelectCountBadge();
       } else {
-        openLayerDetails(loc, 'location');
-        highlightRelatedElements(loc.id, 'location');
+        if (activeMapLocationId === loc.id) {
+          hideCanvasBibleMap();
+          closeStudyPanel();
+        } else {
+          showCanvasBibleMap(loc);
+          openLayerDetails(loc, 'location');
+          highlightRelatedElements(loc.id, 'location');
+        }
       }
     };
     el.addEventListener('click', handleLocationActivate);
@@ -21294,6 +21460,9 @@ window.addEventListener('DOMContentLoaded', async () => {
   if (!isLicensed) return;
 
   applyLocalization();
+  if (typeof initCanvasBibleMap === 'function') {
+    initCanvasBibleMap();
+  }
 
   // Load user notes unconditionally on startup (independent of login/offline status)
   fetchUserNotes();
