@@ -2249,6 +2249,24 @@ datalist {
   cursor: crosshair;
 }
 
+.custom-visual-line.line-normal {
+  stroke: var(--line-color) !important;
+  stroke-width: var(--line-width) !important;
+  stroke-dasharray: 6 4 !important;
+}
+
+.custom-visual-line.line-main {
+  stroke: var(--line-main-color) !important;
+  stroke-width: calc(var(--line-width) + 1.5px) !important;
+  stroke-dasharray: none !important;
+}
+
+.custom-visual-line.line-spouse {
+  stroke: var(--spouse-line-color) !important;
+  stroke-width: var(--line-width) !important;
+  stroke-dasharray: none !important;
+}
+
 .custom-visual-line:hover {
   stroke: var(--text-accent) !important;
   stroke-width: calc(var(--line-width) + 3px) !important;
@@ -2290,20 +2308,20 @@ datalist {
 /* Side center ports positioning */
 .card-link-port.port-top {
   top: -5px;
-  left: calc(50% + 15px);
+  left: 50%;
   transform: translateX(-50%);
 }
 .card-link-port.port-top:hover {
-  transform: translateX(-50%) scale(1.3);
+  transform: translateX(-50%) scale(1.4);
 }
 
 .card-link-port.port-bottom {
   bottom: -5px;
-  left: calc(50% + 15px);
+  left: 50%;
   transform: translateX(-50%);
 }
 .card-link-port.port-bottom:hover {
-  transform: translateX(-50%) scale(1.3);
+  transform: translateX(-50%) scale(1.4);
 }
 
 .card-link-port.port-left {
@@ -2312,7 +2330,7 @@ datalist {
   transform: translateY(-50%);
 }
 .card-link-port.port-left:hover {
-  transform: translateY(-50%) scale(1.3);
+  transform: translateY(-50%) scale(1.4);
 }
 
 .card-link-port.port-right {
@@ -2321,7 +2339,7 @@ datalist {
   transform: translateY(-50%);
 }
 .card-link-port.port-right:hover {
-  transform: translateY(-50%) scale(1.3);
+  transform: translateY(-50%) scale(1.4);
 }
 
 /* 4 Corners (Quadrants) ports positioning */
@@ -2330,7 +2348,7 @@ datalist {
   left: -5px;
 }
 .card-link-port.port-top-left:hover {
-  transform: scale(1.3);
+  transform: scale(1.4);
 }
 
 .card-link-port.port-top-right {
@@ -2338,7 +2356,7 @@ datalist {
   right: -5px;
 }
 .card-link-port.port-top-right:hover {
-  transform: scale(1.3);
+  transform: scale(1.4);
 }
 
 .card-link-port.port-bottom-left {
@@ -2346,7 +2364,7 @@ datalist {
   left: -5px;
 }
 .card-link-port.port-bottom-left:hover {
-  transform: scale(1.3);
+  transform: scale(1.4);
 }
 
 .card-link-port.port-bottom-right {
@@ -2354,59 +2372,43 @@ datalist {
   right: -5px;
 }
 .card-link-port.port-bottom-right:hover {
-  transform: scale(1.3);
+  transform: scale(1.4);
 }
 
 /* Target hover highlight during dragging */
 .card-link-port.port-target-hover {
   background: #ff7800 !important;
-  transform: scale(1.5) !important;
-  box-shadow: 0 0 8px rgba(255, 120, 0, 0.8) !important;
+  transform: scale(1.7) !important;
+  box-shadow: 0 0 10px rgba(255, 120, 0, 1) !important;
+  border-color: #ffffff !important;
+  z-index: 1010 !important;
 }
 
 .admin-mode-active .person-card:hover .card-link-port,
-.admin-mode-active .canvas-annotation:hover .card-link-port {
-  display: block;
+.admin-mode-active .canvas-annotation:hover .card-link-port,
+.admin-mode-active .layer-marker:hover .card-link-port,
+.link-active-dragging .card-link-port {
+  display: block !important;
 }
 
 /* Target hover highlight during dragging */
 .person-card.link-target-hover,
-.canvas-annotation.link-target-hover {
+.canvas-annotation.link-target-hover,
+.layer-marker.link-target-hover,
+.person-card.link-hovered-target,
+.canvas-annotation.link-hovered-target,
+.layer-marker.link-hovered-target {
   outline: 3px solid #ff7800 !important;
   box-shadow: 0 0 15px rgba(255, 120, 0, 0.6) !important;
 }
 
 /* Temporary dragging path line */
 .temp-drag-line {
-  fill: none;
-  stroke: #ff7800;
-  stroke-width: 3px;
-  stroke-dasharray: 6 4;
-  pointer-events: none;
-}
-
-/* Custom Visual Line Styles (normal, main, spouse) */
-.custom-visual-line.line-normal {
-  stroke: var(--line-color) !important;
-  stroke-width: var(--line-width) !important;
-  stroke-dasharray: 6 4 !important;
-}
-
-.custom-visual-line.line-main {
-  stroke: var(--line-main-color) !important;
-  stroke-width: calc(var(--line-width) + 1.5px) !important;
-  stroke-dasharray: none !important;
-}
-
-.custom-visual-line.line-spouse {
-  stroke: var(--spouse-line-color) !important;
-  stroke-width: var(--line-width) !important;
-  stroke-dasharray: none !important;
-}
-
-.custom-visual-line.line-highlight {
-  stroke: var(--text-accent) !important;
-  stroke-width: calc(var(--line-width) + 2px) !important;
+  stroke: #ff7800 !important;
+  stroke-width: 2.5px !important;
+  stroke-dasharray: 4, 4 !important;
+  fill: none !important;
+  pointer-events: none !important;
 }
 
 /* Custom Visual Line endpoint drag handles */
@@ -2414,7 +2416,7 @@ datalist {
   fill: #ffffff !important;
   stroke: #ff7800 !important;
   stroke-width: 2.5px !important;
-  cursor: move !important;
+  cursor: grab !important;
   pointer-events: auto !important;
   filter: drop-shadow(0px 1px 3px rgba(0,0,0,0.3)) !important;
   transition: fill 0.2s, stroke-width 0.2s;
@@ -2424,32 +2426,15 @@ datalist {
   fill: #ff7800 !important;
   stroke: #ffffff !important;
   r: 8px !important;
+  cursor: grab !important;
 }
 
-/* Force-display ports of the currently approached box during drag connection */
-.person-card.link-hovered-target .card-link-port,
-.canvas-annotation.link-hovered-target .card-link-port {
-  display: block !important;
-}
-
-/* Pulsing animation for long press wait */
-@keyframes pulse-orange {
-  0% { r: 5px; fill: #ffffff; }
-  50% { r: 9px; fill: #ff7800; }
-  100% { r: 5px; fill: #ffffff; }
-}
-
-.line-drag-handle.long-press-waiting {
-  animation: pulse-orange 1s infinite ease-in-out !important;
-  stroke: #ff7800 !important;
-  stroke-width: 3px !important;
-}
-
-.line-drag-handle.long-press-detached {
+.line-drag-handle.dragging-endpoint {
   fill: #ff7800 !important;
   stroke: #ffffff !important;
   r: 9px !important;
-  filter: drop-shadow(0px 2px 5px rgba(255, 120, 0, 0.5)) !important;
+  cursor: grabbing !important;
+  filter: drop-shadow(0px 2px 6px rgba(255, 120, 0, 0.7)) !important;
 }
 
 /* Canvas Junction Node (meet point from image: green inside red ring) */

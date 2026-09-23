@@ -4876,6 +4876,18 @@ function getElementCenter(id) {
         y: annot.y + annot.height / 2
       };
     }
+  } else if (id.startsWith('event-') || id.startsWith('ev-')) {
+    const evId = id.startsWith('event-') ? id.replace('event-', '') : id;
+    const ev = events.find(e => String(e.id) === String(evId));
+    if (ev) {
+      return { x: ev.x, y: ev.y };
+    }
+  } else if (id.startsWith('location-') || id.startsWith('loc-')) {
+    const locId = id.startsWith('location-') ? id.replace('location-', '') : id;
+    const loc = locations.find(l => String(l.id) === String(locId));
+    if (loc) {
+      return { x: loc.x, y: loc.y };
+    }
   } else {
     const coord = coordinates[id];
     if (coord) {
@@ -5056,10 +5068,14 @@ function getBoxPorts(id) {
     if (!jNode) return null;
     const r = (jNode.size || 16) / 2;
     return {
-      top:    { x: jNode.x,     y: jNode.y - r, dir: 'UP' },
-      right:  { x: jNode.x + r, y: jNode.y,     dir: 'RIGHT' },
-      bottom: { x: jNode.x,     y: jNode.y + r, dir: 'DOWN' },
-      left:   { x: jNode.x - r, y: jNode.y,     dir: 'LEFT' }
+      top:          { x: jNode.x,     y: jNode.y - r, dir: 'UP' },
+      right:        { x: jNode.x + r, y: jNode.y,     dir: 'RIGHT' },
+      bottom:       { x: jNode.x,     y: jNode.y + r, dir: 'DOWN' },
+      left:         { x: jNode.x - r, y: jNode.y,     dir: 'LEFT' },
+      'top-left':     { x: jNode.x - r * 0.7, y: jNode.y - r * 0.7, dir: 'UP' },
+      'top-right':    { x: jNode.x + r * 0.7, y: jNode.y - r * 0.7, dir: 'UP' },
+      'bottom-left':  { x: jNode.x - r * 0.7, y: jNode.y + r * 0.7, dir: 'DOWN' },
+      'bottom-right': { x: jNode.x + r * 0.7, y: jNode.y + r * 0.7, dir: 'DOWN' }
     };
   } else if (id.startsWith('annot-')) {
     const annotId = parseInt(id.replace('annot-', ''));
@@ -5080,6 +5096,44 @@ function getBoxPorts(id) {
       'bottom-left':  { x: x,         y: y + h,     dir: 'DOWN' },
       'bottom-right': { x: x + w,     y: y + h,     dir: 'DOWN' }
     };
+  } else if (id.startsWith('event-') || id.startsWith('ev-')) {
+    const evId = id.startsWith('event-') ? id.replace('event-', '') : id;
+    const ev = events.find(e => String(e.id) === String(evId));
+    if (!ev) return null;
+    const el = document.getElementById(`event-${ev.id}`);
+    const w = el && el.offsetWidth ? el.offsetWidth : 120;
+    const h = el && el.offsetHeight ? el.offsetHeight : 36;
+    const x = ev.x - w / 2;
+    const y = ev.y - h / 2;
+    return {
+      top:          { x: ev.x,         y: y,         dir: 'UP' },
+      right:        { x: x + w,        y: ev.y,      dir: 'RIGHT' },
+      bottom:       { x: ev.x,         y: y + h,     dir: 'DOWN' },
+      left:         { x: x,            y: ev.y,      dir: 'LEFT' },
+      'top-left':     { x: x,            y: y,         dir: 'UP' },
+      'top-right':    { x: x + w,        y: y,         dir: 'UP' },
+      'bottom-left':  { x: x,            y: y + h,     dir: 'DOWN' },
+      'bottom-right': { x: x + w,        y: y + h,     dir: 'DOWN' }
+    };
+  } else if (id.startsWith('location-') || id.startsWith('loc-')) {
+    const locId = id.startsWith('location-') ? id.replace('location-', '') : id;
+    const loc = locations.find(l => String(l.id) === String(locId));
+    if (!loc) return null;
+    const el = document.getElementById(`location-${loc.id}`);
+    const w = el && el.offsetWidth ? el.offsetWidth : 120;
+    const h = el && el.offsetHeight ? el.offsetHeight : 36;
+    const x = loc.x - w / 2;
+    const y = loc.y - h / 2;
+    return {
+      top:          { x: loc.x,        y: y,         dir: 'UP' },
+      right:        { x: x + w,        y: loc.y,     dir: 'RIGHT' },
+      bottom:       { x: loc.x,        y: y + h,     dir: 'DOWN' },
+      left:         { x: x,            y: loc.y,     dir: 'LEFT' },
+      'top-left':     { x: x,            y: y,         dir: 'UP' },
+      'top-right':    { x: x + w,        y: y,         dir: 'UP' },
+      'bottom-left':  { x: x,            y: y + h,     dir: 'DOWN' },
+      'bottom-right': { x: x + w,        y: y + h,     dir: 'DOWN' }
+    };
   } else {
     const coord = coordinates[id];
     if (!coord) return null;
@@ -5089,7 +5143,7 @@ function getBoxPorts(id) {
     const h = CARD_HEIGHT;
     return {
       top:          { x: x + w / 2, y: y,         dir: 'UP' },
-      right:        { x: x + w,          y: y + h / 2, dir: 'RIGHT' },
+      right:        { x: x + w,     y: y + h / 2, dir: 'RIGHT' },
       bottom:       { x: x + w / 2, y: y + h,     dir: 'DOWN' },
       left:         { x: x,         y: y + h / 2, dir: 'LEFT' },
       'top-left':     { x: x,         y: y,         dir: 'UP' },
@@ -5123,11 +5177,11 @@ function findSnappingTarget(mouseX, mouseY, otherEndId) {
   let bestPortKey = null;
   let bestPortCoord = null;
   let minD = Infinity;
-  const snapRadius = 45; // snapping distance in pixels
+  const snapRadius = 55; // snapping distance in pixels
   
   // 1. Scan Junction Nodes (prioritized for easier spatial selection)
   canvasJunctions.forEach(jNode => {
-    if (jNode.id === otherEndId) return;
+    if (String(jNode.id) === String(otherEndId)) return;
     const ports = getBoxPorts(jNode.id);
     if (ports) {
       Object.keys(ports).forEach(k => {
@@ -5136,7 +5190,7 @@ function findSnappingTarget(mouseX, mouseY, otherEndId) {
           const d = Math.hypot(p.x - mouseX, p.y - mouseY);
           if (d < snapRadius && d < minD) {
             minD = d;
-            bestTargetId = jNode.id;
+            bestTargetId = String(jNode.id);
             bestPortKey = k;
             bestPortCoord = p;
           }
@@ -5149,11 +5203,15 @@ function findSnappingTarget(mouseX, mouseY, otherEndId) {
     return { targetId: bestTargetId, targetPort: bestPortKey, targetPt: bestPortCoord };
   }
   
-  // 2. Scan person-cards and canvas-annotations
+  // 2. Scan person-cards, canvas-annotations, and layer-markers (events, locations)
   const candidateBoxes = [];
-  document.querySelectorAll('.person-card, .canvas-annotation').forEach(el => {
-    const id = el.getAttribute('data-id') || el.id;
-    if (!id || id === otherEndId) return;
+  document.querySelectorAll('.person-card, .canvas-annotation, .layer-marker').forEach(el => {
+    let id = el.getAttribute('data-id') || el.id;
+    if (!id) return;
+    if (id.startsWith('card-')) id = id.replace('card-', '');
+    if (id.startsWith('event-')) id = id.replace('event-', '');
+    if (id.startsWith('location-')) id = id.replace('location-', '');
+    if (String(id) === String(otherEndId)) return;
     candidateBoxes.push({ id, el });
   });
   
@@ -10516,44 +10574,26 @@ function renderCustomVisualLines(svgNS, recreateClickListeners, pathsToDraw) {
       svgLayer.appendChild(helperPath);
     }
     
-    // Create drag handles for endpoints of all custom lines in admin edit mode
-    if (isAdminMode && isLineEditModeActive) {
+    // Create drag handles for endpoints of all custom lines in admin mode
+    if (isAdminMode) {
       const createHandle = (pt, isStart) => {
         const handle = document.createElementNS(svgNS, "circle");
         handle.setAttribute("cx", pt.x);
         handle.setAttribute("cy", pt.y);
-        handle.setAttribute("r", 5);
+        handle.setAttribute("r", 6);
         handle.setAttribute("class", "line-drag-handle");
-        handle.setAttribute("title", isStart ? "연결선 시작점 이동" : "연결선 끝점 이동");
+        handle.setAttribute("title", isStart ? "연결선 시작점 드래그하여 다른 점/박스로 이동" : "연결선 끝점 드래그하여 다른 점/박스로 이동");
         
         const startPress = (clientX, clientY) => {
-          let isDetachedMode = false;
           let activeSnapTarget = null;
           let activeSnapPort = null;
           let activeSnapPt = null;
           
-          showToast("연결선 분리를 위해 2초간 꾹 눌러주세요...", 1000);
-          handle.classList.add('long-press-waiting');
-          
-          const longPressTimeout = setTimeout(() => {
-            isDetachedMode = true;
-            handle.classList.remove('long-press-waiting');
-            handle.classList.add('long-press-detached');
-            showToast("연결선이 분리되었습니다! 끌어서 다른 박스에 연결하세요.");
-            
-            document.querySelectorAll('.person-card').forEach(c => c.classList.add('link-active-dragging'));
-            document.querySelectorAll('.canvas-annotation').forEach(a => a.classList.add('link-active-dragging'));
-          }, 2000);
+          handle.classList.add('dragging-endpoint');
+          document.querySelectorAll('.person-card, .canvas-annotation, .layer-marker, .canvas-junction-node').forEach(c => c.classList.add('link-active-dragging'));
+          showToast("연결선 끝점을 드래그하여 원하는 박스의 연결점(8개 점)에 놓으세요.", 1500);
           
           const moveHandler = (moveX, moveY, rawEvent) => {
-            if (!isDetachedMode) {
-              const dist = Math.hypot(moveX - clientX, moveY - clientY);
-              if (dist > 10) {
-                clearTimeout(longPressTimeout);
-                handle.classList.remove('long-press-waiting');
-              }
-              return;
-            }
             if (rawEvent) {
               rawEvent.stopPropagation();
               if (rawEvent.cancelable) rawEvent.preventDefault();
@@ -10564,17 +10604,9 @@ function renderCustomVisualLines(svgNS, recreateClickListeners, pathsToDraw) {
             const mouseY_correct = (moveY - rect.top) / currentScale;
             
             document.querySelectorAll('.card-link-port').forEach(p => p.classList.remove('port-target-hover'));
-            document.querySelectorAll('.person-card').forEach(c => {
+            document.querySelectorAll('.person-card, .canvas-annotation, .layer-marker, .canvas-junction-node').forEach(c => {
               c.classList.remove('link-target-hover');
               c.classList.remove('link-hovered-target');
-            });
-            document.querySelectorAll('.canvas-annotation').forEach(a => {
-              a.classList.remove('link-target-hover');
-              a.classList.remove('link-hovered-target');
-            });
-            document.querySelectorAll('.canvas-junction-node').forEach(j => {
-              j.classList.remove('link-target-hover');
-              j.classList.remove('link-hovered-target');
             });
             
             activeSnapTarget = null;
@@ -10589,7 +10621,11 @@ function renderCustomVisualLines(svgNS, recreateClickListeners, pathsToDraw) {
               activeSnapPort = snap.targetPort;
               activeSnapPt = snap.targetPt;
               
-              const targetEl = document.getElementById(activeSnapTarget) || document.getElementById(`card-${activeSnapTarget}`) || document.getElementById(`annot-${activeSnapTarget}`);
+              const targetEl = document.getElementById(activeSnapTarget) || 
+                               document.getElementById(`card-${activeSnapTarget}`) || 
+                               document.getElementById(`annot-${activeSnapTarget}`) ||
+                               document.getElementById(`event-${activeSnapTarget}`) ||
+                               document.getElementById(`location-${activeSnapTarget}`);
               if (targetEl) {
                 targetEl.classList.add('link-hovered-target');
                 const portEl = targetEl.querySelector(`.port-${activeSnapPort}`);
@@ -10615,44 +10651,34 @@ function renderCustomVisualLines(svgNS, recreateClickListeners, pathsToDraw) {
           };
           
           const endHandler = () => {
-            clearTimeout(longPressTimeout);
             window.removeEventListener('mousemove', onMouseMove);
             window.removeEventListener('mouseup', onMouseUp);
             window.removeEventListener('touchmove', onTouchMove);
             window.removeEventListener('touchend', onTouchEnd);
             
-            handle.classList.remove('long-press-waiting');
-            handle.classList.remove('long-press-detached');
+            handle.classList.remove('dragging-endpoint');
             
-            document.querySelectorAll('.person-card').forEach(c => {
+            document.querySelectorAll('.person-card, .canvas-annotation, .layer-marker, .canvas-junction-node').forEach(c => {
               c.classList.remove('link-active-dragging');
               c.classList.remove('link-hovered-target');
-            });
-            document.querySelectorAll('.canvas-annotation').forEach(a => {
-              a.classList.remove('link-active-dragging');
-              a.classList.remove('link-hovered-target');
-            });
-            document.querySelectorAll('.canvas-junction-node').forEach(j => {
-              j.classList.remove('link-active-dragging');
-              j.classList.remove('link-hovered-target');
+              c.classList.remove('link-target-hover');
             });
             document.querySelectorAll('.card-link-port').forEach(p => p.classList.remove('port-target-hover'));
             
-            if (isDetachedMode) {
-              if (activeSnapTarget) {
-                pushHistoryState();
-                if (isStart) {
-                  line.from = activeSnapTarget;
-                  line.fromPort = activeSnapPort;
-                } else {
-                  line.to = activeSnapTarget;
-                  line.toPort = activeSnapPort;
-                }
-                saveCustomVisualLines();
-                showToast("연결선 연결 위치가 성공적으로 이동되었습니다.");
+            if (activeSnapTarget) {
+              pushHistoryState();
+              if (isStart) {
+                line.from = activeSnapTarget;
+                line.fromPort = activeSnapPort;
               } else {
-                showToast("연결할 포트를 찾지 못해 기존 포트 위치로 복원되었습니다.");
+                line.to = activeSnapTarget;
+                line.toPort = activeSnapPort;
               }
+              saveCustomVisualLines();
+              debouncedAutoSaveToServer();
+              showToast("연결선 연결 위치가 성공적으로 이동되었습니다.");
+            } else {
+              showToast("연결할 포트를 찾지 못해 기존 포트 위치로 복원되었습니다.");
             }
             
             drawConnections();
@@ -18866,6 +18892,103 @@ function renderEvents() {
       e.preventDefault(); // iOS/iPadOS click 시뮬레이션 중복 발동 방지 차단
     }, { passive: false });
     
+    if (isAdminMode) {
+      ['top', 'right', 'bottom', 'left', 'top-left', 'top-right', 'bottom-left', 'bottom-right'].forEach(portName => {
+        const port = document.createElement('div');
+        port.className = `card-link-port port-${portName}`;
+        port.title = `드래그하여 연결선 만들기 (${portName})`;
+        
+        port.addEventListener('mousedown', (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          
+          const ports = getBoxPorts(`event-${ev.id}`);
+          if (!ports || !ports[portName]) return;
+          const startPt = ports[portName];
+          const startX = startPt.x;
+          const startY = startPt.y;
+          
+          document.querySelectorAll('.person-card, .canvas-annotation, .layer-marker, .canvas-junction-node').forEach(c => c.classList.add('link-active-dragging'));
+          
+          const tempPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+          tempPath.setAttribute("class", "temp-drag-line");
+          tempPath.setAttribute("d", `M ${startX} ${startY} L ${startX} ${startY}`);
+          svgLayer.appendChild(tempPath);
+          
+          let currentTargetId = null;
+          let currentTargetPort = null;
+          
+          const onMouseMove = (moveEvt) => {
+            const rect = treeBoard.getBoundingClientRect();
+            const mouseX = (moveEvt.clientX - rect.left) / currentScale;
+            const mouseY = (moveEvt.clientY - rect.top) / currentScale;
+            
+            tempPath.setAttribute("d", `M ${startX} ${startY} L ${mouseX} ${mouseY}`);
+            
+            document.querySelectorAll('.card-link-port').forEach(p => p.classList.remove('port-target-hover'));
+            document.querySelectorAll('.person-card, .canvas-annotation, .layer-marker, .canvas-junction-node').forEach(c => {
+              c.classList.remove('link-target-hover');
+              c.classList.remove('link-hovered-target');
+            });
+            
+            currentTargetId = null;
+            currentTargetPort = null;
+            
+            const snap = findSnappingTarget(mouseX, mouseY, `event-${ev.id}`);
+            
+            if (snap) {
+              currentTargetId = snap.targetId;
+              currentTargetPort = snap.targetPort;
+              
+              const targetEl = document.getElementById(currentTargetId) || document.getElementById(`card-${currentTargetId}`) || document.getElementById(`annot-${currentTargetId}`) || document.getElementById(`event-${currentTargetId}`) || document.getElementById(`location-${currentTargetId}`);
+              if (targetEl) {
+                targetEl.classList.add('link-hovered-target');
+                const portEl = targetEl.querySelector(`.port-${currentTargetPort}`);
+                if (portEl) {
+                  portEl.classList.add('port-target-hover');
+                }
+              }
+              
+              tempPath.setAttribute("d", `M ${startX} ${startY} L ${snap.targetPt.x} ${snap.targetPt.y}`);
+            }
+          };
+          
+          const onMouseUp = () => {
+            window.removeEventListener('mousemove', onMouseMove);
+            window.removeEventListener('mouseup', onMouseUp);
+            tempPath.remove();
+            
+            document.querySelectorAll('.person-card, .canvas-annotation, .layer-marker, .canvas-junction-node').forEach(c => {
+              c.classList.remove('link-active-dragging');
+              c.classList.remove('link-target-hover');
+              c.classList.remove('link-hovered-target');
+            });
+            document.querySelectorAll('.card-link-port').forEach(p => p.classList.remove('port-target-hover'));
+            
+            if (currentTargetId) {
+              pushHistoryState();
+              customVisualLines.push({
+                id: `link-${Date.now()}`,
+                from: `event-${ev.id}`,
+                to: currentTargetId,
+                fromPort: portName,
+                toPort: currentTargetPort
+              });
+              saveCustomVisualLines();
+              debouncedAutoSaveToServer();
+              drawConnections();
+              showToast("시각적 연결선이 생성되었습니다.");
+            }
+          };
+          
+          window.addEventListener('mousemove', onMouseMove);
+          window.addEventListener('mouseup', onMouseUp);
+        });
+        
+        el.appendChild(port);
+      });
+    }
+    
     layer.appendChild(el);
   });
 }
@@ -18959,6 +19082,103 @@ function renderLocations() {
       handleLocationActivate(e);
       e.preventDefault(); // iOS/iPadOS click 시뮬레이션 중복 발동 방지 차단
     }, { passive: false });
+    
+    if (isAdminMode) {
+      ['top', 'right', 'bottom', 'left', 'top-left', 'top-right', 'bottom-left', 'bottom-right'].forEach(portName => {
+        const port = document.createElement('div');
+        port.className = `card-link-port port-${portName}`;
+        port.title = `드래그하여 연결선 만들기 (${portName})`;
+        
+        port.addEventListener('mousedown', (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          
+          const ports = getBoxPorts(`location-${loc.id}`);
+          if (!ports || !ports[portName]) return;
+          const startPt = ports[portName];
+          const startX = startPt.x;
+          const startY = startPt.y;
+          
+          document.querySelectorAll('.person-card, .canvas-annotation, .layer-marker, .canvas-junction-node').forEach(c => c.classList.add('link-active-dragging'));
+          
+          const tempPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+          tempPath.setAttribute("class", "temp-drag-line");
+          tempPath.setAttribute("d", `M ${startX} ${startY} L ${startX} ${startY}`);
+          svgLayer.appendChild(tempPath);
+          
+          let currentTargetId = null;
+          let currentTargetPort = null;
+          
+          const onMouseMove = (moveEvt) => {
+            const rect = treeBoard.getBoundingClientRect();
+            const mouseX = (moveEvt.clientX - rect.left) / currentScale;
+            const mouseY = (moveEvt.clientY - rect.top) / currentScale;
+            
+            tempPath.setAttribute("d", `M ${startX} ${startY} L ${mouseX} ${mouseY}`);
+            
+            document.querySelectorAll('.card-link-port').forEach(p => p.classList.remove('port-target-hover'));
+            document.querySelectorAll('.person-card, .canvas-annotation, .layer-marker, .canvas-junction-node').forEach(c => {
+              c.classList.remove('link-target-hover');
+              c.classList.remove('link-hovered-target');
+            });
+            
+            currentTargetId = null;
+            currentTargetPort = null;
+            
+            const snap = findSnappingTarget(mouseX, mouseY, `location-${loc.id}`);
+            
+            if (snap) {
+              currentTargetId = snap.targetId;
+              currentTargetPort = snap.targetPort;
+              
+              const targetEl = document.getElementById(currentTargetId) || document.getElementById(`card-${currentTargetId}`) || document.getElementById(`annot-${currentTargetId}`) || document.getElementById(`event-${currentTargetId}`) || document.getElementById(`location-${currentTargetId}`);
+              if (targetEl) {
+                targetEl.classList.add('link-hovered-target');
+                const portEl = targetEl.querySelector(`.port-${currentTargetPort}`);
+                if (portEl) {
+                  portEl.classList.add('port-target-hover');
+                }
+              }
+              
+              tempPath.setAttribute("d", `M ${startX} ${startY} L ${snap.targetPt.x} ${snap.targetPt.y}`);
+            }
+          };
+          
+          const onMouseUp = () => {
+            window.removeEventListener('mousemove', onMouseMove);
+            window.removeEventListener('mouseup', onMouseUp);
+            tempPath.remove();
+            
+            document.querySelectorAll('.person-card, .canvas-annotation, .layer-marker, .canvas-junction-node').forEach(c => {
+              c.classList.remove('link-active-dragging');
+              c.classList.remove('link-target-hover');
+              c.classList.remove('link-hovered-target');
+            });
+            document.querySelectorAll('.card-link-port').forEach(p => p.classList.remove('port-target-hover'));
+            
+            if (currentTargetId) {
+              pushHistoryState();
+              customVisualLines.push({
+                id: `link-${Date.now()}`,
+                from: `location-${loc.id}`,
+                to: currentTargetId,
+                fromPort: portName,
+                toPort: currentTargetPort
+              });
+              saveCustomVisualLines();
+              debouncedAutoSaveToServer();
+              drawConnections();
+              showToast("시각적 연결선이 생성되었습니다.");
+            }
+          };
+          
+          window.addEventListener('mousemove', onMouseMove);
+          window.addEventListener('mouseup', onMouseUp);
+        });
+        
+        el.appendChild(port);
+      });
+    }
     
     layer.appendChild(el);
   });
