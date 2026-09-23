@@ -19359,42 +19359,43 @@ let activeMapLocationId = null;
 let bibleMapSvgLoaded = false;
 
 const BIBLE_MAP_ANCHORS = {
-  '에덴동산': { x: 2280, y: 260 },
-  '에덴': { x: 2280, y: 260 },
-  '아라랏': { x: 2280, y: 260 },
-  '하란': { x: 1750, y: 590 },
-  '시날 평지': { x: 2360, y: 1420 },
-  '시날': { x: 2360, y: 1420 },
-  '바벨탑': { x: 2360, y: 1420 },
-  '바벨론': { x: 2360, y: 1420 },
-  '갈대아 우르': { x: 2580, y: 1760 },
-  '우르': { x: 2580, y: 1760 },
-  '애굽 고센 땅': { x: 480, y: 1720 },
-  '고센': { x: 480, y: 1720 },
-  '애굽': { x: 480, y: 1720 },
-  '이집트': { x: 480, y: 1720 },
-  '홍해': { x: 680, y: 1920 },
-  '시내산': { x: 780, y: 2100 },
-  '시내': { x: 780, y: 2100 },
-  '모리아산': { x: 1070, y: 1280 },
-  '모리아': { x: 1070, y: 1280 },
-  '예루살렘 성벽': { x: 1070, y: 1280 },
-  '예루살렘': { x: 1070, y: 1280 },
-  '베들레헴': { x: 1070, y: 1335 },
-  '헤브론': { x: 1050, y: 1400 },
-  '세겜': { x: 1090, y: 1170 },
-  '벧엘': { x: 1080, y: 1220 },
-  '갈릴리': { x: 1120, y: 1010 },
-  '나사렛': { x: 1120, y: 1010 },
-  '여리고': { x: 1100, y: 1260 },
-  '사해': { x: 1090, y: 1400 },
-  '염해': { x: 1090, y: 1400 },
-  '요단강': { x: 1105, y: 1180 },
-  '다메섹': { x: 1350, y: 850 }
+  '에덴동산': { x: 2310, y: 184 },
+  '에덴': { x: 2310, y: 184 },
+  '아라랏': { x: 2310, y: 184 },
+  '하란': { x: 2132, y: 330 },
+  '시날 평지': { x: 2420, y: 584 },
+  '시날': { x: 2420, y: 584 },
+  '바벨탑': { x: 2420, y: 584 },
+  '바벨론': { x: 2420, y: 584 },
+  '갈대아 우르': { x: 2572, y: 830 },
+  '우르': { x: 2572, y: 830 },
+  '애굽 고센 땅': { x: 578, y: 944 },
+  '고센': { x: 578, y: 944 },
+  '애굽': { x: 480, y: 1100 },
+  '이집트': { x: 480, y: 1100 },
+  '홍해': { x: 784, y: 1306 },
+  '시내산': { x: 950, y: 1328 },
+  '시내': { x: 950, y: 1328 },
+  '모리아산': { x: 1280, y: 752 },
+  '모리아': { x: 1280, y: 752 },
+  '예루살렘 성벽': { x: 1280, y: 752 },
+  '예루살렘': { x: 1280, y: 752 },
+  '베들레헴': { x: 1308, y: 798 },
+  '헤브론': { x: 1266, y: 852 },
+  '세겜': { x: 1320, y: 584 },
+  '벧엘': { x: 1300, y: 670 },
+  '사마리아': { x: 1320, y: 584 },
+  '갈릴리': { x: 1416, y: 392 },
+  '나사렛': { x: 1390, y: 420 },
+  '여리고': { x: 1365, y: 740 },
+  '사해': { x: 1390, y: 860 },
+  '염해': { x: 1390, y: 860 },
+  '요단강': { x: 1400, y: 550 },
+  '다메섹': { x: 1550, y: 320 }
 };
 
 function getMapAnchorForLocation(loc) {
-  if (!loc) return { x: 1070, y: 1280 };
+  if (!loc) return { x: 1280, y: 752 };
   const name = (loc.name || '').trim();
   const eng = (loc.engName || '').trim();
   
@@ -19411,31 +19412,7 @@ function getMapAnchorForLocation(loc) {
     }
   }
   // 기본 가나안 중앙(예루살렘 인근)
-  return { x: 1070, y: 1280 };
-}
-
-function initCanvasBibleMap() {
-  const layer = document.getElementById('canvas-bible-map-layer');
-  if (!layer || bibleMapSvgLoaded) return;
-  
-  fetch('bible_map_background.svg')
-    .then(res => {
-      if (!res.ok) throw new Error("HTTP error " + res.status);
-      return res.text();
-    })
-    .then(svgText => {
-      layer.innerHTML = svgText;
-      bibleMapSvgLoaded = true;
-    })
-    .catch(() => {
-      fetch('assets/bible_map_background.svg')
-        .then(res => res.text())
-        .then(svgText => {
-          layer.innerHTML = svgText;
-          bibleMapSvgLoaded = true;
-        })
-        .catch(err => console.warn("Could not load bible map SVG", err));
-    });
+  return { x: 1280, y: 752 };
 }
 
 function showCanvasBibleMap(loc) {
@@ -19459,7 +19436,8 @@ function showCanvasBibleMap(loc) {
   // 지도 내부의 활성 비콘 핀 위치 갱신
   const beacon = document.getElementById('active-map-pin-beacon');
   if (beacon) {
-    beacon.setAttribute('transform', `translate(${anchor.x}, ${anchor.y})`);
+    beacon.style.left = `${anchor.x}px`;
+    beacon.style.top = `${anchor.y}px`;
     beacon.style.display = 'block';
   }
   
