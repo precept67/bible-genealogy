@@ -24200,7 +24200,6 @@ window.addEventListener('message', (event) => {
     const loc = locations.find(l => l.name === p.name || (l.name && l.name.includes(p.name)) || (p.name && p.name.includes(l.name)));
     if (loc) {
       if (typeof centerOnNode === 'function') centerOnNode(loc.id);
-      if (typeof openLayerDetails === 'function') openLayerDetails(loc, 'location');
       if (typeof highlightRelatedElements === 'function') highlightRelatedElements(loc.id, 'location');
     }
   } else if (data.action === 'dismissMap' || data.action === 'closeMap') {
