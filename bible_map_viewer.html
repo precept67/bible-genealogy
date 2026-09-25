@@ -74,13 +74,10 @@
     
     
 
-    /* 상단 슬림 검색창 */
+    /* 상단 슬림 검색창 & 툴바 */
     .search-container {
-      position: absolute;
-      top: 14px;
-      left: 14px;
-      z-index: 1500;
-      width: 320px;
+      position: relative;
+      width: 260px;
       max-width: calc(100vw - 140px);
     }
     .search-box {
@@ -406,14 +403,14 @@
 
     /* 모바일 반응형 */
     @media (max-width: 640px) {
-      .search-container {
-        top: 10px;
-        left: 10px;
-        width: calc(100vw - 120px);
-      }
       .top-toolbar {
         top: 10px;
         right: 10px;
+        gap: 6px;
+      }
+      .search-container {
+        width: calc(100vw - 80px);
+        max-width: 260px;
       }
       .tool-btn-text {
         display: none;
@@ -436,17 +433,15 @@
   <!-- 지도 컨테이너 -->
   <div id="map"></div>
 
-  <!-- 슬림 검색창 -->
-  <div class="search-container">
-    <div style="position: relative;">
-      <input type="text" id="searchInput" class="search-box" placeholder="성경 지명 검색 (예: 예루살렘, 갈릴리)" autocomplete="off" />
-      <button class="search-clear-btn" id="searchClearBtn" onclick="clearSearch()" title="검색어 지우기">&times;</button>
-    </div>
-    <div class="search-results" id="searchResults"></div>
-  </div>
-
-  <!-- 우측 상단 툴바 -->
+  <!-- 우측 상단 툴바 (검색창 + 지형지도 전환 버튼) -->
   <div class="top-toolbar">
+    <div class="search-container">
+      <div style="position: relative;">
+        <input type="text" id="searchInput" class="search-box" placeholder="성경 지명 검색 (예: 예루살렘, 갈릴리)" autocomplete="off" />
+        <button class="search-clear-btn" id="searchClearBtn" onclick="clearSearch()" title="검색어 지우기">&times;</button>
+      </div>
+      <div class="search-results" id="searchResults"></div>
+    </div>
     <button class="tool-btn" id="btnToggleMap" onclick="toggleMapTile()" title="위성 지도 / 지형 지도 전환">
       <span>🗺️</span>
       <span class="tool-btn-text" id="mapToggleTitle">지형 지도</span>
