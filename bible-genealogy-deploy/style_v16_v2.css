@@ -6840,7 +6840,7 @@ textarea,
   width: 100vw !important;
   height: 100vh !important;
   background: rgba(15, 23, 42, 0.45) !important;
-  display: flex !important;
+  display: none;
   align-items: center !important;
   justify-content: center !important;
   z-index: 20000 !important;
@@ -6848,6 +6848,10 @@ textarea,
   margin: 0 !important;
   box-sizing: border-box !important;
   border: none !important;
+}
+
+#bible-map-modal.active {
+  display: flex !important;
 }
 
 .bible-map-modal-container {
@@ -7128,13 +7132,17 @@ textarea,
   width: 100vw !important;
   height: 100vh !important;
   z-index: 20000 !important;
-  display: flex !important;
+  display: none;
   align-items: center !important;
   justify-content: center !important;
   background: transparent !important;
   padding: 0 !important;
   margin: 0 !important;
   border: none !important;
+}
+
+#bible-map-modal.active {
+  display: flex !important;
 }
 
 .bible-map-modal-container {
