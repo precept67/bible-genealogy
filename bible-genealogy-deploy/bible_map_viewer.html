@@ -251,24 +251,9 @@
       100% { transform: scale(1.6); opacity: 0; }
     }
 
-    /* 하단/우측 상세 정보 카드 */
+    /* 하단/우측 상세 정보 카드 (사용자 요청으로 비활성화) */
     .detail-card {
-      position: absolute;
-      bottom: 20px;
-      right: 20px;
-      width: 360px;
-      max-width: calc(100vw - 32px);
-      max-height: min(480px, calc(100vh - 100px));
-      background: rgba(255, 255, 255, 0.98);
-      backdrop-filter: blur(16px);
-      border-radius: 18px;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
-      border: 1px solid rgba(0, 0, 0, 0.1);
-      padding: 18px 20px;
-      display: none;
-      flex-direction: column;
-      z-index: 1600;
-      animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      display: none !important;
     }
     @keyframes slideUp {
       from { transform: translateY(24px); opacity: 0; }
@@ -700,11 +685,9 @@
       document.getElementById('detailBadge').style.color = cfg.color;
       document.getElementById('detailCoords').innerText = `${p.lat.toFixed(2)}°, ${p.lng.toFixed(2)}°`;
 
-      const descBox = document.getElementById('detailDesc');
-      descBox.innerText = p.desc || '성경 속 역사적 지명입니다.';
-
+      // 상세 정보 창은 사용자 요청에 따라 표시하지 않음 (display: none 유지)
       const card = document.getElementById('detailCard');
-      card.style.display = 'flex';
+      if (card) card.style.display = 'none';
 
       // 펄스 하이라이트 마커
       if (selectedHighlightMarker) {
