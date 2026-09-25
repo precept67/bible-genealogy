@@ -24196,12 +24196,21 @@ window.addEventListener('message', (event) => {
   const data = event.data;
   if (data.action === 'placeSelected' && data.place) {
     const p = data.place;
-    // Find matching location or event in genealogy database
-    const loc = locations.find(l => l.name === p.name || (l.name && l.name.includes(p.name)) || (p.name && p.name.includes(l.name)));
-    if (loc) {
-      if (typeof centerOnNode === 'function') centerOnNode(loc.id);
-      if (typeof highlightRelatedElements === 'function') highlightRelatedElements(loc.id, 'location');
+    // Find matching location or create dynamic location object
+    let loc = locations.find(l => l.name === p.name || (l.name && l.name.includes(p.name)) || (p.name && p.name.includes(l.name)));
+    if (!loc) {
+      loc = {
+        id: 'loc_map_' + (p.id || p.name),
+        name: p.name,
+        lat: p.lat,
+        lng: p.lng,
+        desc: p.desc || '성경 속 역사적 지명입니다.',
+        type: p.type || 'city'
+      };
     }
+    if (typeof centerOnNode === 'function') centerOnNode(loc.id);
+    if (typeof highlightRelatedElements === 'function') highlightRelatedElements(loc.id, 'location');
+    if (typeof openLayerDetails === 'function') openLayerDetails(loc, 'location');
   } else if (data.action === 'dismissMap' || data.action === 'closeMap') {
     closeBibleMapModal();
   }
