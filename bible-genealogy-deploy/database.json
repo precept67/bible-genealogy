@@ -22450,8 +22450,8 @@
       ],
       "x": 10401,
       "y": 4554,
-      "engName": "red sea",
-      "engDesc": "In front of the pursuing Egyptian army, Moses held out his staff and parted the sea with an east wind all night long, crossing it like dry land."
+      "type": "water",
+      "category": "water"
     },
     {
       "id": "loc-1784790981421",
@@ -22470,8 +22470,8 @@
       ],
       "x": 16128,
       "y": 75,
-      "engName": "Garden of Eden",
-      "engDesc": "Paradise, the first home of mankind and the location of the tree of life and the tree of knowledge of good and evil."
+      "type": "region",
+      "category": "region"
     },
     {
       "id": "loc-1784792563461",
@@ -22488,8 +22488,8 @@
       ],
       "x": 16558,
       "y": 2661,
-      "engName": "Plain of Shinar",
-      "engDesc": "A plain where Noah's descendants gathered to build the Tower of Babel and oppose God."
+      "type": "region",
+      "category": "region"
     },
     {
       "id": "loc-1784792669341",
@@ -22509,8 +22509,8 @@
       ],
       "x": 16664,
       "y": 3406,
-      "engName": "Haran",
-      "engDesc": "This is the place where Abraham's father Terah stayed and died, and the land where Abraham left after receiving his calling."
+      "type": "city",
+      "category": "city"
     },
     {
       "id": "loc-1784793488527",
@@ -22528,8 +22528,8 @@
       ],
       "x": 16446,
       "y": 3680,
-      "engName": "Mount Moriah",
-      "engDesc": "This is the mountain where Abraham attempted to sacrifice his only son Isaac as a burnt offering, and the place where Solomon's temple was later built."
+      "type": "mountain",
+      "category": "mountain"
     },
     {
       "id": "loc-1786029363695",
@@ -22547,8 +22547,8 @@
       ],
       "x": 22077,
       "y": 7772,
-      "engName": "Jerusalem Walls",
-      "engDesc": "The walls and ramparts of Jerusalem rebuilt in 52 days under governor Nehemiah's leadership and the unified dedication of the Israelites despite threats from adversaries."
+      "type": "city",
+      "category": "city"
     },
     {
       "id": "loc-1786033012492",
@@ -22566,8 +22566,8 @@
       ],
       "x": 16580,
       "y": 3940,
-      "engName": "land of Goshen, Egypt",
-      "engDesc": "A fertile pasture where Jacob's family, who entered the country at the invitation of Joseph during the Canaan famine, settled and prospered."
+      "type": "region",
+      "category": "region"
     }
   ]
 }
