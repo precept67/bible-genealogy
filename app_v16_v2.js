@@ -24129,6 +24129,12 @@ function openBibleMapModal(target) {
   const iframe = document.getElementById('bible-map-viewer-iframe');
   if (!modal || !iframe) return;
 
+  const targetSrc = iframe.getAttribute('data-src') || 'bible_map_viewer.html';
+  const needsLoad = !iframe.src || iframe.src === 'about:blank' || iframe.src.endsWith('about:blank');
+  if (needsLoad) {
+    iframe.src = targetSrc;
+  }
+
   modal.classList.add('active');
   modal.style.display = 'flex';
 
@@ -24156,7 +24162,7 @@ function openBibleMapModal(target) {
   };
 
   try {
-    if (iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
+    if (!needsLoad && iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
       sendTargetToIframe();
     } else {
       iframe.onload = sendTargetToIframe;
