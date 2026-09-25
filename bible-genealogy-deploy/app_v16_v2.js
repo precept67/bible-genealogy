@@ -24129,6 +24129,7 @@ function openBibleMapModal(target) {
   const iframe = document.getElementById('bible-map-viewer-iframe');
   if (!modal || !iframe) return;
 
+  modal.classList.add('active');
   modal.style.display = 'flex';
 
   let placeName = '';
@@ -24167,7 +24168,10 @@ function openBibleMapModal(target) {
 
 function closeBibleMapModal() {
   const modal = document.getElementById('bible-map-modal');
-  if (modal) modal.style.display = 'none';
+  if (modal) {
+    modal.classList.remove('active');
+    modal.style.display = 'none';
+  }
 }
 
 // Bind modal background click
