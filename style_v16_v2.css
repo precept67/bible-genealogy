@@ -2828,52 +2828,267 @@ datalist {
   pointer-events: none; /* Let clicks pass through empty areas */
 }
 
-/* Canvas Background Bible Map Layer (Interactive OpenSource Live Map under Genealogy Nodes) */
-.canvas-bible-map-layer {
+/* Canvas Background Map Layer completely retired in favor of interactive bible_map_viewer.html */
+.canvas-bible-map-layer,
+.canvas-bible-map-img {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* KMZ Hierarchical Place Labels on Map Layer */
+.canvas-map-labels-container {
   position: absolute;
   top: 0;
   left: 0;
-  width: 2400px;
-  height: 1400px;
-  pointer-events: auto;
-  z-index: 1; /* Below polygons (2), lines (3), markers (4), cards (10) */
-  opacity: 0;
-  transform-origin: 50% 50%;
-  transition: opacity 0.4s ease, transform 0.6s cubic-bezier(0.2, 1, 0.3, 1);
-  will-change: transform, opacity;
-  box-shadow: 0 30px 100px rgba(0, 0, 0, 0.6), 0 0 0 3px rgba(255, 255, 255, 0.15);
-  border-radius: 16px;
-  overflow: hidden;
-  border: 3px solid #64748b;
-  background: #0f172a;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 4;
 }
 
-.canvas-bible-map-layer.active {
-  opacity: 0.96 !important;
-  display: block !important;
+.map-place-tag {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  user-select: none;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.2s ease;
 }
+
+/* KMZ Hierarchical Place Labels on Map Layer (10 Tiers across 15% ~ 250% Zoom Range) */
+.canvas-map-labels-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.map-place-tag {
+  position: absolute;
+  transform: translate(-50%, -100%) scale(var(--map-label-scale, 1));
+  transform-origin: 50% 100%;
+  display: none;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  user-select: none;
+  pointer-events: auto;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.16);
+  border-radius: 6px;
+  transition: transform 0.15s ease, opacity 0.2s ease;
+}
+
+.map-place-tag:hover {
+  transform: translate(-50%, -108%) scale(calc(var(--map-label-scale, 1) * 1.15));
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  z-index: 50 !important;
+}
+
+/* Tier 1 ~ 10 Base Badges */
+.map-place-tag.tier-1 {
+  font-size: 17px;
+  font-weight: 800;
+  color: #78350f;
+  border: 1.5px solid #d97706;
+  padding: 3px 9px;
+  z-index: 15;
+}
+
+.map-place-tag.tier-2 {
+  font-size: 15px;
+  font-weight: 800;
+  color: #78350f;
+  border: 1.5px solid #b45309;
+  padding: 3px 8px;
+  z-index: 14;
+}
+
+.map-place-tag.tier-3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #92400e;
+  border: 1.2px solid #b45309;
+  padding: 2.5px 7px;
+  z-index: 13;
+}
+
+.map-place-tag.tier-4 {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #92400e;
+  border: 1px solid #d97706;
+  padding: 2px 6px;
+  z-index: 12;
+}
+
+.map-place-tag.tier-5 {
+  font-size: 13px;
+  font-weight: 600;
+  color: #a16207;
+  border: 1px solid #ca8a04;
+  padding: 2px 6px;
+  z-index: 11;
+}
+
+.map-place-tag.tier-6 {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #b45309;
+  border: 1px solid #d97706;
+  padding: 2px 5px;
+  z-index: 10;
+}
+
+.map-place-tag.tier-7 {
+  font-size: 12px;
+  font-weight: 600;
+  color: #451a03;
+  border: 1px solid #78350f;
+  padding: 1.5px 5px;
+  z-index: 9;
+}
+
+.map-place-tag.tier-8 {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #1e293b;
+  border: 1px solid #475569;
+  padding: 1.5px 5px;
+  z-index: 8;
+}
+
+.map-place-tag.tier-9 {
+  font-size: 11px;
+  font-weight: 600;
+  color: #1e3a8a;
+  border: 1px solid #3b82f6;
+  background: rgba(240, 249, 255, 0.94);
+  padding: 1.5px 5px;
+  z-index: 7;
+}
+
+.map-place-tag.tier-10 {
+  font-size: 11px;
+  font-weight: 700;
+  color: #991b1b;
+  border: 1.2px solid #ef4444;
+  background: rgba(254, 242, 242, 0.94);
+  padding: 1.5px 5px;
+  z-index: 6;
+}
+
+/* 10-Level Dynamic LOD Zoom Visibility (15% to 250%+) */
+/* Default / Lv 1 (10% ~ 18%): Tier 1 only */
+.canvas-bible-map-layer .map-place-tag.tier-1,
+.canvas-bible-map-layer.zoom-lv1 .map-place-tag.tier-1 {
+  display: flex !important;
+}
+
+/* Lv 2 (18% ~ 27%): Tier 2 only */
+.canvas-bible-map-layer.zoom-lv2 .map-place-tag.tier-1 { display: none !important; }
+.canvas-bible-map-layer.zoom-lv2 .map-place-tag.tier-2 { display: flex !important; }
+
+/* Lv 3 (27% ~ 38%): Tier 3 only */
+.canvas-bible-map-layer.zoom-lv3 .map-place-tag.tier-1,
+.canvas-bible-map-layer.zoom-lv3 .map-place-tag.tier-2 { display: none !important; }
+.canvas-bible-map-layer.zoom-lv3 .map-place-tag.tier-3 { display: flex !important; }
+
+/* Lv 4 (38% ~ 52%): Tier 4 only */
+.canvas-bible-map-layer.zoom-lv4 .map-place-tag.tier-1,
+.canvas-bible-map-layer.zoom-lv4 .map-place-tag.tier-2,
+.canvas-bible-map-layer.zoom-lv4 .map-place-tag.tier-3 { display: none !important; }
+.canvas-bible-map-layer.zoom-lv4 .map-place-tag.tier-4 { display: flex !important; }
+
+/* Lv 5 (52% ~ 70%): Tier 5 only */
+.canvas-bible-map-layer.zoom-lv5 .map-place-tag.tier-1,
+.canvas-bible-map-layer.zoom-lv5 .map-place-tag.tier-2,
+.canvas-bible-map-layer.zoom-lv5 .map-place-tag.tier-3,
+.canvas-bible-map-layer.zoom-lv5 .map-place-tag.tier-4 { display: none !important; }
+.canvas-bible-map-layer.zoom-lv5 .map-place-tag.tier-5 { display: flex !important; }
+
+/* Lv 6 (70% ~ 95%): Tier 6 only */
+.canvas-bible-map-layer.zoom-lv6 .map-place-tag.tier-1,
+.canvas-bible-map-layer.zoom-lv6 .map-place-tag.tier-2,
+.canvas-bible-map-layer.zoom-lv6 .map-place-tag.tier-3,
+.canvas-bible-map-layer.zoom-lv6 .map-place-tag.tier-4,
+.canvas-bible-map-layer.zoom-lv6 .map-place-tag.tier-5 { display: none !important; }
+.canvas-bible-map-layer.zoom-lv6 .map-place-tag.tier-6 { display: flex !important; }
+
+/* Lv 7 (95% ~ 125%): Tier 7 only */
+.canvas-bible-map-layer.zoom-lv7 .map-place-tag.tier-1,
+.canvas-bible-map-layer.zoom-lv7 .map-place-tag.tier-2,
+.canvas-bible-map-layer.zoom-lv7 .map-place-tag.tier-3,
+.canvas-bible-map-layer.zoom-lv7 .map-place-tag.tier-4,
+.canvas-bible-map-layer.zoom-lv7 .map-place-tag.tier-5,
+.canvas-bible-map-layer.zoom-lv7 .map-place-tag.tier-6 { display: none !important; }
+.canvas-bible-map-layer.zoom-lv7 .map-place-tag.tier-7 { display: flex !important; }
+
+/* Lv 8 (125% ~ 165%): Tier 8 only */
+.canvas-bible-map-layer.zoom-lv8 .map-place-tag.tier-1,
+.canvas-bible-map-layer.zoom-lv8 .map-place-tag.tier-2,
+.canvas-bible-map-layer.zoom-lv8 .map-place-tag.tier-3,
+.canvas-bible-map-layer.zoom-lv8 .map-place-tag.tier-4,
+.canvas-bible-map-layer.zoom-lv8 .map-place-tag.tier-5,
+.canvas-bible-map-layer.zoom-lv8 .map-place-tag.tier-6,
+.canvas-bible-map-layer.zoom-lv8 .map-place-tag.tier-7 { display: none !important; }
+.canvas-bible-map-layer.zoom-lv8 .map-place-tag.tier-8 { display: flex !important; }
+
+/* Lv 9 (165% ~ 210%): Tier 9 only */
+.canvas-bible-map-layer.zoom-lv9 .map-place-tag.tier-1,
+.canvas-bible-map-layer.zoom-lv9 .map-place-tag.tier-2,
+.canvas-bible-map-layer.zoom-lv9 .map-place-tag.tier-3,
+.canvas-bible-map-layer.zoom-lv9 .map-place-tag.tier-4,
+.canvas-bible-map-layer.zoom-lv9 .map-place-tag.tier-5,
+.canvas-bible-map-layer.zoom-lv9 .map-place-tag.tier-6,
+.canvas-bible-map-layer.zoom-lv9 .map-place-tag.tier-7,
+.canvas-bible-map-layer.zoom-lv9 .map-place-tag.tier-8 { display: none !important; }
+.canvas-bible-map-layer.zoom-lv9 .map-place-tag.tier-9 { display: flex !important; }
+
+/* Lv 10 (210% ~ 250%+): Tier 10 only */
+.canvas-bible-map-layer.zoom-lv10 .map-place-tag.tier-1,
+.canvas-bible-map-layer.zoom-lv10 .map-place-tag.tier-2,
+.canvas-bible-map-layer.zoom-lv10 .map-place-tag.tier-3,
+.canvas-bible-map-layer.zoom-lv10 .map-place-tag.tier-4,
+.canvas-bible-map-layer.zoom-lv10 .map-place-tag.tier-5,
+.canvas-bible-map-layer.zoom-lv10 .map-place-tag.tier-6,
+.canvas-bible-map-layer.zoom-lv10 .map-place-tag.tier-7,
+.canvas-bible-map-layer.zoom-lv10 .map-place-tag.tier-8,
+.canvas-bible-map-layer.zoom-lv10 .map-place-tag.tier-9 { display: none !important; }
+.canvas-bible-map-layer.zoom-lv10 .map-place-tag.tier-10 { display: flex !important; }
 
 /* Floating info badge on canvas map */
 .canvas-map-info-badge {
   position: absolute;
-  top: 18px;
-  left: 18px;
-  z-index: 1000;
-  background: rgba(15, 23, 42, 0.88);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 10px;
-  padding: 8px 14px;
+  top: 14px;
+  left: 14px;
+  z-index: 10;
+  background: rgba(251, 247, 238, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(140, 109, 70, 0.35);
+  border-radius: 8px;
+  padding: 6px 12px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  gap: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
   pointer-events: auto;
 }
 
 .canvas-map-badge-icon {
-  font-size: 20px;
+  font-size: 16px;
 }
 
 .canvas-map-badge-text {
@@ -2882,79 +3097,42 @@ datalist {
 }
 
 .canvas-map-place-name {
-  font-size: 14px;
-  font-weight: 700;
-  color: #f8fafc;
+  font-size: 13px;
+  font-weight: 800;
+  color: #78350f;
 }
 
 .canvas-map-place-coords {
-  font-size: 11px;
-  color: #38bdf8;
+  font-size: 10.5px;
+  color: #92400e;
   font-weight: 500;
 }
 
-/* Floating mini controls on canvas map (top right) */
-.canvas-map-mini-controls {
-  position: absolute;
-  top: 18px;
-  right: 18px;
-  z-index: 1000;
-  background: rgba(15, 23, 42, 0.88);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 10px;
-  padding: 4px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-  pointer-events: auto;
-}
-
-.canvas-map-layer-btn {
-  background: transparent;
-  border: none;
-  color: #94a3b8;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 6px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.canvas-map-layer-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
-}
-
-.canvas-map-layer-btn.active {
-  background: #2563eb;
-  color: #ffffff;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
-}
-
 .canvas-map-close-btn {
-  background: rgba(239, 68, 68, 0.15);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  color: #f87171;
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 10;
+  background: rgba(251, 247, 238, 0.9);
+  border: 1px solid rgba(140, 109, 70, 0.35);
+  color: #78350f;
   font-size: 14px;
-  font-weight: 700;
-  width: 28px;
-  height: 28px;
+  font-weight: 800;
+  width: 26px;
+  height: 26px;
   border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  margin-left: 4px;
+  pointer-events: auto;
   transition: all 0.15s ease;
 }
 
 .canvas-map-close-btn:hover {
-  background: #ef4444;
+  background: #dc2626;
   color: #ffffff;
+  border-color: #dc2626;
 }
 
 .map-beacon-marker {
@@ -2969,30 +3147,83 @@ datalist {
 
 .beacon-pulse {
   position: absolute;
-  top: -30px;
-  left: -30px;
-  width: 60px;
-  height: 60px;
+  top: -24px;
+  left: -24px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  background: rgba(255, 109, 0, 0.35);
-  border: 2px solid #ff9100;
+  background: rgba(234, 88, 12, 0.3);
+  border: 2px solid #ea580c;
   animation: beacon-wave 1.8s infinite cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Dynamic surrounding places container */
+.canvas-map-nearby-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.canvas-map-nearby-tag {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  margin-top: -6px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(180, 83, 9, 0.4);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #78350f;
+  white-space: nowrap;
+  pointer-events: auto;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.canvas-map-nearby-tag::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 4px 4px 0 4px;
+  border-style: solid;
+  border-color: rgba(180, 83, 9, 0.6) transparent transparent transparent;
+}
+
+.canvas-map-nearby-tag:hover {
+  background: #78350f;
+  color: #ffffff;
+  border-color: #78350f;
+  transform: translate(-50%, -115%) scale(1.08);
+  z-index: 20;
 }
 
 .beacon-dot {
   position: absolute;
-  top: -8px;
-  left: -8px;
-  width: 16px;
-  height: 16px;
+  top: -7px;
+  left: -7px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
-  background: #ff6d00;
-  border: 3px solid #ffffff;
-  box-shadow: 0 0 12px #ff9100, 0 0 4px #fff;
+  background: #ea580c;
+  border: 2.5px solid #ffffff;
+  box-shadow: 0 0 10px #ea580c, 0 0 3px #fff;
 }
 
 @keyframes beacon-wave {
-  0% { transform: scale(0.4); opacity: 0.9; }
+  0% { transform: scale(0.35); opacity: 0.95; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
   100% { transform: scale(1.6); opacity: 0; }
 }
 
@@ -6890,5 +7121,53 @@ textarea,
   background: #ff9100;
   transform: rotate(-45deg) scale(1.35);
   box-shadow: 0 0 16px #ff9100, 0 0 4px #ffffff;
+}
+
+/* Bible Map Viewer Modal Styling */
+#bible-map-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 28000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: fadeIn 0.2s ease-out;
+}
+
+.bible-map-modal-container {
+  width: 94vw;
+  height: 92vh;
+  max-width: 1440px;
+  max-height: 920px;
+  background: #0f172a;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.65), 0 0 0 1.5px rgba(255, 255, 255, 0.18);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.bible-map-close-btn:hover {
+  transform: scale(1.12);
+  background: rgba(239, 68, 68, 0.9) !important;
+  border-color: #ef4444 !important;
+}
+
+@media (max-width: 768px) {
+  .bible-map-modal-container {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    border-radius: 0 !important;
+    border: none !important;
+  }
 }
 
