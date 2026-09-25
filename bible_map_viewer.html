@@ -175,7 +175,7 @@
       z-index: 1500;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
     }
     .tool-btn {
       height: 34px;
@@ -202,6 +202,85 @@
     }
     .tool-btn:active {
       transform: translateY(0);
+    }
+    .tool-btn.active-tool {
+      background: #2563eb !important;
+      color: #ffffff !important;
+      border-color: #1d4ed8 !important;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.45) !important;
+    }
+
+    /* 거리 측정 마커 & 툴팁 & HUD 스타일 */
+    .measure-pin {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #2563eb;
+      color: #ffffff;
+      border: 2px solid #ffffff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 800;
+    }
+    .measure-tooltip {
+      background: rgba(15, 23, 42, 0.92) !important;
+      color: #ffffff !important;
+      border: 1px solid rgba(255, 255, 255, 0.3) !important;
+      border-radius: 8px !important;
+      font-size: 11.5px !important;
+      font-weight: 700 !important;
+      padding: 4px 8px !important;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
+      white-space: nowrap !important;
+    }
+    .measure-hud {
+      position: absolute;
+      top: 56px;
+      right: 14px;
+      z-index: 1500;
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      padding: 7px 14px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      color: #ffffff;
+      font-size: 12.5px;
+      font-weight: 600;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+      animation: fadeIn 0.2s ease-out;
+    }
+    .measure-reset-btn {
+      background: rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .measure-reset-btn:hover {
+      background: rgba(255, 255, 255, 0.35);
+    }
+    .measure-close-btn {
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      line-height: 1;
+      padding: 0 2px;
+    }
+    .measure-close-btn:hover {
+      color: #ef4444;
     }
 
     /* 지도 마커 및 라벨 스타일 */
@@ -401,29 +480,45 @@
       to { opacity: 1; transform: translate(-50%, 0); }
     }
 
-    /* 모바일 반응형 */
-    @media (max-width: 640px) {
+    /* 모바일 및 태블릿(아이폰, 아이패드) 상단 툴바 최적화 */
+    @media (max-width: 860px) {
       .top-toolbar {
-        top: 10px;
-        right: 10px;
+        top: max(10px, env(safe-area-inset-top));
+        left: max(10px, env(safe-area-inset-left));
+        right: max(10px, env(safe-area-inset-right));
+        display: flex;
+        align-items: center;
         gap: 6px;
       }
       .search-container {
-        width: calc(100vw - 80px);
-        max-width: 260px;
+        flex: 1;
+        min-width: 130px;
+        width: auto;
+        max-width: none;
       }
+      .search-box {
+        width: 100%;
+        padding: 6px 28px 6px 12px;
+        font-size: 13px;
+      }
+      .tool-btn {
+        flex-shrink: 0;
+        padding: 0 10px;
+      }
+      .measure-hud {
+        top: max(50px, calc(env(safe-area-inset-top) + 42px));
+        left: max(10px, env(safe-area-inset-left));
+        right: max(10px, env(safe-area-inset-right));
+        justify-content: space-between;
+      }
+    }
+
+    @media (max-width: 520px) {
       .tool-btn-text {
         display: none;
       }
       .tool-btn {
         padding: 0 9px;
-      }
-      .detail-card {
-        left: 10px;
-        right: 10px;
-        bottom: 12px;
-        max-width: none;
-        max-height: 50vh;
       }
     }
   </style>
@@ -433,7 +528,7 @@
   <!-- 지도 컨테이너 -->
   <div id="map"></div>
 
-  <!-- 우측 상단 툴바 (검색창 + 지형지도 전환 버튼) -->
+  <!-- 상단 툴바 (검색창 + 거리측정 버튼 + 지형지도 전환 버튼) -->
   <div class="top-toolbar">
     <div class="search-container">
       <div style="position: relative;">
@@ -442,10 +537,23 @@
       </div>
       <div class="search-results" id="searchResults"></div>
     </div>
+    <button class="tool-btn" id="btnMeasureDistance" onclick="toggleMeasureDistance()" title="지도 상의 거리 측정">
+      <span>📏</span>
+      <span class="tool-btn-text" id="measureBtnText">거리 측정</span>
+    </button>
     <button class="tool-btn" id="btnToggleMap" onclick="toggleMapTile()" title="위성 지도 / 지형 지도 전환">
       <span>🗺️</span>
       <span class="tool-btn-text" id="mapToggleTitle">지형 지도</span>
     </button>
+  </div>
+
+  <!-- 거리 측정 안내 HUD 바 -->
+  <div class="measure-hud" id="measureHud">
+    <span id="measureHudText">📏 지도를 클릭하여 지점 간 거리를 측정하세요</span>
+    <div style="display: flex; align-items: center; gap: 6px;">
+      <button class="measure-reset-btn" onclick="resetMeasurePoints()">초기화</button>
+      <button class="measure-close-btn" onclick="toggleMeasureDistance()">&times;</button>
+    </div>
   </div>
 
   <!-- 지명 상세 정보 카드 -->
@@ -549,19 +657,121 @@
       }
     };
 
-    // 지도의 다른 곳(빈 공간) 클릭 시 바로 족보로 복귀
+    // 4-2. 거리 측정 (Distance Measurement) 시스템
+    let isMeasuringDistance = false;
+    let measurePoints = [];
+    let measureLine = null;
+    const measureLayer = L.layerGroup().addTo(map);
+
+    window.toggleMeasureDistance = function() {
+      isMeasuringDistance = !isMeasuringDistance;
+      const btn = document.getElementById('btnMeasureDistance');
+      const hud = document.getElementById('measureHud');
+      const hudText = document.getElementById('measureHudText');
+
+      if (isMeasuringDistance) {
+        if (btn) btn.classList.add('active-tool');
+        if (hud) hud.style.display = 'flex';
+        if (hudText) hudText.innerText = '📏 지도를 클릭/터치하여 거리를 측정하세요';
+        map.getContainer().style.cursor = 'crosshair';
+        showToast('📏 거리 측정 모드: 지도 위의 지점들을 터치하여 연결하세요.');
+      } else {
+        if (btn) btn.classList.remove('active-tool');
+        if (hud) hud.style.display = 'none';
+        map.getContainer().style.cursor = '';
+        resetMeasurePoints();
+      }
+    };
+
+    window.resetMeasurePoints = function() {
+      measurePoints = [];
+      measureLayer.clearLayers();
+      measureLine = null;
+      const hudText = document.getElementById('measureHudText');
+      if (hudText && isMeasuringDistance) {
+        hudText.innerText = '📏 지도를 클릭/터치하여 거리를 측정하세요';
+      }
+    };
+
+    function handleMeasureMapClick(e) {
+      const latlng = e.latlng;
+      measurePoints.push(latlng);
+
+      const pointIdx = measurePoints.length;
+      let totalDist = 0;
+      let segmentDist = 0;
+
+      for (let i = 1; i < measurePoints.length; i++) {
+        const d = measurePoints[i - 1].distanceTo(measurePoints[i]);
+        totalDist += d;
+        if (i === measurePoints.length - 1) {
+          segmentDist = d;
+        }
+      }
+
+      const formatDist = (meters) => {
+        if (meters < 1000) return `${Math.round(meters)} m`;
+        return `${(meters / 1000).toFixed(2)} km`;
+      };
+
+      // 마커 생성 (번호 배지)
+      const pinHtml = `<div class="measure-pin">${pointIdx}</div>`;
+      const pinIcon = L.divIcon({ className: '', html: pinHtml, iconSize: [22, 22], iconAnchor: [11, 11] });
+      const marker = L.marker(latlng, { icon: pinIcon }).addTo(measureLayer);
+
+      // 마커 위 툴팁 (구간 및 누적 총 거리)
+      let tooltipText = pointIdx === 1 ? '📍 시작점' : `구간: ${formatDist(segmentDist)} (총 ${formatDist(totalDist)})`;
+      marker.bindTooltip(tooltipText, {
+        permanent: true,
+        direction: 'top',
+        className: 'measure-tooltip',
+        offset: [0, -12]
+      }).openTooltip();
+
+      // 폴리라인 업데이트
+      if (measurePoints.length >= 2) {
+        if (!measureLine) {
+          measureLine = L.polyline(measurePoints, {
+            color: '#2563eb',
+            weight: 4,
+            opacity: 0.95,
+            dashArray: '6, 8',
+            lineCap: 'round',
+            lineJoin: 'round'
+          }).addTo(measureLayer);
+        } else {
+          measureLine.setLatLngs(measurePoints);
+        }
+      }
+
+      const hudText = document.getElementById('measureHudText');
+      if (hudText) {
+        if (pointIdx === 1) {
+          hudText.innerText = '📍 시작점 지정됨 → 다음 지점을 클릭하세요';
+        } else {
+          hudText.innerText = `📏 총 거리: ${formatDist(totalDist)} (점 ${pointIdx}개 연결)`;
+        }
+      }
+    }
+
+    // 지도의 다른 곳(빈 공간) 클릭 시 처리
     map.on('click', (e) => {
+      if (isMeasuringDistance) {
+        handleMeasureMapClick(e);
+        return;
+      }
       closeDetailCard();
       if (window.parent && window.parent !== window) {
         window.parent.postMessage({ action: 'dismissMap' }, '*');
       }
     });
 
-    // 검색창, 툴바, 상세 카드 클릭 시 지도 클릭 전파 방지
+    // 검색창, 툴바, HUD, 상세 카드 클릭 시 지도 클릭 전파 방지
     setTimeout(() => {
-      document.querySelectorAll('.search-container, .top-toolbar, .detail-card').forEach(el => {
+      document.querySelectorAll('.search-container, .top-toolbar, .measure-hud, .detail-card').forEach(el => {
         el.addEventListener('click', (e) => e.stopPropagation());
         el.addEventListener('mousedown', (e) => e.stopPropagation());
+        el.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
       });
     }, 100);
 
