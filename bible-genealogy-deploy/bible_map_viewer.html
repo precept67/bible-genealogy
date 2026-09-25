@@ -505,14 +505,16 @@
       zoom: 8
     });
 
-    // 4. 지도 타일 레이어 (위성 vs 지형 - 투명도 80% 적용)
-    const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    // 4. 지도 타일 레이어 (위성 vs 지형 - Esri 상용 정식 라이선스 API Key 적용)
+    const ESRI_API_KEY = 'AAPTaWP2gALsf0PYaEDiXUShhuQ..1nPKhKmNsZbuYwrAq7S027kpt68n_rfaH78lDW29aQ0qfTYtG6VagYIwuHgmtNjq66_eWZwaokF9_iVvKbwJdZpp8u4k4fS0ZQUrI8OPUD8O9GfqS2TXPkscZpWz4CHKhgDnbF_93RVSgYZkGVSHMkO9HlWtx3X1a7QfuBRzxhIJiToGDuQU8TkDU3abeen5zGjJk6xYWqsCBglEMtzimqqlN84dErAOEIXv2Iyf3j9avCIzmPJwpHZWSJo.AT1_A1aSjAtL';
+
+    const satelliteLayer = L.tileLayer(`https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}?token=${ESRI_API_KEY}`, {
       maxZoom: 18,
       opacity: 0.8,
       attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
     });
 
-    const topoLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+    const topoLayer = L.tileLayer(`https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}?token=${ESRI_API_KEY}`, {
       maxZoom: 18,
       opacity: 0.8,
       attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community'
