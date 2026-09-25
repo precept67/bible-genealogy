@@ -5,8 +5,8 @@
   "main": "index.html",
   "scripts": {
     "tauri": "tauri",
-    "build": "mkdir -p dist && cp index.html style_v16_v2.css app_v16_v2.js data_v16_v2.js database.json bible_map_background.svg bible_kmz_data.js app_logo.png dist/ && npx tauri build --target universal-apple-darwin --config '{\"tauri\": {\"updater\": {\"active\": false}, \"bundle\": {\"targets\": [\"app\"]}}}'",
-    "build:mobile": "mkdir -p dist && cp index.html style_v16_v2.css app_v16_v2.js data_v16_v2.js database.json bible_map_background.svg bible_kmz_data.js app_logo.png dist/ && cp -r dist/* ios/App/App/public/",
+    "build": "mkdir -p dist && cp -r index.html style_v16_v2.css app_v16_v2.js data_v16_v2.js database.json bible_map_viewer.html assets dist/ && npx tauri build --target universal-apple-darwin --config '{\"tauri\": {\"updater\": {\"active\": false}, \"bundle\": {\"targets\": [\"app\"]}}}'",
+    "build:mobile": "mkdir -p dist && cp -r index.html style_v16_v2.css app_v16_v2.js data_v16_v2.js database.json bible_map_viewer.html assets dist/ && cp -r dist/* ios/App/App/public/ && cp -r dist/* android/app/src/main/assets/public/",
     "cap:open-ios": "npx cap open ios",
     "cap:open-android": "npx cap open android"
   },
