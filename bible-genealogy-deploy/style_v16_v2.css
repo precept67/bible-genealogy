@@ -805,7 +805,12 @@ body.platform-android-phone #study-panel.expanded {
   max-height: 85vh !important;
   z-index: 35005 !important;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
-  border-radius: 16px !important;
+/* 스마트폰 플랫폼에서는 지도가 열렸을 때 상세창이 지도 뒤에 위치 */
+html.platform-iphone #study-panel:not(.expanded),
+body.platform-iphone #study-panel:not(.expanded),
+html.platform-android-phone #study-panel:not(.expanded),
+body.platform-android-phone #study-panel:not(.expanded) {
+  z-index: 15000 !important;
 }
 
 #study-panel.expanded .panel-header,
@@ -1145,7 +1150,7 @@ body.platform-macos #study-panel.expanded .note-textarea {
     border: none;
     border-left: 1px solid var(--border-panel);
     box-shadow: -5px 0 25px rgba(0, 0, 0, 0.15);
-    z-index: 35000 !important;
+    z-index: 15000 !important; /* 스마트폰에서는 지도가 열릴 때 상세창이 지도 뒤에 위치 */
   }
   #study-panel.active {
     right: 0;
@@ -4498,7 +4503,7 @@ body.platform-macos #study-panel.expanded {
     height: 100% !important;
     max-height: 100vh !important;
     border-radius: 16px 0px 0px 16px !important; /* 좌측 드러나는 엣지 라인만 부드럽게 둥글게 가공 */
-    z-index: 35000 !important; /* 상단 플로팅 헤더, 환경설정, 지도 오버레이(20000)를 완벽하게 덮는 최상위 레이어 */
+    z-index: 15000 !important; /* 폰 가로모드에서도 지도가 열릴 때 상세창이 지도 뒤에 위치 */
   }
   #study-panel.active {
     right: 0px !important;
