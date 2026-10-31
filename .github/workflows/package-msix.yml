@@ -56,7 +56,7 @@ jobs:
           Write-Host "Selected Main Executable: $mainExe"
 
           # Prepare Assets folder
-          $assetsDir = Join-Path $payloadDir "Assets"
+          $assetsDir = "$payloadDir\Assets"
           New-Item -ItemType Directory -Force -Path $assetsDir | Out-Null
 
           # Copy icons from source
@@ -73,32 +73,33 @@ jobs:
               }
           }
 
-          # Load System.Drawing for guaranteed icon generation if any is missing
+          # Load System.Drawing for icon generation
           Add-Type -AssemblyName System.Drawing
           function Ensure-Icon($fileName, $width, $height) {
-              $destPath = Join-Path $assetsDir $fileName
+              $destPath = "$assetsDir\$fileName"
               if (-not (Test-Path $destPath)) {
                   Write-Host "Generating missing icon: $fileName ($width x $height)"
                   $sourceImgPath = ""
                   $candidates = @(
-                      Join-Path $assetsDir "128x128.png",
-                      Join-Path $assetsDir "icon.png",
-                      "$env:GITHUB_WORKSPACE\app_logo.png",
-                      "$env:GITHUB_WORKSPACE\favicon.png"
+                      "$assetsDir\128x128.png",
+                      "$assetsDir\Square150x150Logo.png",
+                      "$assetsDir\icon.png",
+                      "$assetsDir\32x32.png"
                   )
                   foreach ($c in $candidates) {
                       if (Test-Path $c) { $sourceImgPath = $c; break }
                   }
                   if ($sourceImgPath) {
                       $src = [System.Drawing.Image]::FromFile($sourceImgPath)
-                      $bmp = New-Object System.Drawing.Bitmap($width, $height)
+                      $bmp = New-Object System.Drawing.Bitmap([int]$width, [int]$height)
                       $g = [System.Drawing.Graphics]::FromImage($bmp)
                       $g.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
-                      $g.DrawImage($src, 0, 0, $width, $height)
+                      $g.DrawImage($src, 0, 0, [int]$width, [int]$height)
                       $bmp.Save($destPath, [System.Drawing.Imaging.ImageFormat]::Png)
                       $g.Dispose()
                       $bmp.Dispose()
                       $src.Dispose()
+                      Write-Host "Generated $fileName successfully."
                   }
               }
           }
@@ -139,9 +140,7 @@ jobs:
               '    <rescap:Capability Name="runFullTrust" />',
               '  </Capabilities>',
               '  <Applications>',
-              '    <Application Id="App"',
-              "      Executable=`"$mainExe`"",
-              '      EntryPoint="Windows.FullTrustApplication">',
+              "    <Application Id=`"App`" Executable=`"$mainExe`" EntryPoint=`"Windows.FullTrustApplication`">",
               '      <uap:VisualElements',
               '        DisplayName="Open Bible Genealogy Story"',
               '        Description="Open Bible Genealogy Story"',
@@ -167,7 +166,7 @@ jobs:
 
           $outputMsix = "C:\OpenBibleGenealogyStory.msix"
           # Run pack with full schema & resource validation
-          & $makeAppx pack /d "C:\msix_payload" /p $outputMsix /v
+          & $makeAppx pack /d "C:\msix_payload" /p $outputMsix /v /o
 
           if (-not (Test-Path $outputMsix)) {
               throw "Failed to create MSIX package!"
