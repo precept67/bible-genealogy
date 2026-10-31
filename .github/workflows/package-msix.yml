@@ -20,9 +20,9 @@ jobs:
           Write-Host "Looking for setup.exe..."
           $setupExe = ""
           if (Test-Path "setup.exe") {
-              $setupExe = "setup.exe"
+              $setupExe = (Get-Item "setup.exe").FullName
           } elseif (Test-Path "releases/_1.1.3_x64-setup.exe") {
-              $setupExe = "releases/_1.1.3_x64-setup.exe"
+              $setupExe = (Get-Item "releases/_1.1.3_x64-setup.exe").FullName
           } else {
               $found = Get-ChildItem -Filter "*.exe" -Recurse | Where-Object { $_.Name -like "*setup*.exe" -or $_.Name -like "*Setup*.exe" } | Select-Object -First 1
               if ($found) { $setupExe = $found.FullName }
@@ -35,6 +35,7 @@ jobs:
 
           # Create payload folder
           $payloadDir = "C:\msix_payload"
+          if (Test-Path $payloadDir) { Remove-Item -Recurse -Force $payloadDir }
           New-Item -ItemType Directory -Force -Path $payloadDir | Out-Null
 
           # Extract with 7-Zip
@@ -46,30 +47,71 @@ jobs:
           if (Test-Path "$payloadDir\uninstall.exe") { Remove-Item -Force "$payloadDir\uninstall.exe" }
 
           $exes = Get-ChildItem -Path $payloadDir -Filter "*.exe"
-          Write-Host "Found executables:"
+          Write-Host "Found executables in payload:"
           $exes | ForEach-Object { Write-Host " - $($_.Name)" }
 
-          $mainExe = ($exes | Where-Object { $_.Name -notlike "*uninstall*" } | Select-Object -First 1).Name
+          $mainExeObj = $exes | Where-Object { $_.Name -notlike "*uninstall*" } | Select-Object -First 1
+          if (-not $mainExeObj) { throw "No main executable found in payload!" }
+          $mainExe = $mainExeObj.Name
           Write-Host "Selected Main Executable: $mainExe"
 
           # Prepare Assets folder
           $assetsDir = Join-Path $payloadDir "Assets"
           New-Item -ItemType Directory -Force -Path $assetsDir | Out-Null
 
-          if (Test-Path "src-tauri\icons") {
-              Copy-Item "src-tauri\icons\*" -Destination $assetsDir -Recurse -Force
+          # Copy icons from source
+          $possibleIconDirs = @(
+              "$env:GITHUB_WORKSPACE\src-tauri\icons",
+              "src-tauri\icons",
+              "$env:GITHUB_WORKSPACE\icons",
+              "icons"
+          )
+          foreach ($dir in $possibleIconDirs) {
+              if (Test-Path $dir) {
+                  Write-Host "Copying icons from $dir to $assetsDir"
+                  Copy-Item "$dir\*.png" -Destination $assetsDir -Force
+              }
           }
 
-          if (-not (Test-Path "$assetsDir\StoreLogo.png")) {
-              if (Test-Path "$assetsDir\128x128.png") { Copy-Item "$assetsDir\128x128.png" "$assetsDir\StoreLogo.png" }
-          }
-          if (-not (Test-Path "$assetsDir\Square150x150Logo.png")) {
-              if (Test-Path "$assetsDir\128x128.png") { Copy-Item "$assetsDir\128x128.png" "$assetsDir\Square150x150Logo.png" }
-          }
-          if (-not (Test-Path "$assetsDir\Square44x44Logo.png")) {
-              if (Test-Path "$assetsDir\32x32.png") { Copy-Item "$assetsDir\32x32.png" "$assetsDir\Square44x44Logo.png" }
+          # Load System.Drawing for guaranteed icon generation if any is missing
+          Add-Type -AssemblyName System.Drawing
+          function Ensure-Icon($fileName, $width, $height) {
+              $destPath = Join-Path $assetsDir $fileName
+              if (-not (Test-Path $destPath)) {
+                  Write-Host "Generating missing icon: $fileName ($width x $height)"
+                  $sourceImgPath = ""
+                  $candidates = @(
+                      Join-Path $assetsDir "128x128.png",
+                      Join-Path $assetsDir "icon.png",
+                      "$env:GITHUB_WORKSPACE\app_logo.png",
+                      "$env:GITHUB_WORKSPACE\favicon.png"
+                  )
+                  foreach ($c in $candidates) {
+                      if (Test-Path $c) { $sourceImgPath = $c; break }
+                  }
+                  if ($sourceImgPath) {
+                      $src = [System.Drawing.Image]::FromFile($sourceImgPath)
+                      $bmp = New-Object System.Drawing.Bitmap($width, $height)
+                      $g = [System.Drawing.Graphics]::FromImage($bmp)
+                      $g.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
+                      $g.DrawImage($src, 0, 0, $width, $height)
+                      $bmp.Save($destPath, [System.Drawing.Imaging.ImageFormat]::Png)
+                      $g.Dispose()
+                      $bmp.Dispose()
+                      $src.Dispose()
+                  }
+              }
           }
 
+          Ensure-Icon "StoreLogo.png" 50 50
+          Ensure-Icon "Square44x44Logo.png" 44 44
+          Ensure-Icon "Square150x150Logo.png" 150 150
+          Ensure-Icon "Wide310x150Logo.png" 310 150
+
+          Write-Host "Listing Assets folder content:"
+          Get-ChildItem $assetsDir | ForEach-Object { Write-Host " - $($_.Name) ($($_.Length) bytes)" }
+
+          # Generate AppxManifest.xml strictly matching Microsoft Partner Center requirements
           $manifestLines = @(
               '<?xml version="1.0" encoding="utf-8"?>',
               '<Package',
@@ -86,6 +128,10 @@ jobs:
               '    <PublisherDisplayName>SANGHYUN KIM</PublisherDisplayName>',
               '    <Logo>Assets\StoreLogo.png</Logo>',
               '  </Properties>',
+              '  <Resources>',
+              '    <Resource Language="ko-KR" />',
+              '    <Resource Language="en-US" />',
+              '  </Resources>',
               '  <Dependencies>',
               '    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.22621.0" />',
               '  </Dependencies>',
@@ -102,28 +148,43 @@ jobs:
               '        BackgroundColor="transparent"',
               '        Square150x150Logo="Assets\Square150x150Logo.png"',
               '        Square44x44Logo="Assets\Square44x44Logo.png">',
+              '        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" />',
               '      </uap:VisualElements>',
               '    </Application>',
               '  </Applications>',
               '</Package>'
           )
-          $manifestLines | Out-File -FilePath "$payloadDir\AppxManifest.xml" -Encoding utf8
+          
+          $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+          [System.IO.File]::WriteAllLines("$payloadDir\AppxManifest.xml", $manifestLines, $utf8NoBom)
+          Write-Host "AppxManifest.xml created successfully (UTF-8 without BOM)."
 
-      - name: Build MSIX with MakeAppx
+      - name: Build MSIX with MakeAppx & Sign
         shell: powershell
         run: |
           $makeAppx = (Get-ChildItem -Path "C:\Program Files (x86)\Windows Kits\10\bin" -Filter "makeappx.exe" -Recurse | Where-Object { $_.FullName -like "*x64*" } | Select-Object -First 1).FullName
-          $outputMsix = "C:\OpenBibleGenealogyStory.msix"
-          & $makeAppx pack /d "C:\msix_payload" /p $outputMsix /nv /v
+          Write-Host "Using MakeAppx: $makeAppx"
 
+          $outputMsix = "C:\OpenBibleGenealogyStory.msix"
+          # Run pack with full schema & resource validation
+          & $makeAppx pack /d "C:\msix_payload" /p $outputMsix /v
+
+          if (-not (Test-Path $outputMsix)) {
+              throw "Failed to create MSIX package!"
+          }
+          Write-Host "MSIX Package created successfully at $outputMsix"
+
+          Write-Host "Creating matching test certificate..."
           $cert = New-SelfSignedCertificate -Type Custom -Subject "CN=8F713185-F19D-4EBC-B893-639B07A18161" -KeyUsage DigitalSignature -FriendlyName "StoreCert" -CertStoreLocation "Cert:\CurrentUser\My"
           $password = ConvertTo-SecureString -String "Pass12345!" -Force -AsPlainText
           Export-PfxCertificate -Cert $cert -FilePath "C:\cert.pfx" -Password $password | Out-Null
 
           $signTool = (Get-ChildItem -Path "C:\Program Files (x86)\Windows Kits\10\bin" -Filter "signtool.exe" -Recurse | Where-Object { $_.FullName -like "*x64*" } | Select-Object -First 1).FullName
+          Write-Host "Signing package with SignTool: $signTool"
           & $signTool sign /fd SHA256 /a /f "C:\cert.pfx" /p "Pass12345!" $outputMsix
 
           Copy-Item $outputMsix -Destination "OpenBibleGenealogyStory.msix" -Force
+          Write-Host "Package ready for artifact upload."
 
       - name: Upload MSIX Artifact
         uses: actions/upload-artifact@v4
