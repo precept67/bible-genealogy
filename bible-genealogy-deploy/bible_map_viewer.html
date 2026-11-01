@@ -10,17 +10,21 @@
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
   <style>
     body, html {
-      width: 100%;
-      height: 100%;
+      width: 100vw;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
       overflow: hidden;
       font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
-      background: transparent !important;
+      background: #0f172a !important;
     }
     
     #map {
-      width: 100%;
-      height: 100%;
-      background: rgba(15, 23, 42, 0.65) !important;
+      width: 100vw;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      background: #0f172a !important;
       -webkit-transform: translateZ(0);
       transform: translateZ(0);
       -webkit-backface-visibility: hidden;
@@ -48,7 +52,7 @@
     }
 
     .leaflet-tile-pane {
-      opacity: 0.70 !important; /* 30% 투명도 (지도가 30% 투명하게 보여 족보와 자연스럽게 어우러짐) */
+      opacity: 1 !important; /* 100% 완전 불투명 선명한 전체화면 지도 */
     }
     .custom-pin.selected-pin {
       transform: scale(1.32) !important;
@@ -74,45 +78,57 @@
     
     
 
-    /* 상단 슬림 검색창 & 툴바 */
     .search-container {
       position: relative;
-      width: 260px;
-      max-width: calc(100vw - 140px);
+      width: 380px;
+      max-width: calc(100vw - 360px);
+      height: 52px !important;
+      display: flex;
+      align-items: center;
     }
     .search-box {
       width: 100%;
-      height: 34px;
-      padding: 6px 32px 6px 14px;
-      font-size: 13.5px;
+      height: 52px !important;
+      min-height: 52px !important;
+      box-sizing: border-box !important;
+      padding: 0 42px 0 18px !important;
+      font-family: inherit;
+      font-size: 23px !important; /* 23픽셀 글꼴 */
       font-weight: 500;
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      border-radius: 10px;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28);
+      line-height: 50px !important;
+      border: 1px solid rgba(0, 0, 0, 0.15);
+      border-radius: 26px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
       outline: none;
       background: rgba(255, 255, 255, 0.96);
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
       transition: all 0.2s ease;
       color: #0f172a;
+    }
+    .search-box::placeholder {
+      font-size: 23px;
+      color: #94a3b8;
+      font-weight: 400;
     }
     .search-box:focus {
       border-color: #2563eb;
       background: #ffffff;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25), 0 6px 18px rgba(0, 0, 0, 0.32);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25), 0 6px 18px rgba(0, 0, 0, 0.25);
     }
     .search-clear-btn {
       position: absolute;
-      right: 8px;
+      right: 12px;
       top: 50%;
       transform: translateY(-50%);
-      background: #e2e8f0;
+      background: #cbd5e1;
       border: none;
       border-radius: 50%;
-      width: 18px;
-      height: 18px;
-      font-size: 11px;
+      width: 22px;
+      height: 22px;
+      font-size: 15px;
       font-weight: 700;
-      color: #64748b;
+      color: #334155;
       cursor: pointer;
       display: none;
       align-items: center;
@@ -120,27 +136,28 @@
       line-height: 1;
     }
     .search-clear-btn:hover {
-      background: #cbd5e1;
+      background: #94a3b8;
       color: #0f172a;
     }
     .search-results {
       position: absolute;
-      top: 40px;
+      top: calc(100% + 6px);
       left: 0;
       right: 0;
       background: rgba(255, 255, 255, 0.98);
       backdrop-filter: blur(14px);
-      border-radius: 12px;
+      -webkit-backdrop-filter: blur(14px);
+      border-radius: 14px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-      max-height: 320px;
+      max-height: 340px;
       overflow-y: auto;
       display: none;
       z-index: 2000;
-      border: 1px solid rgba(0, 0, 0, 0.08);
+      border: 1px solid rgba(0, 0, 0, 0.12);
     }
     .search-count-header {
-      padding: 7px 12px;
-      font-size: 11px;
+      padding: 8px 14px;
+      font-size: 15px;
       font-weight: 700;
       color: #64748b;
       background: #f8fafc;
@@ -149,10 +166,10 @@
       justify-content: space-between;
     }
     .search-item {
-      padding: 9px 12px;
+      padding: 10px 14px;
       cursor: pointer;
       border-bottom: 1px solid #f1f5f9;
-      font-size: 13px;
+      font-size: 19px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -167,38 +184,56 @@
       text-decoration: underline;
     }
 
-    /* 우측 상단 툴바 */
+    /* 우측 상단 툴바 (족보 메뉴바와 동일하게 top: 44px 및 높이 52px 완전 일치) */
     .top-toolbar {
       position: absolute;
-      top: 14px;
+      top: 44px;
       right: 14px;
+      height: 52px !important;
+      min-height: 52px !important;
+      padding: 0 !important;
       z-index: 1500;
       display: flex;
       align-items: center;
       gap: 8px;
+      box-sizing: border-box !important;
     }
     .tool-btn {
-      height: 34px;
-      padding: 0 12px;
+      height: 52px !important;
+      min-height: 52px !important;
+      box-sizing: border-box !important;
+      padding: 0 18px !important;
       display: inline-flex;
       align-items: center;
-      gap: 5px;
-      border: 1px solid rgba(0, 0, 0, 0.1);
-      border-radius: 18px;
+      justify-content: center;
+      gap: 8px;
+      border: 1px solid rgba(0, 0, 0, 0.15);
+      border-radius: 26px;
       background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
       color: #1e293b;
-      font-size: 12px;
-      font-weight: 700;
+      font-family: inherit;
+      font-size: 23px !important; /* 23픽셀 글꼴 */
+      font-weight: 500;
+      line-height: 1.25 !important;
       cursor: pointer;
-      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
       transition: all 0.15s ease;
       white-space: nowrap;
+    }
+    .tool-btn span {
+      font-size: 23px !important;
+      line-height: 1.25 !important;
+    }
+    .tool-btn-text {
+      font-size: 23px !important;
+      line-height: 1.25 !important;
     }
     .tool-btn:hover {
       background: #f8fafc;
       transform: translateY(-1px);
-      box-shadow: 0 5px 16px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
     }
     .tool-btn:active {
       transform: translateY(0);
@@ -238,7 +273,7 @@
     }
     .measure-hud {
       position: absolute;
-      top: 56px;
+      top: 104px;
       right: 14px;
       z-index: 1500;
       background: rgba(15, 23, 42, 0.92);
@@ -283,6 +318,34 @@
       color: #ef4444;
     }
 
+    /* 지도 저작권(Attribution) 표기 스타일 (은은하고 세련된 반투명 다크 글래스) */
+    .leaflet-control-attribution {
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      z-index: 9999 !important;
+      background: rgba(15, 23, 42, 0.82) !important;
+      backdrop-filter: blur(8px) !important;
+      color: rgba(255, 255, 255, 0.75) !important;
+      font-size: 10.5px !important;
+      padding: 4px 10px !important;
+      border-top-left-radius: 6px !important;
+      border: 1px solid rgba(255, 255, 255, 0.15) !important;
+      border-bottom: none !important;
+      border-right: none !important;
+      max-width: calc(100vw - 20px);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .leaflet-control-attribution a {
+      color: #93c5fd !important;
+      text-decoration: none !important;
+    }
+    .leaflet-control-attribution a:hover {
+      text-decoration: underline !important;
+    }
+
     /* 지도 마커 및 라벨 스타일 */
     .custom-pin {
       display: flex;
@@ -291,23 +354,80 @@
       width: 28px;
       height: 28px;
       border-radius: 50%;
-      background: white;
+      background: #ffffff;
       border: 2px solid #2563eb;
       box-shadow: 0 2px 8px rgba(0,0,0,0.35);
       font-size: 13px;
       cursor: pointer;
-      transition: transform 0.15s ease;
+      transition: transform 0.15s ease, background-color 0.2s ease, border-color 0.2s ease;
     }
     .custom-pin:hover {
       transform: scale(1.22);
       z-index: 9999 !important;
     }
-    .pin-city { border-color: #2563eb; color: #1e40af; }
-    .pin-mountain { border-color: #059669; color: #065f46; }
-    .pin-river { border-color: #0284c7; color: #075985; }
-    .pin-sea { border-color: #0369a1; color: #0c4a6e; }
-    .pin-desert { border-color: #d97706; color: #92400e; }
-    .pin-region { border-color: #7c3aed; color: #5b21b6; }
+    
+    /* 🏛️ 지명 / 성읍 / 도시 (City / Place): 선명하고 강렬한 로열 코발트 블루 */
+    .pin-city {
+      background: #2563eb !important; /* 선명한 코발트 블루 */
+      border: 2px solid #ffffff !important;
+      color: #ffffff !important;
+      box-shadow: 0 2px 10px rgba(37, 99, 235, 0.75) !important;
+    }
+    
+    /* ⛰️ 산 (Mountain): 선명하고 뚜렷한 에메랄드 그린 */
+    .pin-mountain {
+      background: #16a34a !important; /* 선명한 에메랄드 그린 */
+      border: 2px solid #ffffff !important;
+      color: #ffffff !important;
+      box-shadow: 0 2px 10px rgba(22, 163, 74, 0.75) !important;
+    }
+    
+    /* 🌊 강 / 수역 (River / Water): 시원하고 선명한 아쿠아 스카이블루 */
+    .pin-river, .pin-water {
+      background: #0284c7 !important; /* 선명한 스카이블루 */
+      border: 2px solid #ffffff !important;
+      color: #ffffff !important;
+      box-shadow: 0 2px 10px rgba(2, 132, 199, 0.75) !important;
+    }
+    
+    /* 🌊 바다 (Sea): 깊고 선명한 딥 틸 / 청록 */
+    .pin-sea {
+      background: #0f766e !important; /* 선명한 딥 틸 */
+      border: 2px solid #ffffff !important;
+      color: #ffffff !important;
+      box-shadow: 0 2px 10px rgba(15, 118, 110, 0.75) !important;
+    }
+    
+    /* 🌐 지역 / 국가 / 영토 (Region / Territory): 선명하고 화사한 로열 퍼플 */
+    .pin-region {
+      background: #9333ea !important; /* 선명한 로열 퍼플 */
+      border: 2px solid #ffffff !important;
+      color: #ffffff !important;
+      box-shadow: 0 2px 10px rgba(147, 51, 234, 0.75) !important;
+    }
+    
+    /* 🏜️ 광야 / 사막 (Desert): 선명하고 강렬한 파이어 앰버 오렌지 */
+    .pin-desert {
+      background: #ea580c !important; /* 선명한 앰버 오렌지 */
+      border: 2px solid #ffffff !important;
+      color: #ffffff !important;
+      box-shadow: 0 2px 10px rgba(234, 88, 12, 0.75) !important;
+    }
+    
+    /* 검색 결과 아이콘 배지 스타일 */
+    .search-type-icon-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      font-size: 13px;
+      margin-right: 6px;
+      border: 1.5px solid #ffffff;
+      vertical-align: middle;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+    }
 
     .marker-label {
       background: rgba(15, 23, 42, 0.88);
@@ -323,17 +443,7 @@
       pointer-events: none;
     }
 
-    
-    
-    .leaflet-control-attribution {
-      display: none !important;
-    }
 
-
-    .leaflet-control-attribution a {
-      color: #93c5fd !important;
-      text-decoration: underline !important;
-    }
 
     /* 선택 마커 펄스 애니메이션 */
     .pulse-ring {
@@ -483,30 +593,40 @@
     /* 모바일 및 태블릿(아이폰, 아이패드) 상단 툴바 최적화 */
     @media (max-width: 860px) {
       .top-toolbar {
-        top: max(10px, env(safe-area-inset-top));
+        top: max(44px, calc(env(safe-area-inset-top) + 20px));
         left: max(10px, env(safe-area-inset-left));
         right: max(10px, env(safe-area-inset-right));
         display: flex;
         align-items: center;
         gap: 6px;
+        height: 52px !important;
+        min-height: 52px !important;
       }
       .search-container {
         flex: 1;
         min-width: 130px;
         width: auto;
         max-width: none;
+        height: 52px !important;
       }
       .search-box {
         width: 100%;
-        padding: 6px 28px 6px 12px;
-        font-size: 13px;
+        height: 52px !important;
+        min-height: 52px !important;
+        padding: 0 34px 0 14px !important;
+        font-size: 19px !important;
+        border-radius: 26px;
       }
       .tool-btn {
         flex-shrink: 0;
-        padding: 0 10px;
+        height: 52px !important;
+        min-height: 52px !important;
+        padding: 0 12px !important;
+        font-size: 19px !important;
+        border-radius: 26px;
       }
       .measure-hud {
-        top: max(50px, calc(env(safe-area-inset-top) + 42px));
+        top: max(104px, calc(env(safe-area-inset-top) + 76px));
         left: max(10px, env(safe-area-inset-left));
         right: max(10px, env(safe-area-inset-right));
         justify-content: space-between;
@@ -518,7 +638,7 @@
         display: none;
       }
       .tool-btn {
-        padding: 0 9px;
+        padding: 0 10px !important;
       }
     }
   </style>
@@ -528,7 +648,7 @@
   <!-- 지도 컨테이너 -->
   <div id="map"></div>
 
-  <!-- 상단 툴바 (검색창 + 거리측정 버튼 + 지형지도 전환 버튼) -->
+  <!-- 상단 툴바 (검색창 + 거리측정 버튼 + 지형지도 전환 버튼 + 지도 닫기 버튼) -->
   <div class="top-toolbar">
     <div class="search-container">
       <div style="position: relative;">
@@ -544,6 +664,10 @@
     <button class="tool-btn" id="btnToggleMap" onclick="toggleMapTile()" title="위성 지도 / 지형 지도 전환">
       <span>🗺️</span>
       <span class="tool-btn-text" id="mapToggleTitle">지형 지도</span>
+    </button>
+    <button class="tool-btn" id="btnCloseMap" onclick="closeMapViewer()" title="지도 닫기 (족보로 이동)">
+      <span>✕</span>
+      <span class="tool-btn-text">닫기</span>
     </button>
   </div>
 
@@ -587,8 +711,18 @@
   <!-- 토스트 알림 -->
   <div class="toast" id="toast"></div>
 
-  <!-- Leaflet JS -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- Leaflet JS (Local bundle with fallback) -->
+  <script src="assets/leaflet/leaflet.js"></script>
+  <script>
+    if (typeof L === 'undefined') {
+      document.write('<script src="leaflet/leaflet.js"><\/script>');
+    }
+  </script>
+  <script>
+    if (typeof L === 'undefined') {
+      document.write('<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"><\/script>');
+    }
+  </script>
 
   <!-- 뷰어 스크립트 -->
   <script>
@@ -597,10 +731,13 @@
 
     // 2. 분류 설정 및 별칭 사전
     const typeConfigs = {
-      mountain: { color: '#16a34a', labelClass: 'label-mountain', icon: '🏔️', nameKo: '산(山)' },
-      water: { color: '#0284c7', labelClass: 'label-water', icon: '🌊', nameKo: '강/바다' },
-      region: { color: '#9333ea', labelClass: 'label-region', icon: '🗺️', nameKo: '지역/광야' },
-      city: { color: '#dc2626', labelClass: 'label-city', icon: '📍', nameKo: '성읍/도시' }
+      mountain: { color: '#16a34a', pinClass: 'pin-mountain', labelClass: 'label-mountain', icon: '⛰️', nameKo: '산(山)' },
+      water: { color: '#0284c7', pinClass: 'pin-water', labelClass: 'label-water', icon: '🌊', nameKo: '강/바다' },
+      river: { color: '#0284c7', pinClass: 'pin-river', labelClass: 'label-water', icon: '🌊', nameKo: '강(江)' },
+      sea: { color: '#0f766e', pinClass: 'pin-sea', labelClass: 'label-water', icon: '🌊', nameKo: '바다' },
+      region: { color: '#9333ea', pinClass: 'pin-region', labelClass: 'label-region', icon: '🌐', nameKo: '지역/영토' },
+      desert: { color: '#ea580c', pinClass: 'pin-desert', labelClass: 'label-region', icon: '🏜️', nameKo: '광야/사막' },
+      city: { color: '#2563eb', pinClass: 'pin-city', labelClass: 'label-city', icon: '🏛️', nameKo: '성읍/도시' }
     };
     const searchAliases = {
       '사해': '염해', '지중해': '대해', '키프로스': '구브로', '크레타': '그레데',
@@ -611,7 +748,7 @@
     // 3. 지도 초기화 (이스라엘/팔레스타인 중심 뷰, 줌 버튼 삭제, 저작권 전체 표시)
     const map = L.map('map', {
       zoomControl: false,
-      attributionControl: false,
+      attributionControl: true,
       preferCanvas: true,
       fadeAnimation: true,
       zoomAnimation: true,
@@ -622,18 +759,16 @@
       zoom: 8
     });
 
-    // 4. 지도 타일 레이어 (위성 vs 지형 - Esri 상용 정식 라이선스 API Key 적용)
-    const ESRI_API_KEY = 'AAPTaWP2gALsf0PYaEDiXUShhuQ..1nPKhKmNsZbuYwrAq7S027kpt68n_rfaH78lDW29aQ0qfTYtG6VagYIwuHgmtNjq66_eWZwaokF9_iVvKbwJdZpp8u4k4fS0ZQUrI8OPUD8O9GfqS2TXPkscZpWz4CHKhgDnbF_93RVSgYZkGVSHMkO9HlWtx3X1a7QfuBRzxhIJiToGDuQU8TkDU3abeen5zGjJk6xYWqsCBglEMtzimqqlN84dErAOEIXv2Iyf3j9avCIzmPJwpHZWSJo.AT1_A1aSjAtL';
-
-    const satelliteLayer = L.tileLayer(`https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}?token=${ESRI_API_KEY}`, {
+    // 4. 지도 타일 레이어 (위성 vs 지형 - Esri 고해상도 전체화면 타일)
+    const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
       maxZoom: 18,
-      opacity: 0.8,
+      opacity: 1.0,
       attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
     });
 
-    const topoLayer = L.tileLayer(`https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}?token=${ESRI_API_KEY}`, {
+    const topoLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
       maxZoom: 18,
-      opacity: 0.8,
+      opacity: 1.0,
       attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community'
     });
 
@@ -754,16 +889,15 @@
       }
     }
 
-    // 지도의 다른 곳(빈 공간) 클릭 시 처리
+    // 지도의 다른 곳(빈 공간) 클릭 시 처리 (모달 닫기가 아닌 검색결과 닫기 및 마커 선택 해제)
     map.on('click', (e) => {
       if (isMeasuringDistance) {
         handleMeasureMapClick(e);
         return;
       }
       closeDetailCard();
-      if (window.parent && window.parent !== window) {
-        window.parent.postMessage({ action: 'dismissMap' }, '*');
-      }
+      const searchRes = document.getElementById('searchResults');
+      if (searchRes) searchRes.style.display = 'none';
     });
 
     // 검색창, 툴바, HUD, 상세 카드 클릭 시 지도 클릭 전파 방지
@@ -787,6 +921,7 @@
       const size = map.getSize();
       const width = size.x || window.innerWidth;
       const height = size.y || window.innerHeight;
+      if (width <= 20 || height <= 20) return;
       const isMobile = width <= 768;
 
       // 화면 면적 및 기기에 따른 최적 마커 수 계산 (모바일 10개 전후, 대화면 30~40개)
@@ -992,12 +1127,13 @@
       }
 
       searchClearBtn.style.display = 'flex';
-      const qClean = q.toLowerCase().replace(/\s+/g, '');
+      const qClean = q.toLowerCase().replace(/[\s\(\)\[\]\,\.\'\"]/g, '');
       const aliasTarget = searchAliases[qClean] || '';
+      const tokens = q.split(/[\s\(\)\[\]\,\.\'\"]+/).filter(t => t.length >= 2);
 
       const scored = [];
       placesData.forEach(p => {
-        const nameClean = p.name.toLowerCase().replace(/\s+/g, '');
+        const nameClean = p.name.toLowerCase().replace(/[\s\(\)\[\]\,\.\'\"]/g, '');
         let score = 0;
         let matchReason = '';
 
@@ -1006,7 +1142,13 @@
         } else if (nameClean.startsWith(qClean)) {
           score = 80;
         } else if (nameClean.includes(qClean)) {
+          score = 65;
+        } else if (qClean.includes(nameClean)) {
           score = 60;
+          matchReason = '[포함 일치]';
+        } else if (tokens.some(tok => nameClean.includes(tok.toLowerCase()) || tok.toLowerCase().includes(nameClean))) {
+          score = 55;
+          matchReason = '[핵심어 일치]';
         } else if (aliasTarget && nameClean.includes(aliasTarget)) {
           score = 50;
           matchReason = `[연관: ${aliasTarget}]`;
@@ -1046,8 +1188,8 @@
         const reasonHtml = p.matchReason ? `<span style="font-size:11px; margin-left:6px; color:#2563eb; font-weight:normal;">${p.matchReason}</span>` : '';
         return `
           <div class="search-item" id="search_item_${idx}" onmousedown="selectPlace('${p.id}')">
-            <div>
-              <span style="margin-right:4px">${cfg.icon}</span>
+            <div style="display:flex; align-items:center;">
+              <span class="search-type-icon-badge ${cfg.pinClass}">${cfg.icon}</span>
               <strong>${displayName}</strong>
               <span style="font-size:11px; margin-left:6px; color:#6b7280; font-weight:normal;">[${cfg.nameKo}]</span>
               ${reasonHtml}
@@ -1124,7 +1266,37 @@
     window.navigateToPlace = function(nameOrQuery) {
       if (!nameOrQuery) return;
       const target = nameOrQuery.trim();
-      const place = placesData.find(p => p.name === target || p.name.includes(target));
+      const targetClean = target.replace(/[\s·,・/()[\]]/g, '').toLowerCase();
+      const targetTokens = target.split(/[\s·,・/()[\]]+/).filter(t => t.length >= 2);
+
+      // 1) 정확 일치
+      let place = placesData.find(p => {
+        const nameClean = (p.name || '').replace(/[\s·,・/()[\]]/g, '').toLowerCase();
+        return nameClean === targetClean;
+      });
+
+      // 2) 양방향 포함 일치 (예: '애굽 고센 땅' -> '고센땅', '고센땅' -> '고센')
+      if (!place) {
+        place = placesData.find(p => {
+          const nameClean = (p.name || '').replace(/[\s·,・/()[\]]/g, '').toLowerCase();
+          return (nameClean.length >= 2 && targetClean.includes(nameClean)) ||
+                 (targetClean.length >= 2 && nameClean.includes(targetClean));
+        });
+      }
+
+      // 3) 토큰 분해 매칭 (예: '애굽', '고센' 등 핵심 명칭 분해 일치)
+      if (!place && targetTokens.length > 0) {
+        const sortedTokens = [...targetTokens].sort((a, b) => b.length - a.length);
+        for (const tok of sortedTokens) {
+          const tokClean = tok.toLowerCase();
+          place = placesData.find(p => {
+            const nameClean = (p.name || '').replace(/[\s·,・/()[\]]/g, '').toLowerCase();
+            return nameClean === tokClean || nameClean.includes(tokClean) || tokClean.includes(nameClean);
+          });
+          if (place) break;
+        }
+      }
+
       if (place) {
         showDetail(place);
         return true;
@@ -1135,16 +1307,53 @@
       }
     };
 
+    window.closeMapViewer = function() {
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage({ action: 'dismissMap' }, '*');
+      }
+    };
+
+    window.resetMapView = function() {
+      if (map) {
+        map.setView([31.7765, 35.2348], 8);
+        closeDetailCard();
+        updateMarkers();
+      }
+    };
+
     // iframe postMessage 수신
     window.addEventListener('message', (event) => {
       if (!event.data) return;
       const data = event.data;
       if (data.action === 'showPlace' && data.placeName) {
         window.navigateToPlace(data.placeName);
+        setTimeout(() => { if (map) map.invalidateSize(); }, 50);
       } else if (data.action === 'resetView') {
         window.resetMapView();
+      } else if (data.action === 'invalidateSize' || data.action === 'refreshMap') {
+        setTimeout(() => { if (map) { map.invalidateSize(); updateMarkers(); } }, 50);
+      } else if (data.action === 'modalClosed') {
+        closeDetailCard();
       }
     });
+
+    // 화면 표시 시점 및 뷰포트 변경 자동 감지 (display: none -> flex 전환 시 0x0 크기 방지)
+    if (window.ResizeObserver) {
+      const mapEl = document.getElementById('map');
+      const ro = new ResizeObserver(() => {
+        if (map && mapEl && mapEl.offsetWidth > 20 && mapEl.offsetHeight > 20) {
+          map.invalidateSize();
+          updateMarkers();
+        }
+      });
+      if (mapEl) ro.observe(mapEl);
+      if (document.body) ro.observe(document.body);
+    }
+
+    // WKWebView 렌더링 타이밍 보정 (초기 타일 로딩 보장)
+    setTimeout(() => { if (map) { map.invalidateSize(); updateMarkers(); } }, 100);
+    setTimeout(() => { if (map) { map.invalidateSize(); updateMarkers(); } }, 350);
+    setTimeout(() => { if (map) { map.invalidateSize(); updateMarkers(); } }, 800);
 
     function showToast(msg) {
       const t = document.getElementById('toast');

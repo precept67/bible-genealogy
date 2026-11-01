@@ -2,7 +2,7 @@
 :root {
   --font-family: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   
-  /* Light Mode Palette */
+  /* Light Mode Palette - Crisp High-Contrast White System */
   --bg-app: #f1f5f9;
   --bg-board: #ffffff;
   --bg-card-male: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
@@ -19,15 +19,65 @@
   --text-muted: #64748b;
   --text-accent: #2563eb;
   
-  --bg-panel: rgba(255, 255, 255, 0.60);
-  --border-panel: rgba(226, 232, 240, 0.8);
-  --shadow-panel: 0 10px 30px rgba(0, 0, 0, 0.08);
-  --glass-blur: blur(12px);
+  --bg-panel: #ffffff;
+  --border-panel: rgba(226, 232, 240, 0.95);
+  --shadow-panel: 0 14px 38px rgba(0, 0, 0, 0.12);
+  --glass-blur: blur(8px);
 
   --line-color: #ff7800;
   --line-main-color: #ff7800;
   --spouse-line-color: #ef4444;
   --line-width: 3px;
+
+  /* Typography Font Size Scaling System & Box Dimensions */
+  --card-width: 152px;
+  --card-height: 62px;
+  --card-padding-x: 10px;
+  --card-padding-y: 6px;
+  --card-title-size: 18.7px;
+  --card-eng-size: 12.65px;
+  --card-desc-size: 9.5px;
+  --card-title-weight: 400;
+  --card-title-spacing: -0.2px;
+  --study-title-size: 29px;
+  --study-eng-size: 18px;
+  --study-sec-title-size: 22px;
+  --study-desc-size: 20px;
+  --study-note-size: 20px;
+}
+
+body.font-size-medium {
+  --card-width: 176px;
+  --card-height: 72px;
+  --card-padding-x: 13px;
+  --card-padding-y: 8px;
+  --card-title-size: 21px;
+  --card-eng-size: 13.8px;
+  --card-desc-size: 10.5px;
+  --card-title-weight: 400;
+  --card-title-spacing: -0.4px;
+  --study-title-size: 31px;
+  --study-eng-size: 19px;
+  --study-sec-title-size: 24px;
+  --study-desc-size: 22px;
+  --study-note-size: 22px;
+}
+
+body.font-size-large {
+  --card-width: 200px;
+  --card-height: 82px;
+  --card-padding-x: 16px;
+  --card-padding-y: 10px;
+  --card-title-size: 23.4px;
+  --card-eng-size: 15px;
+  --card-desc-size: 11.5px;
+  --card-title-weight: 400;
+  --card-title-spacing: -0.6px;
+  --study-title-size: 33px;
+  --study-eng-size: 20px;
+  --study-sec-title-size: 26px;
+  --study-desc-size: 24px;
+  --study-note-size: 24px;
 }
 
 [data-theme="dark"] {
@@ -175,7 +225,7 @@ header {
   box-shadow: var(--shadow-panel);
   backdrop-filter: var(--glass-blur);
   z-index: 3000;
-  transition: all 0.3s ease;
+  transition: opacity 0.1s ease;
 }
 
 header h1 {
@@ -210,7 +260,7 @@ header .subtitle {
   box-shadow: var(--shadow-panel);
   backdrop-filter: var(--glass-blur);
   opacity: 0.9 !important;
-  transition: all 0.3s ease, opacity 0.2s ease;
+  transition: opacity 0.1s ease;
   z-index: 3000;
 }
 
@@ -302,7 +352,7 @@ header .subtitle {
   box-shadow: var(--shadow-panel);
   backdrop-filter: var(--glass-blur);
   outline: none;
-  transition: all 0.3s ease;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
   box-sizing: border-box;
 }
 
@@ -327,7 +377,8 @@ header .subtitle {
   scrollbar-width: none !important;
   -ms-overflow-style: none !important;
   z-index: 1 !important;
-  cursor: default;
+  cursor: grab;
+  cursor: -webkit-grab;
   outline: none;
   touch-action: none;
   background-color: var(--bg-board);
@@ -354,8 +405,40 @@ body.admin-mode #canvas-container,
   transition: background-color 0.25s ease !important;
 }
 
-#viewer-container:active {
+#viewer-container:active,
+#viewer-container.is-dragging,
+#viewer-container.is-grabbing-active,
+body.is-dragging-canvas,
+body.is-grabbing-active {
+  cursor: grabbing !important;
+  cursor: -webkit-grabbing !important;
+}
+
+#viewer-container.space-pan-active {
+  cursor: grab !important;
+  cursor: -webkit-grab !important;
+}
+
+#viewer-container.space-pan-active:active,
+#viewer-container.space-pan-active.is-dragging,
+#viewer-container.space-pan-active.is-grabbing-active {
+  cursor: grabbing !important;
+  cursor: -webkit-grabbing !important;
+}
+
+body.admin-mode #viewer-container {
   cursor: default;
+}
+body.admin-mode #viewer-container.is-dragging,
+body.admin-mode #viewer-container.is-grabbing-active,
+body.admin-mode.is-dragging-canvas,
+body.admin-mode.is-grabbing-active {
+  cursor: grabbing !important;
+  cursor: -webkit-grabbing !important;
+}
+body.admin-mode #viewer-container.space-pan-active {
+  cursor: grab !important;
+  cursor: -webkit-grab !important;
 }
 
 #zoom-wrapper {
@@ -366,12 +449,21 @@ body.admin-mode #canvas-container,
   left: 0;
   user-select: none;
   -webkit-user-select: none;
+  will-change: transform;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 #tree-board {
   position: relative;
   background-color: transparent;
   overflow: visible;
+  contain: layout style;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 /* SVG Line Layer */
@@ -384,6 +476,8 @@ body.admin-mode #canvas-container,
   overflow: visible !important;
   pointer-events: none;
   z-index: 1; /* Render behind everything else, below locations */
+  contain: strict;
+  will-change: transform;
 }
 #svg-layer {
   position: absolute;
@@ -394,6 +488,8 @@ body.admin-mode #canvas-container,
   overflow: visible !important;
   pointer-events: none;
   z-index: 3;
+  contain: strict;
+  will-change: transform;
 }
 
 .connector-line {
@@ -402,13 +498,30 @@ body.admin-mode #canvas-container,
   stroke-width: var(--line-width);
   stroke-linecap: round;
   stroke-linejoin: round;
-  transition: stroke 0.3s ease;
-  pointer-events: stroke;
+  transition: none !important;
+  pointer-events: none;
   cursor: default;
+}
+
+/* In normal mode, diagram lines do not intercept pointer events for zero mouse-lag */
+body:not(.admin-mode) .connector-line,
+body:not(.admin-mode) .spouse-connector,
+body:not(.admin-mode) .custom-visual-line,
+body:not(.admin-mode) .custom-visual-line-helper,
+body:not(.admin-mode) #svg-layer path {
+  pointer-events: none !important;
+  cursor: default !important;
+}
+
+body.admin-mode .connector-line,
+body.admin-mode .spouse-connector,
+body.admin-mode .custom-visual-line {
+  pointer-events: stroke;
 }
 
 .admin-mode-active .connector-line {
   cursor: crosshair;
+  pointer-events: stroke;
 }
 
 .admin-mode-active .connector-line:hover {
@@ -426,7 +539,7 @@ body.admin-mode #canvas-container,
 .connector-line.preacher-line {
   stroke: var(--preacher-line-color);
   stroke-width: calc(var(--line-width) + 1.2px);
-  transition: stroke 0.3s ease, stroke-width 0.3s ease;
+  transition: none !important;
 }
 
 @keyframes march {
@@ -447,10 +560,15 @@ body.admin-mode #canvas-container,
 /* Node/Card Styling */
 .person-card {
   position: absolute;
-  width: 152px;
-  height: 62px;
+  width: var(--card-width, 152px) !important;
+  min-width: var(--card-width, 152px) !important;
+  height: var(--card-height, 62px) !important;
+  min-height: var(--card-height, 62px) !important;
   border-radius: 10px;
-  padding: 6px 10px;
+  padding: var(--card-padding-y, 6px) var(--card-padding-x, 10px) !important;
+  margin-left: calc((152px - var(--card-width, 152px)) / 2) !important;
+  margin-top: calc((62px - var(--card-height, 62px)) / 2) !important;
+  box-sizing: border-box !important;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -460,18 +578,27 @@ body.admin-mode #canvas-container,
   z-index: 10;
   cursor: pointer;
   user-select: none;
-  transition: box-shadow 0.2s ease, border-color 0.3s ease;
+  contain: layout style;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
 }
 
 /* Disable card transitions during zoom animations, wheel zoom, gesture zoom, and touch zoom to prevent size bouncing/lag */
 .zooming .person-card,
-.zooming .layer-marker {
+.zooming .layer-marker,
+.is-dragging .person-card,
+.is-dragging .layer-marker,
+.is-dragging .canvas-annotation {
   transition: none !important;
+  pointer-events: none !important;
+}
+
+#viewer-container.is-dragging {
+  cursor: grabbing !important;
 }
 
 .person-card:hover {
-  transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12) !important;
+  border-color: var(--accent, #3b82f6) !important;
 }
 
 .person-card.admin-editable {
@@ -575,26 +702,38 @@ body.admin-mode #canvas-container,
 }
 
 .card-title {
-  font-size: 18.7px;
-  font-weight: 700;
-  letter-spacing: -0.2px;
+  font-size: var(--card-title-size, 18.7px) !important;
+  font-weight: var(--card-title-weight, 400) !important;
+  letter-spacing: var(--card-title-spacing, -0.2px) !important;
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  line-height: 1.15 !important;
 }
 
 .card-eng {
-  font-size: 12.65px;
+  font-size: var(--card-eng-size, 12.65px) !important;
   color: var(--text-muted);
   font-weight: 500;
-  margin-top: 5px;
+  margin-top: 4px;
   width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  line-height: 1.2 !important;
 }
 
 .card-desc {
-  font-size: 8.65px;
+  font-size: var(--card-desc-size, 9.5px) !important;
   font-weight: 400;
   opacity: 0.85;
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
 }
 
 /* Dark Mode Card High Contrast Text & Visibility */
@@ -736,32 +875,35 @@ body.admin-mode.platform-android-pad #floating-settings-btn {
   display: flex !important;
 }
 
-/* Study/Note Sidebar Panel (Right Center) */
-#study-panel:not(.expanded) {
-  position: fixed !important;
-  top: 50% !important;
-  transform: translateY(-50%) !important;
-  bottom: auto !important;
-  right: -450px !important;
-  left: auto !important;
-  width: 360px !important;
-  max-width: calc(100vw - 32px) !important;
-  height: auto !important;
-  max-height: min(90vh, calc(100vh - 64px)) !important;
-  background: var(--bg-panel);
-  border: 1px solid var(--border-panel);
-  border-radius: 16px;
-  box-shadow: var(--shadow-panel);
-  backdrop-filter: var(--glass-blur);
-  z-index: 35000 !important;
-  transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  display: flex;
-  flex-direction: column;
-}
+@media (min-width: 769px) {
+  #study-panel:not(.expanded) {
+    position: fixed !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    bottom: auto !important;
+    right: -450px !important;
+    left: auto !important;
+    width: 360px !important;
+    max-width: calc(100vw - 32px) !important;
+    height: auto !important;
+    max-height: min(90vh, calc(100vh - 64px)) !important;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-panel);
+    border-radius: 16px;
+    box-shadow: var(--shadow-panel);
+    backdrop-filter: var(--glass-blur);
+    z-index: 25000 !important;
+    transition: right 0.1s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: right;
+    display: flex;
+    flex-direction: column;
+  }
 
-#study-panel.active:not(.expanded) {
-  right: calc(16px + env(safe-area-inset-right)) !important;
-  left: auto !important;
+  #study-panel.active:not(.expanded) {
+    right: calc(16px + env(safe-area-inset-right)) !important;
+    left: auto !important;
+    transition: right 0.1s cubic-bezier(0.16, 1, 0.3, 1);
+  }
 }
 
 .expand-btn {
@@ -805,11 +947,13 @@ body.platform-android-phone #study-panel.expanded {
   max-height: 85vh !important;
   z-index: 35005 !important;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+}
+
 /* 스마트폰 플랫폼에서는 지도가 열렸을 때 상세창이 지도 뒤에 위치 */
-html.platform-iphone #study-panel:not(.expanded),
-body.platform-iphone #study-panel:not(.expanded),
-html.platform-android-phone #study-panel:not(.expanded),
-body.platform-android-phone #study-panel:not(.expanded) {
+html.platform-iphone #study-panel,
+body.platform-iphone #study-panel,
+html.platform-android-phone #study-panel,
+body.platform-android-phone #study-panel {
   z-index: 15000 !important;
 }
 
@@ -835,14 +979,15 @@ body.platform-macos #study-panel.expanded .note-textarea {
 }
 
 .panel-title h2 {
-  font-size: 18px; /* 헤더 컴팩트화에 맞춰 폰트도 조금 더 슬림화 */
+  font-size: var(--study-title-size, 21px);
   font-weight: 700;
+  line-height: 1.25;
 }
 
 .panel-title p {
-  font-size: 11px;
+  font-size: var(--study-eng-size, 13.5px);
   color: var(--text-muted);
-  margin-top: 2px; /* 상하 마진 50% 축소 */
+  margin-top: 2px;
 }
 
 .close-btn {
@@ -877,20 +1022,20 @@ body.platform-macos #study-panel.expanded .note-textarea {
 }
 
 .panel-sec-title {
-  font-size: 12px;
-  font-weight: 600;
+  font-size: var(--study-sec-title-size, 22px);
+  font-weight: 400;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   color: var(--text-muted);
-  margin-bottom: 4px; /* 아래 간격 50% 축소 */
+  margin-bottom: 4px;
 }
 
 .desc-text {
-  font-size: 13.5px;
-  line-height: 1.5;
+  font-size: var(--study-desc-size, 15.5px);
+  line-height: 1.6;
   color: var(--text-main);
   background: rgba(148, 163, 184, 0.08);
-  padding: 6px 10px; /* 상하 패딩 50% 축소 (12px -> 6px) */
+  padding: 8px 12px;
   border-radius: 8px;
 }
 
@@ -903,7 +1048,8 @@ body.platform-macos #study-panel.expanded .note-textarea {
   border-radius: 8px;
   padding: 8px 10px;
   font-family: var(--font-family);
-  font-size: 13.5px;
+  font-size: var(--study-note-size, 15.5px);
+  line-height: 1.6;
   color: var(--text-main);
   resize: none;
   outline: none;
@@ -927,7 +1073,7 @@ body.platform-macos #study-panel.expanded .note-textarea {
   border-radius: 8px;
   padding: 5px 8px; /* 패딩 50% 축소 (10px 12px -> 5px 8px) */
   font-family: var(--font-family);
-  font-size: 12.5px;
+  font-size: 14.5px;
   color: var(--text-main);
   outline: none;
 }
@@ -948,7 +1094,7 @@ body.platform-macos #study-panel.expanded .note-textarea {
   border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
-  font-size: 12.5px;
+  font-size: 14.5px;
   transition: opacity 0.2s ease;
   flex-shrink: 0;
   white-space: nowrap;
@@ -973,7 +1119,7 @@ body.platform-macos #study-panel.expanded .note-textarea {
   background: rgba(148, 163, 184, 0.05);
   padding: 4px 8px; /* 패딩 50% 축소 (8px 12px -> 4px 8px) */
   border-radius: 6px;
-  font-size: 12.5px;
+  font-size: 14.5px;
 }
 
 .resource-item a {
@@ -994,7 +1140,7 @@ body.platform-macos #study-panel.expanded .note-textarea {
   border: none;
   color: #ef4444;
   cursor: pointer;
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .panel-footer {
@@ -1012,7 +1158,7 @@ body.platform-macos #study-panel.expanded .note-textarea {
   padding: 6px; /* 패딩 50% 축소 (12px -> 6px) */
   border-radius: 8px;
   font-weight: 600;
-  font-size: 13.5px;
+  font-size: 15.5px;
   cursor: pointer;
   transition: opacity 0.2s ease;
 }
@@ -1028,7 +1174,7 @@ body.platform-macos #study-panel.expanded .note-textarea {
   padding: 6px 10px; /* 패딩 50% 축소 (12px 20px -> 6px 10px) */
   border-radius: 8px;
   font-weight: 600;
-  font-size: 13.5px;
+  font-size: 15.5px;
   cursor: pointer;
 }
 
@@ -1142,18 +1288,55 @@ body.platform-macos #study-panel.expanded .note-textarea {
     bottom: calc(16px + env(safe-area-inset-bottom));
   }
   #study-panel {
-    width: 70vw;
-    right: -70vw;
-    top: 0;
-    height: 100%;
-    border-radius: 16px 0 0 16px;
-    border: none;
-    border-left: 1px solid var(--border-panel);
-    box-shadow: -5px 0 25px rgba(0, 0, 0, 0.15);
-    z-index: 15000 !important; /* 스마트폰에서는 지도가 열릴 때 상세창이 지도 뒤에 위치 */
+    position: fixed !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    right: 0 !important;
+    left: auto !important;
+    width: min(88vw, 360px) !important;
+    max-width: 88vw !important;
+    height: 100% !important;
+    height: 100dvh !important;
+    max-height: 100% !important;
+    max-height: 100dvh !important;
+    border-radius: 16px 0 0 16px !important;
+    border: none !important;
+    border-left: 1px solid var(--border-panel) !important;
+    box-shadow: -8px 0 30px rgba(0, 0, 0, 0.25) !important;
+    background: var(--bg-panel, rgba(255, 255, 255, 0.98)) !important;
+    backdrop-filter: var(--glass-blur, blur(8px)) !important;
+    -webkit-backdrop-filter: var(--glass-blur, blur(8px)) !important;
+    z-index: 15000 !important; /* 스마트폰에서는 지도가 열릴 때 상세창이 지도(20000) 뒤에 위치 */
+    display: flex !important;
+    flex-direction: column !important;
+    transform: translateX(100%) !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    transition: transform 0.1s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.1s !important;
+    will-change: transform;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
   }
   #study-panel.active {
-    right: 0;
+    transform: translateX(0) !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    right: 0 !important;
+    left: auto !important;
+    transition: transform 0.1s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.1s !important;
+  }
+  #study-panel .panel-header {
+    padding: calc(14px + env(safe-area-inset-top, 0px)) 16px 12px 16px !important;
+    border-bottom: 1px solid var(--border-panel) !important;
+    flex-shrink: 0 !important;
+  }
+  #study-panel .panel-body {
+    flex: 1 1 auto !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding: 16px 16px calc(24px + env(safe-area-inset-bottom, 0px)) 16px !important;
+    box-sizing: border-box !important;
   }
   .copyright-notice {
     display: none !important;
@@ -1221,7 +1404,7 @@ body.platform-macos #study-panel.expanded .note-textarea {
 #admin-save-btn {
   background: #10b981 !important;
   border-color: #10b981 !important;
-  font-weight: bold !important;
+  font-weight: normal !important;
   color: #ffffff !important;
   border-radius: 8px !important;
   cursor: pointer !important;
@@ -1285,9 +1468,7 @@ body.platform-macos #study-panel.expanded .note-textarea {
   width: 100vw;
   height: var(--visual-viewport-height, 100vh);
   max-height: var(--visual-viewport-height, 100vh);
-  background: rgba(15, 23, 42, 0.45);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background: rgba(15, 23, 42, 0.5);
   display: flex;
   flex-direction: row;
   justify-content: flex-end; /* 화면 우측으로 배치 */
@@ -1326,7 +1507,7 @@ body.keyboard-open .modal-overlay {
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
   display: flex;
   flex-direction: column;
-  animation: modal-pop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: modal-pop 0.12s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
   box-sizing: border-box;
   margin: 0 !important;
@@ -1344,7 +1525,7 @@ body.keyboard-open .modal-overlay {
 
 @keyframes modal-pop {
   from {
-    transform: scale(0.9) translateY(20px);
+    transform: scale(0.96) translateY(8px);
     opacity: 0;
   }
   to {
@@ -1363,7 +1544,7 @@ body.keyboard-open .modal-overlay {
 }
 
 .modal-header h2 {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
 }
 
@@ -1392,7 +1573,7 @@ body.keyboard-open .modal-overlay {
 }
 
 .form-group label {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--text-muted);
   text-transform: uppercase;
@@ -1406,7 +1587,7 @@ body.keyboard-open .modal-overlay {
 .modal-content textarea,
 .modal-content select {
   font-family: var(--font-family);
-  font-size: 14px;
+  font-size: 16px;
   padding: 8px 12px;
   background: rgba(148, 163, 184, 0.08);
   border: 1px solid var(--border-panel);
@@ -1454,7 +1635,7 @@ body.keyboard-open .modal-overlay {
 
 .checkbox-group label {
   text-transform: none;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
   cursor: pointer;
 }
@@ -1472,7 +1653,7 @@ body.keyboard-open .modal-overlay {
 
 .modal-btn {
   font-family: var(--font-family);
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   padding: 10px 18px;
   border-radius: 8px;
@@ -1542,7 +1723,8 @@ body.keyboard-open .modal-overlay {
   box-shadow: var(--shadow-panel);
   backdrop-filter: var(--glass-blur);
   z-index: 25000;
-  transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: right 0.12s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: right;
   display: flex;
   flex-direction: column;
 }
@@ -1695,7 +1877,8 @@ body.keyboard-open .modal-overlay {
   box-shadow: var(--shadow-panel);
   backdrop-filter: var(--glass-blur);
   z-index: 200;
-  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: left 0.12s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: left;
   display: flex;
   flex-direction: column;
 }
@@ -1765,18 +1948,18 @@ body.keyboard-open .modal-overlay {
     left: auto !important;
     right: 16px !important;
   }
-  /* 환경설정 창도 모바일에서 세로 화면 전체 가로 너비의 정확히 66% 영역을 정박하도록 맞춤 튜닝 (10% 확대: 60% -> 66%) */
+  /* 환경설정 창 너비 20% 축소 적용 (min(576px, 94vw)) */
   #settings-modal .modal-content {
-    width: 66% !important; /* 세로 화면 가로 너비의 10% 확대 (60% -> 66%) */
-    max-width: 66% !important; 
+    width: min(576px, 94vw) !important;
+    max-width: 94vw !important; 
     min-width: auto !important;
-    top: 96px !important; /* 화면 상단 96px 정밀 여백 (15px 위로 상향) */
-    bottom: auto !important; /* 고정 높이 400px 렌더링을 위해 하단 구속 해제 */
-    height: auto !important; /* 동적 높이 확장 */
+    top: 96px !important; /* 화면 상단 96px 정밀 여백 */
+    bottom: auto !important;
+    height: auto !important;
     max-height: calc(100vh - 100px) !important;
-    right: calc(4px + env(safe-area-inset-right)) !important; /* 화면 우측 끝 4px 여백 */
+    right: calc(12px + env(safe-area-inset-right)) !important;
     border-radius: 16px !important;
-    z-index: 30000 !important; /* 모바일에서도 검색 토글보다 앞쪽(레이어 위)에 오게 강제 */
+    z-index: 30000 !important;
   }
   #filter-panel {
     width: 75%;
@@ -2017,40 +2200,43 @@ body.keyboard-open .modal-overlay {
   opacity: 0.09 !important;
   filter: grayscale(85%) !important;
   pointer-events: none;
-  transition: opacity 0.3s ease, filter 0.3s ease;
+  transition: none !important;
 }
 
 .tree-highlight-active .connector-line:not(.line-highlight),
 .tree-highlight-active .spouse-connector:not(.line-highlight) {
   opacity: 0.05 !important;
   stroke: #cbd5e1 !important;
-  transition: opacity 0.3s ease;
+  transition: none !important;
 }
 
 .tree-highlight-active .canvas-junction-node {
   opacity: 0.05 !important;
   pointer-events: none;
-  transition: opacity 0.3s ease;
+  transition: none !important;
 }
 
 .tree-highlight-active .canvas-annotation {
   opacity: 0.05 !important;
   pointer-events: none;
-  transition: opacity 0.3s ease;
+  transition: none !important;
 }
 
 .tree-highlight-active .layer-marker {
   opacity: 0.05 !important;
   pointer-events: none;
-  transition: opacity 0.3s ease;
+  transition: none !important;
 }
 
-/* Highlight connection paths with animated glowing pulse */
+/* Highlight connection paths with animated glowing pulse and rich orange drop-shadow aura */
 .connector-line.line-highlight,
-.spouse-connector.line-highlight {
-  stroke: var(--text-accent) !important;
-  stroke-width: 4.5px !important;
-  stroke-dasharray: 8 4;
+.spouse-connector.line-highlight,
+.custom-visual-line.line-highlight {
+  stroke: #ff7a00 !important;
+  stroke-width: 5px !important;
+  stroke-dasharray: 8 4 !important;
+  stroke-linecap: round !important;
+  filter: drop-shadow(0 0 6px rgba(255, 122, 0, 0.95)) !important;
   animation: line-pulse-dash 1.2s linear infinite;
   z-index: 100;
   opacity: 1 !important;
@@ -2225,8 +2411,8 @@ datalist {
 /* Custom Line Bend Handles (Admin Mode Only) */
 .line-bend-handle {
   position: absolute;
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   background: #3b82f6;
   border: 2px solid #ffffff;
@@ -2235,9 +2421,20 @@ datalist {
   z-index: 1002;
   box-shadow: 0 2px 5px rgba(0,0,0,0.25);
   transition: background-color 0.2s, transform 0.2s;
+  touch-action: none;
 }
 
-.line-bend-handle:hover {
+.line-bend-handle::before {
+  content: '';
+  position: absolute;
+  top: -14px;
+  left: -14px;
+  right: -14px;
+  bottom: -14px;
+}
+
+.line-bend-handle:hover,
+.line-bend-handle:active {
   background: #2563eb;
   transform: translate(-50%, -50%) scale(1.3);
 }
@@ -2278,8 +2475,9 @@ datalist {
 }
 
 .custom-visual-line.line-highlight {
-  stroke: var(--text-accent) !important;
-  stroke-width: calc(var(--line-width) + 2px) !important;
+  stroke: #ff7800 !important;
+  stroke-width: calc(var(--line-width) + 3px) !important;
+  filter: drop-shadow(0 0 6px rgba(255, 120, 0, 0.6));
 }
 
 /* Visual highlights for adding connection lines */
@@ -2292,108 +2490,135 @@ datalist {
 .card-link-port {
   display: none;
   position: absolute;
-  width: 10px;
-  height: 10px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
-  background: #3b82f6;
-  border: 1.5px solid #ffffff;
+  background: #ff7800;
+  border: 2px solid #ffffff;
   cursor: crosshair;
   z-index: 1005;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
   transition: background-color 0.2s, transform 0.2s;
   bottom: auto;
   left: auto;
   transform: none;
+  touch-action: none;
 }
 
-.card-link-port:hover {
-  background: #ff7800;
+.card-link-port::before {
+  content: '';
+  position: absolute;
+  top: -12px;
+  left: -12px;
+  right: -12px;
+  bottom: -12px;
+}
+
+.card-link-port:hover,
+.card-link-port:active {
+  transform: scale(1.4);
+  background: #e65100;
 }
 
 /* Side center ports positioning */
 .card-link-port.port-top {
-  top: -5px;
+  top: -7px;
   left: 50%;
   transform: translateX(-50%);
 }
-.card-link-port.port-top:hover {
+.card-link-port.port-top:hover,
+.card-link-port.port-top:active {
   transform: translateX(-50%) scale(1.4);
 }
 
 .card-link-port.port-bottom {
-  bottom: -5px;
+  bottom: -7px;
   left: 50%;
   transform: translateX(-50%);
 }
-.card-link-port.port-bottom:hover {
+.card-link-port.port-bottom:hover,
+.card-link-port.port-bottom:active {
   transform: translateX(-50%) scale(1.4);
 }
 
 .card-link-port.port-left {
-  left: -5px;
+  left: -7px;
   top: 50%;
   transform: translateY(-50%);
 }
-.card-link-port.port-left:hover {
+.card-link-port.port-left:hover,
+.card-link-port.port-left:active {
   transform: translateY(-50%) scale(1.4);
 }
 
 .card-link-port.port-right {
-  right: -5px;
+  right: -7px;
   top: 50%;
   transform: translateY(-50%);
 }
-.card-link-port.port-right:hover {
+.card-link-port.port-right:hover,
+.card-link-port.port-right:active {
   transform: translateY(-50%) scale(1.4);
 }
 
 /* 4 Corners (Quadrants) ports positioning */
 .card-link-port.port-top-left {
-  top: -5px;
-  left: -5px;
+  top: -7px;
+  left: -7px;
 }
-.card-link-port.port-top-left:hover {
+.card-link-port.port-top-left:hover,
+.card-link-port.port-top-left:active {
   transform: scale(1.4);
 }
 
 .card-link-port.port-top-right {
-  top: -5px;
-  right: -5px;
+  top: -7px;
+  right: -7px;
 }
-.card-link-port.port-top-right:hover {
+.card-link-port.port-top-right:hover,
+.card-link-port.port-top-right:active {
   transform: scale(1.4);
 }
 
 .card-link-port.port-bottom-left {
-  bottom: -5px;
-  left: -5px;
+  bottom: -7px;
+  left: -7px;
 }
-.card-link-port.port-bottom-left:hover {
+.card-link-port.port-bottom-left:hover,
+.card-link-port.port-bottom-left:active {
   transform: scale(1.4);
 }
 
 .card-link-port.port-bottom-right {
-  bottom: -5px;
-  right: -5px;
+  bottom: -7px;
+  right: -7px;
 }
-.card-link-port.port-bottom-right:hover {
+.card-link-port.port-bottom-right:hover,
+.card-link-port.port-bottom-right:active {
   transform: scale(1.4);
 }
 
 /* Target hover highlight during dragging */
 .card-link-port.port-target-hover {
-  background: #ff7800 !important;
+  background: #00e676 !important;
   transform: scale(1.7) !important;
-  box-shadow: 0 0 10px rgba(255, 120, 0, 1) !important;
+  box-shadow: 0 0 10px rgba(0, 230, 118, 0.9) !important;
   border-color: #ffffff !important;
   z-index: 1010 !important;
 }
 
 .admin-mode-active .person-card:hover .card-link-port,
+.admin-mode-active .person-card.selected-for-edit .card-link-port,
+.admin-mode-active .person-card.selected .card-link-port,
+.admin-mode-active .person-card.card-selected .card-link-port,
 .admin-mode-active .canvas-annotation:hover .card-link-port,
+.admin-mode-active .canvas-annotation.selected .card-link-port,
 .admin-mode-active .layer-marker:hover .card-link-port,
+.admin-mode-active .layer-marker.selected-layer-item .card-link-port,
+.admin-mode-active .canvas-junction-node .card-link-port,
 .link-active-dragging .card-link-port {
   display: block !important;
+  opacity: 0.95;
 }
 
 /* Target hover highlight during dragging */
@@ -2655,19 +2880,31 @@ datalist {
 /* Custom Polygon Vertex Handles (Admin Mode Only) */
 .poly-vertex-handle {
   position: absolute;
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: #ea580c;
-  border: 2px solid #ffffff;
+  border: 2.5px solid #ffffff;
   cursor: move;
   transform: translate(-50%, -50%);
   z-index: 1003;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
   transition: background-color 0.2s, transform 0.15s;
   touch-action: none;
   user-select: none;
   -webkit-user-select: none;
+}
+
+/* Expanded invisible touch hit target for fingers on touchscreens */
+.poly-vertex-handle::before {
+  content: '';
+  position: absolute;
+  top: -18px;
+  bottom: -18px;
+  left: -18px;
+  right: -18px;
+  border-radius: 50%;
+  pointer-events: auto;
 }
 
 .poly-vertex-handle:hover,
@@ -2678,8 +2915,23 @@ datalist {
 
 .poly-vertex-handle.selected {
   border-color: #ff7800 !important;
-  box-shadow: 0 0 0 4px rgba(255, 120, 0, 0.5) !important;
+  box-shadow: 0 0 0 5px rgba(255, 120, 0, 0.55) !important;
   background: #c2410c !important;
+}
+
+/* Enhanced mobile touch sizes */
+@media (pointer: coarse), (max-width: 900px) {
+  .poly-vertex-handle {
+    width: 22px;
+    height: 22px;
+    border-width: 3px;
+  }
+  .poly-vertex-handle::before {
+    top: -22px;
+    bottom: -22px;
+    left: -22px;
+    right: -22px;
+  }
 }
 
 /* Custom Polygon selection highlighting */
@@ -2690,12 +2942,24 @@ datalist {
 
 .family-group-panel-poly-stroke {
   pointer-events: stroke;
+  touch-action: none;
 }
 
 .family-group-panel-poly.poly-selected {
   stroke-width: inherit;
   fill-opacity: 0.08 !important;
   filter: drop-shadow(0 0 5px rgba(249, 115, 22, 0.8));
+}
+
+/* Mobile & Touch Drag Optimization in Admin Mode */
+.admin-mode-active .person-card,
+.admin-mode-active .layer-marker,
+.admin-mode-active .canvas-annotation,
+.admin-mode-active .family-group-label,
+.admin-mode-active .poly-vertex-handle,
+.admin-mode-active .canvas-junction-node,
+.admin-mode-active .line-bend-handle {
+  touch-action: none;
 }
 
 /* Search Results Dropdown */
@@ -3262,6 +3526,7 @@ datalist {
   -webkit-user-select: none;
   -webkit-user-drag: none;
   touch-action: none;
+  contain: layout style;
 }
 .marker-location {
   z-index: 4; /* Locations placed above polygons and labels, below cards */
@@ -3494,35 +3759,33 @@ datalist {
   opacity: 1;
 }
 
-/* Relationship Highlighting and Dimming Engine */
+/* Relationship Highlighting and Dimming Engine (Instant 0ms GPU performance, zero keyframe rasterization) */
 .relationship-highlight-active .person-card:not(.highlight) {
-  opacity: 0.09 !important;
-  filter: grayscale(85%) !important;
-  pointer-events: none;
-  transition: opacity 0.3s ease, filter 0.3s ease;
+  opacity: 0.08 !important;
+  pointer-events: none !important;
+  transition: none !important;
 }
 
 .relationship-highlight-active .layer-marker:not(.highlight) {
-  opacity: 0.09 !important;
-  filter: grayscale(85%) !important;
-  pointer-events: none;
-  transition: opacity 0.3s ease, filter 0.3s ease;
+  opacity: 0.08 !important;
+  pointer-events: none !important;
+  transition: none !important;
 }
 
 .relationship-highlight-active .connector-line:not(.line-highlight),
 .relationship-highlight-active .spouse-connector:not(.line-highlight),
 .relationship-highlight-active .custom-visual-line:not(.line-highlight) {
   opacity: 0.05 !important;
-  transition: opacity 0.3s ease;
+  pointer-events: none !important;
+  transition: none !important;
 }
 
-/* Beautiful custom glow aura (no scaling/enlargement) */
+/* Beautiful custom glow aura (immediate 0ms response, static GPU composited, zero CPU redraws) */
 .relationship-highlight-active .person-card.highlight {
-  animation: pulse-aura-only 1.5s infinite alternate !important;
+  box-shadow: 0 0 18px var(--glow-color), 0 0 32px var(--glow-color) !important;
   /* NO transform override here so the natural size/hover size stays fixed! */
   z-index: 100 !important;
   opacity: 1 !important;
-  transition: opacity 0.3s ease;
 }
 
 /* Specific glowing colors per card theme */
@@ -3544,8 +3807,6 @@ datalist {
 .relationship-highlight-active .layer-marker.highlight {
   opacity: 1 !important;
   z-index: 100 !important;
-  /* NO transform override here so the inline translate & scale remain intact! */
-  transition: opacity 0.3s ease;
 }
 
 /* Event marker aura: icon and text box */
@@ -3561,47 +3822,60 @@ datalist {
 }
 
 /* Location marker aura: icon and text box */
+.layer-marker.highlight.marker-location,
+.layer-marker.selected-layer-item.marker-location,
+.relationship-highlight-active .layer-marker.highlight.marker-location {
+  opacity: 1 !important;
+  z-index: 100 !important;
+  pointer-events: auto !important;
+}
+
+.layer-marker.highlight.marker-location .marker-icon,
+.layer-marker.selected-layer-item.marker-location .marker-icon,
 .relationship-highlight-active .layer-marker.highlight.marker-location .marker-icon {
-  box-shadow: 0 0 15px rgba(34, 197, 94, 0.8), 0 0 30px rgba(34, 197, 94, 0.5) !important;
+  box-shadow: 0 0 16px rgba(34, 197, 94, 0.95), 0 0 32px rgba(34, 197, 94, 0.6) !important;
   border-color: rgba(34, 197, 94, 1) !important;
   animation: pulse-marker-icon-green 1.5s infinite alternate !important;
 }
 
+.layer-marker.highlight.marker-location .marker-label,
+.layer-marker.selected-layer-item.marker-location .marker-label,
 .relationship-highlight-active .layer-marker.highlight.marker-location .marker-label {
-  box-shadow: 0 0 12px rgba(34, 197, 94, 0.7), 0 0 24px rgba(34, 197, 94, 0.4) !important;
-  border-color: rgba(34, 197, 94, 0.8) !important;
+  box-shadow: 0 0 14px rgba(34, 197, 94, 0.85), 0 0 28px rgba(34, 197, 94, 0.5) !important;
+  border-color: rgba(34, 197, 94, 0.9) !important;
 }
 
 .relationship-highlight-active .canvas-annotation:not(.highlight) {
   opacity: 0.09 !important;
   filter: grayscale(85%) !important;
   pointer-events: none;
-  transition: opacity 0.3s ease, filter 0.3s ease;
+  transition: none !important;
 }
 
 .relationship-highlight-active .canvas-annotation.highlight {
   opacity: 1 !important;
   box-shadow: 0 0 20px rgba(168, 85, 247, 0.7), 0 0 35px rgba(168, 85, 247, 0.4) !important;
   z-index: 100 !important;
-  transition: opacity 0.3s ease, box-shadow 0.3s ease;
+  transition: none !important;
 }
 
 .relationship-highlight-active .canvas-junction-node:not(.highlight) {
   opacity: 0.06 !important;
   pointer-events: none;
-  transition: opacity 0.3s ease;
+  transition: none !important;
 }
 
 .relationship-highlight-active .canvas-junction-node.highlight {
   opacity: 1 !important;
+  transition: none !important;
 }
 
 @keyframes pulse-aura-only {
   from {
-    box-shadow: 0 0 10px var(--glow-color);
+    box-shadow: 0 0 16px var(--glow-color), 0 0 30px var(--glow-color);
   }
   to {
-    box-shadow: 0 0 25px var(--glow-color), 0 0 40px var(--glow-color);
+    box-shadow: 0 0 28px var(--glow-color), 0 0 48px var(--glow-color);
   }
 }
 
@@ -3783,29 +4057,30 @@ datalist {
   cursor: crosshair !important;
 }
 
-/* Release grab/grabbing cursor during relationship/aura highlight and return to default */
-.relationship-highlight-active,
-.relationship-highlight-active #viewer-container,
-.relationship-highlight-active #tree-board {
-  cursor: default !important;
+/* Ensure canvas retains grab/grabbing cursor during relationship/aura highlight */
+.relationship-highlight-active #viewer-container {
+  cursor: grab;
+  cursor: -webkit-grab;
 }
 .relationship-highlight-active #viewer-container:active,
-.relationship-highlight-active #tree-board:active {
-  cursor: default !important;
+.relationship-highlight-active #viewer-container.is-grabbing-active,
+.relationship-highlight-active #viewer-container.is-dragging {
+  cursor: grabbing !important;
+  cursor: -webkit-grabbing !important;
 }
 
 /* Fade out spouse circles, family group polygons, and polygon labels in focus/aura modes */
 .relationship-highlight-active .spouse-node-circle:not(.line-highlight) {
   opacity: 0.05 !important;
-  transition: opacity 0.3s ease;
+  transition: none !important;
 }
 .relationship-highlight-active .spouse-node-circle.line-highlight {
   opacity: 1 !important;
-  transition: opacity 0.3s ease;
+  transition: none !important;
 }
 .relationship-highlight-active .family-group-panel-poly {
   opacity: 0.05 !important;
-  transition: opacity 0.3s ease;
+  transition: none !important;
 }
 .relationship-highlight-active .family-group-panel-poly.highlight {
   opacity: 0.28 !important;
@@ -3822,7 +4097,7 @@ datalist {
 }
 .relationship-highlight-active .family-group-label {
   opacity: 0.09 !important;
-  transition: opacity 0.3s ease;
+  transition: none !important;
 }
 .relationship-highlight-active .family-group-label.highlight {
   opacity: 1 !important;
@@ -3831,15 +4106,15 @@ datalist {
 
 .tree-highlight-active .spouse-node-circle:not(.line-highlight) {
   opacity: 0.05 !important;
-  transition: opacity 0.3s ease;
+  transition: none !important;
 }
 .tree-highlight-active .spouse-node-circle.line-highlight {
   opacity: 1 !important;
-  transition: opacity 0.3s ease;
+  transition: none !important;
 }
 .tree-highlight-active .family-group-panel-poly {
   opacity: 0.05 !important;
-  transition: opacity 0.3s ease;
+  transition: none !important;
 }
 /* Ensure the Prophets area box fades out when tree highlight is active */
 .tree-highlight-active #svg-poly-poly-custom-1785777570404:not(.highlight):not(.poly-selected),
@@ -3852,7 +4127,7 @@ datalist {
 }
 .tree-highlight-active .family-group-label {
   opacity: 0.09 !important;
-  transition: opacity 0.3s ease;
+  transition: none !important;
 }
 
 /* Filter inactive styles */
@@ -3982,14 +4257,14 @@ datalist {
 /* Enable aura highlight glow for Samuel and Prophets under prophets filter active */
 .prophets-filter-active.relationship-highlight-active .person-card.highlight.samuel,
 .prophets-filter-active.relationship-highlight-active .person-card.highlight.prophet:not(.main-line) {
-  animation: pulse-aura-only 1.5s infinite alternate !important;
+  box-shadow: 0 0 18px var(--glow-color), 0 0 32px var(--glow-color) !important;
   --glow-color: rgba(168, 85, 247, 0.75);
   border-color: rgba(168, 85, 247, 0.95) !important;
 }
 
 [data-theme="dark"] .prophets-filter-active.relationship-highlight-active .person-card.highlight.samuel,
 [data-theme="dark"] .prophets-filter-active.relationship-highlight-active .person-card.highlight.prophet:not(.main-line) {
-  animation: pulse-aura-only 1.5s infinite alternate !important;
+  box-shadow: 0 0 18px var(--glow-color), 0 0 32px var(--glow-color) !important;
   --glow-color: rgba(192, 132, 252, 0.8);
   border-color: rgba(192, 132, 252, 0.95) !important;
 }
@@ -4096,7 +4371,7 @@ svg path.prophets-aura {
 .family-group-label.prophets-aura {
   animation: prophets-label-aura-glow 2s infinite alternate !important;
   border-width: 2px !important;
-  font-weight: 800 !important;
+  font-weight: 400 !important;
   box-shadow: 0 0 15px rgba(236, 72, 153, 0.6), 0 2px 4px rgba(0, 0, 0, 0.05) !important;
 }
 
@@ -4308,7 +4583,7 @@ svg path.prophets-aura {
   padding: 0 !important;
 }
 
-/* 환경설정 창 너비 2배 확대 (161px -> 322px), 동적 높이 및 설정 버튼 바로 아래 5px 배치 */
+/* 환경설정 창 너비 20% 축소 (576px, max-width: min(96vw, 620px)) */
 #settings-modal .modal-content {
   position: fixed !important;
   margin: 0 !important;
@@ -4317,8 +4592,8 @@ svg path.prophets-aura {
   bottom: auto !important;
   right: calc(16px + env(safe-area-inset-right, 0px)) !important; /* 화면 우측 여백 */
   left: auto !important;
-  width: 322px !important; /* 가로 너비 2배 확대 (161px -> 322px) */
-  max-width: calc(100vw - 32px) !important;
+  width: 576px !important;
+  max-width: min(96vw, 620px) !important;
   min-width: auto !important;
   height: auto !important; /* 동적 높이 확장 */
   max-height: calc(100vh - 80px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
@@ -4395,7 +4670,7 @@ body.platform-macos #style-editor-panel {
   overflow-y: auto !important;
   visibility: hidden !important;
   pointer-events: none !important;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s !important;
+  transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.12s !important;
   z-index: 15000 !important;
 }
 #style-editor-panel.active,
@@ -4406,35 +4681,50 @@ body.platform-macos #style-editor-panel.active {
   pointer-events: auto !important;
 }
 
-#study-panel,
-html.platform-macos #study-panel,
-body.platform-macos #study-panel {
-  position: fixed !important;
-  top: calc(40px + env(safe-area-inset-top)) !important;
-  bottom: calc(40px + env(safe-area-inset-bottom)) !important;
-  right: 16px !important;
-  transform: translateX(calc(100% + 50px)) !important;
-  width: 380px !important;
-  max-height: calc(100vh - 80px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
-  height: calc(100vh - 80px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
-  overflow-y: auto !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s !important;
-  z-index: 35000 !important;
-}
-#study-panel.active:not(.expanded),
-html.platform-macos #study-panel.active:not(.expanded),
-body.platform-macos #study-panel.active:not(.expanded) {
-  transform: translateX(0) !important;
-  visibility: visible !important;
-  pointer-events: auto !important;
-}
-#study-panel.expanded,
-html.platform-macos #study-panel.expanded,
-body.platform-macos #study-panel.expanded {
-  visibility: visible !important;
-  pointer-events: auto !important;
+@media (min-width: 769px) {
+  #study-panel,
+  html.platform-macos #study-panel,
+  body.platform-macos #study-panel,
+  html.platform-ipad #study-panel,
+  body.platform-ipad #study-panel,
+  html.platform-android-pad #study-panel,
+  body.platform-android-pad #study-panel {
+    position: fixed !important;
+    top: calc(40px + env(safe-area-inset-top)) !important;
+    bottom: calc(40px + env(safe-area-inset-bottom)) !important;
+    right: 16px !important;
+    transform: translateX(calc(100% + 50px)) !important;
+    width: 380px !important;
+    max-height: calc(100vh - 80px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
+    height: calc(100vh - 80px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
+    overflow-y: auto !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.12s !important;
+    z-index: 25000 !important;
+  }
+  #study-panel.active:not(.expanded),
+  html.platform-macos #study-panel.active:not(.expanded),
+  body.platform-macos #study-panel.active:not(.expanded),
+  html.platform-ipad #study-panel.active:not(.expanded),
+  body.platform-ipad #study-panel.active:not(.expanded),
+  html.platform-android-pad #study-panel.active:not(.expanded),
+  body.platform-android-pad #study-panel.active:not(.expanded) {
+    transform: translateX(0) !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.12s !important;
+  }
+  #study-panel.expanded,
+  html.platform-macos #study-panel.expanded,
+  body.platform-macos #study-panel.expanded,
+  html.platform-ipad #study-panel.expanded,
+  body.platform-ipad #study-panel.expanded,
+  html.platform-android-pad #study-panel.expanded,
+  body.platform-android-pad #study-panel.expanded {
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
 }
 
 
@@ -4469,7 +4759,7 @@ body.platform-macos #study-panel.expanded {
     left: auto !important;
     right: calc(16px + env(safe-area-inset-right)) !important;
   }
-  /* 환경설정 창도 가로화면에서 화면 우측 중앙 배치 */
+  /* 환경설정 창도 가로화면에서 화면 우측 중앙 배치 (너비 576px) */
   #settings-modal .modal-content {
     position: fixed !important;
     top: 50% !important;
@@ -4477,8 +4767,8 @@ body.platform-macos #study-panel.expanded {
     bottom: auto !important;
     right: calc(16px + env(safe-area-inset-right)) !important;
     left: auto !important;
-    width: 260px !important;
-    max-width: 85vw !important;
+    width: 576px !important;
+    max-width: min(96vw, 620px) !important;
     min-width: auto !important;
     height: auto !important;
     max-height: min(88vh, calc(100vh - 40px)) !important;
@@ -4571,9 +4861,15 @@ body.platform-macos #study-panel.expanded {
   pointer-events: auto !important;
   margin: 0 !important;
   padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
 }
 
-#searchInput {
+#searchInput,
+#mobileSearchInput,
+.search-box {
   width: 100% !important;
   max-width: 100% !important;
   min-width: 0 !important;
@@ -4590,9 +4886,14 @@ body.platform-macos #study-panel.expanded {
   color: #0f172a !important;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12) !important;
   outline: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
 }
 
-[data-theme="dark"] #searchInput {
+[data-theme="dark"] #searchInput,
+[data-theme="dark"] #mobileSearchInput,
+[data-theme="dark"] .search-box {
   background: rgba(30, 41, 59, 0.95) !important;
   border-color: rgba(255, 255, 255, 0.15) !important;
   color: #f8fafc !important;
@@ -4664,7 +4965,7 @@ body.platform-macos #study-panel.expanded {
   justify-content: center !important;
   color: #334155 !important;
   font-size: 13.5px !important;
-  font-weight: 700 !important;
+  font-weight: 400 !important;
   letter-spacing: -0.2px !important;
   line-height: 1 !important;
   pointer-events: none !important;
@@ -4743,7 +5044,7 @@ body.platform-macos #study-panel.expanded {
   min-height: 40px !important;
   color: #333333 !important;
   font-size: 18px !important;
-  font-weight: bold !important;
+  font-weight: normal !important;
 }
 
 /* 7. 되돌리기 및 다시실행 버튼의 배경 화이트 및 비활성화(disabled) 명도 오차 방어 */
@@ -5322,7 +5623,7 @@ body:not(.admin-mode) #admin-actions-bar:not(.active) {
 
 #zoom-level {
   font-size: 14px !important;
-  font-weight: 700 !important;
+  font-weight: 400 !important;
   min-width: 52px !important;
   text-align: center !important;
   pointer-events: auto !important;
@@ -5618,7 +5919,7 @@ body.platform-macos #style-editor-panel {
   overflow-y: auto !important;
   visibility: hidden !important;
   pointer-events: none !important;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s !important;
+  transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.12s !important;
   z-index: 15000 !important;
 }
 #style-editor-panel.active,
@@ -5629,36 +5930,7 @@ body.platform-macos #style-editor-panel.active {
   pointer-events: auto !important;
 }
 
-#study-panel,
-html.platform-macos #study-panel,
-body.platform-macos #study-panel {
-  position: fixed !important;
-  top: calc(40px + env(safe-area-inset-top)) !important;
-  bottom: calc(40px + env(safe-area-inset-bottom)) !important;
-  right: 16px !important;
-  transform: translateX(calc(100% + 50px)) !important;
-  width: 380px !important;
-  max-height: calc(100vh - 80px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
-  height: calc(100vh - 80px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
-  overflow-y: auto !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s !important;
-  z-index: 35000 !important;
-}
-#study-panel.active:not(.expanded),
-html.platform-macos #study-panel.active:not(.expanded),
-body.platform-macos #study-panel.active:not(.expanded) {
-  transform: translateX(0) !important;
-  visibility: visible !important;
-  pointer-events: auto !important;
-}
-#study-panel.expanded,
-html.platform-macos #study-panel.expanded,
-body.platform-macos #study-panel.expanded {
-  visibility: visible !important;
-  pointer-events: auto !important;
-}
+
 
 .note-textarea,
 #note-text,
@@ -5681,7 +5953,7 @@ body.platform-macos #filter-panel {
   overflow-y: auto !important;
   visibility: hidden !important;
   pointer-events: none !important;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s !important;
+  transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.12s !important;
   z-index: 15000 !important;
 }
 #filter-panel.active,
@@ -5738,7 +6010,7 @@ body.platform-macos #main-titlebar {
 }
 
 .panel-subsec-badge {
-  font-size: 11.5px;
+  font-size: 13.5px;
   font-weight: 700;
   color: var(--text-muted);
   display: flex;
@@ -5759,7 +6031,7 @@ body.platform-macos #main-titlebar {
   border-radius: 6px;
   padding: 5px 8px;
   font-family: var(--font-family);
-  font-size: 12px;
+  font-size: 14px;
   color: var(--text-main);
   outline: none;
   transition: border-color 0.2s ease, background 0.2s ease;
@@ -5776,7 +6048,7 @@ body.platform-macos #main-titlebar {
   border: 1px solid rgba(59, 130, 246, 0.3);
   border-radius: 6px;
   padding: 2px 7px;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   display: inline-flex;
@@ -5810,7 +6082,7 @@ body.platform-macos #main-titlebar {
   border: 1px solid var(--border-panel);
   border-radius: 6px;
   padding: 6px 8px;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .activity-item-content {
@@ -5831,12 +6103,12 @@ body.platform-macos #main-titlebar {
 .activity-item-name {
   font-weight: 700;
   color: var(--text-main);
-  font-size: 12.5px;
+  font-size: 14.5px;
 }
 
 .activity-item-coords {
   font-family: monospace;
-  font-size: 10.5px;
+  font-size: 12.5px;
   color: var(--text-muted);
   background: rgba(0, 0, 0, 0.06);
   padding: 1px 5px;
@@ -5844,7 +6116,7 @@ body.platform-macos #main-titlebar {
 }
 
 .activity-item-desc {
-  font-size: 11.5px;
+  font-size: 13.5px;
   color: var(--text-muted);
   line-height: 1.35;
 }
@@ -5894,7 +6166,7 @@ body.platform-macos #main-titlebar {
   border-radius: 6px;
   cursor: pointer;
   font-weight: 600;
-  font-size: 11.5px;
+  font-size: 13.5px;
   flex-shrink: 0;
   white-space: nowrap;
   height: 28px;
@@ -5922,7 +6194,7 @@ body.platform-macos #main-titlebar {
   padding: 5px 8px;
   border-radius: 6px;
   border: 1px solid var(--border-panel);
-  font-size: 11.5px;
+  font-size: 13.5px;
   gap: 6px;
 }
 
@@ -5941,25 +6213,37 @@ body.platform-macos #main-titlebar {
 
 .admin-activity-item .act-desc {
   color: var(--text-muted);
-  font-size: 10.5px;
+  font-size: 12.5px;
 }
 
 /* =========================================================
    macOS Style Unified Top System Titlebar & Menu Bar
    ========================================================= */
 #desktop-mac-titlebar-bg {
-  display: none !important;
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 24999;
+  -webkit-app-region: drag !important;
+  pointer-events: auto !important;
 }
 
 html.platform-macos #desktop-mac-titlebar-bg,
 body.platform-macos #desktop-mac-titlebar-bg {
-  display: none !important;
+  display: block !important;
 }
 
 [data-theme="dark"] #desktop-mac-titlebar-bg,
 html.platform-macos[data-theme="dark"] #desktop-mac-titlebar-bg,
 body.platform-macos[data-theme="dark"] #desktop-mac-titlebar-bg {
-  display: none !important;
+  background: rgba(30, 30, 30, 0.95) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 
 html.is-fullscreen #desktop-mac-titlebar-bg,
@@ -5968,95 +6252,109 @@ html.is-fullscreen.platform-macos #desktop-mac-titlebar-bg,
 body.is-fullscreen.platform-macos #desktop-mac-titlebar-bg,
 :fullscreen #desktop-mac-titlebar-bg,
 :-webkit-full-screen #desktop-mac-titlebar-bg {
-  display: none !important;
+  display: block !important;
 }
 
 #desktop-mac-menubar {
   display: none;
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 32px;
-  background: rgba(255, 255, 255, 0.7) !important;
-  backdrop-filter: blur(20px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
-  z-index: 25000;
+  top: 44px !important;
+  height: 52px !important;
+  min-height: 52px !important;
+  background: rgba(255, 255, 255, 0.96) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(0, 0, 0, 0.12) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+  z-index: 30000 !important;
   align-items: center;
   justify-content: space-between;
-  padding: 0 14px;
-  box-sizing: border-box;
+  padding: 4px 12px !important;
+  box-sizing: border-box !important;
   font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
-  font-size: 11.5px;
+  font-size: 23px;
+  font-weight: 400;
   color: #111827;
   user-select: none;
   -webkit-user-select: none;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
   -webkit-app-region: no-drag !important;
   pointer-events: auto !important;
-  transition: top 0.2s ease;
+  transition: width 0.2s ease, left 0.15s ease, right 0.15s ease, box-shadow 0.2s ease;
 }
 
 html.platform-macos #desktop-mac-menubar,
 body.platform-macos #desktop-mac-menubar {
   display: flex !important;
-  top: 0px !important;
-  padding: 0 14px !important;
-  background: rgba(255, 255, 255, 0.7) !important;
-  color: #111827 !important;
-  backdrop-filter: blur(20px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
-  transition: top 0.2s ease, padding 0.2s ease;
 }
 
-/* Fullscreen: Menubar has guaranteed safe-area clearance and clean solid background */
+/* 1. 축소 모드 (is-compact / is-floating): 이미지처럼 컴팩트한 알약 캡슐 형태로 내용물 너비만큼 줄어들고 좌우로만 이동 가능 */
+#desktop-mac-menubar.is-compact,
+#desktop-mac-menubar.is-floating,
+html.platform-macos #desktop-mac-menubar.is-compact,
+body.platform-macos #desktop-mac-menubar.is-compact,
+html.platform-macos #desktop-mac-menubar.is-floating,
+body.platform-macos #desktop-mac-menubar.is-floating {
+  width: max-content !important;
+  max-width: calc(100vw - 28px) !important;
+  left: 14px;
+  right: auto !important;
+  top: 44px !important;
+  border-radius: 12px !important;
+}
+
+#desktop-mac-menubar.is-compact #mac-menubar-drag-handle,
+#desktop-mac-menubar.is-floating #mac-menubar-drag-handle {
+  cursor: ew-resize !important;
+}
+
+/* 2. 최대로 모드 (기본/전체 너비 모드): 상단 위치(top: 44px)는 그대로 유지하면서 양옆으로 늘어남 */
+#desktop-mac-menubar:not(.is-compact):not(.is-floating),
+html.platform-macos #desktop-mac-menubar:not(.is-compact):not(.is-floating),
+body.platform-macos #desktop-mac-menubar:not(.is-compact):not(.is-floating) {
+  left: 14px !important;
+  right: 14px !important;
+  width: auto !important;
+  top: 44px !important;
+  border-radius: 12px !important;
+}
+
+/* Fullscreen: 축소 또는 최대 상태 모두 위치는 이미지대로 top: 44px 유지 */
 html.is-fullscreen #desktop-mac-menubar,
 body.is-fullscreen #desktop-mac-menubar,
 html.is-fullscreen.platform-macos #desktop-mac-menubar,
 body.is-fullscreen.platform-macos #desktop-mac-menubar,
 :fullscreen #desktop-mac-menubar,
 :-webkit-full-screen #desktop-mac-menubar {
-  top: 0 !important;
-  padding-top: max(env(safe-area-inset-top, 0px), 14px) !important;
-  padding-bottom: 3px !important;
-  padding-left: 14px !important;
-  padding-right: 14px !important;
-  height: calc(32px + max(env(safe-area-inset-top, 0px), 14px)) !important;
-  align-items: flex-end !important;
-  background: rgba(255, 255, 255, 0.7) !important;
-  color: #111827 !important;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.12) !important;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04) !important;
-  backdrop-filter: blur(20px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  top: 44px !important;
 }
 
-html.is-fullscreen #desktop-mac-menubar .mac-menubar-left,
-body.is-fullscreen #desktop-mac-menubar .mac-menubar-left,
-html.is-fullscreen #desktop-mac-menubar .mac-menubar-right,
-body.is-fullscreen #desktop-mac-menubar .mac-menubar-right {
-  height: 32px !important;
+html.is-fullscreen #desktop-mac-menubar:not(.is-compact):not(.is-floating),
+body.is-fullscreen #desktop-mac-menubar:not(.is-compact):not(.is-floating),
+html.is-fullscreen.platform-macos #desktop-mac-menubar:not(.is-compact):not(.is-floating),
+body.is-fullscreen.platform-macos #desktop-mac-menubar:not(.is-compact):not(.is-floating) {
+  left: 14px !important;
+  right: 14px !important;
+  width: auto !important;
+  top: 44px !important;
 }
 
-@media (display-mode: fullscreen) {
-  #desktop-mac-menubar,
-  html.platform-macos #desktop-mac-menubar,
-  body.platform-macos #desktop-mac-menubar {
-    top: 0 !important;
-    padding-top: max(env(safe-area-inset-top, 0px), 14px) !important;
-    padding-bottom: 3px !important;
-    padding-left: 14px !important;
-    padding-right: 14px !important;
-    height: calc(32px + max(env(safe-area-inset-top, 0px), 14px)) !important;
-    align-items: flex-end !important;
-    background: rgba(255, 255, 255, 0.7) !important;
-    color: #111827 !important;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.12) !important;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.04) !important;
-    backdrop-filter: blur(20px) saturate(180%) !important;
-    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
-  }
+html.is-fullscreen #desktop-mac-menubar.is-compact,
+html.is-fullscreen #desktop-mac-menubar.is-floating {
+  width: max-content !important;
+  max-width: calc(100vw - 28px) !important;
+  right: auto !important;
+  top: 44px !important;
+}
+
+/* 드래그 이동 중 (좌우로만 이동 가능) */
+#desktop-mac-menubar.is-dragging {
+  cursor: ew-resize !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18), 0 2px 6px rgba(0, 0, 0, 0.08) !important;
+  opacity: 0.96 !important;
+  transition: none !important;
 }
 
 .mac-app-branding {
@@ -6066,92 +6364,21 @@ body.is-fullscreen #desktop-mac-menubar .mac-menubar-right {
 [data-theme="dark"] #desktop-mac-menubar,
 html.platform-macos[data-theme="dark"] #desktop-mac-menubar,
 body.platform-macos[data-theme="dark"] #desktop-mac-menubar {
-  background: rgba(30, 30, 30, 0.7) !important;
+  background: rgba(30, 30, 30, 0.95) !important;
   color: #f3f4f6 !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
-  backdrop-filter: blur(20px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.2) !important;
 }
 
-[data-theme="dark"] html.is-fullscreen #desktop-mac-menubar,
-[data-theme="dark"] body.is-fullscreen #desktop-mac-menubar,
-[data-theme="dark"] html.is-fullscreen.platform-macos #desktop-mac-menubar,
-[data-theme="dark"] body.is-fullscreen.platform-macos #desktop-mac-menubar {
-  background: rgba(30, 30, 30, 0.7) !important;
-  color: #f3f4f6 !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2) !important;
-  backdrop-filter: blur(20px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
-}
-
+/* 캔버스 상단 시작 위치: 메뉴바 행(44px + ~52px) 아래로 배치 */
 html.platform-macos #viewer-container,
-body.platform-macos #viewer-container {
-  top: 32px !important;
-  height: calc(100% - 32px) !important;
-}
-
+body.platform-macos #viewer-container,
 html.is-fullscreen.platform-macos #viewer-container,
 body.is-fullscreen.platform-macos #viewer-container,
-html.is-fullscreen #viewer-container,
-body.is-fullscreen #viewer-container {
-  top: calc(34px + max(env(safe-area-inset-top, 0px), 14px)) !important;
-  height: calc(100% - 34px - max(env(safe-area-inset-top, 0px), 14px)) !important;
-}
-
-/* When menubar is floating in windowed mode: viewer starts at top: 0px */
 html.is-menubar-floating.platform-macos #viewer-container,
 body.is-menubar-floating.platform-macos #viewer-container {
-  top: 0px !important;
-  height: 100% !important;
-}
-
-/* When menubar is floating in fullscreen mode: viewer uses 100% full screen */
-html.is-fullscreen.is-menubar-floating.platform-macos #viewer-container,
-body.is-fullscreen.is-menubar-floating.platform-macos #viewer-container {
-  top: 0px !important;
-  height: 100% !important;
-}
-
-/* Floating / Draggable Menubar Mode */
-#desktop-mac-menubar.is-floating,
-html.platform-macos #desktop-mac-menubar.is-floating,
-body.platform-macos #desktop-mac-menubar.is-floating {
-  position: fixed !important;
-  border-radius: 10px !important;
-  border: 1px solid rgba(0, 0, 0, 0.16) !important;
-  background: rgba(255, 255, 255, 0.7) !important;
-  backdrop-filter: blur(20px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.22), 0 2px 6px rgba(0, 0, 0, 0.08) !important;
-  width: auto !important;
-  max-width: 96vw !important;
-  left: 20px;
-  right: auto;
-  top: 14px;
-  padding: 0 12px !important;
-  height: 32px !important;
-  z-index: 26000 !important;
-  transition: box-shadow 0.2s ease, opacity 0.2s ease;
-}
-
-[data-theme="dark"] #desktop-mac-menubar.is-floating,
-html.platform-macos[data-theme="dark"] #desktop-mac-menubar.is-floating,
-body.platform-macos[data-theme="dark"] #desktop-mac-menubar.is-floating {
-  background: rgba(30, 30, 30, 0.7) !important;
-  backdrop-filter: blur(20px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5) !important;
-}
-
-#desktop-mac-menubar.is-dragging {
-  cursor: grabbing !important;
-  user-select: none !important;
-  -webkit-user-select: none !important;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.28) !important;
-  opacity: 0.94 !important;
-  transition: none !important;
+  top: 100px !important;
+  height: calc(100% - 100px) !important;
 }
 
 /* Minimized Menubar Pill */
@@ -6300,12 +6527,12 @@ html.platform-android-pad:not(.platform-macos) #desktop-mac-menubar {
 .mac-zoom-control-box {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 6px;
   background: rgba(0, 0, 0, 0.05);
   border: 1px solid rgba(0, 0, 0, 0.12);
-  border-radius: 12px;
-  padding: 1px 5px;
-  height: 24px;
+  border-radius: 18px;
+  padding: 2px 8px;
+  height: 36px;
   box-sizing: border-box;
 }
 
@@ -6314,12 +6541,19 @@ html.platform-android-pad:not(.platform-macos) #desktop-mac-menubar {
   border-color: rgba(255, 255, 255, 0.18);
 }
 
+.mac-zoom-control-box,
+.mac-zoom-btn,
+.mac-zoom-indicator {
+  -webkit-app-region: no-drag !important;
+  pointer-events: auto !important;
+}
+
 .mac-zoom-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 18px;
-  height: 18px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   border: none;
   background: transparent;
@@ -6327,6 +6561,17 @@ html.platform-android-pad:not(.platform-macos) #desktop-mac-menubar {
   cursor: pointer;
   padding: 0;
   transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.mac-zoom-btn svg,
+.mac-zoom-btn line,
+.mac-zoom-btn path {
+  pointer-events: none !important;
+}
+
+.mac-zoom-btn svg {
+  width: 16px;
+  height: 16px;
 }
 
 .mac-zoom-btn:hover {
@@ -6342,15 +6587,15 @@ html.platform-android-pad:not(.platform-macos) #desktop-mac-menubar {
 }
 
 .mac-zoom-indicator {
-  font-size: 11px;
-  font-weight: 600;
-  min-width: 36px;
+  font-size: 21px;
+  font-weight: 400 !important;
+  min-width: 58px;
   text-align: center;
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
-  padding: 0 3px;
-  border-radius: 3px;
+  padding: 0 4px;
+  border-radius: 4px;
   transition: background 0.15s ease;
 }
 
@@ -6371,7 +6616,7 @@ body.platform-macos #bottom-controls-wrapper {
 .mac-menubar-right {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   height: 100%;
   margin-left: auto;
   -webkit-app-region: no-drag !important;
@@ -6382,12 +6627,12 @@ body.platform-macos #bottom-controls-wrapper {
   position: relative;
   display: flex;
   align-items: center;
-  width: 230px;
-  height: 25px;
+  width: 280px;
+  height: 36px;
   background: rgba(0, 0, 0, 0.06);
   border: 1px solid rgba(0, 0, 0, 0.14);
-  border-radius: 13px;
-  padding: 0 10px;
+  border-radius: 18px;
+  padding: 0 12px;
   transition: all 0.2s ease;
 }
 
@@ -6398,7 +6643,7 @@ body.platform-macos #bottom-controls-wrapper {
 }
 
 .mac-menubar-search:focus-within {
-  width: 280px;
+  width: 340px;
   background: #ffffff;
   border-color: #007aff;
   box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.25);
@@ -6412,10 +6657,10 @@ body.platform-macos #bottom-controls-wrapper {
 
 .mac-menubar-search .search-icon-svg {
   color: var(--text-muted);
-  margin-right: 5px;
+  margin-right: 6px;
   flex-shrink: 0;
-  width: 13px;
-  height: 13px;
+  width: 17px;
+  height: 17px;
 }
 
 .mac-menubar-search input,
@@ -6431,10 +6676,11 @@ body.platform-macos #bottom-controls-wrapper {
   background: transparent !important;
   box-shadow: none !important;
   outline: none !important;
-  font-size: 12px !important;
+  font-size: 21px !important;
+  font-weight: 400 !important;
   font-family: inherit !important;
   color: inherit !important;
-  padding: 0 3px !important;
+  padding: 0 4px !important;
   margin: 0 !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
@@ -6517,12 +6763,12 @@ body.platform-macos #floating-search-wrapper {
 }
 
 .mac-menu-title {
-  padding: 3px 7px;
-  border-radius: 4px;
+  padding: 4px 10px;
+  border-radius: 6px;
   cursor: pointer;
   font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif !important;
-  font-weight: 700 !important;
-  font-size: 11.5px !important;
+  font-weight: 400 !important;
+  font-size: 23px !important;
   line-height: 1.2;
   letter-spacing: -0.01em;
   color: #000000 !important;
@@ -6530,7 +6776,7 @@ body.platform-macos #floating-search-wrapper {
   -webkit-font-smoothing: antialiased !important;
   -moz-osx-font-smoothing: grayscale !important;
   text-rendering: optimizeLegibility !important;
-  text-shadow: 0 0 0.3px #000000 !important;
+  text-shadow: none !important;
   transition: background 0.12s ease;
   white-space: nowrap;
   touch-action: manipulation;
@@ -6559,16 +6805,16 @@ body.platform-macos #floating-search-wrapper {
   position: absolute;
   top: 100%;
   left: 0;
-  min-width: 200px;
+  min-width: 260px;
   background: rgba(255, 255, 255, 0.96);
-  backdrop-filter: blur(25px) saturate(190%);
-  -webkit-backdrop-filter: blur(25px) saturate(190%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(0, 0, 0, 0.15);
-  border-radius: 6px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15), 0 2px 5px rgba(0,0,0,0.06);
-  padding: 3px;
-  margin-top: 1px;
-  z-index: 26000;
+  border-radius: 8px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18), 0 2px 6px rgba(0,0,0,0.08);
+  padding: 5px;
+  margin-top: 3px;
+  z-index: 31000 !important;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   -webkit-app-region: no-drag !important;
@@ -6590,11 +6836,11 @@ body.platform-macos #floating-search-wrapper {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 4px 10px;
-  border-radius: 4px;
+  padding: 8px 14px;
+  border-radius: 6px;
   font-family: var(--font-family) !important;
-  font-size: 11.5px;
-  font-weight: 400;
+  font-size: 19px !important;
+  font-weight: 400 !important;
   color: #1d1d1f;
   cursor: pointer;
   line-height: 1.35;
@@ -6701,7 +6947,7 @@ body.platform-android .admin-dropdown-container {
 
 #admin-align-dropdown-menu .dropdown-header {
   font-size: 11.5px !important;
-  font-weight: 700 !important;
+  font-weight: 400 !important;
   color: #64748b !important;
   padding: 4px 8px 6px 8px !important;
   border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
@@ -6725,7 +6971,7 @@ body.platform-android .admin-dropdown-container {
   background: transparent !important;
   border-radius: 6px !important;
   font-size: 12px !important;
-  font-weight: 600 !important;
+  font-weight: 400 !important;
   color: #1e293b !important;
   cursor: pointer !important;
   text-align: left !important;
@@ -6844,19 +7090,21 @@ textarea,
   left: 0 !important;
   width: 100vw !important;
   height: 100vh !important;
-  background: rgba(15, 23, 42, 0.45) !important;
+  background: #0f172a !important;
   display: none;
   align-items: center !important;
   justify-content: center !important;
-  z-index: 20000 !important;
+  z-index: 50000 !important;
   padding: 0 !important;
   margin: 0 !important;
   box-sizing: border-box !important;
   border: none !important;
+  pointer-events: none !important;
 }
 
 #bible-map-modal.active {
   display: flex !important;
+  pointer-events: auto !important;
 }
 
 .bible-map-modal-container {
@@ -7136,18 +7384,20 @@ textarea,
   left: 0 !important;
   width: 100vw !important;
   height: 100vh !important;
-  z-index: 20000 !important;
+  z-index: 50000 !important;
   display: none;
   align-items: center !important;
   justify-content: center !important;
-  background: transparent !important;
+  background: #0f172a !important;
   padding: 0 !important;
   margin: 0 !important;
   border: none !important;
+  pointer-events: none !important;
 }
 
 #bible-map-modal.active {
   display: flex !important;
+  pointer-events: auto !important;
 }
 
 .bible-map-modal-container {
@@ -7173,3 +7423,1141 @@ textarea,
   border-color: #ef4444 !important;
 }
 
+/* ==========================================================================
+   📱 모바일 폰(iOS iPhone / Android Phone) 전용 상세 정보창(#study-panel) 레이아웃 & Z-Index 보정
+   - 지도가 열렸을 때 지도(#bible-map-modal, z-index: 20000) 뒤에 위치하도록 z-index: 15000 유지
+   - 화면 우측에 부드럽게 슬라이드되는 드로어 형태 (풀 높이, SafeArea 대응, 깔끔한 라운딩)
+   ========================================================================== */
+@media (max-width: 768px), (pointer: coarse) and (max-width: 850px) {
+  #study-panel,
+  html.platform-iphone #study-panel,
+  body.platform-iphone #study-panel,
+  html.platform-android-phone #study-panel,
+  body.platform-android-phone #study-panel {
+    position: fixed !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    right: 0 !important;
+    left: auto !important;
+    width: min(88vw, 360px) !important;
+    max-width: 88vw !important;
+    height: 100% !important;
+    height: 100dvh !important;
+    max-height: 100% !important;
+    max-height: 100dvh !important;
+    border-radius: 16px 0 0 16px !important;
+    border: none !important;
+    border-left: 1px solid var(--border-panel) !important;
+    box-shadow: -8px 0 30px rgba(0, 0, 0, 0.25) !important;
+    background: var(--bg-panel, rgba(255, 255, 255, 0.98)) !important;
+    backdrop-filter: var(--glass-blur, blur(16px)) !important;
+    -webkit-backdrop-filter: var(--glass-blur, blur(16px)) !important;
+    z-index: 15000 !important; /* 지도(#bible-map-modal, 20000) 뒤에 위치 */
+    display: flex !important;
+    flex-direction: column !important;
+    transform: translateX(100%) !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    transition: transform 0.1s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.1s !important;
+    will-change: transform;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  #study-panel.active,
+  html.platform-iphone #study-panel.active,
+  body.platform-iphone #study-panel.active,
+  html.platform-android-phone #study-panel.active,
+  body.platform-android-phone #study-panel.active {
+    transform: translateX(0) !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    right: 0 !important;
+    left: auto !important;
+    transition: transform 0.1s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.1s !important;
+  }
+
+  #study-panel .panel-header,
+  html.platform-iphone #study-panel .panel-header,
+  body.platform-iphone #study-panel .panel-header,
+  html.platform-android-phone #study-panel .panel-header,
+  body.platform-android-phone #study-panel .panel-header {
+    padding: calc(14px + env(safe-area-inset-top, 0px)) 16px 12px 16px !important;
+    border-bottom: 1px solid var(--border-panel) !important;
+    flex-shrink: 0 !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+  }
+
+  #study-panel .panel-body,
+  html.platform-iphone #study-panel .panel-body,
+  body.platform-iphone #study-panel .panel-body,
+  html.platform-android-phone #study-panel .panel-body,
+  body.platform-android-phone #study-panel .panel-body {
+    flex: 1 1 auto !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding: 16px 16px calc(24px + env(safe-area-inset-bottom, 0px)) 16px !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 14px !important;
+  }
+}
+
+/* 스마트폰 전용 z-index 강제 보장 */
+html.platform-iphone #study-panel,
+body.platform-iphone #study-panel,
+html.platform-android-phone #study-panel,
+body.platform-android-phone #study-panel {
+  z-index: 15000 !important;
+}
+
+/* ==========================================================================
+   ✨ 환경설정 족보 글자 크기(Font Size) 3단계 토글 버튼 스타일
+   ========================================================================== */
+.fontsize-opt-btn {
+  background: #ffffff !important;
+  border: 1.5px solid #cbd5e1 !important;
+  color: #334155 !important;
+  font-weight: 400 !important;
+  border-radius: 6px !important;
+  transition: all 0.2s ease !important;
+}
+.fontsize-opt-btn:hover {
+  border-color: #3b82f6 !important;
+  color: #2563eb !important;
+  background: #f8fafc !important;
+}
+.fontsize-opt-btn.active {
+  border-color: #2563eb !important;
+  background: #eff6ff !important;
+  color: #1d4ed8 !important;
+  box-shadow: 0 0 0 1px #2563eb !important;
+}
+[data-theme="dark"] .fontsize-opt-btn {
+  background: #1e293b !important;
+  border-color: #475569 !important;
+  color: #e2e8f0 !important;
+}
+[data-theme="dark"] .fontsize-opt-btn.active {
+  border-color: #3b82f6 !important;
+  background: #1e3a8a !important;
+  color: #93c5fd !important;
+  box-shadow: 0 0 0 1px #3b82f6 !important;
+}
+
+/* ==========================================================================
+   🤍 모든 창/모달/패널 최고 가독성 순백색(Pure White) 배경 시스템 (라이트 모드)
+   - 불필요한 반투명/흐림 효과를 배제하고 깨끗한 화이트(#ffffff)로 가독성 극대화
+   ========================================================================== */
+body:not([data-theme="dark"]) .modal-content,
+body:not([data-theme="dark"]) #settings-modal .modal-content,
+body:not([data-theme="dark"]) #admin-modal .modal-content,
+body:not([data-theme="dark"]) #layer-item-modal .modal-content,
+body:not([data-theme="dark"]) #help-guide-modal .modal-content,
+body:not([data-theme="dark"]) #install-guide-modal .modal-content,
+body:not([data-theme="dark"]) #desktop-license-modal .modal-content,
+body:not([data-theme="dark"]) #admin-dashboard-modal .modal-content,
+body:not([data-theme="dark"]) #polygon-name-modal .modal-content,
+body:not([data-theme="dark"]) #study-panel,
+body:not([data-theme="dark"]) #style-editor-panel,
+body:not([data-theme="dark"]) .search-results-dropdown,
+body:not([data-theme="dark"]) #mobile-search-results,
+body:not([data-theme="dark"]) .mac-search-results {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid rgba(203, 213, 225, 0.95) !important;
+  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.14) !important;
+}
+
+/* 검색바 컨테이너는 투명 유지 (네모난 박스 테두리 잔상 및 이중 테두리 완전 방지) */
+#floating-search-wrapper,
+#search-panel {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+body:not([data-theme="dark"]) .panel-body,
+body:not([data-theme="dark"]) .settings-body,
+body:not([data-theme="dark"]) .modal-body,
+body:not([data-theme="dark"]) .panel-header,
+body:not([data-theme="dark"]) .modal-header {
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+
+body:not([data-theme="dark"]) .desc-text,
+body:not([data-theme="dark"]) .study-content {
+  color: #1e293b !important;
+}
+
+body:not([data-theme="dark"]) input.location-input,
+body:not([data-theme="dark"]) textarea.note-textarea,
+body:not([data-theme="dark"]) .form-control,
+body:not([data-theme="dark"]) select.style-select {
+  background: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+[data-theme="dark"] #mobile-open-map-btn {
+  background: rgba(30, 41, 59, 0.95) !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
+}
+
+[data-theme="dark"] #settings-open-map-direct {
+  background: rgba(37, 99, 235, 0.2) !important;
+  border-color: #3b82f6 !important;
+  color: #60a5fa !important;
+}
+
+/* ==========================================================================
+   📐 자동 박스 여백 및 크기 계산 시스템 (Auto-Growing Box Model)
+   - 글꼴 크기가 커지면 박스의 높이/너비/패딩/여백이 고정 크기에 갇히지 않고
+     텍스트 볼륨과 여백을 자동으로 계산하여 자연스럽게 확장
+   ========================================================================== */
+
+/* 1. 상단 메뉴바: 23px 글꼴에 맞춘 자동 여백 및 확장 박스 */
+#desktop-mac-menubar,
+html.platform-macos #desktop-mac-menubar,
+body.platform-macos #desktop-mac-menubar {
+  height: auto !important;
+  box-sizing: border-box !important;
+  font-size: 23px !important;
+  font-weight: normal !important;
+}
+
+#desktop-mac-menubar:not(.is-floating):not(.is-compact),
+html.platform-macos #desktop-mac-menubar:not(.is-floating):not(.is-compact),
+body.platform-macos #desktop-mac-menubar:not(.is-floating):not(.is-compact) {
+  top: 44px !important;
+  left: 14px !important;
+  right: 14px !important;
+  width: auto !important;
+  height: 52px !important;
+  min-height: 52px !important;
+  padding: 4px 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  border-radius: 12px !important;
+}
+
+#desktop-mac-menubar .mac-menu-title,
+.desktop-top-menubar .mac-menu-title,
+.mac-menu-title {
+  font-size: 23px !important;
+  font-weight: 400 !important;
+  line-height: 1.25 !important;
+  padding: 6px 14px !important;
+  margin: 0 2px !important;
+  border-radius: 6px !important;
+  text-shadow: none !important;
+  box-sizing: border-box !important;
+  height: auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+/* 메뉴바 줌(배율) 컨트롤 박스 */
+#desktop-mac-menubar .mac-zoom-control-box,
+.mac-zoom-control-box {
+  height: auto !important;
+  min-height: 42px !important;
+  padding: 3px 12px !important;
+  border-radius: 21px !important;
+  gap: 8px !important;
+  box-sizing: border-box !important;
+  margin-left: 8px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+#desktop-mac-menubar .mac-zoom-indicator,
+.mac-zoom-indicator {
+  font-size: 21px !important;
+  font-weight: 400 !important;
+  min-width: 64px !important;
+  padding: 2px 8px !important;
+  line-height: 1.25 !important;
+  box-sizing: border-box !important;
+}
+
+#desktop-mac-menubar .mac-zoom-btn,
+.mac-zoom-btn {
+  width: 30px !important;
+  height: 30px !important;
+  min-width: 30px !important;
+  min-height: 30px !important;
+  box-sizing: border-box !important;
+}
+
+#desktop-mac-menubar .mac-zoom-btn svg,
+.mac-zoom-btn svg {
+  width: 17px !important;
+  height: 17px !important;
+}
+
+/* 메뉴바 검색창 박스 */
+#desktop-mac-menubar .mac-menubar-search,
+.mac-menubar-search {
+  height: auto !important;
+  min-height: 42px !important;
+  width: 330px !important;
+  max-width: 38vw !important;
+  border-radius: 21px !important;
+  padding: 4px 16px !important;
+  box-sizing: border-box !important;
+  gap: 8px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+#desktop-mac-menubar .mac-menubar-search:focus-within,
+.mac-menubar-search:focus-within {
+  width: 390px !important;
+}
+
+#desktop-mac-menubar .mac-menubar-search input,
+#desktop-mac-menubar #searchInput,
+.mac-menubar-search .mac-search-input {
+  font-size: 21px !important;
+  font-weight: 400 !important;
+  height: auto !important;
+  min-height: 34px !important;
+  line-height: 1.3 !important;
+  padding: 2px 6px !important;
+  box-sizing: border-box !important;
+}
+
+#desktop-mac-menubar .mac-menubar-search .search-icon-svg,
+.mac-menubar-search .search-icon-svg {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+/* 메뉴바 드롭다운 메뉴 박스 */
+.mac-dropdown-menu {
+  width: max-content !important;
+  min-width: 260px !important;
+  max-width: 90vw !important;
+  padding: 8px !important;
+  border-radius: 10px !important;
+  margin-top: 4px !important;
+  box-sizing: border-box !important;
+}
+
+.mac-dropdown-menu .mac-menu-entry,
+.mac-menu-entry {
+  font-size: 19px !important;
+  font-weight: 400 !important;
+  padding: 10px 16px !important;
+  border-radius: 6px !important;
+  box-sizing: border-box !important;
+  line-height: 1.35 !important;
+  white-space: nowrap !important;
+  gap: 18px !important;
+}
+
+.mac-menu-entry .label {
+  white-space: nowrap !important;
+  flex: 1 0 auto !important;
+}
+
+.mac-menu-entry .shortcut {
+  font-size: 16px !important;
+  font-weight: 400 !important;
+  white-space: nowrap !important;
+  flex: 0 0 auto !important;
+}
+
+/* 메뉴바 컨트롤 버튼 */
+.mac-drag-handle {
+  width: 26px !important;
+  height: 36px !important;
+  min-width: 26px !important;
+  min-height: 36px !important;
+  box-sizing: border-box !important;
+}
+
+.mac-drag-handle svg {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+.mac-bar-control-btn {
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  min-height: 32px !important;
+  border-radius: 6px !important;
+  box-sizing: border-box !important;
+}
+
+.mac-bar-control-btn svg {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+/* 캔버스 상단 시작 위치 동기화 */
+html.platform-macos #viewer-container,
+body.platform-macos #viewer-container {
+  top: 100px !important;
+  height: calc(100% - 100px) !important;
+}
+
+html.is-fullscreen.platform-macos #viewer-container,
+body.is-fullscreen.platform-macos #viewer-container,
+html.is-fullscreen #viewer-container,
+body.is-fullscreen #viewer-container {
+  top: 100px !important;
+  height: calc(100% - 100px) !important;
+}
+
+/* 2. 족보 캔버스 인물 카드: 글자 크기 증가 시 여백과 박스 크기 자동 확장 */
+.person-card {
+  width: var(--card-width, 152px) !important;
+  min-width: var(--card-width, 152px) !important;
+  height: var(--card-height, 62px) !important;
+  min-height: var(--card-height, 62px) !important;
+  padding: var(--card-padding-y, 6px) var(--card-padding-x, 10px) !important;
+  margin-left: calc((152px - var(--card-width, 152px)) / 2) !important;
+  margin-top: calc((62px - var(--card-height, 62px)) / 2) !important;
+  contain: layout style;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease !important;
+}
+
+.card-name-row {
+  box-sizing: border-box !important;
+  width: 100% !important;
+}
+
+.card-title {
+  font-size: var(--card-title-size, 18.7px) !important;
+  line-height: 1.2 !important;
+  box-sizing: border-box !important;
+}
+
+.card-eng {
+  font-size: var(--card-eng-size, 12.65px) !important;
+  line-height: 1.25 !important;
+  box-sizing: border-box !important;
+}
+
+.card-desc {
+  font-size: var(--card-desc-size, 9.5px) !important;
+  line-height: 1.25 !important;
+  box-sizing: border-box !important;
+}
+
+/* 3. 정보 추가 및 수정 창: 글씨 크기(+9px)에 맞춘 입력창/버튼/박스 자동 여백 확장 */
+#admin-modal .modal-content,
+#layer-item-modal .modal-content {
+  width: 740px !important;
+  max-width: min(96vw, 920px) !important;
+  padding: 26px 30px !important;
+  box-sizing: border-box !important;
+  height: auto !important;
+}
+
+#admin-modal .modal-header h2,
+#layer-item-modal .modal-header h2 {
+  font-size: 29px !important;
+  line-height: 1.3 !important;
+}
+
+#admin-modal .modal-header .close-btn,
+#layer-item-modal .modal-header .close-btn {
+  font-size: 33px !important;
+}
+
+#admin-modal .form-grid,
+#layer-item-modal .form-grid {
+  gap: 20px 24px !important;
+  padding: 18px 24px !important;
+  box-sizing: border-box !important;
+}
+
+#admin-modal .form-group,
+#layer-item-modal .form-group {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  margin-bottom: 6px !important;
+  box-sizing: border-box !important;
+}
+
+#admin-modal .form-group label,
+#layer-item-modal .form-group label {
+  font-size: 22px !important;
+  line-height: 1.35 !important;
+  margin-bottom: 4px !important;
+  box-sizing: border-box !important;
+}
+
+#admin-modal .form-group input,
+#admin-modal .form-group select,
+#admin-modal .form-group textarea,
+#admin-modal .modal-content input,
+#admin-modal .modal-content select,
+#admin-modal .modal-content textarea,
+#layer-item-modal .form-group input,
+#layer-item-modal .form-group select,
+#layer-item-modal .form-group textarea,
+#layer-item-modal .modal-content input,
+#layer-item-modal .modal-content select,
+#layer-item-modal .modal-content textarea,
+#layer-item-modal .relation-search {
+  font-size: 25px !important;
+  line-height: 1.4 !important;
+  padding: 14px 18px !important;
+  min-height: 56px !important;
+  height: auto !important;
+  box-sizing: border-box !important;
+  border-radius: 10px !important;
+}
+
+#admin-modal .form-group textarea,
+#admin-modal .modal-content textarea,
+#layer-item-modal .form-group textarea,
+#layer-item-modal .modal-content textarea {
+  min-height: 120px !important;
+  padding: 14px 18px !important;
+  box-sizing: border-box !important;
+}
+
+#admin-modal .form-group input::placeholder,
+#admin-modal .form-group textarea::placeholder,
+#layer-item-modal .form-group input::placeholder,
+#layer-item-modal .form-group textarea::placeholder,
+#layer-item-modal .relation-search::placeholder {
+  font-size: 23px !important;
+  line-height: 1.3 !important;
+}
+
+#admin-modal .checkbox-group,
+#layer-item-modal .checkbox-group {
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+  padding: 8px 0 !important;
+  min-height: 44px !important;
+  box-sizing: border-box !important;
+}
+
+#admin-modal .checkbox-group label,
+#layer-item-modal .checkbox-group label {
+  font-size: 23px !important;
+  line-height: 1.3 !important;
+  box-sizing: border-box !important;
+}
+
+#admin-modal .checkbox-group input,
+#layer-item-modal .checkbox-group input {
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px !important;
+  min-height: 28px !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
+#admin-modal .modal-btn,
+#layer-item-modal .modal-btn {
+  font-size: 24px !important;
+  height: auto !important;
+  min-height: 56px !important;
+  padding: 14px 30px !important;
+  box-sizing: border-box !important;
+  border-radius: 10px !important;
+}
+
+#admin-modal .modal-footer,
+#layer-item-modal .modal-footer {
+  padding: 18px 24px !important;
+  gap: 16px !important;
+  box-sizing: border-box !important;
+}
+
+#admin-modal #preset-container-desc {
+  font-size: 20px !important;
+  line-height: 1.3 !important;
+}
+
+#admin-modal #relation-presets-container {
+  padding: 14px 18px !important;
+  gap: 10px !important;
+  margin: 0 16px 16px 16px !important;
+  box-sizing: border-box !important;
+}
+
+#admin-modal #preset-child-btn,
+#admin-modal #preset-spouse-btn {
+  font-size: 20px !important;
+  height: auto !important;
+  min-height: 48px !important;
+  padding: 10px 20px !important;
+  box-sizing: border-box !important;
+}
+
+#admin-modal #form-col-auto-btn {
+  font-size: 21px !important;
+  height: auto !important;
+  min-height: 56px !important;
+  padding: 10px 22px !important;
+  box-sizing: border-box !important;
+  white-space: nowrap !important;
+}
+
+#admin-modal .admin-activity-add-row {
+  display: flex !important;
+  gap: 10px !important;
+  margin-top: 10px !important;
+  flex-wrap: wrap !important;
+  box-sizing: border-box !important;
+}
+
+#admin-modal .admin-activity-add-row input {
+  min-height: 54px !important;
+  height: auto !important;
+  padding: 12px 16px !important;
+  box-sizing: border-box !important;
+}
+
+#admin-modal #admin-act-add-btn {
+  font-size: 20px !important;
+  height: auto !important;
+  min-height: 54px !important;
+  padding: 12px 24px !important;
+  box-sizing: border-box !important;
+  white-space: nowrap !important;
+}
+
+#admin-modal .admin-activity-item {
+  font-size: 22.5px !important;
+  padding: 12px 16px !important;
+  box-sizing: border-box !important;
+}
+
+#admin-modal .admin-activity-item .act-title {
+  font-size: 22.5px !important;
+}
+
+#admin-modal .admin-activity-item .act-desc {
+  font-size: 21.5px !important;
+}
+
+#admin-modal .related-person-checkbox-item {
+  font-size: 22px !important;
+  padding: 10px 14px !important;
+  box-sizing: border-box !important;
+}
+
+#admin-modal .related-person-checkbox-item input[type="checkbox"] {
+  width: 24px !important;
+  height: 24px !important;
+}
+
+#layer-item-modal .relation-item {
+  font-size: 21px !important;
+  padding: 10px 14px !important;
+  box-sizing: border-box !important;
+}
+
+#layer-item-modal .relation-item input[type="checkbox"] {
+  width: 24px !important;
+  height: 24px !important;
+}
+
+#layer-item-modal .relation-tag {
+  font-size: 20px !important;
+  padding: 8px 12px !important;
+  box-sizing: border-box !important;
+}
+
+#polygon-name-modal #polygon-modal-title {
+  font-size: 24px !important;
+}
+
+#polygon-name-modal #polygon-name-input {
+  font-size: 23px !important;
+  padding: 14px 18px !important;
+  min-height: 52px !important;
+  box-sizing: border-box !important;
+}
+
+#polygon-name-modal .modal-btn {
+  font-size: 22px !important;
+  padding: 12px 22px !important;
+  min-height: 50px !important;
+  box-sizing: border-box !important;
+}
+
+/* 4. 프로그램 안에 있는 모든 글꼴 진하게 하지 않고 보통(Normal / Regular, 400)으로 처리 */
+*,
+*::before,
+*::after,
+html,
+body,
+b,
+strong,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+th,
+button,
+input,
+select,
+textarea,
+label,
+span,
+p,
+a,
+li,
+div,
+.card-title,
+.card-name-row,
+.person-card,
+.panel-header,
+.panel-title,
+.modal-header,
+.modal-header h2,
+.modal-header h3,
+.modal-btn,
+.admin-action-btn,
+.bottom-btn,
+.setting-item-label,
+.study-title,
+.study-sec-title,
+.sec-title,
+.mac-menu-title,
+.mac-menu-entry,
+.fontsize-opt-btn {
+  font-weight: 400 !important;
+}
+
+/* 5. 상세 정보창 목록제목 및 전체 글꼴 크기를 추가 정보창(22px)과 통일 & 여백 자동 계산 */
+#study-panel .panel-sec-title,
+.panel-sec-title,
+#panel-info-title,
+#panel-location-sec-title,
+#panel-note-sec-title,
+#panel-resource-sec-title {
+  font-size: 22px !important;
+  font-weight: 400 !important;
+  line-height: 1.35 !important;
+  letter-spacing: -0.2px !important;
+  margin-top: 14px !important;
+  margin-bottom: 8px !important;
+  color: var(--text-muted) !important;
+  box-sizing: border-box !important;
+}
+
+#study-panel .panel-title h2,
+#panel-name {
+  font-size: 29px !important;
+  font-weight: 400 !important;
+  line-height: 1.25 !important;
+  box-sizing: border-box !important;
+}
+
+#study-panel .panel-title p,
+#panel-eng {
+  font-size: 18px !important;
+  font-weight: 400 !important;
+  line-height: 1.3 !important;
+  margin-top: 4px !important;
+  box-sizing: border-box !important;
+}
+
+#study-panel .panel-subsec-badge {
+  font-size: 20px !important;
+  font-weight: 400 !important;
+  line-height: 1.35 !important;
+  padding: 6px 12px !important;
+  border-radius: 6px !important;
+  display: inline-block !important;
+  margin-bottom: 8px !important;
+  box-sizing: border-box !important;
+}
+
+#study-panel .desc-text {
+  font-size: 20px !important;
+  line-height: 1.65 !important;
+  padding: 14px 18px !important;
+  border-radius: 10px !important;
+  box-sizing: border-box !important;
+}
+
+#study-panel .note-textarea {
+  font-size: 20px !important;
+  line-height: 1.6 !important;
+  padding: 14px 18px !important;
+  min-height: 240px !important;
+  border-radius: 10px !important;
+  box-sizing: border-box !important;
+}
+
+#study-panel .location-input,
+#study-panel .resource-input {
+  font-size: 20px !important;
+  line-height: 1.4 !important;
+  min-height: 50px !important;
+  padding: 10px 14px !important;
+  border-radius: 8px !important;
+  box-sizing: border-box !important;
+}
+
+#study-panel .location-input::placeholder,
+#study-panel .resource-input::placeholder {
+  font-size: 19px !important;
+}
+
+#study-panel .activity-item-name {
+  font-size: 20px !important;
+  font-weight: 400 !important;
+  line-height: 1.3 !important;
+}
+
+#study-panel .activity-item-desc {
+  font-size: 19px !important;
+  font-weight: 400 !important;
+  line-height: 1.4 !important;
+}
+
+#study-panel .activity-add-btn,
+#study-panel .add-resource-btn,
+#study-panel .map-link-btn,
+#study-panel .cancel-btn,
+#study-panel .save-btn {
+  font-size: 20px !important;
+  font-weight: 400 !important;
+  min-height: 48px !important;
+  padding: 10px 20px !important;
+  border-radius: 8px !important;
+  box-sizing: border-box !important;
+}
+
+#study-panel .panel-header {
+  padding: 16px 20px !important;
+  box-sizing: border-box !important;
+}
+
+#study-panel .panel-body {
+  padding: 16px 20px !important;
+  gap: 16px !important;
+  box-sizing: border-box !important;
+}
+
+#study-panel .panel-footer {
+  padding: 16px 20px !important;
+  gap: 12px !important;
+  box-sizing: border-box !important;
+}
+
+@media (min-width: 769px) {
+  #study-panel:not(.expanded) {
+    width: 480px !important;
+    max-width: calc(100vw - 32px) !important;
+    right: -580px !important;
+  }
+  #study-panel.active:not(.expanded) {
+    right: calc(16px + env(safe-area-inset-right)) !important;
+  }
+}
+
+/* 6. 환경설정 창(기본 설정 등) 글꼴 크기를 다른 항목과 동일하게 22px 적용 및 창 너비 20% 축소 (720px -> 576px) */
+#settings-modal .modal-content,
+html #settings-modal .modal-content,
+body #settings-modal .modal-content {
+  width: 576px !important;
+  max-width: min(96vw, 620px) !important;
+  padding: 24px 28px !important;
+  box-sizing: border-box !important;
+  height: auto !important;
+  max-height: min(90vh, calc(100vh - 80px)) !important;
+  border-radius: 16px !important;
+}
+
+#settings-modal .settings-body {
+  padding: 4px 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 22px !important;
+  box-sizing: border-box !important;
+}
+
+#settings-modal .settings-group {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  box-sizing: border-box !important;
+  margin-top: 0 !important;
+}
+
+#settings-modal .settings-group h3,
+#settings-modal h3,
+#settings-modal .sec-title,
+#settings-group-general-title,
+#settings-group-fontsize-title,
+#settings-group-layers-title,
+#settings-group-icloud-title,
+#settings-group-files-title,
+#settings-group-backup-title {
+  font-size: 22px !important;
+  font-weight: 400 !important;
+  line-height: 1.35 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: var(--text-muted) !important;
+  box-sizing: border-box !important;
+}
+
+#settings-modal .settings-btn,
+#settings-modal .settings-btn *,
+#settings-lang-toggle,
+#settings-lang-toggle *,
+#settings-lang-btn-text,
+#settings-theme-toggle,
+#settings-theme-toggle *,
+#settings-theme-btn-text,
+#settings-edit-mode-toggle,
+#settings-edit-mode-toggle *,
+#settings-edit-mode-btn-text,
+#settings-open-map-direct,
+#settings-open-map-direct *,
+#settings-modal .fontsize-opt-btn,
+#btn-font-size-normal,
+#btn-font-size-medium,
+#btn-font-size-large {
+  font-size: 22px !important;
+  font-weight: 400 !important;
+  line-height: 1.35 !important;
+  min-height: 56px !important;
+  height: auto !important;
+  padding: 12px 18px !important;
+  border-radius: 10px !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  white-space: nowrap !important;
+}
+
+#settings-modal .settings-btn span,
+#settings-modal .fontsize-opt-btn span,
+#settings-modal .layer-toggle-row span {
+  white-space: nowrap !important;
+}
+
+#settings-modal .layer-toggles-grid {
+  grid-template-columns: 1fr 1fr !important;
+  gap: 12px 16px !important;
+  padding: 14px 18px !important;
+  border-radius: 10px !important;
+  box-sizing: border-box !important;
+}
+
+#settings-modal .layer-toggle-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 6px 8px !important;
+  box-sizing: border-box !important;
+}
+
+#settings-modal .layer-toggle-row span,
+#text-layer-people,
+#text-layer-events,
+#text-layer-locations,
+#text-layer-polygons,
+#text-layer-prophets {
+  font-size: 22px !important;
+  font-weight: 400 !important;
+  line-height: 1.35 !important;
+}
+
+#settings-modal .custom-layer-chk {
+  width: 26px !important;
+  height: 26px !important;
+  min-width: 26px !important;
+  min-height: 26px !important;
+  border-radius: 6px !important;
+  box-sizing: border-box !important;
+}
+
+#settings-modal .custom-layer-chk .chk-icon {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+#settings-modal .settings-item {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 8px 0 !important;
+  min-height: 52px !important;
+  box-sizing: border-box !important;
+}
+
+#settings-modal .settings-info label,
+#settings-modal .settings-info span,
+#settings-backup-label,
+#settings-restore-label,
+#settings-md-sync-label {
+  font-size: 22px !important;
+  font-weight: 400 !important;
+  line-height: 1.35 !important;
+}
+
+#settings-modal #bottom-backup-btn,
+#settings-modal #bottom-restore-btn,
+#settings-modal #icloud-export-now-btn,
+#settings-modal #icloud-import-now-btn {
+  font-size: 21px !important;
+  font-weight: 400 !important;
+  min-height: 50px !important;
+  padding: 10px 20px !important;
+  border-radius: 8px !important;
+  box-sizing: border-box !important;
+}
+
+#settings-modal #icloud-sync-subtitle,
+#settings-modal #icloud-last-sync-label {
+  font-size: 17px !important;
+  font-weight: 400 !important;
+  line-height: 1.4 !important;
+}
+
+#settings-modal #icloud-sync-status-badge {
+  font-size: 19px !important;
+  font-weight: 400 !important;
+  line-height: 1.35 !important;
+}
+
+#settings-modal .switch-toggle {
+  transform: scale(1.2) !important;
+  transform-origin: right center !important;
+}
+
+/* ==========================================================================
+   📖 성경 족보 사용법 및 기능 가이드 (Help & Usage Guide Modal): 23px 표준화 & 자동 확장 박스
+   ========================================================================== */
+#help-guide-modal > div,
+#help-guide-modal .modal-content {
+  width: 920px !important;
+  max-width: 95vw !important;
+  max-height: 88vh !important;
+  padding: 32px !important;
+  box-sizing: border-box !important;
+  border-radius: 16px !important;
+}
+
+#help-guide-modal,
+#help-guide-modal * {
+  font-size: 23px !important;
+  font-weight: 400 !important;
+  line-height: 1.65 !important;
+  box-sizing: border-box !important;
+}
+
+#help-guide-modal h3 {
+  font-size: 23px !important;
+  font-weight: 400 !important;
+  line-height: 1.3 !important;
+  margin: 0 !important;
+}
+
+#help-guide-modal h3 + span {
+  font-size: 21px !important;
+  font-weight: 400 !important;
+  line-height: 1.4 !important;
+}
+
+#help-guide-modal h4 {
+  font-size: 23px !important;
+  font-weight: 400 !important;
+  line-height: 1.4 !important;
+  margin-top: 0 !important;
+  margin-bottom: 12px !important;
+}
+
+#help-guide-modal b,
+#help-guide-modal strong {
+  font-weight: 400 !important;
+}
+
+#help-guide-modal #help-guide-close-btn {
+  font-size: 32px !important;
+  line-height: 1 !important;
+  top: 20px !important;
+  right: 24px !important;
+}
+
+#help-guide-modal ul {
+  padding-left: 24px !important;
+  margin: 0 !important;
+}
+
+#help-guide-modal li {
+  font-size: 23px !important;
+  font-weight: 400 !important;
+  line-height: 1.65 !important;
+  margin-bottom: 8px !important;
+}
+
+#help-guide-modal table {
+  width: 100% !important;
+  font-size: 23px !important;
+  font-weight: 400 !important;
+  border-collapse: collapse !important;
+}
+
+#help-guide-modal th,
+#help-guide-modal td {
+  font-size: 23px !important;
+  font-weight: 400 !important;
+  line-height: 1.5 !important;
+  padding: 10px 12px !important;
+}
+
+#help-guide-modal kbd {
+  font-size: 21px !important;
+  font-weight: 400 !important;
+  padding: 2px 8px !important;
+  border-radius: 4px !important;
+}
+
+#help-guide-modal button,
+#help-guide-modal #help-guide-confirm-btn {
+  font-size: 23px !important;
+  font-weight: 400 !important;
+  min-height: 56px !important;
+  padding: 14px 20px !important;
+  border-radius: 8px !important;
+  line-height: 1.3 !important;
+}
+
+#help-guide-modal a {
+  font-size: 23px !important;
+  font-weight: 400 !important;
+}
+
+/* Startup landing page overlay click blocking protection */
+#landing-page {
+  pointer-events: none !important;
+}
+html.platform-macos #landing-page,
+body.platform-macos #landing-page {
+  display: none !important;
+  pointer-events: none !important;
+}
