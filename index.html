@@ -108,7 +108,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
   
   <!-- Main Stylesheet -->
-  <link rel="stylesheet" href="style_v16_v2.css?v=25745">
+  <link rel="stylesheet" href="style_v16_v2.css?v=25767">
 
   <!-- Upgraded Admin Toolkit Styling (40px circle, white background, crisp icons) -->
   <style>
@@ -371,6 +371,7 @@
       width: 0 !important;
       height: 0 !important;
     }
+    #floating-search-wrapper,
     #search-panel {
       width: 100% !important;
       height: 100% !important;
@@ -379,9 +380,15 @@
       position: relative !important;
       margin: 0 !important;
       padding: 0 !important;
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      outline: none !important;
     }
     #floating-search-wrapper #searchInput,
-    #floating-search-wrapper input {
+    #floating-search-wrapper #mobileSearchInput,
+    #floating-search-wrapper input,
+    #mobileSearchInput {
       width: 100% !important;
       max-width: 100% !important;
       min-width: 0 !important;
@@ -398,9 +405,15 @@
       color: #0f172a !important;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12) !important;
       outline: none !important;
+      -webkit-appearance: none !important;
+      -moz-appearance: none !important;
+      appearance: none !important;
+      -webkit-tap-highlight-color: transparent !important;
     }
     [data-theme="dark"] #floating-search-wrapper #searchInput,
-    [data-theme="dark"] #floating-search-wrapper input {
+    [data-theme="dark"] #floating-search-wrapper #mobileSearchInput,
+    [data-theme="dark"] #floating-search-wrapper input,
+    [data-theme="dark"] #mobileSearchInput {
       background: rgba(30, 41, 59, 0.95) !important;
       border-color: rgba(255, 255, 255, 0.15) !important;
       color: #f8fafc !important;
@@ -1590,7 +1603,7 @@
 <body>
 
   <!-- Premium Landing Page Overlay (Simplified to Splash Screen - z-index boosted to block all overlays, size shrunk by 40%) -->
-  <div id="landing-page" style="display: block; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%); z-index: 999999; font-family: 'Inter', sans-serif; color: white; box-sizing: border-box; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+  <div id="landing-page" style="display: block; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%); z-index: 999999; font-family: 'Inter', sans-serif; color: white; box-sizing: border-box; overflow: hidden; display: flex; align-items: center; justify-content: center; pointer-events: none;">
     <div style="text-align: center; padding: 20px;">
       <!-- Main Visual & Header -->
       <div style="margin-bottom: 0;">
@@ -1661,152 +1674,152 @@
   </div>
 
   <!-- Help and Usage Guide Modal -->
-  <div id="help-guide-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); z-index: 25000; justify-content: center; align-items: flex-start; overflow-y: auto; padding: 20px; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif; backdrop-filter: blur(5px);">
-    <div style="background: var(--bg-panel, #ffffff); color: var(--text-main, #1e293b); padding: 28px; border-radius: 16px; width: 660px; max-width: 94vw; max-height: 88vh; overflow-y: auto; text-align: left; box-sizing: border-box; position: relative; border: 1px solid var(--border-panel, #e2e8f0); box-shadow: 0 20px 45px rgba(0,0,0,0.3); margin: auto;">
-      <span id="help-guide-close-btn" style="position: absolute; top: 16px; right: 20px; font-size: 26px; color: var(--text-muted, #94a3b8); cursor: pointer; font-weight: 300; line-height: 1; transition: color 0.15s;" onmouseover="this.style.color='var(--text-accent, #3b82f6)'" onmouseout="this.style.color='var(--text-muted, #94a3b8)'">&times;</span>
+  <div id="help-guide-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); z-index: 25000; justify-content: center; align-items: flex-start; overflow-y: auto; padding: 24px; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif; backdrop-filter: blur(5px);">
+    <div class="modal-content" style="background: var(--bg-panel, #ffffff); color: var(--text-main, #1e293b); padding: 32px; border-radius: 16px; width: 920px; max-width: 95vw; max-height: 88vh; overflow-y: auto; text-align: left; box-sizing: border-box; position: relative; border: 1px solid var(--border-panel, #e2e8f0); box-shadow: 0 20px 45px rgba(0,0,0,0.3); margin: auto;">
+      <span id="help-guide-close-btn" style="position: absolute; top: 20px; right: 24px; font-size: 32px; color: var(--text-muted, #94a3b8); cursor: pointer; font-weight: 300; line-height: 1; transition: color 0.15s;" onmouseover="this.style.color='var(--text-accent, #3b82f6)'" onmouseout="this.style.color='var(--text-muted, #94a3b8)'">&times;</span>
       
-      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 18px; border-bottom: 2px solid var(--border-panel, #e2e8f0); padding-bottom: 12px;">
-        <span style="font-size: 24px;">📖</span>
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 22px; border-bottom: 2px solid var(--border-panel, #e2e8f0); padding-bottom: 16px;">
+        <span style="font-size: 30px;">📖</span>
         <div>
-          <h3 style="margin: 0; font-size: 19px; font-weight: 700; color: var(--text-accent, #3b82f6); letter-spacing: -0.3px;">
+          <h3 style="margin: 0; font-size: 23px; font-weight: 400; color: var(--text-accent, #3b82f6); letter-spacing: -0.3px; line-height: 1.3;">
             성경 족보 사용법 및 기능 가이드
           </h3>
-          <span style="font-size: 12px; color: var(--text-muted, #64748b); font-weight: 500;">Bible Genealogy User & Feature Guide</span>
+          <span style="font-size: 21px; color: var(--text-muted, #64748b); font-weight: 400; line-height: 1.4; display: block; margin-top: 2px;">Bible Genealogy User & Feature Guide</span>
         </div>
       </div>
       
-      <div style="display: flex; flex-direction: column; gap: 18px; font-size: 13.5px; line-height: 1.65;">
+      <div style="display: flex; flex-direction: column; gap: 20px; font-size: 23px; font-weight: 400; line-height: 1.65;">
         <!-- Local Storage & Sync Notice -->
-        <div style="background: rgba(37, 99, 235, 0.08); border: 1px solid rgba(37, 99, 235, 0.25); padding: 14px 16px; border-radius: 10px; color: var(--text-main, #1e293b);">
-          <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; color: #2563eb; margin-bottom: 6px;">
+        <div style="background: rgba(37, 99, 235, 0.08); border: 1px solid rgba(37, 99, 235, 0.25); padding: 18px 20px; border-radius: 12px; color: var(--text-main, #1e293b);">
+          <div style="display: flex; align-items: center; gap: 10px; font-size: 23px; font-weight: 400; color: #2563eb; margin-bottom: 8px;">
             <span>💡</span>
             <span>로컬 독립 저장 및 안전한 데이터 보존</span>
           </div>
-          <ul style="margin: 0; padding-left: 18px; color: var(--text-muted, #475569); font-size: 13px; line-height: 1.55; list-style-type: disc;">
-            <li style="margin-bottom: 3px;"><b>개별 로컬 영구 저장</b>: 모든 편집 작업(인물, 사건, 장소, 메모, 연결선 등)은 사용자 PC 로컬 스토리지에 즉시 안전하게 자동 보존됩니다.</li>
-            <li><b>멀티 디바이스 연동</b>: 동일한 라이선스 키/계정으로 로그인 시 iCloud 및 멀티 기기 간 데이터 공유를 지원합니다.</li>
+          <ul style="margin: 0; padding-left: 24px; color: var(--text-muted, #475569); font-size: 23px; font-weight: 400; line-height: 1.65; list-style-type: disc;">
+            <li style="margin-bottom: 8px;"><b style="font-weight: 400; color: var(--text-main, #1e293b);">개별 로컬 영구 저장</b>: 모든 편집 작업(인물, 사건, 장소, 메모, 연결선 등)은 사용자 PC 로컬 스토리지에 즉시 안전하게 자동 보존됩니다.</li>
+            <li><b style="font-weight: 400; color: var(--text-main, #1e293b);">멀티 디바이스 연동</b>: 동일한 라이선스 키/계정으로 로그인 시 iCloud 및 멀티 기기 간 데이터 공유를 지원합니다.</li>
           </ul>
         </div>
 
         <!-- 1. Navigation & Search -->
-        <div style="background: var(--bg-hover, rgba(0,0,0,0.02)); border: 1px solid var(--border-panel, #e2e8f0); border-radius: 10px; padding: 14px 16px;">
-          <h4 style="margin: 0 0 8px 0; font-size: 14.5px; font-weight: 700; color: var(--text-main, #1e293b); display: flex; align-items: center; gap: 6px;">
+        <div style="background: var(--bg-hover, rgba(0,0,0,0.02)); border: 1px solid var(--border-panel, #e2e8f0); border-radius: 12px; padding: 18px 20px;">
+          <h4 style="margin: 0 0 12px 0; font-size: 23px; font-weight: 400; color: var(--text-main, #1e293b); display: flex; align-items: center; gap: 8px;">
             <span>🔍</span> 1. 화면 탐색 및 통합 검색
           </h4>
-          <ul style="margin: 0; padding-left: 18px; color: var(--text-muted, #475569); font-size: 13px; line-height: 1.6;">
-            <li><b>화면 이동 (Pan)</b>: 마우스 좌클릭 후 드래그하거나 트랙패드 두 손가락으로 캔버스를 상하좌우 자유롭게 이동합니다.</li>
-            <li><b>확대/축소 (Zoom)</b>: 마우스 휠 스크롤, 트랙패드 핀치(Pinch), 또는 하단 컨트롤러의 <b>+</b> / <b>-</b> 버튼을 사용합니다.</li>
-            <li><b>100% 원점 화면 리셋</b>: 단축키 <b>⌘0</b> (Windows: <b>Ctrl+0</b>) 또는 하단 홈(🏠) 버튼을 누르면 첫 기본 크기(100%)로 돌아옵니다.</li>
-            <li><b>통합 검색창</b>: 상단 메뉴바 검색창에 인물 이름, 주요 사건, 지명/장소를 입력하면 해당 위치로 즉시 포커스 이동 및 하이라이트됩니다.</li>
+          <ul style="margin: 0; padding-left: 24px; color: var(--text-muted, #475569); font-size: 23px; font-weight: 400; line-height: 1.65;">
+            <li style="margin-bottom: 8px;"><b style="font-weight: 400; color: var(--text-main, #1e293b);">화면 이동 (Pan)</b>: 마우스 좌클릭 후 드래그하거나 트랙패드 두 손가락으로 캔버스를 상하좌우 자유롭게 이동합니다.</li>
+            <li style="margin-bottom: 8px;"><b style="font-weight: 400; color: var(--text-main, #1e293b);">확대/축소 (Zoom)</b>: 마우스 휠 스크롤, 트랙패드 핀치(Pinch), 또는 하단 컨트롤러의 + / - 버튼을 사용합니다.</li>
+            <li style="margin-bottom: 8px;"><b style="font-weight: 400; color: var(--text-main, #1e293b);">100% 원점 화면 리셋</b>: 단축키 ⌘0 (Windows: Ctrl+0) 또는 하단 홈(🏠) 버튼을 누르면 첫 기본 크기(100%)로 돌아옵니다.</li>
+            <li><b style="font-weight: 400; color: var(--text-main, #1e293b);">통합 검색창</b>: 상단 메뉴바 검색창에 인물 이름, 주요 사건, 지명/장소를 입력하면 해당 위치로 즉시 포커스 이동 및 하이라이트됩니다.</li>
           </ul>
         </div>
 
         <!-- 2. Edit Mode & Adding Boxes -->
-        <div style="background: var(--bg-hover, rgba(0,0,0,0.02)); border: 1px solid var(--border-panel, #e2e8f0); border-radius: 10px; padding: 14px 16px;">
-          <h4 style="margin: 0 0 8px 0; font-size: 14.5px; font-weight: 700; color: var(--text-main, #1e293b); display: flex; align-items: center; gap: 6px;">
+        <div style="background: var(--bg-hover, rgba(0,0,0,0.02)); border: 1px solid var(--border-panel, #e2e8f0); border-radius: 12px; padding: 18px 20px;">
+          <h4 style="margin: 0 0 12px 0; font-size: 23px; font-weight: 400; color: var(--text-main, #1e293b); display: flex; align-items: center; gap: 8px;">
             <span>🔓</span> 2. 편집 모드 및 상자(Box) 추가
           </h4>
-          <ul style="margin: 0; padding-left: 18px; color: var(--text-muted, #475569); font-size: 13px; line-height: 1.6;">
-            <li><b>편집 모드 전환</b>: 상단 메뉴 <b>편집 (Edit) ➡️ 🔓 편집 모드 전환</b> 또는 단축키 <b>⇧⌘E</b>(Shift+Cmd+E)를 누릅니다. 편집 모드 진입 시 배경에 미세한 정밀 방안 격자가 표시되어 정렬을 돕습니다.</li>
-            <li><b>👤 인물 카드 (Person)</b>: 새 인물을 추가하고 원하는 위치로 드래그 배치합니다. 인물 카드를 더블클릭하면 생몰년, 부모/배우자 관계, 성경 구절 등을 상세 편집할 수 있습니다.</li>
-            <li><b>📜 주요 사건 (Event)</b>: 역사적 사건 상자를 추가하여 연대표 및 타임라인에 배치합니다.</li>
-            <li><b>📍 장소/지명 (Location)</b>: 성경 속 도시, 산, 지역 상자를 생성하여 지리적 맥락을 연결합니다.</li>
-            <li><b>📝 메모 상자 (Note Box)</b>: 자유로운 해설, 묵상 메모, 성경 구절 텍스트 상자를 원하는 곳에 배치합니다.</li>
-            <li><b>🔷 영역 다각형 (Region)</b>: 다각형 영역을 그려 지파별 영토, 시대적 공간 등을 시각적으로 구분합니다.</li>
+          <ul style="margin: 0; padding-left: 24px; color: var(--text-muted, #475569); font-size: 23px; font-weight: 400; line-height: 1.65;">
+            <li style="margin-bottom: 8px;"><b style="font-weight: 400; color: var(--text-main, #1e293b);">편집 모드 전환</b>: 상단 메뉴 편집 (Edit) ➡️ 🔓 편집 잠금해제 또는 단축키 ⇧⌘E(Shift+Cmd+E)를 누릅니다. 편집 모드 진입 시 배경에 미세한 정밀 방안 격자가 표시되어 정렬을 돕습니다.</li>
+            <li style="margin-bottom: 8px;"><b style="font-weight: 400; color: var(--text-main, #1e293b);">👤 인물 카드 (Person)</b>: 새 인물을 추가하고 원하는 위치로 드래그 배치합니다. 인물 카드를 더블클릭하면 생몰년, 부모/배우자 관계, 성경 구절 등을 상세 편집할 수 있습니다.</li>
+            <li style="margin-bottom: 8px;"><b style="font-weight: 400; color: var(--text-main, #1e293b);">📜 주요 사건 (Event)</b>: 역사적 사건 상자를 추가하여 연대표 및 타임라인에 배치합니다.</li>
+            <li style="margin-bottom: 8px;"><b style="font-weight: 400; color: var(--text-main, #1e293b);">📍 장소/지명 (Location)</b>: 성경 속 도시, 산, 지역 상자를 생성하여 지리적 맥락을 연결합니다.</li>
+            <li style="margin-bottom: 8px;"><b style="font-weight: 400; color: var(--text-main, #1e293b);">📝 메모 상자 (Note Box)</b>: 자유로운 해설, 묵상 메모, 성경 구절 텍스트 상자를 원하는 곳에 배치합니다.</li>
+            <li><b style="font-weight: 400; color: var(--text-main, #1e293b);">🔷 영역 다각형 (Region)</b>: 다각형 영역을 그려 지파별 영토, 시대적 공간 등을 시각적으로 구분합니다.</li>
           </ul>
         </div>
 
         <!-- 3. Copy, Paste & Duplicate -->
-        <div style="background: var(--bg-hover, rgba(0,0,0,0.02)); border: 1px solid var(--border-panel, #e2e8f0); border-radius: 10px; padding: 14px 16px;">
-          <h4 style="margin: 0 0 8px 0; font-size: 14.5px; font-weight: 700; color: var(--text-main, #1e293b); display: flex; align-items: center; gap: 6px;">
+        <div style="background: var(--bg-hover, rgba(0,0,0,0.02)); border: 1px solid var(--border-panel, #e2e8f0); border-radius: 12px; padding: 18px 20px;">
+          <h4 style="margin: 0 0 12px 0; font-size: 23px; font-weight: 400; color: var(--text-main, #1e293b); display: flex; align-items: center; gap: 8px;">
             <span>📋</span> 3. 상자 복사, 붙여넣기 및 즉시 복제
           </h4>
-          <ul style="margin: 0; padding-left: 18px; color: var(--text-muted, #475569); font-size: 13px; line-height: 1.6;">
-            <li><b>복사 (⌘C) & 붙여넣기 (⌘V)</b>: 인물, 사건, 장소, 메모 상자, 영역 다각형 등 복사할 상자를 클릭하여 선택한 후 <b>⌘C</b>를 누르고, 원하는 시점에 <b>⌘V</b>를 누르면 새로운 고유 ID가 부여된 복사본이 생성됩니다.</li>
-            <li><b>즉시 복제 (⌘D)</b>: 상자를 선택한 상태에서 <b>⌘D</b>를 누르면 그 자리에 즉시 복제본(+30px)이 생성됩니다.</li>
-            <li>상단 <b>편집 (Edit)</b> 메뉴의 <b>복사 (Copy)</b>, <b>붙여넣기 (Paste)</b>, <b>박스 즉시 복제 (Duplicate Box)</b> 메뉴 항목으로도 동일하게 조작할 수 있습니다.</li>
+          <ul style="margin: 0; padding-left: 24px; color: var(--text-muted, #475569); font-size: 23px; font-weight: 400; line-height: 1.65;">
+            <li style="margin-bottom: 8px;"><b style="font-weight: 400; color: var(--text-main, #1e293b);">복사 (⌘C) & 붙여넣기 (⌘V)</b>: 인물, 사건, 장소, 메모 상자, 영역 다각형 등 복사할 상자를 클릭하여 선택한 후 ⌘C를 누르고, 원하는 시점에 ⌘V를 누르면 새로운 고유 ID가 부여된 복사본이 생성됩니다.</li>
+            <li style="margin-bottom: 8px;"><b style="font-weight: 400; color: var(--text-main, #1e293b);">즉시 복제 (⌘D)</b>: 상자를 선택한 상태에서 ⌘D를 누르면 그 자리에 즉시 복제본(+30px)이 생성됩니다.</li>
+            <li>상단 편집 (Edit) 메뉴의 복사 (Copy), 붙여넣기 (Paste), 박스 즉시 복제 (Duplicate Box) 메뉴 항목으로도 동일하게 조작할 수 있습니다.</li>
           </ul>
         </div>
 
         <!-- 4. Character ID & Information Sync -->
-        <div style="background: var(--bg-hover, rgba(0,0,0,0.02)); border: 1px solid var(--border-panel, #e2e8f0); border-radius: 10px; padding: 14px 16px;">
-          <h4 style="margin: 0 0 8px 0; font-size: 14.5px; font-weight: 700; color: var(--text-main, #1e293b); display: flex; align-items: center; gap: 6px;">
+        <div style="background: var(--bg-hover, rgba(0,0,0,0.02)); border: 1px solid var(--border-panel, #e2e8f0); border-radius: 12px; padding: 18px 20px;">
+          <h4 style="margin: 0 0 12px 0; font-size: 23px; font-weight: 400; color: var(--text-main, #1e293b); display: flex; align-items: center; gap: 8px;">
             <span>✏️</span> 4. 인물 이름 변경 및 고유 ID 자동 동기화
           </h4>
-          <ul style="margin: 0; padding-left: 18px; color: var(--text-muted, #475569); font-size: 13px; line-height: 1.6;">
-            <li>인물 정보 수정 모달에서 이름을 수정하면 영문/한글 기반 고유 ID가 실시간으로 자동 제안 및 수정 가능하도록 지원됩니다.</li>
-            <li>ID가 변경되면 부모·배우자 관계, 스승·선지자 연결, 관련 사건/장소, 커스텀 시각 연결선, 굴절점, 개인 메모 등 <b>모든 연관 데이터가 누락 없이 완벽하게 자동 갱신</b>됩니다.</li>
+          <ul style="margin: 0; padding-left: 24px; color: var(--text-muted, #475569); font-size: 23px; font-weight: 400; line-height: 1.65;">
+            <li style="margin-bottom: 8px;">인물 정보 수정 모달에서 이름을 수정하면 영문/한글 기반 고유 ID가 실시간으로 자동 제안 및 수정 가능하도록 지원됩니다.</li>
+            <li>ID가 변경되면 부모·배우자 관계, 스승·선지자 연결, 관련 사건/장소, 커스텀 시각 연결선, 굴절점, 개인 메모 등 모든 연관 데이터가 누락 없이 완벽하게 자동 갱신됩니다.</li>
           </ul>
         </div>
 
         <!-- 5. Layers & Visual Control -->
-        <div style="background: var(--bg-hover, rgba(0,0,0,0.02)); border: 1px solid var(--border-panel, #e2e8f0); border-radius: 10px; padding: 14px 16px;">
-          <h4 style="margin: 0 0 8px 0; font-size: 14.5px; font-weight: 700; color: var(--text-main, #1e293b); display: flex; align-items: center; gap: 6px;">
+        <div style="background: var(--bg-hover, rgba(0,0,0,0.02)); border: 1px solid var(--border-panel, #e2e8f0); border-radius: 12px; padding: 18px 20px;">
+          <h4 style="margin: 0 0 12px 0; font-size: 23px; font-weight: 400; color: var(--text-main, #1e293b); display: flex; align-items: center; gap: 8px;">
             <span>🎛️</span> 5. 레이어(Layers) 실시간 제어 및 시각화
           </h4>
-          <ul style="margin: 0; padding-left: 18px; color: var(--text-muted, #475569); font-size: 13px; line-height: 1.6;">
-            <li>상단 <b>레이어 (Layers)</b> 메뉴에서 인물 족보(👤), 주요 사건(📜), 장소/지명(📍), 영역 다각형(🔷), 선지자 계보(👑) 레이어를 원클릭으로 켜고 끌 수 있습니다.</li>
-            <li>현재 화면에 표시 중인 활성 레이어는 메뉴 항목 옆에 실시간 체크마크(<b>✓</b>)로 표시됩니다.</li>
-            <li><b>자유 연결선 & 굴절점</b>: 상자 간 마우스 드래그로 관계선을 생성하고, 선을 더블클릭하여 굴절점(Bend points) 및 스타일(색상/굵기/점선)을 지정할 수 있습니다.</li>
+          <ul style="margin: 0; padding-left: 24px; color: var(--text-muted, #475569); font-size: 23px; font-weight: 400; line-height: 1.65;">
+            <li style="margin-bottom: 8px;">상단 레이어 (Layers) 메뉴에서 인물 족보(👤), 주요 사건(📜), 장소/지명(📍), 영역 다각형(🔷), 선지자 계보(👑) 레이어를 원클릭으로 켜고 끌 수 있습니다.</li>
+            <li style="margin-bottom: 8px;">현재 화면에 표시 중인 활성 레이어는 메뉴 항목 옆에 실시간 체크마크(✓)로 표시됩니다.</li>
+            <li><b style="font-weight: 400; color: var(--text-main, #1e293b);">자유 연결선 & 굴절점</b>: 상자 간 마우스 드래그로 관계선을 생성하고, 선을 더블클릭하여 굴절점(Bend points) 및 스타일(색상/굵기/점선)을 지정할 수 있습니다.</li>
           </ul>
         </div>
 
         <!-- 6. Data Backup & Restore -->
-        <div style="background: var(--bg-hover, rgba(0,0,0,0.02)); border: 1px solid var(--border-panel, #e2e8f0); border-radius: 10px; padding: 14px 16px;">
-          <h4 style="margin: 0 0 8px 0; font-size: 14.5px; font-weight: 700; color: var(--text-main, #1e293b); display: flex; align-items: center; gap: 6px;">
+        <div style="background: var(--bg-hover, rgba(0,0,0,0.02)); border: 1px solid var(--border-panel, #e2e8f0); border-radius: 12px; padding: 18px 20px;">
+          <h4 style="margin: 0 0 12px 0; font-size: 23px; font-weight: 400; color: var(--text-main, #1e293b); display: flex; align-items: center; gap: 8px;">
             <span>💾</span> 6. 데이터 백업 및 복원 (JSON Backup & Restore)
           </h4>
-          <ul style="margin: 0; padding-left: 18px; color: var(--text-muted, #475569); font-size: 13px; line-height: 1.6;">
-            <li>상단 <b>파일 (File) ➡️ 연구 메모 백업 (JSON 저장)</b> 메뉴를 통해 전체 족보 데이터 및 연구 노트를 파일로 안전하게 백업할 수 있습니다.</li>
-            <li><b>연구 메모 복원 (JSON 불러오기)</b>을 통해 다른 기기나 백업 시점의 데이터를 손쉽게 복원할 수 있습니다.</li>
+          <ul style="margin: 0; padding-left: 24px; color: var(--text-muted, #475569); font-size: 23px; font-weight: 400; line-height: 1.65;">
+            <li style="margin-bottom: 8px;">상단 파일 (File) ➡️ 연구 메모 백업 (JSON 저장) 메뉴를 통해 전체 족보 데이터 및 연구 노트를 파일로 안전하게 백업할 수 있습니다.</li>
+            <li>연구 메모 복원 (JSON 불러오기)을 통해 다른 기기나 백업 시점의 데이터를 손쉽게 복원할 수 있습니다.</li>
           </ul>
         </div>
 
         <!-- 7. Keyboard Shortcuts Table -->
-        <div style="background: var(--bg-hover, rgba(0,0,0,0.02)); border: 1px solid var(--border-panel, #e2e8f0); border-radius: 10px; padding: 14px 16px;">
-          <h4 style="margin: 0 0 10px 0; font-size: 14.5px; font-weight: 700; color: var(--text-main, #1e293b); display: flex; align-items: center; gap: 6px;">
+        <div style="background: var(--bg-hover, rgba(0,0,0,0.02)); border: 1px solid var(--border-panel, #e2e8f0); border-radius: 12px; padding: 18px 20px;">
+          <h4 style="margin: 0 0 14px 0; font-size: 23px; font-weight: 400; color: var(--text-main, #1e293b); display: flex; align-items: center; gap: 8px;">
             <span>⌨️</span> 7. 주요 단축키 안내표 (Keyboard Shortcuts)
           </h4>
           <div style="overflow-x: auto;">
-            <table style="width: 100%; border-collapse: collapse; font-size: 12.5px; text-align: left;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 23px; font-weight: 400; text-align: left;">
               <thead>
                 <tr style="border-bottom: 2px solid var(--border-panel, #e2e8f0); color: var(--text-main, #1e293b);">
-                  <th style="padding: 6px 8px; width: 38%;">단축키 (Mac / Win)</th>
-                  <th style="padding: 6px 8px;">기능 및 동작 설명</th>
+                  <th style="padding: 10px 12px; width: 42%; font-size: 23px; font-weight: 400;">단축키 (Mac / Win)</th>
+                  <th style="padding: 10px 12px; font-size: 23px; font-weight: 400;">기능 및 동작 설명</th>
                 </tr>
               </thead>
               <tbody style="color: var(--text-muted, #475569);">
                 <tr style="border-bottom: 1px solid var(--border-panel, #f1f5f9);">
-                  <td style="padding: 6px 8px; font-family: monospace; font-weight: 600; color: var(--text-accent, #3b82f6);"><kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 5px;">⇧⌘E</kbd> / <kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 5px;">Shift+Ctrl+E</kbd></td>
-                  <td style="padding: 6px 8px;"><b>편집 모드 전환</b> (잠금 해제 / 편집 종료)</td>
+                  <td style="padding: 10px 12px; font-family: monospace; font-size: 23px; font-weight: 400; color: var(--text-accent, #3b82f6);"><kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 2px 8px; font-size: 21px; font-weight: 400;">⇧⌘E</kbd> / <kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 2px 8px; font-size: 21px; font-weight: 400;">Shift+Ctrl+E</kbd></td>
+                  <td style="padding: 10px 12px; font-size: 23px; font-weight: 400;"><b style="font-weight: 400; color: var(--text-main, #1e293b);">편집 모드 전환</b> (잠금 해제 / 편집 종료)</td>
                 </tr>
                 <tr style="border-bottom: 1px solid var(--border-panel, #f1f5f9);">
-                  <td style="padding: 6px 8px; font-family: monospace; font-weight: 600; color: var(--text-accent, #3b82f6);"><kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 5px;">⌘C</kbd> / <kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 5px;">Ctrl+C</kbd></td>
-                  <td style="padding: 6px 8px;">선택한 상자(인물/사건/장소/메모/영역) <b>복사</b></td>
+                  <td style="padding: 10px 12px; font-family: monospace; font-size: 23px; font-weight: 400; color: var(--text-accent, #3b82f6);"><kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 2px 8px; font-size: 21px; font-weight: 400;">⌘C</kbd> / <kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 2px 8px; font-size: 21px; font-weight: 400;">Ctrl+C</kbd></td>
+                  <td style="padding: 10px 12px; font-size: 23px; font-weight: 400;">선택한 상자(인물/사건/장소/메모/영역) <b style="font-weight: 400; color: var(--text-main, #1e293b);">복사</b></td>
                 </tr>
                 <tr style="border-bottom: 1px solid var(--border-panel, #f1f5f9);">
-                  <td style="padding: 6px 8px; font-family: monospace; font-weight: 600; color: var(--text-accent, #3b82f6);"><kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 5px;">⌘V</kbd> / <kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 5px;">Ctrl+V</kbd></td>
-                  <td style="padding: 6px 8px;">복사된 상자를 새 고유 ID로 <b>붙여넣기</b></td>
+                  <td style="padding: 10px 12px; font-family: monospace; font-size: 23px; font-weight: 400; color: var(--text-accent, #3b82f6);"><kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 2px 8px; font-size: 21px; font-weight: 400;">⌘V</kbd> / <kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 2px 8px; font-size: 21px; font-weight: 400;">Ctrl+V</kbd></td>
+                  <td style="padding: 10px 12px; font-size: 23px; font-weight: 400;">복사된 상자를 새 고유 ID로 <b style="font-weight: 400; color: var(--text-main, #1e293b);">붙여넣기</b></td>
                 </tr>
                 <tr style="border-bottom: 1px solid var(--border-panel, #f1f5f9);">
-                  <td style="padding: 6px 8px; font-family: monospace; font-weight: 600; color: var(--text-accent, #3b82f6);"><kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 5px;">⌘D</kbd> / <kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 5px;">Ctrl+D</kbd></td>
-                  <td style="padding: 6px 8px;">선택한 상자 <b>즉시 복제</b> (Duplicate)</td>
+                  <td style="padding: 10px 12px; font-family: monospace; font-size: 23px; font-weight: 400; color: var(--text-accent, #3b82f6);"><kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 2px 8px; font-size: 21px; font-weight: 400;">⌘D</kbd> / <kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 2px 8px; font-size: 21px; font-weight: 400;">Ctrl+D</kbd></td>
+                  <td style="padding: 10px 12px; font-size: 23px; font-weight: 400;">선택한 상자 <b style="font-weight: 400; color: var(--text-main, #1e293b);">즉시 복제</b> (Duplicate)</td>
                 </tr>
                 <tr style="border-bottom: 1px solid var(--border-panel, #f1f5f9);">
-                  <td style="padding: 6px 8px; font-family: monospace; font-weight: 600; color: var(--text-accent, #3b82f6);"><kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 5px;">⌘Z</kbd> / <kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 5px;">Ctrl+Z</kbd></td>
-                  <td style="padding: 6px 8px;"><b>실행 취소</b> (Undo)</td>
+                  <td style="padding: 10px 12px; font-family: monospace; font-size: 23px; font-weight: 400; color: var(--text-accent, #3b82f6);"><kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 2px 8px; font-size: 21px; font-weight: 400;">⌘Z</kbd> / <kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 2px 8px; font-size: 21px; font-weight: 400;">Ctrl+Z</kbd></td>
+                  <td style="padding: 10px 12px; font-size: 23px; font-weight: 400;"><b style="font-weight: 400; color: var(--text-main, #1e293b);">되돌리기</b> (Undo)</td>
                 </tr>
                 <tr style="border-bottom: 1px solid var(--border-panel, #f1f5f9);">
-                  <td style="padding: 6px 8px; font-family: monospace; font-weight: 600; color: var(--text-accent, #3b82f6);"><kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 5px;">⇧⌘Z</kbd> / <kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 5px;">Ctrl+Y</kbd></td>
-                  <td style="padding: 6px 8px;"><b>다시 실행</b> (Redo)</td>
+                  <td style="padding: 10px 12px; font-family: monospace; font-size: 23px; font-weight: 400; color: var(--text-accent, #3b82f6);"><kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 2px 8px; font-size: 21px; font-weight: 400;">⇧⌘Z</kbd> / <kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 2px 8px; font-size: 21px; font-weight: 400;">Ctrl+Y</kbd></td>
+                  <td style="padding: 10px 12px; font-size: 23px; font-weight: 400;"><b style="font-weight: 400; color: var(--text-main, #1e293b);">다시 실행</b> (Redo)</td>
                 </tr>
                 <tr style="border-bottom: 1px solid var(--border-panel, #f1f5f9);">
-                  <td style="padding: 6px 8px; font-family: monospace; font-weight: 600; color: var(--text-accent, #3b82f6);"><kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 5px;">⌘0</kbd> / <kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 5px;">Ctrl+0</kbd></td>
-                  <td style="padding: 6px 8px;"><b>100% 기본 크기 화면 리셋</b></td>
+                  <td style="padding: 10px 12px; font-family: monospace; font-size: 23px; font-weight: 400; color: var(--text-accent, #3b82f6);"><kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 2px 8px; font-size: 21px; font-weight: 400;">⌘0</kbd> / <kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 2px 8px; font-size: 21px; font-weight: 400;">Ctrl+0</kbd></td>
+                  <td style="padding: 10px 12px; font-size: 23px; font-weight: 400;"><b style="font-weight: 400; color: var(--text-main, #1e293b);">100% 기본 크기 화면 리셋</b></td>
                 </tr>
                 <tr>
-                  <td style="padding: 6px 8px; font-family: monospace; font-weight: 600; color: var(--text-accent, #3b82f6);"><kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 5px;">Esc</kbd></td>
-                  <td style="padding: 6px 8px;">팝업 모달 닫기 / 상자 선택 해제</td>
+                  <td style="padding: 10px 12px; font-family: monospace; font-size: 23px; font-weight: 400; color: var(--text-accent, #3b82f6);"><kbd style="background: var(--bg-panel, #fff); border: 1px solid #cbd5e1; border-radius: 4px; padding: 2px 8px; font-size: 21px; font-weight: 400;">Esc</kbd></td>
+                  <td style="padding: 10px 12px; font-size: 23px; font-weight: 400;">팝업 모달 닫기 / 상자 선택 해제</td>
                 </tr>
               </tbody>
             </table>
@@ -1814,24 +1827,24 @@
         </div>
 
         <!-- Updates / Download Card -->
-        <div style="background: rgba(148, 163, 184, 0.08); padding: 14px 16px; border-radius: 10px; border: 1px dashed var(--border-panel, #cbd5e1);">
-          <h4 style="margin: 0 0 6px 0; font-size: 13.5px; font-weight: 700; color: var(--text-main, #1e293b); display: flex; align-items: center; gap: 6px;">
+        <div style="background: rgba(148, 163, 184, 0.08); padding: 18px 20px; border-radius: 12px; border: 1px dashed var(--border-panel, #cbd5e1);">
+          <h4 style="margin: 0 0 10px 0; font-size: 23px; font-weight: 400; color: var(--text-main, #1e293b); display: flex; align-items: center; gap: 8px;">
             <span>🔄</span> 프로그램 버전 및 최신 다운로드
           </h4>
-          <p style="margin: 0 0 10px 0; font-size: 12.5px; color: var(--text-muted, #64748b);">
-            현재 사용 중인 버전: <b>v1.1.5 (Universal Desktop & Web)</b><br>
+          <p style="margin: 0 0 14px 0; font-size: 23px; font-weight: 400; color: var(--text-muted, #64748b); line-height: 1.6;">
+            현재 사용 중인 버전: <b style="font-weight: 400; color: var(--text-main, #1e293b);">v1.1.9 (Universal Desktop & Web)</b><br>
             아래 버튼을 클릭하면 사용 중인 기기(Mac/Windows)에 최적화된 최신 설치 프로그램 파일이 즉시 다운로드됩니다.
           </p>
-          <button onclick="window.downloadLatestProgram()" style="display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 10px; background: var(--text-accent, #3b82f6); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; transition: opacity 0.15s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+          <button onclick="window.downloadLatestProgram()" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 14px 20px; background: var(--text-accent, #3b82f6); color: white; border: none; border-radius: 8px; font-weight: 400; cursor: pointer; font-size: 23px; min-height: 56px; transition: opacity 0.15s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
             🌐 최신 설치 파일 즉시 다운로드
           </button>
-          <div style="margin-top: 8px; text-align: center;">
-            <a href="javascript:void(0)" id="show-install-guide-link" style="color: #ea580c; text-decoration: underline; font-weight: 600; font-size: 12px; display: inline-block;">⚠️ 첫 설치 시 보안 차단 경고 해결 방법 (필독!)</a>
+          <div style="margin-top: 10px; text-align: center;">
+            <a href="javascript:void(0)" id="show-install-guide-link" style="color: #ea580c; text-decoration: underline; font-weight: 400; font-size: 23px; display: inline-block;">⚠️ 첫 설치 시 보안 차단 경고 해결 방법 (필독!)</a>
           </div>
         </div>
       </div>
 
-      <button id="help-guide-confirm-btn" style="width: 100%; padding: 12px; background: var(--text-accent, #3b82f6); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 14px; margin-top: 20px; transition: opacity 0.15s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">가이드 확인 및 닫기</button>
+      <button id="help-guide-confirm-btn" style="width: 100%; padding: 16px; background: var(--text-accent, #3b82f6); color: white; border: none; border-radius: 10px; font-weight: 400; cursor: pointer; font-size: 23px; min-height: 58px; margin-top: 24px; transition: opacity 0.15s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">가이드 확인 및 닫기</button>
     </div>
   </div>
 
@@ -1909,8 +1922,8 @@
     <!-- Top Native Titlebar Area Background (0~28px for Mac Window Drag & Traffic Lights) -->
     <div id="desktop-mac-titlebar-bg"></div>
 
-    <!-- macOS Native-Style Top System Menu Bar (Positioned cleanly below titlebar at top: 28px) -->
-    <header id="desktop-mac-menubar" class="desktop-top-menubar">
+    <!-- macOS Native-Style Top System Menu Bar (Positioned cleanly below titlebar at top: 44px) -->
+    <header id="desktop-mac-menubar" class="desktop-top-menubar is-compact is-floating" style="top: 44px !important; left: 14px !important; right: auto !important; width: max-content !important;">
       <!-- Minimized pill shown when bar is collapsed -->
       <div class="mac-menubar-minimized-pill" id="mac-menubar-minimized-pill" title="클릭하여 메뉴바 펼치기">
         <span class="pill-icon">☰</span>
@@ -1942,7 +1955,7 @@
           <span class="mac-menu-title" id="mac-menu-title-edit">편집</span>
           <div class="mac-dropdown-menu">
             <div class="mac-menu-entry highlight" id="mac-menu-toggle-edit">
-              <span class="label" id="mac-menu-toggle-edit-label">편집 모드 전환</span>
+              <span class="label" id="mac-menu-toggle-edit-label">편집 잠금해제</span>
               <span class="shortcut">⇧⌘E</span>
             </div>
             <div class="mac-menu-divider"></div>
@@ -1956,7 +1969,7 @@
             <div class="mac-menu-entry" id="mac-menu-paste"><span class="label">붙여넣기</span><span class="shortcut">⌘V</span></div>
             <div class="mac-menu-entry" id="mac-menu-duplicate-box"><span class="label">박스 즉시 복제</span><span class="shortcut">⌘D</span></div>
             <div class="mac-menu-divider"></div>
-            <div class="mac-menu-entry" id="mac-menu-undo"><span class="label">실행 취소</span><span class="shortcut">⌘Z</span></div>
+            <div class="mac-menu-entry" id="mac-menu-undo"><span class="label">되돌리기</span><span class="shortcut">⌘Z</span></div>
             <div class="mac-menu-entry" id="mac-menu-redo"><span class="label">다시 실행</span><span class="shortcut">⇧⌘Z</span></div>
           </div>
         </div>
@@ -1967,6 +1980,10 @@
             <div class="mac-menu-entry" id="mac-menu-zoomin"><span class="label">확대</span><span class="shortcut">⌘+</span></div>
             <div class="mac-menu-entry" id="mac-menu-zoomout"><span class="label">축소</span><span class="shortcut">⌘-</span></div>
             <div class="mac-menu-entry" id="mac-menu-reset-zoom"><span class="label">100% 기본 크기</span><span class="shortcut">⌘0</span></div>
+            <div class="mac-menu-divider"></div>
+            <div class="mac-menu-entry" id="mac-menu-font-size-normal"><span class="label"><span class="menu-check menu-font-check" id="font-check-normal" style="display:inline-block; width:16px; font-weight:700; color:currentColor;">✓</span><span>족보 글자 크기: 표준 (100%)</span></span></div>
+            <div class="mac-menu-entry" id="mac-menu-font-size-medium"><span class="label"><span class="menu-check menu-font-check" id="font-check-medium" style="display:inline-block; width:16px; font-weight:700; color:currentColor; visibility:hidden;">✓</span><span>족보 글자 크기: 조금 크게 (112%)</span></span></div>
+            <div class="mac-menu-entry" id="mac-menu-font-size-large"><span class="label"><span class="menu-check menu-font-check" id="font-check-large" style="display:inline-block; width:16px; font-weight:700; color:currentColor; visibility:hidden;">✓</span><span>족보 글자 크기: 크게 (125%)</span></span></div>
             <div class="mac-menu-divider"></div>
             <div class="mac-menu-entry" id="mac-menu-center-adam"><span class="label">시작 위치(아담)로 이동</span><span class="shortcut">⌥A</span></div>
             <div class="mac-menu-entry" id="mac-menu-open-bible-map"><span class="label">🗺️ 성경 실측 지도 (KMZ)</span><span class="shortcut">⌥M</span></div>
@@ -2103,8 +2120,11 @@
 
     <!-- 4. Mobile Floating Search Panel Wrapper (Mobile Only) -->
     <div id="floating-search-wrapper" class="mobile-only-search" style="position: fixed; z-index: 16000; display: flex; align-items: center; justify-content: center; pointer-events: auto;">
-      <div id="search-panel" style="position: relative; display: flex; align-items: center; pointer-events: auto; margin: 0; width: 100%;">
-        <input type="text" id="mobileSearchInput" class="search-box" placeholder="검색 (인물, 사건, 장소)..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+      <div id="search-panel" style="position: relative; display: flex; align-items: center; pointer-events: auto; margin: 0; width: 100%; gap: 6px;">
+        <input type="text" id="mobileSearchInput" class="search-box" placeholder="검색 (인물, 사건, 장소)..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="flex: 1; min-width: 0;">
+        <button id="mobile-open-map-btn" type="button" onclick="if(typeof openBibleMapModal==='function')openBibleMapModal();" title="성경 실측 지도 열기" style="width: 40px; height: 40px; min-width: 40px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, 0.12); background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12); display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; padding: 0; -webkit-tap-highlight-color: transparent; flex-shrink: 0;">
+          🗺️
+        </button>
         <ul id="mobile-search-results" class="search-results-dropdown"></ul>
       </div>
     </div>
@@ -2130,6 +2150,22 @@
     <aside id="style-editor-panel">
       <!-- Style editor panel header removed -->
       <div class="panel-body">
+        <!-- 0. Genealogy Font Size 3-Step Scaling -->
+        <section class="style-section" style="padding-bottom: 12px; margin-bottom: 12px; border-bottom: 1px solid var(--border-panel);">
+          <h3 class="panel-sec-title" id="style-sec-fontsize-title" style="margin-top: 0;">🔤 족보 글자 크기</h3>
+          <div class="fontsize-btn-group" style="display: flex; gap: 5px; margin-top: 6px;">
+            <button type="button" id="btn-font-size-normal-style" class="fontsize-opt-btn active" style="flex: 1; font-size: 11.5px; min-height: 32px; padding: 6px 2px; border-radius: 6px; cursor: pointer; font-weight: 600; border: 1.5px solid #cbd5e1; background: #ffffff; color: var(--text-main); transition: all 0.2s ease;">
+              표준 (100%)
+            </button>
+            <button type="button" id="btn-font-size-medium-style" class="fontsize-opt-btn" style="flex: 1; font-size: 11.5px; min-height: 32px; padding: 6px 2px; border-radius: 6px; cursor: pointer; font-weight: 600; border: 1.5px solid #cbd5e1; background: #ffffff; color: var(--text-main); transition: all 0.2s ease;">
+              조금 크게 (112%)
+            </button>
+            <button type="button" id="btn-font-size-large-style" class="fontsize-opt-btn" style="flex: 1; font-size: 11.5px; min-height: 32px; padding: 6px 2px; border-radius: 6px; cursor: pointer; font-weight: 600; border: 1.5px solid #cbd5e1; background: #ffffff; color: var(--text-main); transition: all 0.2s ease;">
+              크게 (125%)
+            </button>
+          </div>
+        </section>
+
         <!-- 1. Area Editor (Custom Polygons) -->
         <section class="style-section" id="area-editor-section" style="display: none;">
           <h3 class="panel-sec-title" id="area-editor-title">영역(다각형) 편집기</h3>
@@ -2365,6 +2401,17 @@
           </span>
         </button>
         
+        <button id="admin-undo-btn" class="admin-action-btn-circle has-tooltip tooltip-down" data-tooltip="되돌리기 (⌘Z)" title="되돌리기 (⌘Z)" disabled style="opacity: 0.4;">
+          <span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 26.5px; height: 26.5px;">
+            <img class="custom-undo-icon" src="undo_btn.png" alt="되돌리기" style="width: 22px; height: 22px; object-fit: contain; pointer-events: none;" />
+          </span>
+        </button>
+        <button id="admin-redo-btn" class="admin-action-btn-circle has-tooltip tooltip-down" data-tooltip="다시 실행 (⇧⌘Z)" title="다시 실행 (⇧⌘Z)" disabled style="opacity: 0.4;">
+          <span class="emoji-icon" style="display: flex; align-items: center; justify-content: center; width: 26.5px; height: 26.5px;">
+            <img class="custom-redo-icon" src="redo_btn.png" alt="다시 실행" style="width: 22px; height: 22px; object-fit: contain; pointer-events: none;" />
+          </span>
+        </button>
+        
         <!-- Multi-Select & Alignment Dropdown Tool -->
         <div class="admin-dropdown-container">
           <button id="admin-align-dropdown-toggle" class="admin-action-btn-circle has-tooltip tooltip-down" data-tooltip="다중 선택 및 정렬 도구" title="다중 선택 및 정렬 도구">
@@ -2509,92 +2556,113 @@
     </div>
 
     <!-- Bible Map Viewer Modal (Full-Screen Immersive Leaflet Map Overlay with 30% Transparency) -->
-    <div id="bible-map-modal" class="modal-overlay" style="display: none; z-index: 20000; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; padding: 0; margin: 0; background: rgba(15, 23, 42, 0.45); border: none;">
+    <div id="bible-map-modal" class="modal-overlay" style="display: none; z-index: 50000; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; padding: 0; margin: 0; background: rgba(15, 23, 42, 0.45); border: none;">
       <div class="bible-map-modal-container" style="position: relative; width: 100vw; height: 100vh; max-width: 100vw; max-height: 100vh; background: transparent; border-radius: 0; border: none; overflow: hidden; box-shadow: none; display: flex; flex-direction: column;">
-        <iframe id="bible-map-viewer-iframe" src="about:blank" data-src="bible_map_viewer.html" style="width: 100%; height: 100%; border: none; flex: 1; background: transparent;" allow="fullscreen; clipboard-read; clipboard-write"></iframe>
+        <iframe id="bible-map-viewer-iframe" src="about:blank" data-src="bible_map_viewer.html?v=25764" style="width: 100%; height: 100%; border: none; flex: 1; background: transparent;" allow="fullscreen; clipboard-read; clipboard-write"></iframe>
       </div>
     </div>
 
     <!-- Settings Modal (Upgraded with Language, Theme, Layers, and iCloud Sync options) -->
     <div id="settings-modal" class="modal-overlay" style="display: none;">
-      <div class="modal-content" style="max-height: 90vh; overflow-y: auto;">
+      <div class="modal-content" style="width: 576px !important; max-width: min(96vw, 620px) !important; max-height: 90vh; overflow-y: auto;">
         <!-- Settings Modal Header Removed for Compact Layout -->
-        <div class="settings-body" style="display: flex; flex-direction: column; gap: 1.5px; padding: 17px 15px 6px 15px;">
+        <div class="settings-body" style="display: flex; flex-direction: column; gap: 18px; padding: 20px 22px 14px 22px;">
           
           <!-- 1. General App Configurations (Lang, Theme, and Edit Mode Toggle) -->
           <div class="settings-group">
-            <h3 id="settings-group-general-title" style="margin: 0; font-size: 13px; padding: 1px 0 0 0;">일반 설정</h3>
-            <div style="display: flex; gap: 6px; margin-top: 2px;">
-              <button id="settings-lang-toggle" class="settings-btn primary-outline" style="flex: 1; font-size: 12.5px; min-height: 34px; padding: 7px 9px; border-radius: 6px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 4px; border: 1px solid var(--border-panel); background: var(--bg-panel); color: var(--text-main);">
+            <h3 id="settings-group-general-title" style="margin: 0; font-size: 22px; font-weight: 400; padding: 0;">기본 설정</h3>
+            <div style="display: flex; gap: 8px; margin-top: 8px;">
+              <button id="settings-lang-toggle" class="settings-btn primary-outline" style="flex: 1; font-size: 22px; min-height: 56px; padding: 12px 14px; border-radius: 10px; cursor: pointer; font-weight: 400; display: flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid var(--border-panel); background: var(--bg-panel); color: var(--text-main);">
                 <span id="settings-lang-btn-text">🌐 언어 전환</span>
               </button>
-              <button id="settings-theme-toggle" class="settings-btn primary-outline" style="flex: 1; font-size: 12.5px; min-height: 34px; padding: 7px 9px; border-radius: 6px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 4px; border: 1px solid var(--border-panel); background: var(--bg-panel); color: var(--text-main);">
+              <button id="settings-theme-toggle" class="settings-btn primary-outline" style="flex: 1; font-size: 22px; min-height: 56px; padding: 12px 14px; border-radius: 10px; cursor: pointer; font-weight: 400; display: flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid var(--border-panel); background: var(--bg-panel); color: var(--text-main);">
                 <span id="settings-theme-btn-text">🌙 다크 모드</span>
               </button>
             </div>
-            <div style="display: flex; gap: 6px; margin-top: 5px;">
-              <button id="settings-edit-mode-toggle" class="settings-btn primary-outline" style="flex: 1; font-size: 12.5px; min-height: 34px; padding: 7px 9px; border-radius: 6px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 4px; border: 1px solid var(--border-panel); background: var(--bg-panel); color: var(--text-main);">
-                <span id="settings-edit-mode-btn-text">🔒 편집 모드 전환 (⇧⌘E)</span>
+            <div style="display: flex; gap: 8px; margin-top: 8px;">
+              <button id="settings-edit-mode-toggle" class="settings-btn primary-outline" style="flex: 1; font-size: 22px; min-height: 56px; padding: 12px 14px; border-radius: 10px; cursor: pointer; font-weight: 400; display: flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid var(--border-panel); background: var(--bg-panel); color: var(--text-main);">
+                <span id="settings-edit-mode-btn-text">🔒 편집 잠금해제 (⇧⌘E)</span>
+              </button>
+            </div>
+            <div style="margin-top: 8px;">
+              <button type="button" id="settings-open-map-direct" class="settings-btn" onclick="if(typeof openBibleMapModal==='function'){openBibleMapModal(); document.getElementById('settings-modal').style.display='none';}" style="width: 100%; font-size: 22px; min-height: 56px; padding: 12px 14px; border-radius: 10px; cursor: pointer; font-weight: 400; display: flex; align-items: center; justify-content: center; gap: 8px; border: 1.5px solid #3b82f6; background: rgba(59, 130, 246, 0.1); color: #2563eb;">
+                <span>🗺️ 성경 실측 지도 열기 (Full-Screen)</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 1-2. Genealogy Font Size Setting Group (3-Step: 표준 100%, 조금 크게 112%, 크게 125%) -->
+          <div class="settings-group" style="margin-top: 4px;">
+            <h3 id="settings-group-fontsize-title" style="margin: 0; font-size: 22px; font-weight: 400; padding: 0;">족보 글자 크기</h3>
+            <div class="fontsize-btn-group" style="display: flex; gap: 6px; margin-top: 6px;">
+              <button type="button" id="btn-font-size-normal" class="fontsize-opt-btn active" style="flex: 1; font-size: 22px; min-height: 52px; padding: 8px 4px; border-radius: 10px; cursor: pointer; font-weight: 400; border: 1.5px solid #cbd5e1; background: #ffffff; color: var(--text-main); transition: all 0.2s ease;">
+                표준 (100%)
+              </button>
+              <button type="button" id="btn-font-size-medium" class="fontsize-opt-btn" style="flex: 1; font-size: 22px; min-height: 52px; padding: 8px 4px; border-radius: 10px; cursor: pointer; font-weight: 400; border: 1.5px solid #cbd5e1; background: #ffffff; color: var(--text-main); transition: all 0.2s ease;">
+                조금 크게 (112%)
+              </button>
+              <button type="button" id="btn-font-size-large" class="fontsize-opt-btn" style="flex: 1; font-size: 22px; min-height: 52px; padding: 8px 4px; border-radius: 10px; cursor: pointer; font-weight: 400; border: 1.5px solid #cbd5e1; background: #ffffff; color: var(--text-main); transition: all 0.2s ease;">
+                크게 (125%)
               </button>
             </div>
           </div>
 
           <!-- 2. Layer Toggle Configurations (Transferred from main screen view) -->
           <div class="settings-group">
-            <h3 id="settings-group-layers-title" style="margin: 0; font-size: 13px; padding: 1px 0 0 0;">레이어 표시 설정</h3>
-            <div class="layer-toggles-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px 8px; font-size: 12.5px; color: var(--text-main); background: rgba(0,0,0,0.03); padding: 6px 8px; border-radius: 8px; border: 1px solid var(--border-panel); margin-top: 2px;">
-              <div class="layer-toggle-row" style="display: flex; align-items: center; gap: 6px; padding: 2px 2px;">
-                <button type="button" class="custom-layer-chk checked" id="btn-layer-people" style="width: 19px; height: 19px; padding: 0; border-radius: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer; -webkit-tap-highlight-color: transparent;">
-                  <svg class="chk-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <h3 id="settings-group-layers-title" style="margin: 0; font-size: 22px; font-weight: 400; padding: 0;">레이어 표시 설정</h3>
+            <div class="layer-toggles-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; font-size: 20px; color: var(--text-main); background: rgba(0,0,0,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border-panel); margin-top: 6px;">
+              <div class="layer-toggle-row" style="display: flex; align-items: center; gap: 8px; padding: 4px 2px;">
+                <button type="button" class="custom-layer-chk checked" id="btn-layer-people" style="width: 24px; height: 24px; padding: 0; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; -webkit-tap-highlight-color: transparent;">
+                  <svg class="chk-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                   <input type="checkbox" id="toggle-layer-people" checked style="display: none;">
                 </button>
-                <span id="text-layer-people" style="font-weight: 500; user-select: none; cursor: default;">인물 족보</span>
+                <span id="text-layer-people" style="font-size: 20px; font-weight: 400; user-select: none; cursor: default;">인물 족보</span>
               </div>
-              <div class="layer-toggle-row" style="display: flex; align-items: center; gap: 6px; padding: 2px 2px;">
-                <button type="button" class="custom-layer-chk checked" id="btn-layer-events" style="width: 19px; height: 19px; padding: 0; border-radius: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer; -webkit-tap-highlight-color: transparent;">
-                  <svg class="chk-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <div class="layer-toggle-row" style="display: flex; align-items: center; gap: 8px; padding: 4px 2px;">
+                <button type="button" class="custom-layer-chk checked" id="btn-layer-events" style="width: 24px; height: 24px; padding: 0; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; -webkit-tap-highlight-color: transparent;">
+                  <svg class="chk-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                   <input type="checkbox" id="toggle-layer-events" checked style="display: none;">
                 </button>
-                <span id="text-layer-events" style="font-weight: 500; user-select: none; cursor: default;">주요 사건</span>
+                <span id="text-layer-events" style="font-size: 20px; font-weight: 400; user-select: none; cursor: default;">주요 사건</span>
               </div>
-              <div class="layer-toggle-row" style="display: flex; align-items: center; gap: 6px; padding: 2px 2px;">
-                <button type="button" class="custom-layer-chk checked" id="btn-layer-locations" style="width: 19px; height: 19px; padding: 0; border-radius: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer; -webkit-tap-highlight-color: transparent;">
-                  <svg class="chk-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <div class="layer-toggle-row" style="display: flex; align-items: center; gap: 8px; padding: 4px 2px;">
+                <button type="button" class="custom-layer-chk checked" id="btn-layer-locations" style="width: 24px; height: 24px; padding: 0; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; -webkit-tap-highlight-color: transparent;">
+                  <svg class="chk-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                   <input type="checkbox" id="toggle-layer-locations" checked style="display: none;">
                 </button>
-                <span id="text-layer-locations" style="font-weight: 500; user-select: none; cursor: default;">장소/지명</span>
+                <span id="text-layer-locations" style="font-size: 20px; font-weight: 400; user-select: none; cursor: default;">장소/지명</span>
               </div>
-              <div class="layer-toggle-row" style="display: flex; align-items: center; gap: 6px; padding: 2px 2px;">
-                <button type="button" class="custom-layer-chk checked" id="btn-layer-polygons" style="width: 19px; height: 19px; padding: 0; border-radius: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer; -webkit-tap-highlight-color: transparent;">
-                  <svg class="chk-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <div class="layer-toggle-row" style="display: flex; align-items: center; gap: 8px; padding: 4px 2px;">
+                <button type="button" class="custom-layer-chk checked" id="btn-layer-polygons" style="width: 24px; height: 24px; padding: 0; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; -webkit-tap-highlight-color: transparent;">
+                  <svg class="chk-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                   <input type="checkbox" id="toggle-layer-polygons" checked style="display: none;">
                 </button>
-                <span id="text-layer-polygons" style="font-weight: 500; user-select: none; cursor: default;">영역</span>
+                <span id="text-layer-polygons" style="font-size: 20px; font-weight: 400; user-select: none; cursor: default;">영역</span>
               </div>
-              <div class="layer-toggle-row" style="display: flex; align-items: center; gap: 6px; padding: 2px 2px;">
-                <button type="button" class="custom-layer-chk checked" id="btn-layer-prophets" style="width: 19px; height: 19px; padding: 0; border-radius: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer; -webkit-tap-highlight-color: transparent;">
-                  <svg class="chk-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <div class="layer-toggle-row" style="display: flex; align-items: center; gap: 8px; padding: 4px 2px;">
+                <button type="button" class="custom-layer-chk checked" id="btn-layer-prophets" style="width: 24px; height: 24px; padding: 0; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; -webkit-tap-highlight-color: transparent;">
+                  <svg class="chk-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                   <input type="checkbox" id="toggle-layer-prophets" checked style="display: none;">
                 </button>
-                <span id="text-layer-prophets" style="font-weight: 500; user-select: none; cursor: default;">선지자</span>
+                <span id="text-layer-prophets" style="font-size: 20px; font-weight: 400; user-select: none; cursor: default;">선지자</span>
               </div>
               <input type="checkbox" id="toggle-relationship-highlight" checked style="display: none;">
             </div>
           </div>
 
-          <!-- 3. iCloud Synchronization Options (Mac & Multi-Device) -->
+          <!-- 3. iCloud Synchronization Options (iPhone, iPad, Mac Multi-Device) -->
           <div class="settings-group" id="settings-icloud-group">
-            <div class="settings-item" id="settings-icloud-item" style="margin-top: 0; display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+            <div class="settings-item" id="settings-icloud-item" style="margin-top: 0; display: flex; justify-content: space-between; align-items: center; cursor: pointer; min-height: 48px;">
               <div>
-                <span id="settings-group-icloud-title" style="margin: 0; font-size: 13px; font-weight: 600; padding: 1px 0 0 0; user-select: none; display: flex; align-items: center; gap: 4px;">
+                <span id="settings-group-icloud-title" style="margin: 0; font-size: 22px; font-weight: 400; padding: 0; user-select: none; display: flex; align-items: center; gap: 6px;">
                   <span>☁️ iCloud 자동 동기화</span>
                 </span>
-                <div id="icloud-sync-subtitle" style="font-size: 11px; color: var(--text-muted, #64748b); margin-top: 2px;">
-                  맥북 / 데스크톱 간 기존 데이터 및 메모 자동 공유
+                <div id="icloud-sync-subtitle" style="font-size: 16px; color: var(--text-muted, #64748b); margin-top: 4px;">
+                  아이폰, 아이패드, 맥북 간 데이터 및 메모 실시간 자동 동기화
                 </div>
               </div>
               <div class="settings-action">
-                <label class="switch-toggle" id="switch-icloud-btn" style="transform: scale(0.85); transform-origin: right center; cursor: pointer; display: inline-block;">
+                <label class="switch-toggle" id="switch-icloud-btn" style="transform: scale(1.1); transform-origin: right center; cursor: pointer; display: inline-block;">
                   <input type="checkbox" id="setting-icloud-sync">
                   <span class="slider-round"></span>
                 </label>
@@ -2602,19 +2670,19 @@
             </div>
             
             <!-- iCloud Status & Action Controls -->
-            <div id="icloud-account-fields" style="display: none; flex-direction: column; gap: 8px; margin-top: 8px; padding: 10px; background: rgba(0,0,0,0.03); border: 1px solid var(--border-panel); border-radius: 8px;">
-              <div id="icloud-sync-status-badge" style="display: flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 600; color: #10b981;">
-                <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #10b981;"></span>
-                <span id="icloud-status-text">iCloud Drive 연동 활성화됨 (폴더: iCloud Drive &gt; BibleGenealogy)</span>
+            <div id="icloud-account-fields" style="display: none; flex-direction: column; gap: 10px; margin-top: 8px; padding: 12px; background: rgba(0,0,0,0.03); border: 1px solid var(--border-panel); border-radius: 10px;">
+              <div id="icloud-sync-status-badge" style="display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 400; color: #10b981;">
+                <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #10b981;"></span>
+                <span id="icloud-status-text">iCloud 연동 활성화됨 (iPhone, iPad, Mac 실시간 동기화)</span>
               </div>
-              <div id="icloud-last-sync-label" style="font-size: 11px; color: var(--text-muted, #64748b);">
+              <div id="icloud-last-sync-label" style="font-size: 16px; color: var(--text-muted, #64748b);">
                 마지막 동기화: 확인 중...
               </div>
-              <div style="display: flex; gap: 6px; margin-top: 2px;">
-                <button type="button" id="icloud-export-now-btn" class="settings-btn" style="flex: 1; font-size: 11.5px; padding: 6px 8px; border-radius: 6px; background: var(--bg-panel); border: 1px solid var(--border-panel); color: var(--text-main); cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 4px;">
+              <div style="display: flex; gap: 8px; margin-top: 4px;">
+                <button type="button" id="icloud-export-now-btn" class="settings-btn" style="flex: 1; font-size: 19px; min-height: 46px; padding: 10px 14px; border-radius: 8px; background: var(--bg-panel); border: 1px solid var(--border-panel); color: var(--text-main); cursor: pointer; font-weight: 400; display: flex; align-items: center; justify-content: center; gap: 6px;">
                   <span>☁️ iCloud로 백업/내보내기</span>
                 </button>
-                <button type="button" id="icloud-import-now-btn" class="settings-btn" style="flex: 1; font-size: 11.5px; padding: 6px 8px; border-radius: 6px; background: var(--bg-panel); border: 1px solid var(--border-panel); color: var(--text-main); cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 4px;">
+                <button type="button" id="icloud-import-now-btn" class="settings-btn" style="flex: 1; font-size: 19px; min-height: 46px; padding: 10px 14px; border-radius: 8px; background: var(--bg-panel); border: 1px solid var(--border-panel); color: var(--text-main); cursor: pointer; font-weight: 400; display: flex; align-items: center; justify-content: center; gap: 6px;">
                   <span>⬇️ iCloud 데이터 가져오기</span>
                 </button>
               </div>
@@ -2623,13 +2691,13 @@
 
           <!-- 4. Local File Sync & Manual Backup -->
           <div class="settings-group">
-            <h3 id="settings-group-files-title" style="margin: 0; font-size: 13px; padding: 1px 0 0 0;">로컬 파일 관리</h3>
-            <div class="settings-item" id="settings-md-item" style="margin-top: 1px; display: flex; justify-content: space-between; align-items: center; opacity: 0.55; cursor: not-allowed;">
+            <h3 id="settings-group-files-title" style="margin: 0; font-size: 22px; font-weight: 400; padding: 0;">로컬 파일 관리</h3>
+            <div class="settings-item" id="settings-md-item" style="margin-top: 2px; display: flex; justify-content: space-between; align-items: center; opacity: 0.55; cursor: not-allowed; min-height: 48px;">
               <div class="settings-info" style="flex: 1; padding-right: 8px;">
-                <span id="settings-md-sync-label" style="font-weight: 600; font-size: 11.5px; user-select: none;">Obsidian 마크다운 연동 (비활성화됨)</span>
+                <span id="settings-md-sync-label" style="font-weight: 400; font-size: 20px; user-select: none;">Obsidian 마크다운 연동 (비활성화됨)</span>
               </div>
               <div class="settings-action">
-                <label class="switch-toggle" id="switch-md-btn" style="transform: scale(0.8); transform-origin: right center; cursor: not-allowed; display: inline-block;">
+                <label class="switch-toggle" id="switch-md-btn" style="transform: scale(1.0); transform-origin: right center; cursor: not-allowed; display: inline-block;">
                   <input type="checkbox" id="setting-md-sync" disabled>
                   <span class="slider-round" style="background-color: #cbd5e1 !important;"></span>
                 </label>
@@ -2638,26 +2706,26 @@
           </div>
           
           <div class="settings-group">
-            <h3 id="settings-group-backup-title" style="margin: 0; font-size: 13px; padding: 1px 0 0 0;">백업 및 복원</h3>
-            <div style="display: flex; flex-direction: column; gap: 2px; margin-top: 1px;">
-              <div class="settings-item" style="display: flex; justify-content: space-between; align-items: center;">
+            <h3 id="settings-group-backup-title" style="margin: 0; font-size: 22px; font-weight: 400; padding: 0;">백업 및 복원</h3>
+            <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 4px;">
+              <div class="settings-item" style="display: flex; justify-content: space-between; align-items: center; min-height: 48px;">
                 <div class="settings-info" style="flex: 1; padding-right: 8px;">
-                  <label id="settings-backup-label" style="font-weight: 600; font-size: 11.5px;">전체 메모 백업</label>
+                  <label id="settings-backup-label" style="font-weight: 400; font-size: 20px;">전체 메모 백업</label>
                 </div>
                 <div class="settings-action">
-                  <button id="bottom-backup-btn" class="settings-btn primary-outline" style="font-size: 10.5px; padding: 2px 7px; border-radius: 5px; cursor: pointer; display: flex; align-items: center; gap: 4px; font-weight: 600; border: 1px solid var(--border-panel); background: var(--bg-panel); color: var(--text-main);">
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                  <button id="bottom-backup-btn" class="settings-btn primary-outline" style="font-size: 19px; min-height: 46px; padding: 8px 14px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 400; border: 1px solid var(--border-panel); background: var(--bg-panel); color: var(--text-main);">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
                     <span id="settings-backup-btn-text">백업 생성</span>
                   </button>
                 </div>
               </div>
-              <div class="settings-item" style="display: flex; justify-content: space-between; align-items: center;">
+              <div class="settings-item" style="display: flex; justify-content: space-between; align-items: center; min-height: 48px;">
                 <div class="settings-info" style="flex: 1; padding-right: 8px;">
-                  <label id="settings-restore-label" style="font-weight: 600; font-size: 11.5px;">백업 불러오기</label>
+                  <label id="settings-restore-label" style="font-weight: 400; font-size: 20px;">백업 불러오기</label>
                 </div>
                 <div class="settings-action">
-                  <button id="bottom-restore-btn" class="settings-btn primary-outline" style="font-size: 10.5px; padding: 2px 7px; border-radius: 5px; cursor: pointer; display: flex; align-items: center; gap: 4px; font-weight: 600; border: 1px solid var(--border-panel); background: var(--bg-panel); color: var(--text-main);">
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                  <button id="bottom-restore-btn" class="settings-btn primary-outline" style="font-size: 19px; min-height: 46px; padding: 8px 14px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 400; border: 1px solid var(--border-panel); background: var(--bg-panel); color: var(--text-main);">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
                     <span id="settings-restore-btn-text">백업 선택</span>
                   </button>
                 </div>
@@ -2677,10 +2745,10 @@
         </div>
         <form id="admin-form">
           <div id="relation-presets-container" style="display: none; background: var(--bg-panel); border: 1px solid var(--border-panel); padding: 10px; border-radius: 8px; margin: 0 16px 12px 16px; flex-direction: column; gap: 6px;">
-            <p id="preset-container-desc" style="margin: 0; font-size: 11px; color: var(--text-muted); font-weight: 600;"><span id="preset-title-text">선택된 인물 연계 프리셋</span> (<span id="relation-target-name">이름</span>)</p>
+            <p id="preset-container-desc" style="margin: 0; font-size: 20px; color: var(--text-muted); font-weight: 600;"><span id="preset-title-text">선택된 인물 연계 프리셋</span> (<span id="relation-target-name">이름</span>)</p>
             <div style="display: flex; gap: 8px;">
-              <button type="button" id="preset-child-btn" class="admin-action-btn primary" style="font-size: 11px; padding: 6px 10px; margin: 0;">👶 자식으로 추가</button>
-              <button type="button" id="preset-spouse-btn" class="admin-action-btn primary" style="font-size: 11px; padding: 6px 10px; margin: 0;">💍 배우자로 추가</button>
+              <button type="button" id="preset-child-btn" class="admin-action-btn primary" style="font-size: 20px; padding: 8px 16px; margin: 0;">👶 자식으로 추가</button>
+              <button type="button" id="preset-spouse-btn" class="admin-action-btn primary" style="font-size: 20px; padding: 8px 16px; margin: 0;">💍 배우자로 추가</button>
             </div>
           </div>
           <div class="form-grid">
@@ -2711,7 +2779,7 @@
               <label id="label-form-col" for="form-col">열 위치 (소수점 3자리 지원)*</label>
               <div style="display:flex; gap:8px; align-items:center;">
                 <input type="number" id="form-col" required step="0.001" value="0" placeholder="직계=0, 왼쪽=-1.5, 오른쪽=1.5" style="flex:1;">
-                <button type="button" id="form-col-auto-btn" class="admin-action-btn primary" style="margin:0; padding:0 12px; height:38px; font-size:12px;" title="부모 및 형제 기준으로 열 위치를 자동 계산합니다.">자동 계산</button>
+                <button type="button" id="form-col-auto-btn" class="admin-action-btn primary" style="margin:0; padding:0 16px; height:50px; font-size:21px;" title="부모 및 형제 기준으로 열 위치를 자동 계산합니다.">자동 계산</button>
               </div>
             </div>
             <div class="form-group">
@@ -2762,7 +2830,7 @@
                 <input type="text" id="admin-act-name-input" placeholder="장소명 (예: 예루살렘)" style="flex: 1.2; min-width: 110px;">
                 <input type="text" id="admin-act-coords-input" placeholder="좌표 (위도, 경도)" style="flex: 1; min-width: 120px;">
                 <input type="text" id="admin-act-desc-input" placeholder="사역/활동 내용 (예: 통일 왕국 통치)" style="flex: 1.8; min-width: 140px;">
-                <button type="button" id="admin-act-add-btn" class="admin-action-btn primary" style="margin: 0; padding: 0 12px; height: 36px; font-size: 11px; white-space: nowrap;">추가</button>
+                <button type="button" id="admin-act-add-btn" class="admin-action-btn primary" style="margin: 0; padding: 0 16px; height: 48px; font-size: 20px; white-space: nowrap;">추가</button>
               </div>
             </div>
             
@@ -2856,18 +2924,18 @@
 
     <!-- Polygon Name Input Modal -->
     <div id="polygon-name-modal" class="modal-overlay" style="display: none; justify-content: center; align-items: center; z-index: 35000;">
-      <div class="modal-content" style="width: 380px; max-width: min(92vw, 420px); border-radius: 14px; padding: 22px 20px; box-shadow: 0 16px 36px rgba(0,0,0,0.35); background: var(--bg-board, #ffffff); border: 1px solid var(--border-panel, #cbd5e1); display: flex; flex-direction: column; gap: 14px; flex: 0 0 auto;">
+      <div class="modal-content" style="width: 480px; max-width: min(94vw, 520px); border-radius: 14px; padding: 26px 24px; box-shadow: 0 16px 36px rgba(0,0,0,0.35); background: var(--bg-board, #ffffff); border: 1px solid var(--border-panel, #cbd5e1); display: flex; flex-direction: column; gap: 16px; flex: 0 0 auto;">
         <div style="display: flex; align-items: center; justify-content: space-between;">
-          <h3 id="polygon-modal-title" style="margin: 0; font-size: 15px; font-weight: 700; color: var(--text-main, #0f172a);">새로운 다각형 영역의 이름을 입력하세요:</h3>
-          <button type="button" id="polygon-name-close-btn" class="close-btn" style="font-size: 18px; line-height: 1; border: none; background: none; cursor: pointer; color: var(--text-muted, #64748b); padding: 2px;">&times;</button>
+          <h3 id="polygon-modal-title" style="margin: 0; font-size: 24px; font-weight: 700; color: var(--text-main, #0f172a);">새로운 다각형 영역의 이름을 입력하세요:</h3>
+          <button type="button" id="polygon-name-close-btn" class="close-btn" style="font-size: 27px; line-height: 1; border: none; background: none; cursor: pointer; color: var(--text-muted, #64748b); padding: 2px;">&times;</button>
         </div>
-        <form id="polygon-name-form" onsubmit="return false;" style="display: flex; flex-direction: column; gap: 14px; margin: 0;">
+        <form id="polygon-name-form" onsubmit="return false;" style="display: flex; flex-direction: column; gap: 16px; margin: 0;">
           <div>
-            <input type="text" id="polygon-name-input" style="width: 100%; box-sizing: border-box; padding: 10px 14px; font-size: 14px; border: 1.5px solid var(--border-panel, #cbd5e1); border-radius: 8px; outline: none; background: var(--bg-panel, #f8fafc); color: var(--text-main, #0f172a); transition: border-color 0.2s;" placeholder="새 영역" autocomplete="off">
+            <input type="text" id="polygon-name-input" style="width: 100%; box-sizing: border-box; padding: 14px 18px; font-size: 23px; border: 1.5px solid var(--border-panel, #cbd5e1); border-radius: 8px; outline: none; background: var(--bg-panel, #f8fafc); color: var(--text-main, #0f172a); transition: border-color 0.2s;" placeholder="새 영역" autocomplete="off">
           </div>
-          <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px;">
-            <button type="button" id="polygon-name-cancel-btn" class="modal-btn" style="padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; background: var(--bg-panel, #f1f5f9); border: 1px solid var(--border-panel, #cbd5e1); color: var(--text-muted, #64748b);">취소</button>
-            <button type="submit" id="polygon-name-confirm-btn" class="modal-btn primary" style="padding: 8px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; background: #ea580c; border: none; color: #ffffff;">확인</button>
+          <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 4px;">
+            <button type="button" id="polygon-name-cancel-btn" class="modal-btn" style="padding: 12px 20px; border-radius: 6px; font-size: 22px; font-weight: 600; cursor: pointer; background: var(--bg-panel, #f1f5f9); border: 1px solid var(--border-panel, #cbd5e1); color: var(--text-muted, #64748b);">취소</button>
+            <button type="submit" id="polygon-name-confirm-btn" class="modal-btn primary" style="padding: 12px 22px; border-radius: 6px; font-size: 22px; font-weight: 600; cursor: pointer; background: #ea580c; border: none; color: #ffffff;">확인</button>
           </div>
         </form>
       </div>
@@ -3171,6 +3239,6 @@
   </script>
   <script src="leaflet/leaflet.js"></script>
   <script src="bible_kmz_data.js"></script>
-  <script src="app_v16_v2.js?v=25745"></script>
+  <script src="app_v16_v2.js?v=25767"></script>
 </body>
 </html>
