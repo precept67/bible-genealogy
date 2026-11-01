@@ -44,7 +44,8 @@ jobs:
         shell: bash
         run: |
           mkdir -p dist
-          cp index.html style_v16_v2.css app_v16_v2.js data_v16_v2.js database.json app_logo.png dist/
+          cp -r bible-genealogy-deploy/* dist/
+          rm -rf dist/downloads
 
       - name: Disable updater and set nsis target
         shell: bash
