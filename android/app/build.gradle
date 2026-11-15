@@ -18,10 +18,16 @@ android {
     }
     signingConfigs {
         release {
-            storeFile file("bible-release-key.jks")
-            storePassword "REMOVED"
-            keyAlias "bible-alias"
-            keyPassword "REMOVED"
+            // 서명 정보는 android/keystore.properties 에서 읽는다 (깃허브에 올리지 않음)
+            def ksFile = rootProject.file("keystore.properties")
+            if (ksFile.exists()) {
+                def ks = new Properties()
+                ks.load(new FileInputStream(ksFile))
+                storeFile rootProject.file(ks['storeFile'])
+                storePassword ks['storePassword']
+                keyAlias ks['keyAlias']
+                keyPassword ks['keyPassword']
+            }
         }
     }
     buildTypes {
